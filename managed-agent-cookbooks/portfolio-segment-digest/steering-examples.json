@@ -1,0 +1,90 @@
+{
+  "agent": "portfolio-segment-digest",
+  "description": "Steering examples for the portfolio-segment-digest agent. Covers standard weekly runs, first-run initialization, segment filters, data gap scenarios, and output variations.",
+  "examples": [
+    {
+      "id": "psd-001",
+      "label": "Standard weekly run",
+      "prompt": "Run the portfolio segment digest.",
+      "expected_behavior": "Reads cs-ops config, loads prior baseline, dispatches Segment Data Puller → Distribution Analyzer → Portfolio Summarizer → Report Composer, writes updated baseline, delivers Slack post and file output. Includes WoW columns and shift flags where thresholds are exceeded.",
+      "notes": "The canonical scheduled trigger. All four subagents run in sequence. WoW comparisons are active because a prior baseline exists."
+    },
+    {
+      "id": "psd-002",
+      "label": "First run — no prior baseline",
+      "prompt": "Run the portfolio segment digest.",
+      "expected_behavior": "Reads config. Detects no baseline file. Initializes: runs Segment Data Puller, Distribution Analyzer, and Portfolio Summarizer, but passes baseline_availability_flag=first_run to Report Composer. Output uses first-run format — no WoW columns, no shift flags, lists each segment's current distributions. Writes baseline. Posts initialization notice to Slack and file.",
+      "notes": "First run produces a different format. WoW comparisons begin on the following run. Verify the baseline file was written correctly after this run."
+    },
+    {
+      "id": "psd-003",
+      "label": "Segment-specific filter",
+      "prompt": "Run the portfolio segment digest for mid-market only.",
+      "expected_behavior": "Reads config. Passes only the mid-market segment definition to Segment Data Puller. Distribution Analyzer and Portfolio Summarizer compute for mid-market only. Report Composer produces a single-segment breakdown. Notes in the output that the digest was scoped to mid-market.",
+      "notes": "Useful for a quick segment-level check outside the scheduled run. Portfolio Summary totals reflect the filtered segment only."
+    },
+    {
+      "id": "psd-004",
+      "label": "No Red accounts this period",
+      "prompt": "Segment health report",
+      "expected_behavior": "Runs normally. When Portfolio Summarizer returns no_red_accounts: true, Report Composer opens the Portfolio Summary section with 'No Red accounts this period across [N] segments' before the summary table. WoW columns still appear; distribution shift flags are suppressed (no Red movement to flag).",
+      "notes": "Agent should not skip the run or truncate the output when there are no Red accounts. Green-dominant distributions are still worth reporting."
+    },
+    {
+      "id": "psd-005",
+      "label": "Slack post suppressed — file output only",
+      "prompt": "Run the portfolio segment digest. Don't post to Slack — save to file only.",
+      "expected_behavior": "Runs all four subagents normally. Skips the Slack delivery step. Writes baseline. Saves the markdown file to the configured file_output_path. Confirms delivery with file path and timestamp.",
+      "notes": "Use when testing a new configuration or when Slack is unavailable for a scheduled run."
+    },
+    {
+      "id": "psd-006",
+      "label": "CRM connector unavailable",
+      "prompt": "Run portfolio digest",
+      "expected_behavior": "Reads config. Dispatches Segment Data Puller. Segment Data Puller returns connector_status.crm: unavailable. Orchestrator surfaces the error: 'CRM connector unavailable — portfolio digest cannot run with incomplete account data. Verify [CRM connector name] connection and retry.' Does not dispatch Distribution Analyzer, Portfolio Summarizer, or Report Composer. Does not write baseline.",
+      "notes": "Hard stop on connector failure. Agent never runs on stale or partial segment data. Do not attempt to use cached data."
+    },
+    {
+      "id": "psd-007",
+      "label": "CS Platform connector unavailable",
+      "prompt": "Weekly segment rollup",
+      "expected_behavior": "Reads config. Dispatches Segment Data Puller. Segment Data Puller returns connector_status.cs_platform: unavailable. Orchestrator surfaces the error: 'CS Platform connector unavailable — health tier data missing. Portfolio digest cannot run without health scores. Verify [CS Platform connector name] and retry.' Hard stop. No downstream subagents dispatched. No baseline write.",
+      "notes": "Same hard-stop logic as CRM unavailability. Both connectors are required."
+    },
+    {
+      "id": "psd-008",
+      "label": "Zero accounts returned — empty-set guard",
+      "prompt": "Run the portfolio segment digest.",
+      "expected_behavior": "Reads config. Dispatches Segment Data Puller. Segment Data Puller returns total_accounts: 0. Orchestrator triggers empty-set guard: logs 'Segment Data Puller returned no accounts — verify CRM and CS Platform connector configuration and segment definitions in cs-ops/CLAUDE.md' and stops. Does not dispatch Distribution Analyzer, Portfolio Summarizer, or Report Composer. Does not write baseline.",
+      "notes": "Empty-set guard prevents fabricated distributions. Common cause: segment_definitions in cs-ops/CLAUDE.md do not match the field values in the CRM."
+    },
+    {
+      "id": "psd-009",
+      "label": "Corrupted baseline — initialize fresh",
+      "prompt": "Run portfolio digest",
+      "expected_behavior": "Reads config. Attempts to load baseline. Baseline file is present but cannot be parsed. Logs: 'Baseline file could not be read — initializing fresh. Prior week-over-week data unavailable.' Proceeds as first run: no WoW columns, no shift flags. Writes a clean new baseline after subagents complete. Notes the corruption in the output.",
+      "notes": "Do not abort on a corrupted baseline — initialize fresh. The error is logged prominently but does not prevent the run."
+    },
+    {
+      "id": "psd-010",
+      "label": "On-demand run outside schedule",
+      "prompt": "Segment health report — I want to see where things stand ahead of the board meeting.",
+      "expected_behavior": "Recognizes trigger phrase 'segment health report'. Runs full pipeline as a standard run (not scheduled). If prior baseline exists, produces standard output with WoW columns. Notes in the output that this is an on-demand run. Slack post and file output proceed per configured targets.",
+      "notes": "On-demand runs are functionally identical to scheduled runs. The baseline is loaded and updated normally. Do not skip the baseline write because it is an on-demand run."
+    },
+    {
+      "id": "psd-011",
+      "label": "Distribution shift flag triggered",
+      "prompt": "Run the portfolio segment digest.",
+      "expected_behavior": "Standard run. Distribution Analyzer returns shift_flag: true for mid-market (Red % increased by more than the configured threshold). Report Composer includes the shift flag block for mid-market: '⚠️ Distribution shift: Red band +[Δ]pp week over week — meaningful movement.' Capacity escalation path is included if capacity is also flagged. Cross-Segment Comparison table renders with a ⚠️ indicator next to mid-market WoW delta.",
+      "notes": "Shift flag and capacity flag can coexist. Both appear in the segment breakdown block."
+    },
+    {
+      "id": "psd-012",
+      "label": "Health data freshness warning",
+      "prompt": "Run portfolio digest",
+      "expected_behavior": "Reads config. Detects that health_refresh_cadence is weekly and the last refresh date (from CS Platform connector metadata) is more than 7 days ago. Before running subagents, surfaces a prominent warning: 'Health data for [segment(s)] may not reflect this week's updates — last refresh was [date]. Confirm with [health_data_owner] before acting on distribution shifts.' Continues the run but includes the warning in the reviewer note block of the output.",
+      "notes": "The run proceeds despite the warning. The freshness warning appears in both the Slack post and the file output reviewer note."
+    }
+  ]
+}

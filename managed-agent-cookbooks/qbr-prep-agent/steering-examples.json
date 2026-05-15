@@ -1,0 +1,90 @@
+{
+  "agent": "qbr-prep-agent",
+  "description": "Prompting patterns and expected behaviors for the QBR Prep Agent. Use these as starting points for on-demand invocations. This agent is always on-demand — it does not run on a schedule.",
+  "examples": [
+    {
+      "id": "qbr-001",
+      "label": "Standard invocation by account name",
+      "prompt": "Prepare the QBR package for Meridian Labs.",
+      "expected_behavior": "Orchestrator reads config, pulls the account record from CRM, retrieves success criteria from CRM, dispatches Account Data Assembler. After profile is complete, dispatches Achievement Analyzer with criteria and profile. After achievement analysis returns, dispatches Narrative Drafter and Slide Outline Generator simultaneously. Assembles full package using the configured template type. All sections marked [DRAFT — requires CSM review]. Saves to output_path.",
+      "notes": "Standard invocation. CRM success criteria required — if not found, the orchestrator pauses before dispatching Achievement Analyzer."
+    },
+    {
+      "id": "qbr-002",
+      "label": "With meeting date specified",
+      "prompt": "Prepare the QBR package for Northwave Financial — the meeting is June 15.",
+      "expected_behavior": "Runs identically to standard invocation. Uses June 15 as the qbr_date for calculating the review period window and for the renewal context proximity check (renewal context included if renewal is within 120 days of June 15). Brief header notes the meeting date.",
+      "notes": "Including the meeting date is recommended for accurate review period scoping. Without it, the agent uses today's date as qbr_date."
+    },
+    {
+      "id": "qbr-003",
+      "label": "Template override",
+      "prompt": "Run QBR prep for Apex Systems using the operational template.",
+      "expected_behavior": "Runs full preparation chain with the operational template type (12–15 slides) rather than the configured default. Slide Outline Generator produces a more detailed outline appropriate for a technical champion or power user audience. Achievement analysis and narrative draft are unchanged by the template override.",
+      "notes": "Overrides qbr_template_preference for this run only. Does not change the config default."
+    },
+    {
+      "id": "qbr-004",
+      "label": "Renewal-focused template",
+      "prompt": "Get Lighthouse Analytics ready for their quarterly review. Use the renewal-focused template — their renewal is next month.",
+      "expected_behavior": "Runs with the renewal-focused template (10–12 slides). Slide outline includes a dedicated renewal slide with renewal date, ARR, and recommended talking points. Renewal Context section in the narrative draft is always included regardless of proximity. Achievement analysis is unchanged.",
+      "notes": "The renewal context section in the narrative draft is always included when using the renewal-focused template, not just when renewal is within 120 days."
+    },
+    {
+      "id": "qbr-005",
+      "label": "Success criteria not in CRM — CSM provides at invocation",
+      "prompt": "Prepare QBR for Crestwood Partners. Success criteria for this quarter were: (1) 90% of provisioned seats active, (2) executive sponsor engaged in monthly touchpoints, (3) two new use cases live in production.",
+      "expected_behavior": "Orchestrator finds no success criteria in CRM. Detects that criteria are provided in the invocation prompt. Uses the three stated criteria rather than pausing to ask. Notes source as 'CSM-provided' in the achievement analysis header. Proceeds with full chain.",
+      "notes": "If the CSM anticipates that criteria are not in CRM, embedding them in the invocation avoids the pause prompt and speeds up the run."
+    },
+    {
+      "id": "qbr-006",
+      "label": "Success criteria not in CRM — orchestrator pauses",
+      "prompt": "Run QBR prep for Cascade Industries.",
+      "expected_behavior": "Orchestrator finds no success criteria in CRM and none provided in the invocation. Halts before dispatching Achievement Analyzer. Asks the CSM: 'Success criteria for Cascade Industries were not found in CRM. Please provide the agreed goals for this quarter before I continue.' Waits for CSM input. Resumes after input is received.",
+      "notes": "The orchestrator never fabricates success criteria. This is the expected behavior when criteria are missing and not provided in the prompt."
+    },
+    {
+      "id": "qbr-007",
+      "label": "Extended review period",
+      "prompt": "Prepare the QBR package for Summit Group — review the last 6 months.",
+      "expected_behavior": "Overrides review_period_days to 180 days for this run. Account Data Assembler pulls product usage, support, and NPS data over the 6-month window. Achievement analysis and narrative draft reference the extended period. Package header notes the review window used.",
+      "notes": "Useful for accounts with longer QBR cycles or when the CSM wants broader trend context."
+    },
+    {
+      "id": "qbr-008",
+      "label": "Missing optional connectors",
+      "prompt": "Prepare the QBR for Irongate Solutions.",
+      "expected_behavior": "Runs full chain. If product usage, support, or NPS connectors are unavailable or not configured, Account Data Assembler returns null for those sections and lists them in connectors_unavailable. Achievement Analyzer scores goals with available data only; goals requiring unavailable data are marked '? Evidence unclear'. Narrative Drafter notes data gaps in the relevant sections. Slide Outline Generator flags affected slides as 'Data unavailable — CSM to provide'. Package is complete with gaps documented.",
+      "notes": "Missing optional connectors do not halt the run. The output is still useful and clearly documents what data was missing."
+    },
+    {
+      "id": "qbr-009",
+      "label": "Executive template for C-suite meeting",
+      "prompt": "Prep the QBR for Valorex Corp. It's a C-suite meeting — use the executive template and keep the narrative tight.",
+      "expected_behavior": "Runs with the executive template (8–10 slides). Slide outline is structured for strategic framing with fewer operational details. Narrative Drafter is passed the executive context; opening framing and look-ahead sections emphasize business outcomes over feature usage. Achievement analysis is unchanged in depth — the narrative framing adapts.",
+      "notes": "The 'keep it tight' instruction is passed to the Narrative Drafter as context for tone. Narrative sections are still complete — they are structured toward outcomes rather than activity."
+    },
+    {
+      "id": "qbr-010",
+      "label": "Checking achievement on a single goal",
+      "prompt": "What does the data say about Orion Medical's first success criterion for this quarter?",
+      "expected_behavior": "Pulls Orion Medical's account data and success criteria from CRM. Dispatches Achievement Analyzer scoped to the first criterion only. Returns the score, supporting evidence, and recommended framing for that one goal. Does not produce a full narrative draft or slide outline.",
+      "notes": "Useful for spot-checking a specific goal before a meeting or when the CSM needs quick data on one objective. Single-criterion mode does not produce a full package."
+    },
+    {
+      "id": "qbr-011",
+      "label": "Requesting only the slide outline",
+      "prompt": "Give me just the slide outline for Meridian Labs' QBR — I'll write the narrative myself.",
+      "expected_behavior": "Runs Account Data Assembler and Achievement Analyzer in full. Dispatches Slide Outline Generator only — does not dispatch Narrative Drafter. Returns the slide-by-slide outline with content guidance and data references. Notes in delivery status that narrative draft was intentionally skipped.",
+      "notes": "The Achievement Analyzer always runs — the slide outline requires scored goals to populate content guidance accurately."
+    },
+    {
+      "id": "qbr-012",
+      "label": "Requesting only the narrative draft",
+      "prompt": "Write the QBR narrative for Apex Systems — I already have the slides.",
+      "expected_behavior": "Runs Account Data Assembler and Achievement Analyzer in full. Dispatches Narrative Drafter only — does not dispatch Slide Outline Generator. Returns the full narrative draft with all six sections. Notes in delivery status that slide outline was intentionally skipped.",
+      "notes": "The Achievement Analyzer always runs — the narrative draft requires scored goals to accurately frame what was accomplished and what was not."
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+<!--
+SHARED COMPANY PROFILE — claude-for-customer-success
+
+This file is shared across all four plugins: csm, cs-ops, renewals, onboarding.
+Location: ~/.claude/plugins/config/claude-for-customer-success/company-profile.md
+
+Rules:
+1. All four plugins READ this file before their own plugin-specific CLAUDE.md.
+2. The first cold-start interview you run WRITES this file. Subsequent plugin
+   cold-starts read it and skip questions already answered here.
+3. Plugin-specific facts (tool stack, team structure, workflow details) go in
+   each plugin's own CLAUDE.md at:
+   ~/.claude/plugins/config/claude-for-customer-success/<plugin-name>/CLAUDE.md
+4. To update company-level facts across all plugins at once, edit this file
+   directly or run: /<any-plugin>:cold-start-interview --redo-company-profile
+5. This template ships with the plugin. Do not write user data into this file.
+   User data lives only in ~/.claude/plugins/config/...
+-->
+
+# Company Profile
+*Written by cold-start on [DATE]. If `[PLACEHOLDER]`, run any plugin's cold-start interview.*
+
+---
+
+## Company
+
+**Name:** [PLACEHOLDER]
+**Industry:** [PLACEHOLDER — e.g., B2B SaaS / PLG / enterprise software / fintech / healthcare IT]
+**Stage:** [PLACEHOLDER — early-stage startup / growth / late-stage / public]
+**Primary market:** [PLACEHOLDER — SMB / mid-market / enterprise / mixed]
+**ACV range:** [PLACEHOLDER — e.g., $5K–$50K / $50K–$500K / $500K+]
+
+---
+
+## Customer Success Organization
+
+**CS team size:** [PLACEHOLDER — headcount]
+**CS motion:** [PLACEHOLDER — high-touch / tech-touch / scaled / mixed]
+**CS model:** [PLACEHOLDER — pooled / named accounts / segmented by ACV or tier]
+**Reporting:** [PLACEHOLDER — CS reports to: CEO / CRO / CCO / COO / other]
+
+**Segments (list each):**
+
+| Segment | ACV range | Motion | Accounts per CSM |
+|---------|-----------|--------|-----------------|
+| [PLACEHOLDER] | | | |
+
+---
+
+## Product
+
+**Product category:** [PLACEHOLDER — brief description: what the product does, who it's for]
+**Primary value metric:** [PLACEHOLDER — the thing customers pay for / measure ROI against, e.g., seats, API calls, outcomes enabled]
+**Key adoption milestones:** [PLACEHOLDER — the 3–5 things a customer must do to get value; drives onboarding and health scoring]
+
+---
+
+## Revenue Model
+
+**Contract structure:** [PLACEHOLDER — annual / multi-year / monthly / usage-based / hybrid]
+**Expansion motion:** [PLACEHOLDER — seats, modules, usage tiers, cross-sell]
+**Primary churn driver(s):** [PLACEHOLDER — what actually causes customers to leave or not renew]
+
+---
+
+## Tools (high-level — details go in each plugin's CLAUDE.md)
+
+**CRM:** [PLACEHOLDER — Salesforce / HubSpot / other / none]
+**CS Platform:** [PLACEHOLDER — Gainsight / Totango / ChurnZero / Vitally / Planhat / other / none]
+**Call recording:** [PLACEHOLDER — Gong / Chorus / Clari / other / none]
+**Contract/CLM:** [PLACEHOLDER — DocuSign CLM / Ironclad / Drive / other / none]
+
+---
+
+## CS Leadership
+
+**Head of CS:** [PLACEHOLDER — name, title]
+**Escalation contact for at-risk accounts:** [PLACEHOLDER — name or role]
+
+---
+
+## CS Posture
+
+**Risk tolerance:** [PLACEHOLDER — flag early and often / flag only confirmed risk / balanced]
+**Methodology:** [PLACEHOLDER — SuccessCOACHING TARO / custom playbook / both / none formally]
+
+---
+
+*To update: edit this file directly or run `/<plugin>:cold-start-interview --redo-company-profile`*

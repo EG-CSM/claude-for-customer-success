@@ -1,0 +1,25 @@
+name: portfolio-segment-digest
+model: claude-sonnet-4-7
+system:
+  file: ../../cs-ops/agents/portfolio-segment-digest.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: read,  enabled: true }
+      - { name: write, enabled: true }
+      - { name: task,  enabled: true }
+  - { type: mcp_toolset, mcp_server_name: crm,        default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: cs-platform, default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: slack,       default_config: { enabled: true } }
+mcp_servers:
+  - { type: url, name: crm,         url: "${CRM_MCP_URL}" }
+  - { type: url, name: cs-platform, url: "${CS_PLATFORM_MCP_URL}" }
+  - { type: url, name: slack,       url: "${SLACK_MCP_URL}" }
+skills:
+  - { from_plugin: ../../cs-ops }
+callable_agents:
+  - { manifest: ./subagents/segment-data-puller.yaml }
+  - { manifest: ./subagents/distribution-analyzer.yaml }
+  - { manifest: ./subagents/portfolio-summarizer.yaml }
+  - { manifest: ./subagents/report-composer.yaml }

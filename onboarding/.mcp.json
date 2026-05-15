@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "asana": {
+      "type": "url",
+      "url": "${ASANA_MCP_URL}",
+      "note": "Project management — onboarding project templates, task status, milestones"
+    },
+    "linear": {
+      "type": "url",
+      "url": "${LINEAR_MCP_URL}",
+      "note": "Project management alternative"
+    },
+    "jira": {
+      "type": "url",
+      "url": "${JIRA_MCP_URL}",
+      "note": "Project management alternative"
+    },
+    "salesforce": {
+      "type": "url",
+      "url": "${SALESFORCE_MCP_URL}",
+      "note": "CRM — account details, contacts, deal context, handoff notes"
+    },
+    "hubspot": {
+      "type": "url",
+      "url": "${HUBSPOT_MCP_URL}",
+      "note": "CRM alternative"
+    },
+    "gdrive": {
+      "type": "url",
+      "url": "${GDRIVE_MCP_URL}",
+      "note": "Document storage — kickoff decks, onboarding templates, handoff docs"
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "salesforce": {
+      "type": "url",
+      "url": "${SALESFORCE_MCP_URL}",
+      "note": "CRM — opportunity stage, renewal date, contract value, contacts"
+    },
+    "hubspot": {
+      "type": "url",
+      "url": "${HUBSPOT_MCP_URL}",
+      "note": "CRM alternative"
+    },
+    "salesforce_cpq": {
+      "type": "url",
+      "url": "${SALESFORCE_CPQ_MCP_URL}",
+      "note": "CPQ — quote history, pricing rules, discount approvals"
+    },
+    "dealhub": {
+      "type": "url",
+      "url": "${DEALHUB_MCP_URL}",
+      "note": "CPQ alternative"
+    },
+    "docusign": {
+      "type": "url",
+      "url": "${DOCUSIGN_MCP_URL}",
+      "note": "Contract storage — executed agreements, addenda, order forms"
+    },
+    "ironclad": {
+      "type": "url",
+      "url": "${IRONCLAD_MCP_URL}",
+      "note": "CLM alternative — contract metadata, term dates, auto-renewal clauses"
+    },
+    "gdrive": {
+      "type": "url",
+      "url": "${GDRIVE_MCP_URL}",
+      "note": "Document storage — contracts, renewal templates"
+    },
+    "g2": {
+      "type": "url",
+      "url": "${G2_MCP_URL}",
+      "note": "Review platform — buyer intent signals, expansion opportunity indicators, competitive win/loss context at renewal"
+    }
+  }
+}

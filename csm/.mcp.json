@@ -1,0 +1,49 @@
+{
+  "mcpServers": {
+    "salesforce": {
+      "type": "url",
+      "url": "${SALESFORCE_MCP_URL}",
+      "note": "CRM — account data, opportunity stage, contact hierarchy, activity history"
+    },
+    "hubspot": {
+      "type": "url",
+      "url": "${HUBSPOT_MCP_URL}",
+      "note": "CRM alternative"
+    },
+    "gainsight": {
+      "type": "url",
+      "url": "${GAINSIGHT_MCP_URL}",
+      "note": "CS Platform — health scores, CTAs, success plans, timeline, usage data"
+    },
+    "totango": {
+      "type": "url",
+      "url": "${TOTANGO_MCP_URL}",
+      "note": "CS Platform alternative"
+    },
+    "churnzero": {
+      "type": "url",
+      "url": "${CHURNZERO_MCP_URL}",
+      "note": "CS Platform alternative"
+    },
+    "vitally": {
+      "type": "url",
+      "url": "${VITALLY_MCP_URL}",
+      "note": "CS Platform alternative"
+    },
+    "gong": {
+      "type": "url",
+      "url": "${GONG_MCP_URL}",
+      "note": "Call recording — transcripts, highlights, action items"
+    },
+    "gdrive": {
+      "type": "url",
+      "url": "${GDRIVE_MCP_URL}",
+      "note": "Document storage — QBR decks, success plan docs, templates"
+    },
+    "g2": {
+      "type": "url",
+      "url": "${G2_MCP_URL}",
+      "note": "Review platform — product reviews, buyer intent signals, competitive intelligence, market intelligence reviews with company context"
+    }
+  }
+}

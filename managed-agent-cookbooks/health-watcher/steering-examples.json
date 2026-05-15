@@ -1,0 +1,90 @@
+{
+  "agent": "health-watcher",
+  "description": "Prompting patterns and expected behaviors for the Health Watcher agent. Use these as starting points for scheduled task prompts and on-demand invocations.",
+  "examples": [
+    {
+      "id": "hw-001",
+      "label": "Standard daily run",
+      "prompt": "Run the health watcher.",
+      "expected_behavior": "Runs the full three-subagent chain. Health Reader pulls current scores for all accounts in scope and loads the prior baseline. Trend Analyzer compares scores against baseline and classifies movement by alert tier. Alert Composer formats the digest, writes the updated baseline, and delivers to configured outputs. Produces a complete digest covering all alert tiers and the portfolio movement table.",
+      "notes": "The standard scheduled invocation. Works identically whether triggered on schedule or on-demand."
+    },
+    {
+      "id": "hw-002",
+      "label": "Weekly trend run",
+      "prompt": "Run the weekly health watcher.",
+      "expected_behavior": "Runs with a 7-day comparison window rather than the prior run's snapshot. Digest includes a Recovering section between Watch and Portfolio Movement. Header includes a trend summary line. Portfolio Movement table includes period-over-period comparison. All other behavior identical to the daily run.",
+      "notes": "Weekly mode adds the recovering accounts section and trend comparison. Use the weekly prompt for the Friday or Monday scheduled run when weekly cadence is configured."
+    },
+    {
+      "id": "hw-003",
+      "label": "First run — initialization",
+      "prompt": "Run the health watcher.",
+      "expected_behavior": "No baseline file exists. Health Reader pulls current scores and notes no baseline is available. Trend Analyzer cannot compute deltas — returns an initialization record. Alert Composer writes the baseline file and delivers a digest noting this was the initialization run. No alerts are fired. Digest reads: 'Baseline captured — [N] accounts scored. Alerts will fire on the next run.'",
+      "notes": "Expected behavior on first run after setup or after a baseline file is deleted. Not an error condition."
+    },
+    {
+      "id": "hw-004",
+      "label": "CSM-specific alert check",
+      "prompt": "Check health score drops for Sarah Chen's accounts.",
+      "expected_behavior": "Restricts the scan to accounts where CSM assignment matches 'Sarah Chen'. Pulls scores and baseline for that subset. Runs full alert classification. Digest header notes the CSM filter. Alert sections reflect only Sarah's accounts.",
+      "notes": "Useful for a CSM checking their own book or for a manager reviewing a specific CSM's portfolio."
+    },
+    {
+      "id": "hw-005",
+      "label": "Immediate alerts only",
+      "prompt": "Which accounts have health score drops that need attention right now?",
+      "expected_behavior": "Runs the full scan and classification, then returns only accounts in the Immediate Attention tier with full score movement blocks. Includes the portfolio movement table. Watch and Recovering sections are omitted from the response body.",
+      "notes": "Does not skip classification — runs the full chain. Only the output presentation is filtered."
+    },
+    {
+      "id": "hw-006",
+      "label": "Preview without Slack delivery",
+      "prompt": "Run the health watcher but don't post to Slack — I want to review it first.",
+      "expected_behavior": "Runs the full chain and produces the complete markdown digest. Suppresses Slack delivery for this run regardless of config. Still writes the updated baseline. Notes in delivery_status that Slack was intentionally skipped.",
+      "notes": "The baseline is always updated even when Slack is suppressed. Baseline write is not gated on delivery."
+    },
+    {
+      "id": "hw-007",
+      "label": "Single account health check",
+      "prompt": "What is Meridian Labs' current health score and how has it moved?",
+      "expected_behavior": "Pulls the current health score for Meridian Labs and the prior baseline for that account. Returns the score, band, delta from baseline, and the appropriate alert tier. No portfolio-level output or movement table.",
+      "notes": "Single-account mode for ad hoc checks. Does not produce a full portfolio digest or update the baseline."
+    },
+    {
+      "id": "hw-008",
+      "label": "No alerts this period",
+      "prompt": "Run the health watcher.",
+      "expected_behavior": "All accounts are Stable (movement ≤ ±2 points). No Immediate or Watch alerts fire. Digest renders with 'No immediate health alerts this period.' before the portfolio movement table. Table shows all accounts in the Stable column. Baseline is updated.",
+      "notes": "Expected behavior during a healthy period or when scores are flat. Not an error condition."
+    },
+    {
+      "id": "hw-009",
+      "label": "Health score source unavailable",
+      "prompt": "Run the health watcher.",
+      "expected_behavior": "Health Reader is unable to connect to the configured health score source. Orchestrator halts immediately. No digest is produced. No baseline is written. Error message surfaced: 'Health score source unavailable — [connector name] did not respond. Run halted. Resolve connector access before retrying.'",
+      "notes": "The agent never runs on stale data. Halt on source unavailability is a hard rule, not configurable."
+    },
+    {
+      "id": "hw-010",
+      "label": "Corrupted baseline — re-initialization",
+      "prompt": "Run the health watcher.",
+      "expected_behavior": "Health Reader finds the baseline file but cannot parse it. Trend Analyzer is told to treat this as an initialization run — no deltas computed, no alerts fired. Alert Composer writes a fresh baseline and delivers a digest noting: 'Prior baseline was unreadable — re-initialized. Alerts will fire on the next run.'",
+      "notes": "Corrupted baseline is treated as a first run, not an error that halts execution. The condition is always surfaced in the digest."
+    },
+    {
+      "id": "hw-011",
+      "label": "Scheduled trigger (daily cron)",
+      "prompt": "Run the health watcher.",
+      "expected_behavior": "This is the standard scheduled prompt used with cronExpression '0 8 * * *'. Reads config, runs full three-subagent chain, persists baseline, delivers to all configured outputs. Behavior is identical to on-demand invocation with the same prompt.",
+      "notes": "Scheduled and on-demand invocations intentionally use the same prompt — no special syntax needed for scheduled runs."
+    },
+    {
+      "id": "hw-012",
+      "label": "Enterprise accounts only",
+      "prompt": "Run the health watcher for Enterprise accounts only.",
+      "expected_behavior": "Restricts the scan to Enterprise-segment accounts. Pulls scores and baseline for that subset. Runs full alert classification. Digest header notes the segment filter. Portfolio Movement table reflects only Enterprise accounts.",
+      "notes": "Equivalent to setting csm_filter or account_scope to segment:Enterprise for this run only. Does not change config defaults."
+    }
+  ]
+}

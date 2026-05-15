@@ -1,0 +1,54 @@
+{
+  "mcpServers": {
+    "snowflake": {
+      "type": "url",
+      "url": "${SNOWFLAKE_MCP_URL}",
+      "note": "Data warehouse — usage events, health metrics, product analytics"
+    },
+    "bigquery": {
+      "type": "url",
+      "url": "${BIGQUERY_MCP_URL}",
+      "note": "Data warehouse alternative"
+    },
+    "gainsight": {
+      "type": "url",
+      "url": "${GAINSIGHT_MCP_URL}",
+      "note": "CS Platform — health model config, segment rules, playbooks"
+    },
+    "totango": {
+      "type": "url",
+      "url": "${TOTANGO_MCP_URL}",
+      "note": "CS Platform alternative — health scores, segment health data"
+    },
+    "churnzero": {
+      "type": "url",
+      "url": "${CHURNZERO_MCP_URL}",
+      "note": "CS Platform alternative — health scores, segment health data"
+    },
+    "vitally": {
+      "type": "url",
+      "url": "${VITALLY_MCP_URL}",
+      "note": "CS Platform alternative — health scores, segment health data"
+    },
+    "looker": {
+      "type": "url",
+      "url": "${LOOKER_MCP_URL}",
+      "note": "BI — CS dashboards, metric definitions, saved explores"
+    },
+    "tableau": {
+      "type": "url",
+      "url": "${TABLEAU_MCP_URL}",
+      "note": "BI alternative"
+    },
+    "salesforce": {
+      "type": "url",
+      "url": "${SALESFORCE_MCP_URL}",
+      "note": "CRM — account list, ARR, segment assignments"
+    },
+    "slack": {
+      "type": "url",
+      "url": "${SLACK_MCP_URL}",
+      "note": "Slack — portfolio-segment-digest delivery to CS Ops channel"
+    }
+  }
+}

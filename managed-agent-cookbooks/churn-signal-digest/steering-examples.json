@@ -1,0 +1,90 @@
+{
+  "agent": "churn-signal-digest",
+  "description": "Prompting patterns and expected behaviors for the Churn Signal Digest agent. Use these as starting points for scheduled task prompts and on-demand invocations.",
+  "examples": [
+    {
+      "id": "csd-001",
+      "label": "Standard daily run",
+      "prompt": "Run the churn signal digest.",
+      "expected_behavior": "Runs the full three-subagent chain. Signal Collector pulls data across all configured connectors for the daily window (last 7 days). Signal Analyzer classifies accounts by P1/P2/P3 severity. Digest Composer formats and delivers the digest to configured outputs. Produces a complete digest covering all severity tiers and the portfolio summary.",
+      "notes": "The standard scheduled invocation. Works identically whether triggered on schedule or on-demand."
+    },
+    {
+      "id": "csd-002",
+      "label": "Explicitly scoped to since-yesterday signals",
+      "prompt": "What signals fired since yesterday?",
+      "expected_behavior": "Runs the full chain with a 1-day look-back window rather than the configured default. Digest header notes the scoped window. Portfolio Summary reflects the 1-day period. Useful for a quick catch-up after a missed daily run.",
+      "notes": "Overrides the date window for this run only. Does not change the configured reporting_period."
+    },
+    {
+      "id": "csd-003",
+      "label": "Enterprise accounts only",
+      "prompt": "Show me this week's churn signals for Enterprise accounts.",
+      "expected_behavior": "Restricts the signal scan to Enterprise-segment accounts. Uses the weekly date window (last 30 days). Digest header notes both the segment filter and the weekly period. P1, P2, and P3 sections reflect only Enterprise accounts. Mid-Market and SMB accounts are excluded from this run.",
+      "notes": "Equivalent to setting account_scope: segment:Enterprise for this run only."
+    },
+    {
+      "id": "csd-004",
+      "label": "CSM-specific run",
+      "prompt": "Pull churn signals for Marcus Webb's accounts.",
+      "expected_behavior": "Restricts the scan to accounts where CSM assignment matches 'Marcus Webb'. Produces a standard digest with only Marcus's accounts. Header notes the CSM filter applied. All tiers and sections present for matching accounts.",
+      "notes": "Useful for CSM-specific reviews or manager 1:1 prep. Works for any CSM name from CRM records."
+    },
+    {
+      "id": "csd-005",
+      "label": "P1 accounts only",
+      "prompt": "Which accounts have P1 churn signals right now?",
+      "expected_behavior": "Runs the full signal scan and classification, then presents only P1 accounts with full signal blocks and recommended actions. Includes the portfolio summary table. P2, P3, and no-signal accounts are excluded from the response body.",
+      "notes": "Does not skip classification — runs the full chain. Only the output presentation is filtered."
+    },
+    {
+      "id": "csd-006",
+      "label": "Suppressing Slack for preview",
+      "prompt": "Run the churn signal digest but don't post to Slack — I want to review it first.",
+      "expected_behavior": "Runs the full chain and produces the complete markdown digest. Suppresses Slack delivery for this run regardless of config. Notes in delivery_status that Slack was intentionally skipped for this run.",
+      "notes": "Useful for previewing output before a Slack post, especially before the first run or after reconfiguring signal weights."
+    },
+    {
+      "id": "csd-007",
+      "label": "Single account signal check",
+      "prompt": "Are there any churn signals on Meridian Labs right now?",
+      "expected_behavior": "Pulls signal data for Meridian Labs only. Runs classification on that single account. Returns the account's signal block in digest format — severity tier, signals detected, recommended action if P1 or P2, or 'No signals detected' if clean. No portfolio-level output or summary table.",
+      "notes": "Single-account mode for ad hoc checks. Does not produce a portfolio digest."
+    },
+    {
+      "id": "csd-008",
+      "label": "P1 and P2 only, skip P3",
+      "prompt": "Give me just the accounts that need attention — skip the watch list.",
+      "expected_behavior": "Runs the full classification and returns P1 and P2 accounts with full signal detail and recommended actions, plus the portfolio summary table. Omits the P3 brief list from the output.",
+      "notes": "Useful when the P3 list is long and the team only has bandwidth for priority accounts."
+    },
+    {
+      "id": "csd-009",
+      "label": "Acknowledge data freshness gaps",
+      "prompt": "Run the churn signal digest and flag any accounts where data coverage is incomplete.",
+      "expected_behavior": "Runs normally. Accounts where one or more optional connectors returned null are flagged [data unavailable] inline in their signal block. The portfolio summary footer lists unavailable connectors. No additional inference is performed beyond standard data flags.",
+      "notes": "The agent does not estimate missing signals. Standard data flags cover connector unavailability."
+    },
+    {
+      "id": "csd-010",
+      "label": "Scheduled trigger (daily cron)",
+      "prompt": "Run the churn signal digest.",
+      "expected_behavior": "This is the standard scheduled prompt used with cronExpression '0 7 * * *'. Reads config, runs full three-subagent chain, delivers to all configured outputs. Behavior is identical to on-demand invocation with the same prompt.",
+      "notes": "Scheduled and on-demand invocations intentionally use the same prompt — no special syntax needed for scheduled runs."
+    },
+    {
+      "id": "csd-011",
+      "label": "No signals detected",
+      "prompt": "Run the churn signal digest.",
+      "expected_behavior": "If the Signal Analyzer finds no accounts with P1, P2, or P3 signals, the digest renders with an all-clear note after the header and a portfolio summary showing all accounts in the no-signal state. All risk sections are omitted from the body.",
+      "notes": "Expected behavior for periods with clean portfolio health. Not an error condition."
+    },
+    {
+      "id": "csd-012",
+      "label": "Weekly run with trend comparison",
+      "prompt": "Run the weekly churn signal digest.",
+      "expected_behavior": "Runs with the weekly date window (last 30 days) and includes a period-over-period change column in the portfolio summary showing whether each tier's account count increased, decreased, or held steady versus the prior week. Section ordering is unchanged. Header notes the weekly period.",
+      "notes": "The 'weekly' label in the prompt triggers the 30-day window and enables period-over-period comparison. Daily runs use a 7-day window and omit trend comparison."
+    }
+  ]
+}

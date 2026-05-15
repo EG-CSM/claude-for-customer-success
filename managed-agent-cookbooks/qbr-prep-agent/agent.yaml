@@ -1,0 +1,27 @@
+name: qbr-prep-agent
+model: claude-sonnet-4-7
+system:
+  file: ../../csm/agents/qbr-prep-agent.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: read,  enabled: true }
+      - { name: write, enabled: true }
+      - { name: task,  enabled: true }
+  - { type: mcp_toolset, mcp_server_name: crm,      default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: usage,    default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: support,  default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: nps-csat, default_config: { enabled: true } }
+mcp_servers:
+  - { type: url, name: crm,      url: "${CRM_MCP_URL}" }
+  - { type: url, name: usage,    url: "${USAGE_MCP_URL}" }
+  - { type: url, name: support,  url: "${SUPPORT_MCP_URL}" }
+  - { type: url, name: nps-csat, url: "${NPS_CSAT_MCP_URL}" }
+skills:
+  - { from_plugin: ../../csm }
+callable_agents:
+  - { manifest: ./subagents/account-data-assembler.yaml }
+  - { manifest: ./subagents/achievement-analyzer.yaml }
+  - { manifest: ./subagents/narrative-drafter.yaml }
+  - { manifest: ./subagents/slide-outline-generator.yaml }

@@ -1,0 +1,24 @@
+name: onboarding-milestone-tracker
+model: claude-sonnet-4-7
+system:
+  file: ../../onboarding/agents/onboarding-milestone-tracker.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: read,  enabled: true }
+      - { name: write, enabled: true }
+      - { name: task,  enabled: true }
+  - { type: mcp_toolset, mcp_server_name: pm,    default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: crm,   default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: slack,  default_config: { enabled: true } }
+mcp_servers:
+  - { type: url, name: pm,    url: "${PM_MCP_URL}" }
+  - { type: url, name: crm,   url: "${CRM_MCP_URL}" }
+  - { type: url, name: slack, url: "${SLACK_MCP_URL}" }
+skills:
+  - { from_plugin: ../../onboarding }
+callable_agents:
+  - { manifest: ./subagents/milestone-puller.yaml }
+  - { manifest: ./subagents/risk-assessor.yaml }
+  - { manifest: ./subagents/report-composer.yaml }

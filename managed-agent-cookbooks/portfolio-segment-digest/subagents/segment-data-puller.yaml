@@ -1,0 +1,15 @@
+name: segment-data-puller
+model: claude-sonnet-4-7
+system:
+  file: ./segment-data-puller.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs: []
+  - { type: mcp_toolset, mcp_server_name: crm,         default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: cs-platform,  default_config: { enabled: true } }
+mcp_servers:
+  - { type: url, name: crm,         url: "${CRM_MCP_URL}" }
+  - { type: url, name: cs-platform, url: "${CS_PLATFORM_MCP_URL}" }
+skills: []
+callable_agents: []

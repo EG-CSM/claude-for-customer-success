@@ -1,0 +1,90 @@
+{
+  "agent": "onboarding-milestone-tracker",
+  "description": "Prompting patterns and expected behaviors for the Onboarding Milestone Tracker agent. Use these as starting points for scheduled task prompts and on-demand invocations.",
+  "examples": [
+    {
+      "id": "omt-001",
+      "label": "Standard daily run",
+      "prompt": "Run the onboarding milestone tracker.",
+      "expected_behavior": "Runs the full three-subagent chain. Milestone Reader pulls current milestone status for all active onboarding accounts and resolves timeline anchors from CRM. Timeline Analyzer classifies each account as Overdue, At Risk, Due Soon, or On Track. Digest Composer formats and delivers the digest with all sections. Graduated accounts (M5 complete) are excluded automatically.",
+      "notes": "The standard weekday scheduled invocation. Works identically whether triggered on schedule or on-demand."
+    },
+    {
+      "id": "omt-002",
+      "label": "Overdue accounts only",
+      "prompt": "Which onboarding accounts have overdue milestones?",
+      "expected_behavior": "Runs the full chain. Returns only accounts in the Overdue section with full status blocks and recommended actions. Includes the portfolio summary table. At Risk, Due Soon, and On Track accounts are excluded from the response body.",
+      "notes": "Does not skip classification — runs the full chain. Only the output presentation is filtered to Overdue accounts."
+    },
+    {
+      "id": "omt-003",
+      "label": "CSM-specific milestone check",
+      "prompt": "Check milestone status for Marcus Webb's accounts.",
+      "expected_behavior": "Restricts the scan to accounts where CSM assignment matches 'Marcus Webb'. Runs full classification on that subset. Digest header notes the CSM filter applied. All status sections reflect only Marcus's active onboarding accounts. Graduated accounts are excluded.",
+      "notes": "Useful for a CSM checking their own onboarding book or for a manager reviewing a specific CSM's portfolio before a 1:1."
+    },
+    {
+      "id": "omt-004",
+      "label": "Single account milestone check",
+      "prompt": "What is Meridian Labs' current onboarding milestone status?",
+      "expected_behavior": "Pulls milestone data for Meridian Labs only. Runs classification on that single account. Returns the milestone status block — current milestone, expected date, days overdue or days remaining, and at-risk signals if any. Includes recommended action if Overdue or At Risk. No portfolio-level output or summary table.",
+      "notes": "Single-account mode for ad hoc checks. Does not produce a portfolio digest."
+    },
+    {
+      "id": "omt-005",
+      "label": "Preview without Slack delivery",
+      "prompt": "Run the onboarding milestone tracker but don't post to Slack — I want to review it first.",
+      "expected_behavior": "Runs the full chain and produces the complete markdown digest. Suppresses Slack delivery for this run regardless of config. Notes in delivery_status that Slack was intentionally skipped for this run.",
+      "notes": "Useful for previewing output before a Slack post, especially before the first run or after reconfiguring milestone frameworks."
+    },
+    {
+      "id": "omt-006",
+      "label": "No overdue or at-risk accounts",
+      "prompt": "Run the onboarding milestone tracker.",
+      "expected_behavior": "All active onboarding accounts are On Track or Due Soon. Digest opens with 'No overdue or at-risk milestones today.' followed by the Due Soon brief list if any accounts are due within 7 days, then the portfolio summary table. Overdue and At Risk sections are omitted from the body.",
+      "notes": "Expected behavior during a healthy period. Not an error condition."
+    },
+    {
+      "id": "omt-007",
+      "label": "PM connector unavailable",
+      "prompt": "Run the onboarding milestone tracker.",
+      "expected_behavior": "Milestone Reader is unable to connect to the configured project management connector. Orchestrator halts immediately. No digest is produced. Error surfaced: 'Project management connector unavailable — [connector name] did not respond. Run halted. Resolve connector access before retrying.'",
+      "notes": "The PM connector is required. Halt on unavailability is a hard rule — the agent never runs without current milestone data."
+    },
+    {
+      "id": "omt-008",
+      "label": "CRM unavailable — timeline anchor fallback",
+      "prompt": "Run the onboarding milestone tracker.",
+      "expected_behavior": "Milestone Reader cannot reach the CRM connector. Run continues using the PM project creation date as the timeline anchor for all affected accounts. Digest header notes: 'CRM unavailable — timeline anchored to project creation date for [N] accounts. CSM assignments rendered as —.' Classification and alert sections proceed normally.",
+      "notes": "CRM unavailability is non-fatal. The PM connector holds milestone data; CRM provides the timeline anchor and CSM display name. Missing CRM degrades accuracy of at-risk classifications slightly."
+    },
+    {
+      "id": "omt-009",
+      "label": "Scheduled trigger (weekday cron)",
+      "prompt": "Run the onboarding milestone tracker.",
+      "expected_behavior": "This is the standard scheduled prompt used with cronExpression '0 7 * * 1-5'. Reads config, runs full three-subagent chain, delivers to all configured outputs. Behavior is identical to on-demand invocation with the same prompt. Does not run on Saturday or Sunday.",
+      "notes": "Weekday-only scheduling prevents alert noise on days when CSMs cannot act on the information."
+    },
+    {
+      "id": "omt-010",
+      "label": "Specific milestone check across all accounts",
+      "prompt": "Which accounts haven't completed M2 tech setup yet?",
+      "expected_behavior": "Runs the full scan. Returns all accounts where M2 is the current milestone (not yet completed), grouped by status: Overdue M2, At Risk M2, Due Soon M2. Includes days overdue or days remaining per account. Portfolio summary reflects all active onboarding accounts.",
+      "notes": "Milestone-specific filtering is output filtering only — the full chain runs. Useful for implementation team check-ins on technical setup completion rates."
+    },
+    {
+      "id": "omt-011",
+      "label": "No active onboarding accounts",
+      "prompt": "Run the onboarding milestone tracker.",
+      "expected_behavior": "Milestone Reader finds no active onboarding accounts matching the configured scope (either all accounts are graduated with M5 complete, or no projects match the onboarding_project_tag). Digest renders with 'No active onboarding accounts in scope.' and a portfolio summary showing zero counts across all categories.",
+      "notes": "Expected behavior if the portfolio is fully onboarded or if the tag filter is too restrictive. Not an error condition — check onboarding_project_tag configuration if unexpected."
+    },
+    {
+      "id": "omt-012",
+      "label": "Due soon accounts only",
+      "prompt": "Show me which onboarding milestones are coming due this week.",
+      "expected_behavior": "Runs the full classification. Returns only accounts in the Due Soon section as a brief one-line list per account — no narrative, no recommended action blocks. Includes the portfolio summary table. Overdue and At Risk sections are omitted from the response body if filtered output was requested.",
+      "notes": "Due Soon accounts receive brief list format only — no recommended action, no status narrative. This is a heads-up category, not an alert category. Overdue and At Risk accounts always receive full blocks when present."
+    }
+  ]
+}

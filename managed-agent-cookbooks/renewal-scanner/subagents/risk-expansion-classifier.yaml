@@ -1,0 +1,11 @@
+name: risk-expansion-classifier
+model: claude-sonnet-4-7
+system:
+  file: ./risk-expansion-classifier.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs: []
+mcp_servers: []
+skills: []
+callable_agents: []

@@ -1,0 +1,19 @@
+name: signal-collector
+model: claude-sonnet-4-7
+system:
+  file: ./signal-collector.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs: []
+  - { type: mcp_toolset, mcp_server_name: crm,      default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: support,   default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: usage,     default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: nps-csat,  default_config: { enabled: true } }
+mcp_servers:
+  - { type: url, name: crm,      url: "${CRM_MCP_URL}" }
+  - { type: url, name: support,  url: "${SUPPORT_MCP_URL}" }
+  - { type: url, name: usage,    url: "${USAGE_MCP_URL}" }
+  - { type: url, name: nps-csat, url: "${NPS_CSAT_MCP_URL}" }
+skills: []
+callable_agents: []

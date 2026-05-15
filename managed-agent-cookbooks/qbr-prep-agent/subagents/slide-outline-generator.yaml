@@ -1,0 +1,11 @@
+name: slide-outline-generator
+model: claude-haiku-4-5-20251001
+system:
+  file: ./slide-outline-generator.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs: []
+mcp_servers: []
+skills: []
+callable_agents: []

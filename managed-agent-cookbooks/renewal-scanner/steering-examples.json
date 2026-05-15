@@ -1,0 +1,90 @@
+{
+  "agent": "renewal-scanner",
+  "description": "Prompting patterns and expected behaviors for the Renewal Scanner agent. Use these as starting points for scheduled task prompts and on-demand invocations.",
+  "examples": [
+    {
+      "id": "rs-001",
+      "label": "Standard weekly run",
+      "prompt": "Run the renewal scanner for this week.",
+      "expected_behavior": "Runs the full three-subagent chain. Pipeline Puller pulls all accounts renewing within the configured look_ahead_window_days. Risk & Expansion Classifier classifies and ranks them. Renewal Brief Composer formats and delivers the brief to configured outputs (markdown file and/or Slack). Produces a complete brief covering all tiers and expansion opportunities.",
+      "notes": "The standard scheduled invocation. Works identically whether triggered on schedule or on-demand."
+    },
+    {
+      "id": "rs-002",
+      "label": "Explicit window override",
+      "prompt": "Scan renewals for the next 60 days.",
+      "expected_behavior": "Overrides configured look_ahead_window_days with 60 days for this run. All other config values apply. Returns a brief scoped to the 60-day window. Brief header notes the window used.",
+      "notes": "Useful for a tighter review before a quarterly close or board presentation."
+    },
+    {
+      "id": "rs-003",
+      "label": "Segment-restricted run",
+      "prompt": "Run the renewal scanner for Enterprise accounts only.",
+      "expected_behavior": "Restricts the pipeline pull to Enterprise-segment accounts only. Brief header notes the segment filter. Pipeline Summary table reflects only Enterprise accounts. Mid-Market and SMB accounts are excluded from this run.",
+      "notes": "Equivalent to setting segment_filter: Enterprise for this run only."
+    },
+    {
+      "id": "rs-004",
+      "label": "CSM-specific run",
+      "prompt": "Give me Sarah Chen's renewal brief for this week.",
+      "expected_behavior": "Restricts the scan to accounts where CSM assignment matches 'Sarah Chen'. Produces a standard brief with only Sarah's accounts. Header notes the CSM filter applied. All tiers and sections present for matching accounts.",
+      "notes": "Useful for CSM-specific pipeline reviews or manager 1:1 prep. Works for any CSM name from CRM records."
+    },
+    {
+      "id": "rs-005",
+      "label": "Red accounts only",
+      "prompt": "Which renewals are in the immediate attention tier right now?",
+      "expected_behavior": "Runs the full pipeline scan and classification, then presents only red-tier accounts with full signal detail and recommended actions. Includes pipeline summary table. Yellow, green, and insufficient data sections are omitted from the response.",
+      "notes": "Does not skip classification — runs the full chain. Only the output presentation is filtered."
+    },
+    {
+      "id": "rs-006",
+      "label": "Expansion opportunities focus",
+      "prompt": "Show me expansion opportunities in the renewal pipeline.",
+      "expected_behavior": "Runs the full scan and highlights the Expansion Opportunities section. Returns expansion accounts with signal level and evidence. Also includes pipeline summary. Risk sections presented in compact form rather than omitted, to preserve portfolio context.",
+      "notes": "Output still includes the 'Raise with AE — do not commit in the renewal brief' note on each expansion account."
+    },
+    {
+      "id": "rs-007",
+      "label": "Preview without Slack delivery",
+      "prompt": "Run the renewal scanner but don't post to Slack — I want to review it first.",
+      "expected_behavior": "Runs the full chain and produces the complete markdown brief. Suppresses Slack delivery for this run regardless of config. Notes in delivery_status that Slack was intentionally skipped.",
+      "notes": "Useful for previewing output before confirming a Slack post, especially before the first run or after config changes."
+    },
+    {
+      "id": "rs-008",
+      "label": "Single account status check",
+      "prompt": "What is Meridian Labs' renewal status?",
+      "expected_behavior": "Pulls the single account record for Meridian Labs from CRM, runs classification, and returns the account's full signal block in renewal brief format — tier, signals, recommended action, AE involvement. No portfolio-level output or pipeline summary.",
+      "notes": "Single-account mode for ad hoc checks. Does not produce a full portfolio brief."
+    },
+    {
+      "id": "rs-009",
+      "label": "Red and yellow only (skip green)",
+      "prompt": "Give me just the accounts that need attention — skip the on-track list.",
+      "expected_behavior": "Runs the full classification and returns red and yellow tier accounts with full signal detail, plus the expansion section and pipeline summary. Omits the green compact list and insufficient data section from the output.",
+      "notes": "Useful for a focused risk review when portfolio is large and the green list would dominate the output."
+    },
+    {
+      "id": "rs-010",
+      "label": "Scheduled trigger (cron)",
+      "prompt": "Run the renewal scanner for this week.",
+      "expected_behavior": "This is the standard scheduled prompt used with cronExpression '0 7 * * 1'. Reads config, runs full three-subagent chain, delivers to all configured outputs. Behavior is identical to on-demand invocation with the same prompt.",
+      "notes": "Scheduled and on-demand invocations intentionally use the same prompt — no special syntax needed for scheduled runs."
+    },
+    {
+      "id": "rs-011",
+      "label": "Acknowledge data freshness",
+      "prompt": "Run the renewal scanner. Flag any accounts where the data might be stale.",
+      "expected_behavior": "Runs normally. Accounts with unverified renewal dates are flagged [date unverified] inline. ARR gaps are flagged [ARR unverified]. The pipeline summary footer includes the data_as_of timestamp and any unavailable sources. No additional staleness inference is performed beyond these standard flags.",
+      "notes": "The agent does not estimate freshness beyond what the connectors return. Standard data flags already cover the common stale-data cases."
+    },
+    {
+      "id": "rs-012",
+      "label": "No accounts in window",
+      "prompt": "Run the renewal scanner.",
+      "expected_behavior": "If no accounts have renewals within the look_ahead_window_days, the brief renders with a 'No accounts renewing within [N] days' note after the header. All risk sections are omitted. Pipeline Summary table renders with all counts at zero.",
+      "notes": "Expected behavior for low-renewal periods (e.g., post-cycle lull). Not an error condition."
+    }
+  ]
+}
