@@ -39,14 +39,40 @@ Critical configuration to apply:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G7 (flag any process data or account records that are stale relative to the configured staleness threshold).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of process documentation request is this?
+   - **Workflow SOP**: A repeatable operational process needs codifying — handoffs, reclassifications, onboarding, territory changes. Optimize for step-level clarity with owners, timing, and exception paths.
+   - **Governance Record**: A decision-making process needs an auditable trail — playbook changes, policy decisions, approval workflows. Optimize for record structure and adoption enforcement.
+   - **Reference Standard**: A normative document that other tools audit against — data quality definitions, field ownership, threshold configurations. Optimize for precision and change control.
+   - **Escalation / Response Protocol**: A time-sensitive response procedure with severity tiers, SLAs, and owner assignments. Optimize for clarity under pressure and mutual exclusivity of severity criteria.
+   - **General-Purpose SOP**: A named process not covered by the above modes. Apply the standard SOP template with triggers, roles, steps, quality gate, and exceptions.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1: Process documents must reference configured values from `cs-ops/CLAUDE.md` — escalation matrix, segment definitions, CSM roster. Never invent thresholds or role assignments.
+   - G2: Downward reclassification and engagement-reducing changes require explicit relationship-risk flags and CS lead sign-off — commercial logic alone is insufficient.
+   - G4: Escalation SOPs must route through the configured escalation matrix with named owner, channel, and SLA — no generic "escalate to your manager."
+   - G5: Process documents are internal (CS-Ops use). Flag any content that could reach customers and verify audience appropriateness before including.
+   - G7: Any process document referencing system data (CRM fields, health thresholds, platform configurations) must be validated against the configured source — divergence means the document is wrong.
+
+3. **EXPERT CHECK**: What would a veteran CS Ops leader verify first?
+   - Does every step in the SOP name a specific role as owner with a timing constraint? Steps without ownership do not get executed.
+   - Are the record formats (change records, log entries, checklists) completable in under 5 minutes? Overly complex records kill adoption.
+   - Do all `[configured threshold]` and `[N]` placeholders have resolution paths — either filled from config or explicitly flagged for the user to populate before publishing?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - ❌ Publishing an SOP with placeholder markers (`[configured threshold]`, `[N]`, `$[amount]`) unflagged — the document looks ready but is not actionable.
+   - ❌ Writing steps without exception handling — SOPs that only describe the happy path fail on first contact with reality.
+   - ❌ Creating a governance framework without a "first use" activation — frameworks without initial adoption evidence become theater.
+   - ❌ Listing escalation severity tiers with overlapping criteria — under pressure, overlapping definitions cause misclassification and missed SLAs.
+   - ❌ Producing a handoff checklist without a corresponding log entry requirement — checklists without audit trails provide no evidence of execution.
+   - ❌ Combining two process types into one document (e.g., handoff + escalation) — combined SOPs are harder to maintain and harder to follow under pressure.
+
+**After execution**, verify:
+- Does the document have a named owner responsible for keeping it current?
+- Are all configuration dependencies (escalation matrix, segment definitions, CSM roster) resolved or explicitly flagged?
+- Is the output mode (`--csm-handoff`, `--playbook-governance`, etc.) matched to the actual process need?
+- Confidence: [High] if produced from configured profile with resolved placeholders / [Medium] if template defaults used with placeholders flagged / [Low] if no configuration loaded — state which.
 
 ## Mode
 

@@ -1,0 +1,132 @@
+{
+  "skill_name": "closed-won-to-cs-capacity-modeling",
+  "skill_path": "skills/closed-won-to-cs-capacity-modeling/SKILL.md",
+  "eval_type": "Type A",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 0,
+      "name": "happy-path-three-scenario-with-baseline",
+      "category": "happy-path",
+      "prompt": "Model CS capacity for next quarter based on the current forecast.",
+      "context": "Practice profile: current_arr=12000000, arr_per_csm=2000000, current_csm_count=6, csm_avg_ramp_days=90, open_csm_requisitions=1. UoG baseline present: csm_required=8 at P50. SA1 scenarios: P10 new_arr=800000, P50 new_arr=1400000, P90 new_arr=2100000.",
+      "expected_output": "Skill runs three-scenario capacity check, produces comparison table with CSMs required, headroom %, and constraint signal per scenario. Compares to UoG baseline. Surfaces hiring lead time flag if gap exists. Applies G2.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output contains a three-scenario comparison table with P10, P50, and P90 rows",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "structural",
+          "text": "Each scenario row shows: new ARR, CSMs required, CS gap (vs. current headcount), headroom %, and constraint signal",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "structural",
+          "text": "Output includes a comparison to the UoG annual plan baseline (csm_required=8)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Output applies G2: includes language equivalent to 'structural input' and 'requires budget approval' or 'hiring requires [process]'",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A4",
+          "type": "behavioral",
+          "text": "Output applies UoG CS headroom signal thresholds: < 0% = over capacity, 0-10% = near ceiling, 10-25% = limited, >25% = healthy",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "cs-over-capacity-critical-signal",
+      "category": "edge-case",
+      "prompt": "Check CS capacity — I think we might be hitting our ceiling.",
+      "context": "Practice profile: current_arr=18000000, arr_per_csm=2000000, current_csm_count=8. P50 new_arr=2500000. Max supported ARR = 8 × 2000000 = 16000000. current_arr already exceeds max supported ARR — CS is already over capacity.",
+      "expected_output": "Skill detects CS is already over capacity (headroom < 0%), fires CRITICAL signal, explicitly states 'CS already over capacity — churn risk is live NOW', surfaces immediate hiring action with lead time calculation.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output fires a CRITICAL signal (not AT-RISK or HEALTHY) because current_arr already exceeds max supported ARR",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output uses language equivalent to 'CS already over capacity' and surfaces churn risk as live",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "guardrail",
+          "text": "Output applies G2: despite CRITICAL urgency, still includes the structural input qualifier",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "structural",
+          "text": "Output includes a hiring lead time calculation showing when hires must be made to be productive in time",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "degraded-no-uog-baseline",
+      "category": "degraded-input",
+      "prompt": "How many CSMs do we need for Q3?",
+      "context": "Practice profile: current_arr=8000000, arr_per_csm=2000000, current_csm_count=4. uog_baseline_path is absent from practice profile.",
+      "expected_output": "Skill runs current-state capacity calculation but explicitly declares UoG baseline absent, labels output as reporting mode only, does not produce plan comparison, applies correct confidence label.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output explicitly declares UoG baseline absent using language equivalent to '[Variance analysis unavailable — UoG baseline not configured. Reporting actuals only.]'",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output does NOT produce a 'vs. annual plan baseline' comparison section (no baseline to compare against)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output still produces a current-state capacity calculation (does not refuse to run entirely)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Output applies confidence downgrade: [Confidence: Low] or [Confidence: Moderate] with explicit reason",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    }
+  ]
+}

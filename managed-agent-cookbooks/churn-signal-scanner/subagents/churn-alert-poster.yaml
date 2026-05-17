@@ -1,0 +1,13 @@
+name: churn-alert-poster
+model: claude-sonnet-4-7
+system:
+  file: ./churn-alert-poster.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs: []
+  - { type: mcp_toolset, mcp_server_name: slack, default_config: { enabled: true } }
+mcp_servers:
+  - { type: url, name: slack, url: "${SLACK_MCP_URL}" }
+skills: []
+callable_agents: []

@@ -1,0 +1,171 @@
+{
+  "skill_name": "cold-start-interview",
+  "skill_path": "skills/cold-start-interview/SKILL.md",
+  "eval_type": "Type A",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 0,
+      "name": "first-install-no-existing-profile",
+      "category": "happy-path",
+      "prompt": "Set up the rev-ops plugin. I don't have any other C4CS plugins installed.",
+      "context": "No company-profile.md exists at ~/.claude/plugins/config/claude-for-customer-success/company-profile.md",
+      "expected_output": "Skill checks for existing profile, reports it not found, directs user to install another C4CS plugin first OR proceeds with minimal session-only setup. Collects connector status. Does NOT ask company-level questions that belong to company-profile.md.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output checks for existing company-profile.md before asking any questions",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output reports company profile as absent and explains the implication (either directs to another plugin or offers minimal setup)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "structural",
+          "text": "Output includes a connector detection step reporting status of HubSpot, Google Drive, Slack, Linear, Zapier, and CS platform",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "behavioral",
+          "text": "Output does NOT ask for company_name, primary_segment, current_arr, fiscal_year_start_month, crm_system, or cs_platform (these come from company-profile.md)",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "returning-install-existing-profile",
+      "category": "happy-path",
+      "prompt": "Set up the rev-ops plugin.",
+      "context": "company-profile.md exists with: company_name=Acme Corp, primary_segment=Enterprise, current_arr=12000000, fiscal_year_start_month=2, crm_system=HubSpot, cs_platform=Gainsight. No rev-ops/CLAUDE.md exists yet.",
+      "expected_output": "Skill reads existing profile silently, confirms inherited fields, then asks only RevOps-specific Groups A-F. Does not re-ask inherited fields. After collecting all required fields, writes CLAUDE.md and produces a readiness summary.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output confirms it found the existing company profile and names at least one inherited field",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output does NOT ask for company_name, primary_segment, current_arr, crm_system, or cs_platform",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "structural",
+          "text": "Output asks for target_growth_pct, nrr_current, sales_motion, touch_model, ae_quota, arr_per_csm (Group A — all required)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "structural",
+          "text": "Output asks for current_ae_count and current_csm_count (Group B — required headcount)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A4",
+          "type": "structural",
+          "text": "Output asks for discount_standard_threshold_pct and discount_elevated_threshold_pct (Group C — required)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A5",
+          "type": "structural",
+          "text": "Output asks for mql_definition, sal_definition, sql_definition (Group D — required)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A6",
+          "type": "structural",
+          "text": "After collecting required fields, output produces a capability readiness summary showing which skills are at full capability vs. degraded",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "update-mode-existing-revops-profile",
+      "category": "edge-case",
+      "prompt": "Re-run the rev-ops setup — I just completed annual planning and the baseline has changed.",
+      "context": "Both company-profile.md and rev-ops/CLAUDE.md exist with full configuration.",
+      "expected_output": "Skill detects existing rev-ops profile, offers update mode vs. full re-run, defaults to update mode, asks which fields need changing rather than re-collecting everything.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output detects existing rev-ops/CLAUDE.md and explicitly offers update mode vs. full re-run",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output does NOT immediately start asking all configuration questions from scratch",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "subjective",
+          "text": "Update mode offers a focused, efficient path — asks which specific fields changed rather than a full interview",
+          "auto_gradable": false,
+          "rubric": "PASS: Output explicitly asks 'which fields need updating' or equivalent, presents a list of field groups, and offers to update specific ones. FAIL: Output launches into full Group A-F interview sequence without first scoping what changed."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "ocv-catalog-absent-readiness-signal",
+      "category": "degraded-input",
+      "prompt": "Set up the rev-ops plugin.",
+      "context": "company-profile.md exists. User answers all Groups A-F but when asked about OCV catalog (Group E) responds: 'We don't have one yet.'",
+      "expected_output": "Skill completes setup, writes CLAUDE.md with ocv_catalog_path omitted, and produces a readiness summary that flags SA5 skills as degraded with [Confidence: Low] and explains how to resolve with outcome-statement-builder.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Readiness summary shows SA5 skills (deal-to-outcome-tracing, outcome-to-value-tracking, sales-cs-handoff-quality-scoring) as degraded or partial",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Readiness summary references outcome-statement-builder as the resolution path for the OCV gap",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Setup completes successfully despite absent OCV — skill does not block or error on missing optional field",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    }
+  ]
+}

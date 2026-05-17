@@ -114,14 +114,46 @@ If a skill uses project tracker or CRM data and cannot confirm when it was last 
 
 ---
 
+## AskUserQuestion (AUQ) resilience
+
+These rules govern every `AskUserQuestion` call in this plugin. They are not skill-specific — they apply to all skills, commands, and agents.
+
+**One question per call.** Never batch multiple questions into a single `AskUserQuestion` invocation. If more than one decision is needed, ask the first, wait for a response, then ask the next. The single-question rule is absolute.
+
+**T2 — prose fallback.** The `AskUserQuestion` widget does not render in all clients. If the widget returns an empty, null, or unparseable response, immediately present a prose multiple-choice block and do not proceed as if the question was answered:
+
+```
+**[Question text here]**
+
+**A)** [Option 1]
+**B)** [Option 2]
+**C)** [Option 3] ← proceeding with this if no response
+
+*(Type A, B, C — or describe your preference)*
+```
+
+**T3 — embedded default.** The T2 prose block always marks one option with `← proceeding with this if no response`. If the user does not respond within the session, proceed with that option. The default should be the safest or most reversible choice — not the most aggressive action.
+
+**`/auq force-prose` command.** If the user sends `/auq force-prose`, skip the widget on all subsequent `AskUserQuestion` calls this session and go directly to T2 prose blocks. Acknowledge once: "Switching to prose-only questions for this session." Then apply without further comment.
+
+---
+
 ## Source attribution
 
+Tag outputs to describe what was actually used:
+
 - `[Project tracker — Asana]` / `[Project tracker — Linear]` / `[Project tracker — Jira]` etc. — only if a live tool call returned data this session
-- `[CRM — Salesforce]` / `[CRM — HubSpot]` — only if a live tool call returned data
-- `[Drive]` / `[SharePoint]` etc. — only if retrieved this session
+- `[CRM — Salesforce]` / `[CRM — HubSpot]` — only if a live tool call returned data this session
+- `[Document storage — Drive]` / `[Document storage — SharePoint]` / `[Document storage — Box]` etc. — only if retrieved this session
+- `[CS Platform — Gainsight]` / `[CS Platform — Vitally]` etc. — only if a live tool call returned data this session
+- `[Computed]` — derived or calculated by the agent from live data (not a direct retrieval)
 - `[user provided]` — you pasted it, described it, or uploaded it
 - `[model knowledge]` — background from training data; not account-specific
 - `[conversation context]` — facts established earlier in this session
+
+Do not promote a tag because the data "seems like" it came from a connected source. The tag describes provenance, not assumption.
+
+**Tool-vs-context conflict.** When a tool result conflicts with what you described in conversation (the project tracker shows Milestone 2 complete, but you said it was blocked), surface both: "The project tracker shows M2 complete. You described M2 as blocked — these conflict. Which is more current?" Do not silently prefer either.
 
 ---
 
@@ -208,6 +240,20 @@ When you ask a question in this domain outside a formal skill, I'll read the pra
 
 ---
 
+## Cold-start readiness
+
+| Skill Area | Full capability | Partial | Degraded |
+|---|---|---|---|
+| SA1 — Onboarding Health | Project tracker + CRM + CS Platform connected | Project tracker + CRM | Project tracker only |
+| SA2 — Milestone Tracking | Project tracker connected + milestone framework configured | Project tracker connected, framework unconfigured | No connector; milestone status from conversation |
+| SA3 — TtV Analysis | CRM + project tracker + product analytics connected | CRM + project tracker | CRM only; no usage data |
+| SA4 — Blocker & Risk Detection | Project tracker + CRM + CS Platform connected | Project tracker + CRM | Project tracker only |
+| SA5 — Handoff Readiness | Project tracker + CRM + graduation criteria configured | Project tracker + CRM, criteria unconfigured | No connector; handoff status from conversation |
+| SA6 — Escalation Routing | Escalation matrix configured + CRM connected | CRM only | No connector; escalation from conversation |
+| Onboarding Orchestrator | All connectors + full onboarding profile | Any two connectors | Single connector or profile incomplete |
+
+---
+
 ## Escalation matrix
 
 | Situation | Route to | How | SLA |
@@ -238,6 +284,80 @@ When you ask a question in this domain outside a formal skill, I'll read the pra
 **Customer-facing plan format:** [PLACEHOLDER — Google Doc / Asana project / Notion / slide deck]
 **Internal status format:** [PLACEHOLDER — project tracker / Slack update / weekly email]
 **Escalation communication style:** [PLACEHOLDER — direct summary / narrative with context]
+
+---
+
+---
+
+## Managed agents
+
+The onboarding plugin manages one scheduled agent. It reads this config file for the milestone framework, escalation matrix, PM connector routing, and output targets. It respects the shared guardrails above.
+
+---
+
+### onboarding-milestone-tracker (scheduled)
+
+**What it does:** Runs each weekday morning to monitor M1–M5 milestone progress across all active onboarding accounts. Compares current milestone status against expected timelines, surfaces overdue and at-risk accounts with recommended actions, and posts a digest designed for daily CS team review during onboarding standups. An account is active if M5 (handoff_ready) is not yet complete; graduated accounts are excluded automatically.
+
+**Pipeline stages:**
+1. `milestone-puller` — pulls current milestone status for all active onboarding accounts from the configured project management connector; resolves timeline anchor (contract start date from CRM, or PM project creation date as fallback)
+2. `risk-assessor` — classifies each account as Overdue, At Risk, Due Soon, or On Track by comparing actual milestone progress against the configured milestone framework; applies at-risk signal detection; no external connectors
+3. `report-composer` — formats classified accounts into the digest (Overdue → At Risk → Due Soon → Portfolio Summary); delivers markdown and optional Slack mrkdwn output
+
+**Trigger phrases:** "Run the onboarding milestone tracker", "Which onboarding accounts are overdue?", "Check milestone status for [CSM name]'s accounts", or on schedule.
+
+| Agent | Triggers | Subagents | Cadence | Plugin that owns it |
+|-------|----------|-----------|---------|---------------------|
+| onboarding-milestone-tracker | Scheduled (weekdays 7 AM) · "run milestone tracker" · "which accounts are overdue?" · "check milestone status for [CSM]'s accounts" | milestone-puller, risk-assessor, report-composer | Daily (Mon–Fri) | onboarding |
+
+**Required config fields (from this file):**
+- `pm_connector` — project management MCP connector name
+- `onboarding_project_tag` — tag or label that identifies onboarding projects in the PM tool
+- `milestone_framework` — which milestone set the agent tracks (M1–M5 standard or custom)
+- `digest_output` — `file` | `slack` | `both`
+
+**Optional config fields:**
+- `at_risk_signals` — override default at-risk detection rules per milestone
+- `escalation_matrix` — CSM and manager assignments for escalation blocks in the digest
+- `slack_channel` — required if `digest_output` includes `slack`
+- `digest_file_path` — required if `digest_output` includes `file`
+- `csm_filter` — restrict output to accounts owned by a specific CSM
+
+**Behavioral notes:**
+- If the PM connector is unavailable, the agent halts immediately — no digest is produced; stale data produces false alarms and is not acceptable
+- If a contract start date is missing for an account, the agent uses the PM project creation date as the timeline anchor and notes the substitution
+- TtV projections are internal only — they never appear in any output delivered to Slack or saved as a shared report
+- Overdue does not equal failed — the digest flags milestones for CSM attention; it does not characterize account health or CSM performance
+- On-track accounts are counted in the Portfolio Summary but do not appear in the digest body
+
+**Cold-start readiness for this agent:**
+
+| Capability | Full | Partial | Degraded |
+|------------|------|---------|----------|
+| Milestone Puller | PM connector + CRM connected | PM connector only (project date as anchor) | PM connector unavailable — agent halts |
+| Risk Assessor | milestone_framework configured | milestone_framework using defaults | — |
+| Report Composer | Slack connector configured | File output only | No output channels configured |
+| Orchestrator | All connectors + milestone_framework + digest_output | PM connector + digest_output | Required config contains [PLACEHOLDER] — halts |
+
+**Cookbook:** `managed-agent-cookbooks/onboarding-milestone-tracker/`
+**Schedule:** `"0 7 * * 1-5"` (weekdays at 7:00 AM)
+
+If required config fields contain `[PLACEHOLDER]`, run `/onboarding:cold-start-interview --section milestones` to configure this agent before scheduling.
+
+---
+
+## Shared assets
+
+These files are authoritative for the full plugin suite. Read them before acting on any
+cross-plugin workflow or when a skill description references shared definitions.
+
+- **`~/.claude/plugins/config/claude-for-customer-success/shared/cs-domain-model.md`**
+  Health score bands (Healthy / Developing / At Risk / Critical), shared guardrails G1–G7,
+  and CS domain vocabulary used across all plugins.
+
+- **`~/.claude/plugins/config/claude-for-customer-success/shared/cross-skill-registry.md`**
+  Canonical command registry for all five plugins. Use this to resolve skill names, mode
+  flags, and trigger conditions without hardcoding command strings in skill files.
 
 ---
 

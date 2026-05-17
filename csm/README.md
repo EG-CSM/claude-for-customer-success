@@ -104,6 +104,24 @@ The `taro-play-runner` skill matches account signals to plays in your configured
 
 ---
 
+## Managed Agents
+
+The csm plugin is the primary plugin for four scheduled agents and three on-demand agents that run multi-stage pipelines automatically or when triggered by a CSM.
+
+**Scheduled (run on a cron cadence):**
+- [`health-watcher`](../managed-agent-cookbooks/health-watcher/) — daily portfolio health scan and movement alerts
+- [`churn-signal-digest`](../managed-agent-cookbooks/churn-signal-digest/) — cross-source churn signal aggregation; P1/P2/P3 severity ranking
+- [`qbr-prep-agent`](../managed-agent-cookbooks/qbr-prep-agent/) — account research, achievement assessment, narrative draft, and slide outline
+
+**On-demand (CSM-triggered in chat):**
+- [`adoption-motion-agent`](../managed-agent-cookbooks/adoption-motion/) — feature coverage map, gap diagnosis, TARO play prescription
+- [`expansion-builder-agent`](../managed-agent-cookbooks/expansion-builder/) — whitespace inventory, adoption health gate, business case, AE handoff
+- [`advocacy-agent`](../managed-agent-cookbooks/advocacy/) — burnout-protected advocate qualification and advocacy package generation
+
+Agent registration files are in [`csm/agents/`](./agents/). Full cookbook documentation — architecture, configuration, subagent specs, and deployment instructions — is in [`managed-agent-cookbooks/`](../managed-agent-cookbooks/).
+
+---
+
 ## Related plugins
 
 | Plugin | For |

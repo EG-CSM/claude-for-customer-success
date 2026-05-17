@@ -1,0 +1,4888 @@
+# CS Capability Model — claude-for-customer-success
+# Source: ~/claude-cowork/projects/agent-building/claude-for-customer-success
+# Generated: 2026-05-16
+# Status: VALIDATED
+# Total skills: 74 (cs-ops: 9, csm: 13, onboarding: 9, renewals: 10, rev-ops: 33)
+
+skills:
+
+  # ─────────────────────────────────────────────
+  # DOMAIN: cs-ops
+  # ─────────────────────────────────────────────
+
+  - id: cs-ops.capacity-planner
+    name: capacity-planner
+    version: "1.0.0"
+    category: cs-ops
+    owner: cs-ops
+    summary: >
+      Assess CSM capacity and coverage across the current book of business.
+      Models headcount demand, coverage ratios, and book-of-business distribution
+      to surface under- or over-capacity signals at the team and segment level.
+    intended_tasks:
+      - Current capacity and coverage ratio audit
+      - Headcount demand modeling for growth scenarios
+      - Book redistribution planning after departures or segment changes
+      - Pre-QBR capacity review for CS leadership
+    out_of_scope:
+      - Hiring decisions or approval (produces recommendations only)
+      - Individual performance assessment
+      - Renewal or churn forecasting
+    invocation_cues:
+      - "capacity"
+      - "coverage ratio"
+      - "CSM headcount"
+      - "book of business distribution"
+      - "who should take the account"
+      - "can we absorb new logos"
+    anti_cues:
+      - Questions about individual CSM performance reviews
+      - Renewal probability scoring (use renewals.risk-assessment)
+      - New logo pipeline capacity (use rev-ops.closed-won-to-cs-capacity-modeling)
+    priority: standard
+    argument_hint: "[--current | --headcount | --redistribution | --departure]"
+    required_context:
+      - cs-ops CLAUDE.md practice profile
+      - CSM roster with segment assignments and ARR
+    consumes_files:
+      - cs-ops/CLAUDE.md
+    produces_artifacts:
+      - Capacity and coverage ratio report
+      - Headcount demand model
+      - Redistribution recommendation
+    tools_used:
+      - CRM connector (optional)
+      - CS Platform connector (optional)
+    related_skills:
+      - cs-ops.segment-analyzer
+      - rev-ops.closed-won-to-cs-capacity-modeling
+    execution_profile:
+      pre_flight: reads cs-ops CLAUDE.md; routes to cold-start-interview if missing
+      connector_behavior: falls back to manual input if CRM/CS Platform unavailable
+    constraints:
+      - Recommendations only — no autonomous roster changes
+      - Headcount proposals require CS leadership approval
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Coverage ratios computed per segment
+      - Under/over-capacity signals surfaced with recommended actions
+    known_failure_modes:
+      - Stale CSM roster data produces misleading ratios
+      - Missing segment assignments cause unallocated ARR
+
+  - id: cs-ops.cold-start-interview
+    name: cold-start-interview
+    version: "1.0.0"
+    category: cs-ops
+    owner: cs-ops
+    summary: >
+      Configures the CS-Ops plugin by collecting team structure, segmentation model,
+      health model parameters, reporting cadence, and connector status. Writes the
+      cs-ops CLAUDE.md practice profile consumed by all other cs-ops skills.
+    intended_tasks:
+      - First-time cs-ops plugin setup
+      - Full practice profile rebuild after major org changes
+      - Section-specific updates via --section flag
+    out_of_scope:
+      - CSM-specific practice profiles (use csm.cold-start-interview)
+      - Onboarding or renewals configuration
+    invocation_cues:
+      - "set up cs-ops"
+      - "configure cs ops"
+      - "first time setup"
+      - "cs-ops plugin"
+    anti_cues:
+      - Profile already exists and only one field needs updating (use cs-ops.customize)
+    priority: high
+    argument_hint: "[--full | --section <section-name>]"
+    required_context:
+      - None — bootstraps from zero
+    consumes_files: []
+    produces_artifacts:
+      - cs-ops/CLAUDE.md practice profile
+    tools_used: []
+    related_skills:
+      - cs-ops.customize
+    execution_profile:
+      pre_flight: none — this IS the pre-flight for all other cs-ops skills
+      connector_behavior: checks connector availability during interview
+    constraints:
+      - config_skill — governs other skills, not a direct CS action
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - cs-ops/CLAUDE.md written with no placeholder markers remaining
+    known_failure_modes:
+      - Incomplete section leaves placeholder markers that trigger repeated cold-start
+
+  - id: cs-ops.customize
+    name: customize
+    version: "1.0.0"
+    category: cs-ops
+    owner: cs-ops
+    summary: >
+      Updates specific sections of the cs-ops practice profile without rerunning
+      the full cold-start interview. Displays current values before editing and
+      confirms changes before writing.
+    intended_tasks:
+      - Update a single config section (e.g., health model weights, segment thresholds)
+      - Reset a section to defaults
+      - Show current configuration
+    out_of_scope:
+      - First-time setup (use cs-ops.cold-start-interview)
+      - Updates across multiple domains
+    invocation_cues:
+      - "update cs-ops config"
+      - "change health model weights"
+      - "show current cs-ops settings"
+    anti_cues:
+      - Profile missing or all placeholders (use cs-ops.cold-start-interview)
+    priority: standard
+    argument_hint: "[--show | --section <name> | --reset]"
+    required_context:
+      - Existing cs-ops/CLAUDE.md
+    consumes_files:
+      - cs-ops/CLAUDE.md
+    produces_artifacts:
+      - Updated cs-ops/CLAUDE.md
+    tools_used: []
+    related_skills:
+      - cs-ops.cold-start-interview
+    execution_profile:
+      pre_flight: reads and displays current values before any edit
+      connector_behavior: n/a
+    constraints:
+      - config_skill
+      - Confirms changes before writing
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Target section updated; no other sections modified
+    known_failure_modes:
+      - Editing wrong section if --section argument is ambiguous
+
+  - id: cs-ops.data-quality-check
+    name: data-quality-check
+    version: "1.0.0"
+    category: cs-ops
+    owner: cs-ops
+    summary: >
+      Audits CRM and CS Platform data quality across completeness, staleness, and
+      consistency dimensions. Produces a field-level scorecard and prioritized
+      remediation backlog. Never writes to source systems — all fixes are proposals.
+    intended_tasks:
+      - Weekly or monthly data quality audit
+      - Pre-QBR data hygiene check
+      - Field-specific completeness investigation
+      - Identifying data inconsistencies across systems
+    out_of_scope:
+      - Applying corrections autonomously
+      - CRM structural changes or field definitions
+    invocation_cues:
+      - "data quality"
+      - "CRM hygiene"
+      - "missing fields"
+      - "stale data"
+      - "data audit"
+    anti_cues:
+      - Revenue-side CRM hygiene (use rev-ops.crm-hygiene-audit)
+    priority: standard
+    argument_hint: "[--full | --completeness | --staleness | --consistency | --field <name>]"
+    required_context:
+      - cs-ops CLAUDE.md
+    consumes_files:
+      - cs-ops/CLAUDE.md
+    produces_artifacts:
+      - Field-level quality scorecard
+      - Remediation backlog (proposals only)
+    tools_used:
+      - CRM connector (optional)
+      - CS Platform connector (optional)
+    related_skills:
+      - rev-ops.crm-hygiene-audit
+      - rev-ops.duplicate-detection
+    execution_profile:
+      pre_flight: reads cs-ops CLAUDE.md
+      connector_behavior: falls back to manual input without connectors
+    constraints:
+      - Read-only — no autonomous writes to CRM or CS Platform
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Quality score per dimension computed
+      - Remediation backlog prioritized by impact
+    known_failure_modes:
+      - Without connectors, audit scope is limited to user-supplied data
+
+  - id: cs-ops.health-model-review
+    name: health-model-review
+    version: "1.0.0"
+    category: cs-ops
+    owner: cs-ops
+    summary: >
+      Audits the portfolio health model for distribution anomalies, calibration drift,
+      and component weight validity. Surfaces whether the model is accurately predicting
+      risk and recommends recalibration when distributions are skewed.
+    intended_tasks:
+      - Quarterly health model calibration review
+      - Distribution audit (too many Green, skewed Red)
+      - Component weight audit
+      - Full health model assessment
+    out_of_scope:
+      - Individual account health review (use csm.health-score-review)
+      - Health score changes without CS leadership approval
+    invocation_cues:
+      - "health model"
+      - "calibrate health scores"
+      - "health distribution"
+      - "too many green accounts"
+      - "health model weights"
+    anti_cues:
+      - Single account health review (use csm.health-score-review)
+    priority: standard
+    argument_hint: "[--distribution | --calibration | --component-audit | --full]"
+    required_context:
+      - cs-ops CLAUDE.md
+      - Portfolio health data
+    consumes_files:
+      - cs-ops/CLAUDE.md
+    produces_artifacts:
+      - Distribution analysis report
+      - Calibration recommendations
+      - Component weight audit
+    tools_used:
+      - CS Platform connector (optional)
+    related_skills:
+      - csm.health-score-review
+      - cs-ops.segment-analyzer
+    execution_profile:
+      pre_flight: reads cs-ops CLAUDE.md
+      connector_behavior: falls back to manual data input
+    constraints:
+      - Recommendations only — model changes require CS leadership sign-off
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Distribution analysis completed
+      - Calibration drift identified and quantified
+    known_failure_modes:
+      - Small portfolio (< 20 accounts) produces statistically unreliable distribution analysis
+
+  - id: cs-ops.metric-dashboard
+    name: metric-dashboard
+    version: "1.0.0"
+    category: cs-ops
+    owner: cs-ops
+    summary: >
+      Generates CS metrics dashboards across reporting cadences — weekly, monthly,
+      quarterly, board-level, and CSM performance views. Aggregates health, renewal,
+      onboarding, and engagement metrics into structured reports.
+    intended_tasks:
+      - Weekly team metrics snapshot
+      - Monthly leadership report
+      - Quarterly business review data package
+      - Board-level CS metrics summary
+      - CSM individual performance view
+    out_of_scope:
+      - Revenue-side GTM metrics (use rev-ops.gtm-unified-metrics-pulse)
+      - Real-time dashboard tooling (produces static reports)
+    invocation_cues:
+      - "metrics dashboard"
+      - "weekly metrics"
+      - "monthly report"
+      - "board metrics"
+      - "CSM performance"
+    anti_cues:
+      - Cross-functional GTM metrics (use rev-ops.gtm-unified-metrics-pulse)
+      - Revenue brief (use rev-ops.revenue-brief-generation)
+    priority: standard
+    argument_hint: "[--weekly | --monthly | --quarterly | --board | --csm-performance]"
+    required_context:
+      - cs-ops CLAUDE.md
+    consumes_files:
+      - cs-ops/CLAUDE.md
+    produces_artifacts:
+      - Metrics report (structured markdown)
+    tools_used:
+      - CRM connector (optional)
+      - CS Platform connector (optional)
+    related_skills:
+      - rev-ops.gtm-unified-metrics-pulse
+      - cs-ops.segment-analyzer
+    execution_profile:
+      pre_flight: reads cs-ops CLAUDE.md
+      connector_behavior: falls back to manual data input
+    constraints:
+      - Output is [DRAFT] until RevOps/CS leadership review for board/quarterly cadences
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - All configured metric categories present in output
+      - Period-over-period comparison included
+    known_failure_modes:
+      - Missing connector data produces gaps in automated metric pulls
+
+  - id: cs-ops.playbook-auditor
+    name: playbook-auditor
+    version: "1.0.0"
+    category: cs-ops
+    owner: cs-ops
+    summary: >
+      Audits CS playbook coverage, trigger definitions, adoption rates, and dead plays.
+      Surfaces gaps where motion types lack playbooks, identifies under-adopted plays,
+      and flags plays that haven't been executed in a configurable lookback window.
+    intended_tasks:
+      - Quarterly playbook coverage audit
+      - Dead play identification and retirement
+      - Adoption rate analysis by play and CSM
+      - Single play deep-dive
+    out_of_scope:
+      - Play execution (use csm.taro-play-runner)
+      - Writing new playbooks
+    invocation_cues:
+      - "playbook audit"
+      - "playbook coverage"
+      - "dead plays"
+      - "play adoption"
+      - "which plays aren't being used"
+    anti_cues:
+      - Running a specific play (use csm.taro-play-runner)
+    priority: standard
+    argument_hint: "[--full | --coverage | --adoption | --dead-plays | --play <name>]"
+    required_context:
+      - cs-ops CLAUDE.md
+      - Playbook registry
+    consumes_files:
+      - cs-ops/CLAUDE.md
+    produces_artifacts:
+      - Playbook coverage gap report
+      - Adoption scorecard
+      - Dead play retirement candidates
+    tools_used:
+      - CS Platform connector (optional)
+    related_skills:
+      - csm.taro-play-runner
+    execution_profile:
+      pre_flight: reads cs-ops CLAUDE.md
+      connector_behavior: falls back to manual playbook inventory
+    constraints:
+      - Audit only — no play retirement without CS leadership approval
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Coverage gaps mapped to motion types
+      - Adoption rates computed per play
+    known_failure_modes:
+      - Play execution data unavailable without CS Platform connector
+
+  - id: cs-ops.process-doc
+    name: process-doc
+    version: "1.0.0"
+    category: cs-ops
+    owner: cs-ops
+    summary: >
+      Creates and updates CS Operations SOPs, governance records, and handoff guides.
+      Produces structured process documentation for CSM handoffs, playbook governance,
+      data quality processes, escalation workflows, segment change procedures, and
+      general SOPs.
+    intended_tasks:
+      - CSM account handoff document
+      - Playbook governance record
+      - Data quality SOP
+      - Escalation workflow documentation
+      - Segment change process guide
+      - General CS Ops SOP
+    out_of_scope:
+      - Customer-facing documentation
+      - Onboarding handoff docs (use onboarding.handoff-doc)
+    invocation_cues:
+      - "process doc"
+      - "SOP"
+      - "handoff guide"
+      - "document this process"
+      - "playbook governance"
+    anti_cues:
+      - Customer-facing onboarding handoff (use onboarding.handoff-doc)
+    priority: standard
+    argument_hint: "[--csm-handoff | --playbook-governance | --data-quality | --escalation | --segment-change | --sop]"
+    required_context:
+      - cs-ops CLAUDE.md
+      - Process details from user
+    consumes_files:
+      - cs-ops/CLAUDE.md
+    produces_artifacts:
+      - Structured SOP or governance document (markdown)
+    tools_used: []
+    related_skills:
+      - onboarding.handoff-doc
+    execution_profile:
+      pre_flight: reads cs-ops CLAUDE.md
+      connector_behavior: n/a
+    constraints:
+      - Output is [DRAFT] — requires CS Ops review before publishing
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Process steps fully documented with owner and SLA
+    known_failure_modes:
+      - Ambiguous process inputs produce incomplete SOPs
+
+  - id: cs-ops.segment-analyzer
+    name: segment-analyzer
+    version: "1.0.0"
+    category: cs-ops
+    owner: cs-ops
+    summary: >
+      Analyzes the book of business by segment — ARR distribution, health distribution,
+      coverage ratios, and at-risk account identification. Surfaces reclassification
+      candidates when accounts no longer fit their current segment criteria.
+    intended_tasks:
+      - Segment-level ARR and health analysis
+      - Coverage ratio by segment
+      - At-risk account identification by segment
+      - Reclassification candidate surfacing
+    out_of_scope:
+      - Individual account health review (use csm.health-score-review)
+      - Capacity modeling (use cs-ops.capacity-planner)
+    invocation_cues:
+      - "segment analysis"
+      - "segment distribution"
+      - "ARR by segment"
+      - "at-risk by segment"
+      - "reclassification"
+    anti_cues:
+      - Single account analysis (use csm.health-score-review)
+    priority: standard
+    argument_hint: "[--full | --segment <name> | --reclassification | --at-risk]"
+    required_context:
+      - cs-ops CLAUDE.md
+    consumes_files:
+      - cs-ops/CLAUDE.md
+    produces_artifacts:
+      - Segment distribution report
+      - Reclassification candidate list
+      - At-risk account list by segment
+    tools_used:
+      - CRM connector (optional)
+      - CS Platform connector (optional)
+    related_skills:
+      - cs-ops.capacity-planner
+      - csm.health-score-review
+    execution_profile:
+      pre_flight: reads cs-ops CLAUDE.md
+      connector_behavior: falls back to manual input
+    constraints:
+      - Reclassification recommendations require CS leadership approval
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - All configured segments analyzed
+      - Reclassification candidates identified with rationale
+    known_failure_modes:
+      - Missing segment definitions in practice profile cause unclassified accounts
+
+  # ─────────────────────────────────────────────
+  # DOMAIN: csm
+  # ─────────────────────────────────────────────
+
+  - id: csm.account-research
+    name: account-research
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Generates pre-call account briefs with stakeholder intelligence, product usage
+      signals, support history, and relationship context. Works standalone via web
+      search; enriched with CRM and CS Platform connectors.
+    intended_tasks:
+      - Pre-call account brief (standard depth)
+      - Deep account research with all available signals
+      - Stakeholder mapping for a specific account
+    out_of_scope:
+      - Call agenda construction (use csm.call-prep)
+      - Portfolio-level analysis (use cs-ops.segment-analyzer)
+    invocation_cues:
+      - "research [account]"
+      - "account brief"
+      - "tell me about [company]"
+      - "who are the stakeholders"
+    anti_cues:
+      - Building a full call prep with agenda (use csm.call-prep)
+    priority: standard
+    argument_hint: "[<account-name>] [--brief | --deep | --stakeholders]"
+    required_context:
+      - csm CLAUDE.md practice profile
+      - Account name or ID
+    consumes_files:
+      - csm/CLAUDE.md
+    produces_artifacts:
+      - Account brief (markdown)
+      - Stakeholder list
+    tools_used:
+      - CRM connector (optional)
+      - CS Platform connector (optional)
+      - Web search (optional)
+    related_skills:
+      - csm.call-prep
+      - csm.stakeholder-map
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md
+      connector_behavior: web search fallback when CRM/CS Platform unavailable
+    constraints:
+      - Brief content from training data is [Moderate] confidence without connectors
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Account context, stakeholder list, and key signals surfaced
+    known_failure_modes:
+      - Private companies with no public presence produce thin briefs without connectors
+
+  - id: csm.call-prep
+    name: call-prep
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Generates a pre-call preparation brief calibrated to call type — kickoff, QBR,
+      health review, renewal, check-in, or custom. Includes agenda, talking points,
+      account context, and open action items. Intended for use 24–48 hours before calls.
+    intended_tasks:
+      - Kickoff call preparation
+      - QBR preparation brief
+      - Health review call prep
+      - Renewal conversation prep
+      - Check-in call agenda
+    out_of_scope:
+      - Full QBR document construction (use csm.qbr-builder)
+      - Renewal negotiation brief (use renewals.negotiation-prep)
+    invocation_cues:
+      - "prep for my call"
+      - "call prep"
+      - "prepare for QBR"
+      - "kickoff prep"
+      - "renewal call prep"
+    anti_cues:
+      - Building the full QBR deck (use csm.qbr-builder)
+      - Negotiation strategy (use renewals.negotiation-prep)
+    priority: high
+    argument_hint: "[<account-name>] [--kickoff | --qbr | --health | --renewal | --check-in | --custom]"
+    required_context:
+      - csm CLAUDE.md
+      - Account name and call type
+    consumes_files:
+      - csm/CLAUDE.md
+    produces_artifacts:
+      - Call prep brief with agenda and talking points
+    tools_used:
+      - CRM connector (optional)
+      - CS Platform connector (optional)
+      - Call transcript connector (optional)
+    related_skills:
+      - csm.account-research
+      - csm.qbr-builder
+      - renewals.negotiation-prep
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md
+      connector_behavior: falls back to user-provided context
+    constraints:
+      - Prep brief is [DRAFT] — CSM reviews before call
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Agenda, context, talking points, and open items all present
+    known_failure_modes:
+      - Without connectors, open action items may be incomplete
+
+  - id: csm.cold-start-interview
+    name: cold-start-interview
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Configures the CSM practice profile — motion type, segment, product catalog,
+      success plan template, outcome catalog path, and connector status. Writes
+      csm/CLAUDE.md consumed by all csm skills. Optionally generates an outcome catalog
+      from the product catalog during setup.
+    intended_tasks:
+      - First-time CSM plugin setup
+      - Full practice profile rebuild
+      - Connector re-verification
+      - Outcome catalog generation from product catalog
+    out_of_scope:
+      - Updating individual sections (use csm.customize)
+      - CS-Ops or other domain configuration
+    invocation_cues:
+      - "set up csm plugin"
+      - "configure my csm practice"
+      - "first time setup csm"
+    anti_cues:
+      - Partial update to an existing profile (use csm.customize)
+    priority: high
+    argument_hint: "[--redo | --check-integrations | --generate-outcome-catalog]"
+    required_context:
+      - None — bootstraps from zero
+    consumes_files: []
+    produces_artifacts:
+      - csm/CLAUDE.md practice profile
+      - Outcome catalog (optional)
+    tools_used: []
+    related_skills:
+      - csm.customize
+    execution_profile:
+      pre_flight: none — this IS the pre-flight for all csm skills
+      connector_behavior: checks connector availability during interview
+    constraints:
+      - config_skill
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - csm/CLAUDE.md written with no placeholder markers
+    known_failure_modes:
+      - Incomplete interview leaves placeholders that trigger repeated cold-start
+
+  - id: csm.customize
+    name: customize
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Updates specific sections of the CSM practice profile without a full re-interview.
+      Alias for cold-start-interview when profile is entirely missing. Shows current
+      values, confirms changes before writing.
+    intended_tasks:
+      - Update a single profile section
+      - Reset a section to defaults
+      - Show current CSM configuration
+    out_of_scope:
+      - First-time setup (use csm.cold-start-interview)
+    invocation_cues:
+      - "update csm config"
+      - "change my motion type"
+      - "show csm settings"
+    anti_cues:
+      - Profile entirely missing (use csm.cold-start-interview)
+    priority: standard
+    argument_hint: "[--full | --section <name> | --reset]"
+    required_context:
+      - Existing csm/CLAUDE.md
+    consumes_files:
+      - csm/CLAUDE.md
+    produces_artifacts:
+      - Updated csm/CLAUDE.md
+    tools_used: []
+    related_skills:
+      - csm.cold-start-interview
+    execution_profile:
+      pre_flight: reads and displays current values
+      connector_behavior: n/a
+    constraints:
+      - config_skill
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Target section updated without modifying other sections
+    known_failure_modes:
+      - Ambiguous section names may edit wrong section
+
+  - id: csm.escalation-memo
+    name: escalation-memo
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Manages the full escalation lifecycle — opening, updating, and closing escalation
+      memos for technical, complaint, executive, and internal escalation types. Routes
+      to the correct escalation path per the configured escalation matrix.
+    intended_tasks:
+      - Open a new escalation memo
+      - Update an in-progress escalation with new information
+      - Close an escalation with resolution summary
+    out_of_scope:
+      - Churn risk assessment (use renewals.risk-assessment)
+      - Escalation routing decisions (governed by practice profile matrix)
+    invocation_cues:
+      - "escalation memo"
+      - "open an escalation"
+      - "escalate this account"
+      - "update escalation"
+      - "close escalation"
+    anti_cues:
+      - Renewal risk memo (use renewals.risk-assessment or csm.risk-flag)
+    priority: high
+    argument_hint: "[<account-name>] [--open | --update | --close] [--technical | --complaint | --executive | --internal]"
+    required_context:
+      - csm CLAUDE.md
+      - Account context and escalation details
+    consumes_files:
+      - csm/CLAUDE.md
+    produces_artifacts:
+      - Escalation memo (structured markdown)
+      - Routing recommendation per escalation matrix
+    tools_used:
+      - CRM connector (optional)
+      - Linear connector (optional)
+    related_skills:
+      - csm.risk-flag
+      - renewals.risk-assessment
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md; validates escalation matrix exists
+      connector_behavior: falls back to manual routing if connectors absent
+    constraints:
+      - Escalation routing follows configured matrix — not overridden by user instruction
+      - Executive escalations require CS leadership acknowledgment
+    risk_level: medium
+    approval_needed: true
+    success_criteria:
+      - Escalation memo created with owner, SLA, and routing path
+    known_failure_modes:
+      - Missing escalation matrix in practice profile causes routing failure
+
+  - id: csm.health-score-review
+    name: health-score-review
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Reviews health scores for a single account or full portfolio. Breaks down
+      signal components, surfaces trend direction, and recommends remediation plays.
+      Modes: triage (quick risk scan), deep (full signal analysis), portfolio (all accounts).
+    intended_tasks:
+      - Account health triage before a call
+      - Deep health review with component analysis
+      - Portfolio health sweep for at-risk identification
+    out_of_scope:
+      - Health model calibration (use cs-ops.health-model-review)
+      - Renewal risk scoring (use renewals.risk-assessment)
+    invocation_cues:
+      - "health score"
+      - "health review"
+      - "how healthy is [account]"
+      - "portfolio health"
+      - "at-risk accounts"
+    anti_cues:
+      - Health model calibration (use cs-ops.health-model-review)
+      - Renewal-stage risk (use renewals.risk-assessment)
+    priority: high
+    argument_hint: "[<account-name>] [--triage | --deep | --portfolio]"
+    required_context:
+      - csm CLAUDE.md
+    consumes_files:
+      - csm/CLAUDE.md
+    produces_artifacts:
+      - Health score breakdown with trend and recommendation
+    tools_used:
+      - CS Platform connector (optional)
+      - CRM connector (optional)
+    related_skills:
+      - cs-ops.health-model-review
+      - renewals.risk-assessment
+      - csm.risk-flag
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md
+      connector_behavior: falls back to user-supplied signal data
+    constraints:
+      - Health score components reflect configured model — not generic defaults
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Signal breakdown, trend, and recommended play all present
+    known_failure_modes:
+      - Without CS Platform connector, signals are limited to user-provided data
+
+  - id: csm.qbr-builder
+    name: qbr-builder
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Builds and reviews Quarterly Business Reviews. Drafts value delivered,
+      metric performance, next-period priorities, and success plan alignment.
+      Produces internal draft, executive brief, and full QBR document variants.
+    intended_tasks:
+      - Draft a QBR document from scratch
+      - Review and improve an existing QBR draft
+      - Generate an executive brief version
+    out_of_scope:
+      - Call prep for QBR meeting (use csm.call-prep)
+      - Value statement narrative only (use csm.value-statement)
+    invocation_cues:
+      - "build QBR"
+      - "draft QBR"
+      - "quarterly business review"
+      - "QBR document"
+      - "review my QBR"
+    anti_cues:
+      - Quick pre-call prep (use csm.call-prep)
+    priority: standard
+    argument_hint: "[<account-name>] [--draft | --review | --exec-brief]"
+    required_context:
+      - csm CLAUDE.md
+      - Account metrics and value delivered data
+    consumes_files:
+      - csm/CLAUDE.md
+    produces_artifacts:
+      - QBR document (markdown)
+      - Executive brief variant
+    tools_used:
+      - CRM connector (optional)
+      - CS Platform connector (optional)
+    related_skills:
+      - csm.value-statement
+      - csm.call-prep
+      - csm.success-plan-builder
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md
+      connector_behavior: falls back to user-provided metrics
+    constraints:
+      - Output is [DRAFT] — CSM reviews before customer delivery
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Value delivered, metrics, priorities, and next steps all present
+    known_failure_modes:
+      - Missing usage metrics produce incomplete value delivered sections
+
+  - id: csm.renewal-readiness
+    name: renewal-readiness
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Assesses renewal readiness 90–180 days before renewal date. Evaluates health,
+      relationship strength, commercial risk, and success plan completion. Produces
+      readiness brief, renewal timeline, and customer-facing renewal summary.
+    intended_tasks:
+      - Renewal readiness assessment (90–180 day window)
+      - Renewal timeline construction
+      - Customer-facing renewal summary
+    out_of_scope:
+      - Negotiation strategy (use renewals.negotiation-prep)
+      - Renewal forecasting (use renewals.renewal-forecast)
+      - Risk assessment post-signal detection (use renewals.risk-assessment)
+    invocation_cues:
+      - "renewal readiness"
+      - "prepare for renewal"
+      - "renewal assessment"
+      - "is [account] ready to renew"
+    anti_cues:
+      - Negotiation prep (use renewals.negotiation-prep)
+      - Post-churn signal risk triage (use renewals.risk-assessment)
+    priority: high
+    argument_hint: "[<account-name>] [--brief | --timeline | --customer-summary]"
+    required_context:
+      - csm CLAUDE.md
+      - Renewal date and account context
+    consumes_files:
+      - csm/CLAUDE.md
+    produces_artifacts:
+      - Renewal readiness brief
+      - Renewal timeline
+      - Customer-facing summary
+    tools_used:
+      - CRM connector (optional)
+      - CS Platform connector (optional)
+    related_skills:
+      - renewals.risk-assessment
+      - renewals.negotiation-prep
+      - csm.health-score-review
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md
+      connector_behavior: falls back to manual input
+    constraints:
+      - Customer-facing summary requires CSM review before sending
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Risk tier, relationship assessment, and recommended next steps all present
+    known_failure_modes:
+      - Used outside 90–180 day window produces insufficient lead time for action
+
+  - id: csm.risk-flag
+    name: risk-flag
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Generates a risk memo for at-risk accounts, including signal summary, risk tier,
+      and escalation routing per the configured escalation matrix. Optionally produces
+      a full escalation memo.
+    intended_tasks:
+      - Quick risk memo for an at-risk account
+      - Escalation memo triggered by risk signal
+    out_of_scope:
+      - Portfolio-level risk analysis (use renewals.risk-assessment)
+      - Full escalation lifecycle (use csm.escalation-memo)
+    invocation_cues:
+      - "risk flag"
+      - "flag this account as at-risk"
+      - "risk memo"
+      - "account is at risk"
+    anti_cues:
+      - Renewal-stage risk assessment (use renewals.risk-assessment)
+      - Full escalation lifecycle (use csm.escalation-memo)
+    priority: high
+    argument_hint: "[<account-name>] [--brief | --escalation-memo]"
+    required_context:
+      - csm CLAUDE.md
+      - Account and signal context
+    consumes_files:
+      - csm/CLAUDE.md
+    produces_artifacts:
+      - Risk memo
+      - Escalation memo (optional)
+    tools_used:
+      - CRM connector (optional)
+    related_skills:
+      - csm.escalation-memo
+      - renewals.risk-assessment
+      - csm.health-score-review
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md; validates escalation matrix
+      connector_behavior: falls back to user-provided signal context
+    constraints:
+      - Escalation routing follows configured matrix
+    risk_level: medium
+    approval_needed: true
+    success_criteria:
+      - Risk tier, signal summary, and escalation path all present
+    known_failure_modes:
+      - Missing escalation matrix causes routing gap
+
+  - id: csm.stakeholder-map
+    name: stakeholder-map
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Builds and updates stakeholder maps for accounts — relationship health, engagement
+      gaps, sponsor risk, and coverage of economic buyer, champion, and influencer roles.
+    intended_tasks:
+      - Build stakeholder map for an account
+      - Gap analysis of missing stakeholder roles
+      - Sponsor risk assessment
+    out_of_scope:
+      - Account-level health review (use csm.health-score-review)
+      - Research on specific individuals (use csm.account-research --stakeholders)
+    invocation_cues:
+      - "stakeholder map"
+      - "who are our stakeholders at [account]"
+      - "champion risk"
+      - "sponsor risk"
+      - "executive sponsor"
+    anti_cues:
+      - Full account research (use csm.account-research)
+    priority: standard
+    argument_hint: "[<account-name>] [--map | --gap-analysis | --sponsor-risk]"
+    required_context:
+      - csm CLAUDE.md
+      - Known contacts at the account
+    consumes_files:
+      - csm/CLAUDE.md
+    produces_artifacts:
+      - Stakeholder map (structured markdown)
+      - Gap analysis
+      - Sponsor risk assessment
+    tools_used:
+      - CRM connector (optional)
+    related_skills:
+      - csm.account-research
+      - csm.health-score-review
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md
+      connector_behavior: falls back to user-provided contact list
+    constraints:
+      - Relationship health ratings are [Moderate] confidence without engagement data
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - All key stakeholder roles identified; gaps flagged
+    known_failure_modes:
+      - Sparse CRM contact data produces incomplete maps
+
+  - id: csm.success-plan-builder
+    name: success-plan-builder
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Builds and updates customer success plans — co-authored documents with measurable
+      outcomes, milestones, and ownership. Aligned to the outcome catalog and customer
+      lifecycle stage.
+    intended_tasks:
+      - New success plan from scratch
+      - Reset and rebuild an existing plan
+      - Quarterly success plan review
+    out_of_scope:
+      - Onboarding-stage success criteria (use onboarding.success-criteria)
+      - QBR construction (use csm.qbr-builder)
+    invocation_cues:
+      - "success plan"
+      - "build success plan"
+      - "update success plan"
+      - "customer success plan"
+    anti_cues:
+      - Onboarding success criteria definition (use onboarding.success-criteria)
+    priority: standard
+    argument_hint: "[<account-name>] [--new | --reset | --review]"
+    required_context:
+      - csm CLAUDE.md
+      - Outcome catalog path
+      - Customer goals and lifecycle stage
+    consumes_files:
+      - csm/CLAUDE.md
+      - Outcome catalog (if configured)
+    produces_artifacts:
+      - Success plan document (markdown)
+    tools_used:
+      - CRM connector (optional)
+      - CS Platform connector (optional)
+    related_skills:
+      - csm.qbr-builder
+      - onboarding.success-criteria
+      - csm.value-statement
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md; checks outcome catalog path
+      connector_behavior: falls back to user-provided goals
+    constraints:
+      - Success plan is co-authored — requires customer review before finalizing
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Measurable outcomes, milestones, and owners all present
+    known_failure_modes:
+      - Missing outcome catalog produces generic success criteria
+
+  - id: csm.taro-play-runner
+    name: taro-play-runner
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Selects and executes TARO (Trigger-Action-Resource-Outcome) plays for a given
+      situation. Produces execution-ready outputs — email drafts, meeting agendas,
+      talking points — calibrated to the play and customer context.
+    intended_tasks:
+      - Situation-based play selection
+      - Full play execution with customer-ready outputs
+    out_of_scope:
+      - Playbook auditing (use cs-ops.playbook-auditor)
+      - Play creation or editing
+    invocation_cues:
+      - "run a play"
+      - "which play should I use"
+      - "TARO play"
+      - "play for [situation]"
+      - "execute play"
+    anti_cues:
+      - Playbook coverage audit (use cs-ops.playbook-auditor)
+    priority: high
+    argument_hint: "[--situation | --play <play-name>]"
+    required_context:
+      - csm CLAUDE.md
+      - Playbook registry with TARO plays
+      - Account and situation context
+    consumes_files:
+      - csm/CLAUDE.md
+      - Playbook registry
+    produces_artifacts:
+      - Play execution brief
+      - Email draft / agenda / talking points
+    tools_used:
+      - CRM connector (optional)
+      - CS Platform connector (optional)
+    related_skills:
+      - cs-ops.playbook-auditor
+      - csm.call-prep
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md; validates playbook registry path
+      connector_behavior: play selection works without connectors; output quality improves with account data
+    constraints:
+      - Customer-facing outputs require CSM review before sending
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Correct play selected and all execution outputs produced
+    known_failure_modes:
+      - Missing playbook registry causes play selection failure
+
+  - id: csm.value-statement
+    name: value-statement
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Generates value realized narratives in multiple formats — internal CS summary,
+      customer-facing statement, executive brief, and AE handoff. Draws on product
+      usage, business outcomes, and outcome catalog alignment.
+    intended_tasks:
+      - Internal value summary for CS leadership
+      - Customer-facing value statement
+      - Executive brief for sponsor relationship
+      - AE handoff value narrative
+    out_of_scope:
+      - Full QBR document (use csm.qbr-builder)
+      - Renewal negotiation framing (use renewals.negotiation-prep)
+    invocation_cues:
+      - "value statement"
+      - "value realized"
+      - "what value have we delivered"
+      - "value narrative"
+      - "ROI summary"
+    anti_cues:
+      - Full QBR construction (use csm.qbr-builder)
+    priority: standard
+    argument_hint: "[<account-name>] [--internal | --customer | --exec-brief | --ae-handoff]"
+    required_context:
+      - csm CLAUDE.md
+      - Usage and outcome data
+    consumes_files:
+      - csm/CLAUDE.md
+      - Outcome catalog (if configured)
+    produces_artifacts:
+      - Value statement in requested format
+    tools_used:
+      - CS Platform connector (optional)
+      - CRM connector (optional)
+    related_skills:
+      - csm.qbr-builder
+      - renewals.negotiation-prep
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md
+      connector_behavior: falls back to user-provided outcome data
+    constraints:
+      - Customer-facing outputs require CSM review
+      - ARR figures flagged for Finance review in executive variants
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Value narrative aligned to outcome catalog entries; specific and quantified where possible
+    known_failure_modes:
+      - Without usage data, value statements are qualitative only
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DOMAIN: onboarding  (9 skills)
+# ─────────────────────────────────────────────────────────────────────────────
+
+- id: onboarding.blocker-review
+  name: blocker-review
+  version: "1.0.0"
+  category: onboarding
+  owner: onboarding
+  summary: >
+    Diagnose and resolve onboarding blockers — anything preventing a customer
+    from reaching their next milestone on time. Classifies blockers by type and
+    severity, routes to the correct resolution path per the escalation matrix,
+    and produces an action plan with named owners and deadlines.
+  intended_tasks:
+    - Guided diagnostic for a current blocker (--diagnose, default)
+    - Formatted escalation brief for a named escalation contact (--escalate)
+    - Logging a resolved blocker to account history (--log)
+  out_of_scope:
+    - Autonomously contacting escalation contacts
+    - Modifying PM connector tasks directly
+  invocation_cues:
+    - "blocker"
+    - "stuck"
+    - "milestone delayed"
+    - "escalate"
+    - "not progressing"
+  anti_cues:
+    - General milestone status (use milestone-tracker)
+    - Handoff readiness check (use handoff-doc --readiness)
+  priority: standard
+  argument_hint: "[<account-name-or-ID>] [--diagnose | --escalate | --log]"
+  required_context:
+    - onboarding CLAUDE.md (escalation matrix, thresholds, escalation contacts)
+  consumes_files:
+    - onboarding/CLAUDE.md
+  produces_artifacts:
+    - Blocker diagnostic with classification and severity
+    - Escalation brief (--escalate)
+    - Resolved blocker log entry (--log)
+  tools_used:
+    - CRM connector (optional)
+    - PM connector (optional)
+  related_skills:
+    - onboarding.milestone-tracker
+    - onboarding.handoff-doc
+  execution_profile:
+    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing or placeholder-filled
+    connector_behavior: falls back to CSM input if CRM/PM unavailable
+  constraints:
+    - Escalation contacts sourced from profile only; no autonomous outreach
+    - Severity classification uses profile escalation thresholds
+  risk_level: low
+  approval_needed: false
+  success_criteria:
+    - Blocker classified by type and severity
+    - Resolution path identified with named owner and deadline
+    - Escalation brief produced when --escalate is used
+  known_failure_modes:
+    - Profile escalation matrix missing — classification falls back to generic tiers
+    - PM connector unavailable — milestone context requires manual input
+
+- id: onboarding.cold-start-interview
+  name: cold-start-interview
+  version: "1.0.0"
+  category: onboarding
+  owner: onboarding
+  config_skill: true
+  summary: >
+    First-time setup for the onboarding practice profile. Collects role, onboarding
+    model, segment configuration, TtV targets, milestone definitions, success criteria
+    model, kickoff and handoff format, escalation matrix, integrations, and CS
+    methodology preferences. Writes to onboarding CLAUDE.md so all other onboarding
+    skills have required context. Run once at setup; use customize for updates.
+  intended_tasks:
+    - Full onboarding profile setup (--full)
+    - Abbreviated 15-minute setup writing minimum required fields (--quick)
+    - Full profile redo (--redo)
+    - Integration check only (--check-integrations)
+    - Company profile section only (--redo-company-profile)
+    - Specific section update (--section <name>)
+  out_of_scope:
+    - CSM-level account data (use csm.cold-start-interview)
+    - Rev-ops metric configuration (use rev-ops.cold-start-interview)
+  invocation_cues:
+    - "set up onboarding"
+    - "configure onboarding"
+    - "onboarding profile"
+    - "onboarding cold start"
+  anti_cues:
+    - Profile already configured and needs a targeted update (use customize)
+  priority: high
+  argument_hint: "[--full | --quick | --redo | --check-integrations | --redo-company-profile | --section <name>]"
+  required_context:
+    - None (generates the profile)
+  consumes_files: []
+  produces_artifacts:
+    - onboarding/CLAUDE.md (complete practice profile)
+  tools_used:
+    - CRM connector (optional — auto-populate company profile)
+  related_skills:
+    - onboarding.customize
+  execution_profile:
+    pre_flight: no pre-flight — this IS the setup skill
+    connector_behavior: CRM pre-fill offered; falls back to manual entry
+  constraints:
+    - Only writes to onboarding/CLAUDE.md — no other system writes
+  risk_level: low
+  approval_needed: false
+  success_criteria:
+    - onboarding CLAUDE.md written with all required sections populated
+    - No placeholder values remaining in required fields
+  known_failure_modes:
+    - User skips required fields — downstream skills fallback to generic defaults
+    - Profile written with stale CRM data — validate with --check-integrations
+
+- id: onboarding.customize
+  name: customize
+  version: "1.0.0"
+  category: onboarding
+  owner: onboarding
+  config_skill: true
+  summary: >
+    View and update the onboarding plugin configuration — milestone targets, TtV
+    benchmarks, success criteria format, escalation contacts, graduation criteria,
+    and CS methodology references. Validates configuration for missing fields and
+    placeholder values before running other onboarding skills.
+  intended_tasks:
+    - Display current configuration with section-by-section status (--view, default)
+    - Update specific settings by section name (--update <section>)
+    - Restore a section to template defaults (--reset <section>)
+    - Validate configuration for completeness and consistency (--validate)
+  out_of_scope:
+    - Full profile rebuild (use cold-start-interview --redo)
+  invocation_cues:
+    - "update onboarding config"
+    - "change milestone targets"
+    - "onboarding settings"
+    - "view onboarding profile"
+    - "validate onboarding config"
+  anti_cues:
+    - Profile does not yet exist (use cold-start-interview)
+  priority: standard
+  argument_hint: "[--view | --update <section> | --reset <section> | --validate]"
+  required_context:
+    - onboarding CLAUDE.md (must exist)
+  consumes_files:
+    - onboarding/CLAUDE.md
+  produces_artifacts:
+    - Updated onboarding/CLAUDE.md
+    - Validation report (--validate)
+  tools_used: []
+  related_skills:
+    - onboarding.cold-start-interview
+  execution_profile:
+    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+    connector_behavior: no connectors required
+  constraints:
+    - Only writes to onboarding/CLAUDE.md — no other system writes
+  risk_level: low
+  approval_needed: false
+  success_criteria:
+    - Requested section updated and written to profile
+    - Validation report identifies all missing and placeholder fields
+  known_failure_modes:
+    - Section name mismatch — user must reference exact section headings from --view output
+
+- id: onboarding.handoff-doc
+  name: handoff-doc
+  version: "1.0.0"
+  category: onboarding
+  owner: onboarding
+  summary: >
+    Generate the onboarding graduation handoff document — structured transfer of
+    account context from the onboarding CSM to the post-onboarding team. Reads
+    graduation criteria, escalation contacts, and handoff format from the onboarding
+    profile. Pulls account history from CRM and PM connectors if available.
+  intended_tasks:
+    - Full handoff document for graduation (--draft, default)
+    - Graduation readiness check before generating the document (--readiness)
+    - Abbreviated handoff brief for verbal or async transfer (--summary)
+  out_of_scope:
+    - Notifying the receiving team (no autonomous messaging)
+    - Modifying CRM records
+  invocation_cues:
+    - "handoff"
+    - "graduation"
+    - "transfer account"
+    - "onboarding complete"
+    - "handoff doc"
+  anti_cues:
+    - Mid-onboarding status update (use onboarding-plan --summary)
+    - Blocker escalation (use blocker-review --escalate)
+  priority: standard
+  argument_hint: "[<account-name-or-ID>] [--draft | --readiness | --summary]"
+  required_context:
+    - onboarding CLAUDE.md (graduation criteria, handoff format, escalation contacts)
+  consumes_files:
+    - onboarding/CLAUDE.md
+  produces_artifacts:
+    - Graduation handoff document (--draft)
+    - Readiness assessment with gap list (--readiness)
+    - Abbreviated handoff brief (--summary)
+  tools_used:
+    - CRM connector (optional)
+    - PM connector (optional)
+  related_skills:
+    - onboarding.success-criteria
+    - onboarding.milestone-tracker
+  execution_profile:
+    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+    connector_behavior: falls back to CSM input if CRM/PM unavailable
+  constraints:
+    - No autonomous outreach to receiving team
+    - Graduation criteria sourced from profile only
+  risk_level: low
+  approval_needed: false
+  success_criteria:
+    - Complete handoff document produced with all required sections
+    - Readiness check identifies open items blocking graduation (--readiness)
+  known_failure_modes:
+    - Graduation criteria not configured — document uses generic template
+    - CRM unavailable — account history section requires manual input
+
+- id: onboarding.kickoff-prep
+  name: kickoff-prep
+  version: "1.0.0"
+  category: onboarding
+  owner: onboarding
+  summary: >
+    Prepare for an onboarding kickoff — generates a customized customer-facing
+    agenda and an internal pre-kickoff checklist. Reads kickoff format, required
+    attendees, onboarding model, and milestone targets from the onboarding profile.
+    Pulls account context from CRM if available.
+  intended_tasks:
+    - Customer-facing agenda and internal prep checklist together (--prep, default)
+    - Customer-facing agenda only (--agenda)
+    - Internal prep checklist only (--checklist)
+  out_of_scope:
+    - Post-kickoff plan generation (use onboarding-plan --draft)
+    - Sending the agenda to the customer
+  invocation_cues:
+    - "kickoff prep"
+    - "prepare kickoff"
+    - "kickoff agenda"
+    - "kickoff checklist"
+  anti_cues:
+    - Post-kickoff planning (use onboarding-plan)
+    - Handoff from onboarding (use handoff-doc)
+  priority: standard
+  argument_hint: "[<account-name-or-ID>] [--prep | --agenda | --checklist]"
+  required_context:
+    - onboarding CLAUDE.md (kickoff format, required attendees, onboarding model)
+  consumes_files:
+    - onboarding/CLAUDE.md
+  produces_artifacts:
+    - Customer-facing kickoff agenda draft
+    - Internal pre-kickoff preparation checklist
+  tools_used:
+    - CRM connector (optional)
+  related_skills:
+    - onboarding.onboarding-plan
+    - onboarding.success-criteria
+  execution_profile:
+    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+    connector_behavior: CRM used for account context; falls back to manual input
+  constraints:
+    - Agenda is a draft only — no autonomous send to customer
+    - Attendee requirements sourced from profile
+  risk_level: low
+  approval_needed: false
+  success_criteria:
+    - Agenda calibrated to onboarding model and segment
+    - Internal checklist covers pre-call logistics, attendee confirmation, materials readiness
+  known_failure_modes:
+    - Kickoff format not configured — uses generic template
+    - CRM unavailable — account section requires manual input
+
+- id: onboarding.milestone-tracker
+  name: milestone-tracker
+  version: "1.0.0"
+  category: onboarding
+  owner: onboarding
+  summary: >
+    Track milestone progress across one account or the full onboarding portfolio.
+    Reads milestone framework, at-risk signals, and escalation thresholds from the
+    onboarding profile. Pulls current milestone status from PM connector (Asana,
+    Linear, Jira, or Monday) if configured.
+  intended_tasks:
+    - Current-state milestone view for one account (--status, default)
+    - Milestone health summary across all active onboarding accounts (--portfolio)
+    - At-risk and overdue milestones with recommended actions (--flag)
+  out_of_scope:
+    - Modifying milestones or task assignments in PM connector
+    - TtV performance analysis (use ttv-analysis)
+  invocation_cues:
+    - "milestone status"
+    - "milestone health"
+    - "track onboarding"
+    - "at-risk milestones"
+    - "overdue milestones"
+  anti_cues:
+    - Blocker diagnosis (use blocker-review)
+    - TtV performance analysis (use ttv-analysis)
+  priority: standard
+  argument_hint: "[<account-name-or-ID>] [--status | --portfolio | --flag]"
+  required_context:
+    - onboarding CLAUDE.md (milestone framework, at-risk signals, escalation thresholds)
+  consumes_files:
+    - onboarding/CLAUDE.md
+  produces_artifacts:
+    - Milestone health snapshot (--status or --portfolio)
+    - At-risk account list with recommended actions (--flag)
+  tools_used:
+    - PM connector: Asana, Linear, Jira, or Monday (optional)
+    - CRM connector (optional)
+  related_skills:
+    - onboarding.blocker-review
+    - onboarding.ttv-analysis
+    - onboarding.onboarding-plan
+  execution_profile:
+    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+    connector_behavior: PM connector primary; falls back to CSM input
+  constraints:
+    - Read-only — no PM connector writes
+    - At-risk thresholds sourced from profile
+  risk_level: low
+  approval_needed: false
+  success_criteria:
+    - Milestone completion status current per PM connector or CSM input
+    - At-risk accounts surfaced with threshold-based classification (--flag)
+  known_failure_modes:
+    - PM connector not configured — all milestone data requires manual input
+    - Milestone framework not defined in profile — tracker uses generic milestone names
+
+- id: onboarding.onboarding-plan
+  name: onboarding-plan
+  version: "1.0.0"
+  category: onboarding
+  owner: onboarding
+  summary: >
+    Generate, update, or summarize the customer-facing onboarding plan document —
+    the primary shared artifact between the CSM and customer team. Defines milestone
+    timeline, ownership per stage, first priorities, communication cadence, and
+    success criteria placeholder. Reads onboarding model, milestone framework,
+    duration targets, and plan format from the onboarding profile.
+  intended_tasks:
+    - Generate a complete plan after kickoff (--draft, default)
+    - Revise the plan after a milestone completes or scope changes (--update)
+    - Abbreviated current-status view for async stakeholder updates (--summary)
+  out_of_scope:
+    - Sending the plan to the customer
+    - Modifying PM connector tasks
+  invocation_cues:
+    - "onboarding plan"
+    - "draft plan"
+    - "update plan"
+    - "plan document"
+  anti_cues:
+    - Kickoff preparation (use kickoff-prep)
+    - Success criteria definition session (use success-criteria --define)
+  priority: standard
+  argument_hint: "[<account-name-or-ID>] [--draft | --update | --summary]"
+  required_context:
+    - onboarding CLAUDE.md (onboarding model, milestone framework, plan format)
+  consumes_files:
+    - onboarding/CLAUDE.md
+  produces_artifacts:
+    - Customer-facing onboarding plan document (--draft)
+    - Revised plan with change log (--update)
+    - Status summary for async updates (--summary)
+  tools_used:
+    - CRM connector (optional)
+    - PM connector (optional — milestone status for --update)
+  related_skills:
+    - onboarding.kickoff-prep
+    - onboarding.success-criteria
+    - onboarding.milestone-tracker
+  execution_profile:
+    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+    connector_behavior: CRM for account context; PM for milestone status on --update
+  constraints:
+    - Document is a draft — no autonomous delivery to customer
+  risk_level: low
+  approval_needed: false
+  success_criteria:
+    - Plan includes milestone timeline, ownership, communication cadence, and success criteria placeholder
+    - Revised plan tracks change reason and updated dates (--update)
+  known_failure_modes:
+    - Plan format not configured — uses generic template
+    - CRM unavailable — contract dates and stakeholders require manual input
+
+- id: onboarding.success-criteria
+  name: success-criteria
+  version: "1.0.0"
+  category: onboarding
+  owner: onboarding
+  summary: >
+    Define, refine, and track onboarding success criteria with the customer.
+    Produces a structured success criteria document — typically 3–5 measurable
+    outcomes the customer commits to achieving by end of onboarding. Reads
+    criteria format, review cadence, and methodology from the onboarding profile.
+  intended_tasks:
+    - Criteria definition session from scratch (--define, default)
+    - Adjust existing criteria after scope change (--refine)
+    - Progress assessment against confirmed criteria (--review)
+    - Customer-facing summary without internal notes (--export)
+  out_of_scope:
+    - Revenue or expansion metrics (use renewals or rev-ops skills)
+    - Full onboarding plan (use onboarding-plan)
+  invocation_cues:
+    - "success criteria"
+    - "define outcomes"
+    - "customer outcomes"
+    - "onboarding goals"
+  anti_cues:
+    - TtV performance analysis (use ttv-analysis)
+    - Graduation readiness (use handoff-doc --readiness)
+  priority: standard
+  argument_hint: "[<account-name-or-ID>] [--define | --refine | --review | --export]"
+  required_context:
+    - onboarding CLAUDE.md (criteria format, review cadence, methodology)
+  consumes_files:
+    - onboarding/CLAUDE.md
+  produces_artifacts:
+    - Structured success criteria document (--define)
+    - Refined criteria with change log (--refine)
+    - Progress assessment against criteria (--review)
+    - Customer-facing criteria summary (--export)
+  tools_used:
+    - CRM connector (optional)
+  related_skills:
+    - onboarding.onboarding-plan
+    - onboarding.handoff-doc
+  execution_profile:
+    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+    connector_behavior: CRM used for account context; falls back to manual input
+  constraints:
+    - Criteria are 3–5 measurable outcomes; more requires profile override
+    - Internal review notes excluded from --export output
+  risk_level: low
+  approval_needed: false
+  success_criteria:
+    - Criteria document contains 3–5 measurable customer-agreed outcomes
+    - Progress assessment maps each criterion to current evidence (--review)
+  known_failure_modes:
+    - Criteria format not configured — uses generic template
+    - Customer declines measurable outcomes — document flagged for CSM review
+
+- id: onboarding.ttv-analysis
+  name: ttv-analysis
+  version: "1.0.0"
+  category: onboarding
+  owner: onboarding
+  summary: >
+    Time-to-value analysis for onboarding performance — single account or portfolio.
+    Reads TtV targets by segment and milestone framework from the onboarding profile.
+    Analyzes actual milestone completion dates against targets to surface pace signals
+    and produce recommendations for accounts running behind. All TtV outputs are
+    labeled as internal planning targets — never customer commitments.
+  intended_tasks:
+    - Single-account TtV assessment (--account, default)
+    - Comparative TtV view across closed or active onboarding accounts (--portfolio)
+    - Common delay pattern identification with intervention recommendations (--patterns)
+  out_of_scope:
+    - Presenting TtV data to customers as commitments
+    - Modifying PM connector data
+  invocation_cues:
+    - "time to value"
+    - "TtV"
+    - "onboarding pace"
+    - "behind on onboarding"
+    - "delay patterns"
+  anti_cues:
+    - Real-time milestone status (use milestone-tracker)
+    - Blocker diagnosis (use blocker-review)
+  priority: standard
+  argument_hint: "[<account-name-or-ID>] [--account | --portfolio | --patterns]"
+  required_context:
+    - onboarding CLAUDE.md (TtV targets by segment, milestone framework)
+  consumes_files:
+    - onboarding/CLAUDE.md
+  produces_artifacts:
+    - TtV assessment with pace rating and variance (--account)
+    - Portfolio TtV comparison table (--portfolio)
+    - Delay pattern report with intervention recommendations (--patterns)
+  tools_used:
+    - PM connector (optional — actual milestone dates)
+    - CRM connector (optional — segment classification)
+  related_skills:
+    - onboarding.milestone-tracker
+    - onboarding.blocker-review
+  execution_profile:
+    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+    connector_behavior: PM connector for actual dates; falls back to CSM input
+  constraints:
+    - All TtV outputs labeled as internal planning targets — not customer commitments
+    - Targets sourced from profile; no hardcoded benchmarks
+  risk_level: low
+  approval_needed: false
+  success_criteria:
+    - Variance from TtV target computed and classified (on-track / at-risk / delayed)
+    - Delay pattern report identifies top 3 factors with recommended interventions (--patterns)
+  known_failure_modes:
+    - TtV targets not configured by segment — analysis uses generic single-tier target
+    - Milestone dates unavailable from PM — analysis relies on CSM recall
+
+  # ── RENEWALS DOMAIN ──────────────────────────────────────────────────────────
+
+  - id: renewals.churn-analysis
+    name: churn-analysis
+    version: "1.0"
+    category: renewals
+    owner: renewals-manager
+
+    summary: >
+      Root-cause analysis of closed churn or contraction events. Identifies
+      why an account churned, which signals were present and missed, and what
+      process or product changes would reduce recurrence.
+    intended_tasks:
+      - Post-churn retrospective for a single account
+      - Portfolio-level churn pattern scan across multiple lost accounts
+      - Quick signal audit to identify earliest missed warning
+    out_of_scope:
+      - Active at-risk accounts (use risk-assessment)
+      - Expansion or renewal forecasting
+      - Win-loss analysis for new logos (sales domain)
+
+    invocation_cues:
+      - "why did [account] churn"
+      - "analyze our churn"
+      - "post-mortem on lost account"
+      - "what signals did we miss"
+      - "churn retrospective"
+      - "--portfolio-scan"
+    anti_cues:
+      - Account is still active — route to risk-assessment
+      - Request is about renewal probability — route to renewal-forecast
+    priority: high
+    argument_hint: "[<account-name-or-ID>] [--deep | --quick | --portfolio-scan]"
+
+    required_context:
+      - Domain CLAUDE.md (reads at startup; routes to cold-start-interview if missing)
+      - Account name or ID, or list for portfolio scan
+      - CRM data or manual input: contract end date, ARR, churn reason, last meaningful contact
+      - Support history summary (optional but improves accuracy)
+    consumes_files:
+      - renewals/CLAUDE.md
+      - company-profile.md
+    produces_artifacts:
+      - Churn root-cause report (structured markdown)
+      - Signal timeline (earliest-to-latest warning indicators)
+      - Process gap recommendations
+
+    tools_used:
+      - CRM connector (Salesforce/HubSpot — optional; falls back to manual input)
+    related_skills:
+      - renewals.risk-assessment (pre-churn analog)
+      - renewals.renewal-forecast (portfolio context)
+      - renewals.cold-start-interview (domain config pre-flight)
+    execution_profile:
+      steps: 4-7
+      token_estimate: 800-1400
+      latency: moderate
+
+    constraints:
+      - Account content is confidential — no cross-account data sharing in outputs
+      - CRM data older than 7 days triggers freshness warning
+      - Portfolio scan limited to accounts explicitly provided; no CRM bulk export without authorization
+    risk_level: high
+    approval_needed: false
+
+    success_criteria:
+      - Root cause classified to at least one of five signal domains
+      - Earliest detectable signal identified with approximate date
+      - At least one actionable process or product recommendation produced
+    known_failure_modes:
+      - Insufficient account history → superficial root cause; prompt for more data
+      - Multiple simultaneous causes conflated → force priority ranking
+      - Portfolio scan without consistent data fields → flag gaps before analysis
+
+  - id: renewals.cold-start-interview
+    name: cold-start-interview
+    version: "1.0"
+    category: renewals
+    owner: renewals-manager
+
+    summary: >
+      Configuration skill (config_skill). Conducts the renewals domain onboarding
+      interview, populates renewals/CLAUDE.md, and optionally updates the shared
+      company-profile.md. All other renewals skills read CLAUDE.md at startup;
+      this skill creates and maintains that file.
+    intended_tasks:
+      - First-time renewals domain setup
+      - Updating specific CLAUDE.md sections without full redo
+      - Checking current configuration state
+      - Validating integration connector status
+    out_of_scope:
+      - Non-renewals domain configuration (each domain has its own cold-start-interview)
+      - Executing any renewals workflow (configure first, then run skills)
+
+    invocation_cues:
+      - "set up renewals"
+      - "configure the renewals domain"
+      - "run renewals onboarding"
+      - "update renewals config"
+      - "--check-integrations"
+      - "--redo-company-profile"
+    anti_cues:
+      - User wants to run a renewals workflow, not configure — check CLAUDE.md first
+    priority: critical
+    argument_hint: "[--full | --quick | --redo | --check-integrations | --redo-company-profile | --section <name>]"
+
+    required_context:
+      - None required at invocation — skill elicits all needed context via interview
+      - Checks for existing company-profile.md before asking company-level questions
+    consumes_files:
+      - renewals/CLAUDE.md (existing, if present)
+      - company-profile.md (shared, if present)
+    produces_artifacts:
+      - renewals/CLAUDE.md (created or updated)
+      - company-profile.md (created or updated, if --redo-company-profile or first run)
+
+    tools_used:
+      - CRM connector (Salesforce/HubSpot — optional; validates connection during --check-integrations)
+    related_skills:
+      - renewals.customize (targeted updates post-interview)
+      - All other renewals skills (consume CLAUDE.md produced here)
+    execution_profile:
+      steps: 8-12
+      token_estimate: 600-1200
+      latency: moderate
+
+    constraints:
+      - Must complete before any other renewals skill can execute reliably
+      - --redo overwrites CLAUDE.md; warn user before executing
+      - Company-profile.md changes affect all domains — confirm scope before writing
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - renewals/CLAUDE.md written with all 8 sections populated (no placeholder values)
+      - company-profile.md created or confirmed current
+      - User confirms configuration is accurate before skill exits
+    known_failure_modes:
+      - User skips questions → placeholder values persist → downstream skills route back here
+      - CRM connector unavailable → manual input path activated; flag in CLAUDE.md
+      - --section targets non-existent section → list valid section names and reprompt
+
+  - id: renewals.contract-review
+    name: contract-review
+    version: "1.0"
+    category: renewals
+    owner: renewals-manager
+
+    summary: >
+      Extracts and risk-flags key contract terms across eight categories. Applies
+      a 🟢/🟡/🔴 risk system; MFN clauses always trigger 🔴 + Legal escalation.
+      Must run before negotiation-prep and price-increase-prep for any account.
+    intended_tasks:
+      - Pre-renewal contract term extraction
+      - Risk flagging of non-standard terms
+      - Pre-negotiation brief preparation
+      - Price protection and MFN clause identification
+    out_of_scope:
+      - Legal advice or binding legal interpretation
+      - Contract redlining or drafting (Legal team function)
+      - New logo contract review (sales domain)
+
+    invocation_cues:
+      - "review the contract for [account]"
+      - "what are the renewal terms"
+      - "check for MFN clause"
+      - "price protection check"
+      - "--extract"
+      - "--flag"
+      - "--summary"
+    anti_cues:
+      - Request is for legal advice — route to Legal
+      - User wants negotiation strategy without contract terms — run this first
+    priority: high
+    argument_hint: "[<account-name-or-ID>] [--extract | --flag | --summary]"
+
+    required_context:
+      - Domain CLAUDE.md
+      - Contract document (PDF, text, or pasted content)
+      - Account name or ID
+    consumes_files:
+      - renewals/CLAUDE.md
+      - Contract document (provided by user)
+    produces_artifacts:
+      - Contract term extraction table (8 categories)
+      - Risk flag summary (🟢/🟡/🔴 by term)
+      - Escalation notice (if 🔴 findings present)
+
+    tools_used:
+      - File read (contract document)
+    related_skills:
+      - renewals.negotiation-prep (runs after this; requires output)
+      - renewals.price-increase-prep (runs after this for price-protected accounts)
+      - renewals.cold-start-interview (domain config pre-flight)
+    execution_profile:
+      steps: 3-5
+      token_estimate: 700-1200
+      latency: low-moderate
+
+    constraints:
+      - MFN clause detection → always 🔴 + immediate Legal + Head of CS routing (non-negotiable)
+      - Output is informational only — not legal advice
+      - Non-standard terms require Legal review before negotiation commitment
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - All 8 term categories extracted or flagged as not-present
+      - Every non-standard term carries a risk color and recommended action
+      - MFN escalation triggered if clause detected
+    known_failure_modes:
+      - Contract not provided → prompt for document; cannot proceed without it
+      - Ambiguous language → flag as 🟡 and recommend Legal clarification
+      - Incomplete contract (redacted sections) → note gaps in output
+
+  - id: renewals.customize
+    name: customize
+    version: "1.0"
+    category: renewals
+    owner: renewals-manager
+
+    summary: >
+      Configuration skill (config_skill). Makes targeted updates to renewals/CLAUDE.md
+      or company-profile.md without running the full cold-start-interview. Includes
+      a validate mode that runs consistency checks across configuration fields.
+    intended_tasks:
+      - Update a single CLAUDE.md field (e.g., discount floor, escalation SLA)
+      - Edit company-profile.md company-level fields
+      - Validate current configuration for internal consistency
+      - Show current configuration without editing
+    out_of_scope:
+      - First-time setup (use cold-start-interview)
+      - Executing renewals workflows (this is config-only)
+
+    invocation_cues:
+      - "update the renewals config"
+      - "change the discount floor"
+      - "update my escalation SLA"
+      - "show current config"
+      - "validate config"
+      - "--show"
+      - "--edit"
+      - "--validate"
+    anti_cues:
+      - No CLAUDE.md exists yet — route to cold-start-interview
+      - User wants to run a renewal workflow, not configure
+    priority: medium
+    argument_hint: "[--show | --edit <field> <value> | --validate]"
+
+    required_context:
+      - renewals/CLAUDE.md (must exist; routes to cold-start-interview if not found)
+      - company-profile.md (for company-level field edits)
+    consumes_files:
+      - renewals/CLAUDE.md
+      - company-profile.md
+    produces_artifacts:
+      - Updated renewals/CLAUDE.md (--edit mode)
+      - Updated company-profile.md (--edit company fields)
+      - Consistency report (--validate mode)
+
+    tools_used: []
+    related_skills:
+      - renewals.cold-start-interview (full setup; prerequisite)
+      - All renewals skills (consume updated CLAUDE.md)
+    execution_profile:
+      steps: 2-4
+      token_estimate: 300-600
+      latency: low
+
+    constraints:
+      - --validate checks four consistency rules: GRR/NRR inversion, discount floor vs anchor,
+        escalation SLA vs renewal window, strategic threshold vs deal size
+      - Edits to company-profile.md affect all domains — confirm scope before writing
+      - Cannot create CLAUDE.md if missing — routes to cold-start-interview
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - Target field updated with new value and confirmed by user
+      - --validate produces pass/fail for all four consistency checks with remediation hints
+      - --show renders current config in readable format
+    known_failure_modes:
+      - Field name not recognized → list valid field names and reprompt
+      - --validate finds GRR/NRR inversion → block edit until resolved; explain impact
+      - company-profile.md conflict with domain CLAUDE.md → surface both values and ask which wins
+
+  - id: renewals.executive-summary
+    name: executive-summary
+    version: "1.0"
+    category: renewals
+    owner: renewals-manager
+
+    summary: >
+      Produces a structured executive-facing account summary for renewal conversations
+      with senior stakeholders. Three modes: brief (1-page CRO/weekly), full (extended
+      with competitive context and exec engagement plan), board (board/investor format,
+      strips relationship detail). ARR figures always flagged as not-yet-a-revenue-commitment.
+    intended_tasks:
+      - Pre-call brief for CRO or VP CS on a renewal account
+      - Board or investor update on strategic accounts
+      - Full account narrative for QBR executive prep
+    out_of_scope:
+      - Detailed negotiation positioning (use negotiation-prep)
+      - Risk tier calculation (import from risk-assessment; never re-derive here)
+      - Customer-facing documents (this is internal)
+
+    invocation_cues:
+      - "executive summary for [account]"
+      - "CRO brief on [account]"
+      - "board update for [account]"
+      - "prep exec for renewal call"
+      - "--brief"
+      - "--full"
+      - "--board"
+    anti_cues:
+      - User wants negotiation tactics — route to negotiation-prep
+      - User wants risk tier calculation — run risk-assessment first
+    priority: high
+    argument_hint: "[<account-name-or-ID>] [--brief | --full | --board]"
+
+    required_context:
+      - Domain CLAUDE.md
+      - Risk tier from risk-assessment (must be pre-run; not re-derived here)
+      - Account ARR, contract end date, key stakeholders
+      - Recent engagement notes or CRM activity
+    consumes_files:
+      - renewals/CLAUDE.md
+      - risk-assessment output (risk tier import)
+    produces_artifacts:
+      - Executive summary document (mode-appropriate length and format)
+      - Bottom line (2 sentences)
+      - Commercial status table
+      - Relationship health summary
+      - Risk summary (imported tier)
+      - Recommended executive action with named ask (person/action/date)
+
+    tools_used:
+      - CRM connector (optional; falls back to manual input)
+    related_skills:
+      - renewals.risk-assessment (tier import — must run first)
+      - renewals.negotiation-prep (separate artifact; not combined here)
+      - renewals.cold-start-interview (domain config pre-flight)
+    execution_profile:
+      steps: 4-6
+      token_estimate: 700-1300
+      latency: moderate
+
+    constraints:
+      - All ARR figures flagged "[review — not yet a revenue commitment]"
+      - Risk tier imported from risk-assessment; never re-derived in this skill
+      - Executive asks must name specific person, specific action, specific date — no vague asks
+      - Board format requires explicit user authorization before generating
+      - Value claims require account-specific evidence — no generic benefit statements
+    risk_level: medium
+    approval_needed: true  # board mode only
+
+    success_criteria:
+      - Bottom line produced in ≤2 sentences
+      - Commercial status table accurate to provided data
+      - Named executive ask with person/action/date included
+      - ARR commitment language applied to all figures
+    known_failure_modes:
+      - risk-assessment not pre-run → block generation; prompt user to run it first
+      - Executive ask lacks specificity → force clarification before finalizing
+      - Board mode without authorization → refuse and explain requirement
+
+  - id: renewals.expansion-signal
+    name: expansion-signal
+    version: "1.0"
+    category: renewals
+    owner: renewals-manager
+
+    summary: >
+      Detects and qualifies expansion opportunities within the existing customer base.
+      Six signal types across three qualification tiers. AE routing is mandatory at
+      Qualified tier. Expansion never included in GRR; tracked separately.
+    intended_tasks:
+      - Identify expansion signals before or during renewal cycle
+      - Qualify expansion opportunity to Pipeline-ready or Qualified tier
+      - Catalog all detectable signal types for the configured pricing model
+    out_of_scope:
+      - New logo expansion (sales domain)
+      - GRR forecasting (expansion excluded by definition)
+      - Accounts with active churn risk — run risk-assessment first
+
+    invocation_cues:
+      - "find expansion opportunities"
+      - "expansion signals for [account]"
+      - "upsell audit"
+      - "growth signals"
+      - "--deep"
+      - "--quick"
+      - "--catalog"
+    anti_cues:
+      - Account has active churn risk — resolve risk before expansion pursuit
+      - User wants forecast with expansion in GRR — expansion excluded from GRR
+    priority: high
+    argument_hint: "[<account-name-or-ID>] [--deep | --quick | --catalog]"
+
+    required_context:
+      - Domain CLAUDE.md
+      - Account usage data or summary
+      - Pricing model configuration (seat, usage-based, or hybrid)
+      - Risk-assessment output if any churn risk signals present
+    consumes_files:
+      - renewals/CLAUDE.md
+      - risk-assessment output (if churn risk flagged)
+    produces_artifacts:
+      - Expansion signal report (detected signals with qualification tier)
+      - AE routing notice (if Qualified tier reached)
+      - ARR potential estimate (Low Confidence — flagged)
+
+    tools_used:
+      - CRM connector (optional; product usage data if available)
+    related_skills:
+      - renewals.risk-assessment (must check first if churn risk present)
+      - renewals.negotiation-prep (downstream if expansion pursued)
+      - renewals.renewal-forecast (NRR includes Qualified expansion in pipeline)
+      - renewals.cold-start-interview (domain config pre-flight)
+    execution_profile:
+      steps: 4-8
+      token_estimate: 600-1200
+      latency: moderate
+
+    constraints:
+      - Expansion ARR potential estimates flagged "[Low Confidence]" — not revenue commitments
+      - AE routing mandatory when opportunity reaches Qualified tier (non-negotiable)
+      - Renewal risk must be addressed before expansion pursuit; skill blocks if active Critical risk
+      - Expansion never in GRR calculation
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - All applicable signal types assessed for configured pricing model
+      - Each detected signal assigned to Early signal / Pipeline-ready / Qualified tier
+      - AE routing triggered if Qualified reached
+    known_failure_modes:
+      - Usage data unavailable → proceed with relationship signals only; flag data gap
+      - Active Critical risk → block expansion pursuit; redirect to risk-assessment
+      - Usage-based signals attempted on seat-only pricing model → skip gracefully
+
+  - id: renewals.negotiation-prep
+    name: negotiation-prep
+    version: "1.0"
+    category: renewals
+    owner: renewals-manager
+
+    summary: >
+      Prepares the renewals manager for a contract negotiation. Produces an internal
+      brief (anchor, floor, top objections) and optionally a clean customer-facing
+      export proposal. Requires contract-review output as input. Three locked numbers
+      (anchor, first concession, walk-away) must be confirmed before any negotiation call.
+    intended_tasks:
+      - Pre-call negotiation brief preparation
+      - Objection bank construction
+      - Multi-scenario offer modeling
+      - Clean customer-facing proposal export
+    out_of_scope:
+      - Contract review (must run contract-review first)
+      - Executive positioning (use executive-summary)
+      - Price increase communications (use price-increase-prep)
+
+    invocation_cues:
+      - "negotiation prep for [account]"
+      - "prep for renewal call"
+      - "objection handling for [account]"
+      - "build negotiation brief"
+      - "--brief"
+      - "--full"
+      - "--export"
+    anti_cues:
+      - Contract not yet reviewed — run contract-review first
+      - User wants executive summary — that is a separate artifact
+    priority: high
+    argument_hint: "[<account-name-or-ID>] [--brief | --full | --export]"
+
+    required_context:
+      - Domain CLAUDE.md
+      - contract-review output (required; blocks if not present)
+      - Account ARR, risk tier, key stakeholders
+      - Discount authority ceiling from CLAUDE.md
+    consumes_files:
+      - renewals/CLAUDE.md
+      - contract-review output
+      - risk-assessment output (for risk tier context)
+    produces_artifacts:
+      - Negotiation brief (internal: opening position, walk-away, authority ceiling, top objections, recommended opening, pre-call checklist)
+      - Customer-facing export proposal (--export mode only; fully suppresses internal content)
+
+    tools_used:
+      - CRM connector (optional)
+    related_skills:
+      - renewals.contract-review (prerequisite; must run first)
+      - renewals.risk-assessment (risk tier context)
+      - renewals.expansion-signal (if expansion in scope)
+      - renewals.executive-summary (separate artifact)
+      - renewals.cold-start-interview (domain config pre-flight)
+    execution_profile:
+      steps: 4-7
+      token_estimate: 700-1400
+      latency: moderate
+
+    constraints:
+      - Three locked numbers (anchor, first concession, walk-away) required before any call
+      - Walk-away floor is not an opening offer — never present it as one
+      - Non-standard contract terms → Legal review required before committing
+      - --export mode fully suppresses all internal positioning, floor, and authority data
+      - No fabricated competitor intelligence — only verified data included
+      - Discount authority check on every scenario — ceiling from CLAUDE.md
+      - contract-review must have run first; skill blocks without it
+    risk_level: high
+    approval_needed: false
+
+    success_criteria:
+      - Three locked numbers confirmed and documented in brief
+      - Top 3 objections with responses included
+      - --export produces clean proposal with zero internal data leakage
+      - Discount ceiling respected in all scenarios
+    known_failure_modes:
+      - contract-review output missing → block; require it before proceeding
+      - Competitor data requested without source → refuse fabrication; use verified data only
+      - Discount scenario exceeds authority ceiling → flag and require escalation path
+
+  - id: renewals.price-increase-prep
+    name: price-increase-prep
+    version: "1.0"
+    category: renewals
+    owner: renewals-manager
+
+    summary: >
+      Prepares a price increase plan for one account or a multi-account cohort.
+      Produces internal plan, optional customer-facing draft notice, and objection
+      handling prep. Approval must precede customer communication (non-negotiable).
+      Five increase types supported; at-risk accounts require risk-assessment first.
+    intended_tasks:
+      - Price increase plan for a single account
+      - Cohort rollout table for multi-account price increase
+      - Customer-facing notice draft (after plan approval)
+      - Objection handling prep for price increase conversations
+    out_of_scope:
+      - Negotiation strategy (use negotiation-prep)
+      - Contract review for price-protected terms (run contract-review first)
+      - Discount modeling (separate from price increase logic)
+
+    invocation_cues:
+      - "price increase for [account]"
+      - "plan a rate increase"
+      - "cohort price increase"
+      - "draft price increase notice"
+      - "--plan"
+      - "--draft"
+      - "--objections"
+      - "--cohort"
+    anti_cues:
+      - Account is at-risk — run risk-assessment first
+      - Price protection in contract — run contract-review first
+      - User wants to draft notice before plan is approved — block; plan first
+    priority: high
+    argument_hint: "[<account-name-or-ID> | --cohort] [--plan | --draft | --objections]"
+
+    required_context:
+      - Domain CLAUDE.md
+      - Account ARR, contract end date, current rate
+      - Risk-assessment output if at-risk signals present
+      - contract-review output if price-protected account
+      - Approval status (required before --draft)
+    consumes_files:
+      - renewals/CLAUDE.md
+      - risk-assessment output (if at-risk)
+      - contract-review output (if price-protected)
+    produces_artifacts:
+      - Price increase plan (internal; approval status, rationale, timing, objection prep)
+      - Customer-facing draft email (--draft mode; after plan approval only)
+      - Cohort rollout table (--cohort mode)
+
+    tools_used:
+      - CRM connector (optional; for cohort account list)
+    related_skills:
+      - renewals.contract-review (prerequisite for price-protected accounts)
+      - renewals.risk-assessment (prerequisite for at-risk accounts)
+      - renewals.negotiation-prep (downstream if increase triggers negotiation)
+      - renewals.cold-start-interview (domain config pre-flight)
+    execution_profile:
+      steps: 4-8
+      token_estimate: 600-1300
+      latency: moderate
+
+    constraints:
+      - Approval required before any customer communication — non-negotiable
+      - No value claims without account-specific evidence
+      - Inside 30 days of renewal = high-risk; consult Head of CS before proceeding
+      - Revenue commitment language on all ARR figures
+      - --draft only available after --plan confirms approval
+      - At-risk accounts: risk-assessment required first
+      - Price-protected accounts: contract-review required first
+    risk_level: high
+    approval_needed: true
+
+    success_criteria:
+      - Plan includes increase type classification, approval status, rationale, and timing recommendation
+      - --draft produces clean customer email with no internal pricing logic exposed
+      - Cohort table covers all accounts in scope with consistent fields
+    known_failure_modes:
+      - --draft requested without --plan approval → block; explain sequence
+      - At-risk account without risk-assessment → block; require pre-flight
+      - Inside 30 days of renewal → escalate to Head of CS; do not proceed autonomously
+
+  - id: renewals.renewal-forecast
+    name: renewal-forecast
+    version: "1.0"
+    category: renewals
+    owner: renewals-manager
+
+    summary: >
+      Builds a weighted renewal forecast across the full book or a scoped subset.
+      Applies five pipeline stage weights, produces three scenarios (best/likely/worst),
+      and calculates GRR and NRR correctly. All figures flagged as not-yet-a-revenue-commitment.
+      Expansion included in NRR only when Qualified + formal pipeline confirmed.
+    intended_tasks:
+      - Full book renewal forecast
+      - 90/60/30-day cohort forecast
+      - Segment-level forecast
+      - Single-account pipeline addition
+    out_of_scope:
+      - Individual account risk assessment (use risk-assessment)
+      - Expansion opportunity identification (use expansion-signal)
+      - Price increase planning (use price-increase-prep)
+
+    invocation_cues:
+      - "renewal forecast"
+      - "what's my renewal number"
+      - "forecast this quarter's renewals"
+      - "GRR forecast"
+      - "NRR forecast"
+      - "--full"
+      - "--cohort"
+      - "--segment"
+      - "--account"
+    anti_cues:
+      - User wants individual account risk — route to risk-assessment
+      - User wants expansion identification — route to expansion-signal
+    priority: high
+    argument_hint: "[--full | --cohort 90|60|30 | --segment <name> | --account <name>]"
+
+    required_context:
+      - Domain CLAUDE.md
+      - Account list with: ARR, pipeline stage, contract end date, risk tier
+      - CRM data or manual input
+      - Expansion pipeline data (for NRR; only if Qualified + formal pipeline)
+    consumes_files:
+      - renewals/CLAUDE.md
+      - risk-assessment outputs (risk tiers per account)
+      - expansion-signal outputs (Qualified expansion only for NRR)
+    produces_artifacts:
+      - Forecast table (per-account weighted ARR by stage)
+      - Three-scenario summary (best/likely/worst)
+      - GRR and NRR calculations with formula documentation
+      - At-risk accounts with named escalation owners
+
+    tools_used:
+      - CRM connector (optional; falls back to manual input)
+    related_skills:
+      - renewals.risk-assessment (risk tiers required input)
+      - renewals.expansion-signal (NRR expansion source)
+      - renewals.negotiation-prep (downstream for at-risk accounts)
+      - renewals.price-increase-prep (affects ARR inputs)
+      - renewals.executive-summary (consumes forecast output)
+      - renewals.cold-start-interview (domain config pre-flight)
+    execution_profile:
+      steps: 5-9
+      token_estimate: 800-1500
+      latency: moderate-high
+
+    constraints:
+      - All ARR figures flagged "[review — not yet a revenue commitment]"
+      - Expansion in NRR only when economic buyer qualified + formal pipeline confirmed
+      - Expansion never in GRR — formula strictly: (Starting ARR − Churn − Contraction) / Starting ARR
+      - Pipeline stage weights: Open 70%, Verbal commitment 90%, At risk 25%, Won 100%, Lost 0%
+      - At-risk accounts require named escalation owner in output
+      - CRM data older than 7 days triggers freshness warning
+      - No fabricated ARR figures
+    risk_level: high
+    approval_needed: false
+
+    success_criteria:
+      - GRR and NRR calculated with correct formulas and documented
+      - Three scenarios produced with stage-weight assumptions stated
+      - Every at-risk account has named escalation owner
+      - Revenue commitment language applied to all figures
+    known_failure_modes:
+      - Expansion included in GRR → block; flag formula error and correct
+      - CRM data stale → apply freshness warning; do not suppress data
+      - At-risk account missing escalation owner → require it before finalizing forecast
+
+  - id: renewals.risk-assessment
+    name: risk-assessment
+    version: "1.0"
+    category: renewals
+    owner: renewals-manager
+
+    summary: >
+      Assesses renewal risk for a single account or a portfolio batch. Scores across
+      five signal domains, assigns a risk tier (Critical/High/Medium/Low), and triggers
+      mandatory escalation protocols for Critical-tier accounts. Health scores are inputs,
+      not verdicts. Auto-escalate triggers are non-negotiable.
+    intended_tasks:
+      - Pre-renewal risk tier assignment for a single account
+      - Multi-account triage for pipeline review prep
+      - Quick 3-domain risk check for time-sensitive situations
+    out_of_scope:
+      - Post-churn retrospective (use churn-analysis)
+      - Expansion opportunity identification (use expansion-signal)
+      - Forecast construction (use renewal-forecast)
+
+    invocation_cues:
+      - "risk assessment for [account]"
+      - "how at-risk is [account]"
+      - "triage my renewal pipeline"
+      - "risk check before renewal call"
+      - "--deep"
+      - "--quick"
+      - "--triage"
+    anti_cues:
+      - Account has already churned — route to churn-analysis
+      - User wants expansion signals — route to expansion-signal
+    priority: critical
+    argument_hint: "[<account-name-or-ID>] [--deep | --quick | --triage]"
+
+    required_context:
+      - Domain CLAUDE.md
+      - Account name or ID (or list for --triage)
+      - Usage data, engagement history, support tickets, commercial signals
+      - CRM data or manual input
+    consumes_files:
+      - renewals/CLAUDE.md
+    produces_artifacts:
+      - Risk tier assignment (Critical/High/Medium/Low) with evidence
+      - Signal summary by domain (5 domains assessed)
+      - Escalation notice with owner, channel, and SLA (if Critical)
+      - Triage table (--triage mode; all accounts with tier and top signal)
+
+    tools_used:
+      - CRM connector (optional; falls back to manual input)
+    related_skills:
+      - renewals.churn-analysis (post-churn analog)
+      - renewals.expansion-signal (expansion only after risk resolved)
+      - renewals.renewal-forecast (tier imported into forecast)
+      - renewals.negotiation-prep (risk context required)
+      - renewals.executive-summary (tier imported; not re-derived)
+      - renewals.cold-start-interview (domain config pre-flight)
+    execution_profile:
+      steps: 4-8
+      token_estimate: 700-1400
+      latency: moderate
+
+    constraints:
+      - Health scores are inputs not verdicts — tier derives from red flag count and auto-escalate triggers
+      - Auto-escalate triggers are non-negotiable: non-renewal notice OR ≥2 auto-escalate signals OR exec sponsor departed + competitor confirmed → always Critical
+      - Escalation always names owner, channel, and SLA — no anonymous escalations
+      - Discount authority check on every save offer scenario
+      - Account content confidential — no cross-account data sharing
+      - CRM data older than 7 days triggers freshness warning
+    risk_level: high
+    approval_needed: false
+
+    success_criteria:
+      - Tier assigned with supporting evidence from signal domains
+      - Auto-escalate triggers checked and applied correctly
+      - Critical-tier accounts produce named escalation notice before skill exits
+    known_failure_modes:
+      - Health score treated as tier without red flag count → correct; re-derive from signals
+      - Auto-escalate trigger present but tier set to High → block; force Critical
+      - Escalation owner not named → require it; do not produce anonymous escalation
+      - CRM data stale → apply freshness warning; proceed with caveat
+
+
+# ============================================================
+# DOMAIN: rev-ops (33 skills)
+# ============================================================
+
+  - id: rev-ops.annual-planning-workflow
+    name: annual-planning-workflow
+    version: "1.0.0"
+    domain: rev-ops
+    category: planning
+    owner: rev-ops
+    summary: >
+      Orchestrates the 7-phase annual GTM planning cycle — from scope setup through
+      board ratification. Coordinates scenario-modeling, quota-sensitivity-analysis,
+      unit-of-growth-calculator, territory-optimization, and revenue-brief-generation
+      as sub-agents. Each phase has a named human approval gate; the skill never
+      advances past a gate without explicit user confirmation.
+    intended_tasks:
+      - Orchestrate the full annual planning cycle end-to-end
+      - Coordinate sub-agent calls (scenario, quota, UoG, territory, revenue-brief)
+      - Present phase deliverables and gate approval prompts to RevOps lead
+      - Route midcycle replans when drift triggers fire
+    out_of_scope:
+      - Executing individual sub-agent tasks directly (delegates to sub-skills)
+      - Issuing hiring decisions or comp changes (output is proposals only)
+      - CRM edits of any kind
+
+    invocation_cues:
+      - "annual planning"
+      - "GTM planning cycle"
+      - "run the planning process"
+      - "fiscal year planning"
+      - "start planning workflow"
+    anti_cues:
+      - Single-phase request (quota only, territory only) — route to the sub-skill directly
+      - Mid-year replan — use mid-year-replan-triggering instead
+    priority: high
+    argument_hint: "Optionally specify fiscal year or phase to resume from"
+
+    required_context:
+      - Prior-year ARR actuals and growth rates
+      - Current pipeline snapshot (for scenario inputs)
+      - Headcount and pod structure for UoG calculation
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Phase-gated planning memo per phase (Markdown)
+      - Final annual plan document pending board ratification
+
+    tools_used:
+      - scenario-modeling (sub-agent)
+      - quota-sensitivity-analysis (sub-agent)
+      - unit-of-growth-calculator (sub-agent)
+      - territory-optimization (sub-agent)
+      - revenue-brief-generation (sub-agent)
+    related_skills:
+      - rev-ops.mid-year-replan-triggering
+      - rev-ops.scenario-modeling
+      - rev-ops.quota-sensitivity-analysis
+      - rev-ops.unit-of-growth-calculator
+      - rev-ops.territory-optimization
+    execution_profile:
+      complexity: T3
+      typical_turns: 15-25
+      tool_calls_per_run: 10-20
+
+    constraints:
+      - G1: all ARR/revenue figures flagged [review — not yet a revenue commitment]
+      - G2: capacity outputs are structural signals, not hiring mandates
+      - G3: comp model proposals require HR + Finance dual review
+      - G4: territory outputs require RevOps lead + Sales lead dual confirmation
+      - Every phase gate requires explicit human approval before advancing
+    risk_level: high
+    approval_needed: true
+
+    success_criteria:
+      - All 7 phases completed with documented human approval at each gate
+      - Sub-agent outputs incorporated into phase deliverables
+      - Final plan document carries board ratification status
+    known_failure_modes:
+      - Missing prior-year actuals → scenario inputs unreliable; flag and request
+      - User skips gate approval → skill must re-prompt, not advance silently
+      - Sub-agent failure mid-cycle → surface error, hold phase, do not proceed
+
+  - id: rev-ops.change-communication-packaging
+    name: change-communication-packaging
+    version: "1.0.0"
+    domain: rev-ops
+    category: communication
+    owner: rev-ops
+    summary: >
+      Packages GTM change decisions (territory, quota, comp, process) into
+      structured stakeholder communications. Produces audience-specific messaging
+      (field, management, finance) with rationale, timeline, and FAQ. All output
+      is [DRAFT] until RevOps lead approves; skill never distributes directly.
+    intended_tasks:
+      - Draft stakeholder communications for territory or quota changes
+      - Package comp plan updates for field and management audiences
+      - Produce FAQ and objection-handling supplements for GTM changes
+      - Format change rationale for board or exec consumption
+    out_of_scope:
+      - Sending or distributing communications (output only)
+      - Making the underlying change decisions
+      - CRM or system updates
+
+    invocation_cues:
+      - "communicate the change"
+      - "package the territory change"
+      - "draft the quota announcement"
+      - "write the comp rollout comms"
+      - "change communication"
+    anti_cues:
+      - Requests to actually distribute or send — skill produces drafts only
+      - Requests to make the change decision — route to planning sub-skills
+    priority: medium
+    argument_hint: "Specify change type (territory/quota/comp/process) and audience"
+
+    required_context:
+      - Change decision content and rationale
+      - Target audience list (field / management / finance / exec)
+      - Timeline for rollout
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Audience-specific communication drafts (Markdown, [DRAFT] status)
+      - FAQ document supplement
+
+    tools_used: []
+    related_skills:
+      - rev-ops.territory-optimization
+      - rev-ops.quota-sensitivity-analysis
+      - rev-ops.annual-planning-workflow
+    execution_profile:
+      complexity: T2
+      typical_turns: 3-6
+      tool_calls_per_run: 1-2
+
+    constraints:
+      - G1: all ARR/revenue figures flagged [review — not yet a revenue commitment]
+      - All output is [DRAFT] until RevOps lead explicitly approves
+      - Skill never distributes or posts communications autonomously
+    risk_level: medium
+    approval_needed: true
+
+    success_criteria:
+      - Audience-appropriate messaging produced for all specified audiences
+      - Rationale and FAQ sections present
+      - [DRAFT] status signal on all outputs
+    known_failure_modes:
+      - Missing change rationale → messaging lacks credibility; request before drafting
+      - Audience list not specified → ask before producing undifferentiated copy
+
+  - id: rev-ops.closed-won-to-cs-capacity-modeling
+    name: closed-won-to-cs-capacity-modeling
+    version: "1.0.0"
+    domain: rev-ops
+    category: capacity-planning
+    owner: rev-ops
+    summary: >
+      Models CSM headroom consumption from closed-won deals. Maps new ARR to
+      CSM pod capacity using UoG pod structure; computes headroom signals
+      (<0% over capacity, 0-10% near ceiling, 10-25% limited, >25% healthy).
+      Output is structural signal only — not a hiring mandate.
+    intended_tasks:
+      - Calculate CSM capacity impact of closed-won deal batch
+      - Compute headroom signal by pod or segment
+      - Flag near-ceiling or over-capacity conditions for leadership review
+      - Feed capacity data into annual-planning-workflow Phase 3
+    out_of_scope:
+      - Issuing hiring decisions or headcount requests (G2)
+      - Territory or quota modeling (separate sub-skills)
+      - CRM edits
+
+    invocation_cues:
+      - "capacity impact of new deals"
+      - "CSM headroom after close"
+      - "closed-won capacity modeling"
+      - "how much capacity do these deals consume"
+    anti_cues:
+      - Requests for hiring recommendations — output is signals, not mandates
+      - Territory fairness analysis — use territory-optimization
+    priority: medium
+    argument_hint: "Provide closed-won deal list with ARR; optionally specify pod structure"
+
+    required_context:
+      - Closed-won deal list with ARR values
+      - Current CSM pod structure and headroom baseline (from UoG)
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Headroom signal report by pod/segment (Markdown)
+      - Capacity summary table
+
+    tools_used:
+      - unit-of-growth-calculator (reference)
+    related_skills:
+      - rev-ops.unit-of-growth-calculator
+      - rev-ops.annual-planning-workflow
+      - rev-ops.mid-year-replan-triggering
+    execution_profile:
+      complexity: T2
+      typical_turns: 3-5
+      tool_calls_per_run: 1-3
+
+    constraints:
+      - G2: capacity outputs are structural signals, not hiring mandates
+      - G1: ARR figures flagged [review — not yet a revenue commitment]
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - Headroom signal produced for each pod/segment
+      - Over-capacity or near-ceiling conditions explicitly flagged
+      - Output clearly labeled as structural signal, not mandate
+    known_failure_modes:
+      - Missing UoG pod baseline → headroom calculation unreliable; request baseline first
+      - ARR values not provided → cannot compute consumption; prompt for deal data
+
+  - id: rev-ops.cold-start-interview
+    name: cold-start-interview
+    version: "1.0.0"
+    domain: rev-ops
+    category: config
+    owner: rev-ops
+    summary: >
+      Meta-skill. Conducts structured intake interview to populate the rev-ops
+      domain CLAUDE.md profile when it is absent or contains unfilled placeholders.
+      All domain peers check for this profile at startup and route here when missing.
+      Produces the completed CLAUDE.md; does not execute any domain task itself.
+    intended_tasks:
+      - Collect rev-ops domain configuration via structured interview
+      - Populate CLAUDE.md with: ARR baseline, pipeline structure, CRM source of truth,
+        forecast cadence, comp plan details, territory structure, data authority hierarchy
+      - Validate completeness before writing profile
+    out_of_scope:
+      - Executing rev-ops domain tasks (routes to domain skill after profile is written)
+      - Making strategic decisions about the configuration values
+
+    invocation_cues:
+      - Rev-ops CLAUDE.md is absent
+      - Rev-ops CLAUDE.md contains placeholder values
+      - "set up rev-ops"
+      - "configure rev-ops profile"
+      - "run the rev-ops intake"
+    anti_cues:
+      - Profile already complete — proceed directly to the requested task
+    priority: high
+    argument_hint: "No arguments; drives interview interactively"
+
+    required_context: []
+    consumes_files: []
+    produces_artifacts:
+      - Completed rev-ops domain CLAUDE.md
+
+    tools_used: []
+    related_skills:
+      - rev-ops.customize (peer config skill)
+      - All rev-ops domain skills (consumers of the profile)
+    execution_profile:
+      complexity: T1
+      typical_turns: 8-15
+      tool_calls_per_run: 1
+
+    constraints:
+      - Must not execute domain tasks before profile is complete
+      - Must validate all required fields before writing CLAUDE.md
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - All required profile fields populated with non-placeholder values
+      - CLAUDE.md written and validated
+      - User confirmed profile before write
+    known_failure_modes:
+      - User provides ambiguous values → ask clarifying question before writing
+      - Partial completion → save partial draft, flag remaining gaps, do not write incomplete profile
+
+  - id: rev-ops.crm-hygiene-audit
+    name: crm-hygiene-audit
+    version: "1.0.0"
+    domain: rev-ops
+    category: data-quality
+    owner: rev-ops
+    summary: >
+      Audits CRM data quality across four hygiene dimensions: field completion,
+      stage integrity, duplicate presence, and data decay. Produces a scored
+      hygiene report with prioritized remediation recommendations. All findings
+      are read-only proposals; skill never edits CRM records autonomously (G9).
+    intended_tasks:
+      - Score overall CRM hygiene across four dimensions
+      - Identify field completion gaps by stage gate
+      - Flag stage-skipping, backward movement, or stale stage anomalies
+      - Surface duplicate account/contact/opportunity candidates
+      - Report data decay signals for accounts not updated within decay threshold
+    out_of_scope:
+      - Executing CRM edits (G9 — output is proposals only)
+      - Deep duplicate merging (use duplicate-detection for confidence scoring)
+      - Forecast variance analysis (use forecast-variance-analysis)
+
+    invocation_cues:
+      - "CRM audit"
+      - "hygiene audit"
+      - "data quality review"
+      - "clean up the CRM"
+      - "how healthy is our CRM data"
+    anti_cues:
+      - Requests to actually merge or edit records — output is findings only
+      - Forecast accuracy analysis — route to forecast-variance-analysis
+    priority: medium
+    argument_hint: "Optionally scope to segment, team, or date range"
+
+    required_context:
+      - CRM data access (HubSpot preferred per data authority hierarchy)
+      - Stage definitions and field completion requirements per stage
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Hygiene scorecard with dimension scores (Markdown)
+      - Prioritized remediation recommendation list
+
+    tools_used:
+      - field-completion-monitoring (sub-reference)
+      - stage-integrity-audit (sub-reference)
+      - duplicate-detection (sub-reference)
+      - data-decay-tracking (sub-reference)
+    related_skills:
+      - rev-ops.field-completion-monitoring
+      - rev-ops.stage-integrity-audit
+      - rev-ops.duplicate-detection
+      - rev-ops.data-decay-tracking
+    execution_profile:
+      complexity: T2
+      typical_turns: 4-8
+      tool_calls_per_run: 3-6
+
+    constraints:
+      - G6: all data reads must surface data-as-of timestamp
+      - G9: no autonomous CRM edits; all findings are proposals
+      - G7: escalation path present for critical hygiene failures
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - All four hygiene dimensions scored
+      - Critical gaps explicitly flagged with escalation path
+      - data-as-of timestamp present on all data reads
+    known_failure_modes:
+      - CRM connector unavailable → surface failure; do not proceed on stale cache
+      - Stage definitions not configured → cannot score stage integrity; request definitions
+
+  - id: rev-ops.cross-system-reconciliation
+    name: cross-system-reconciliation
+    version: "1.0.0"
+    domain: rev-ops
+    category: data-quality
+    owner: rev-ops
+    summary: >
+      Reconciles ARR, account, and pipeline data across CRM, Finance sheets, CS
+      platform, and billing systems using the data authority hierarchy
+      (HubSpot > Finance Sheets > CS platform > Slack/Linear). Surfaces
+      discrepancies with delta magnitude and recommended resolution path.
+      Never overwrites source systems autonomously.
+    intended_tasks:
+      - Reconcile ARR figures across CRM and Finance sheets
+      - Surface account record discrepancies between CRM and CS platform
+      - Identify pipeline count or stage mismatches across systems
+      - Flag which system holds authoritative value per data authority hierarchy
+    out_of_scope:
+      - Overwriting source systems (G9)
+      - Forecasting or pipeline coverage analysis (separate skills)
+      - Territory or quota data (use planning sub-skills)
+
+    invocation_cues:
+      - "reconcile the data"
+      - "CRM vs Finance discrepancy"
+      - "cross-system reconciliation"
+      - "why don't the numbers match"
+      - "systems out of sync"
+    anti_cues:
+      - Single-system data quality — use crm-hygiene-audit
+      - Forecast analysis — use forecast-variance-analysis
+    priority: medium
+    argument_hint: "Specify systems to reconcile and data domain (ARR/accounts/pipeline)"
+
+    required_context:
+      - Access to at least two of: CRM, Finance sheets, CS platform, billing
+      - Data authority hierarchy configuration (from domain CLAUDE.md)
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Discrepancy report with delta magnitudes and authority resolution (Markdown)
+
+    tools_used: []
+    related_skills:
+      - rev-ops.crm-hygiene-audit
+      - rev-ops.data-decay-tracking
+      - rev-ops.field-completion-monitoring
+    execution_profile:
+      complexity: T2
+      typical_turns: 4-7
+      tool_calls_per_run: 2-5
+
+    constraints:
+      - G6: data-as-of timestamp on all reads
+      - G9: no autonomous system writes; discrepancies are flagged, not corrected
+      - Data authority hierarchy must be applied; HubSpot wins on conflict unless Finance has override
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - Discrepancies identified with delta magnitude and authority source named
+      - Resolution path recommended for each discrepancy
+      - data-as-of timestamps present on all data pulls
+    known_failure_modes:
+      - Connector to one system unavailable → partial reconciliation; label what was skipped
+      - Authority hierarchy not configured → request configuration before proceeding
+
+  - id: rev-ops.data-decay-tracking
+    name: data-decay-tracking
+    version: "1.0.0"
+    domain: rev-ops
+    category: data-quality
+    owner: rev-ops
+    summary: >
+      Tracks staleness of account, contact, and opportunity records against
+      configurable decay thresholds. Produces a decay report ranked by staleness
+      severity. Integrates into crm-hygiene-audit as a sub-dimension. All output
+      is read-only; no autonomous CRM writes (G9).
+    intended_tasks:
+      - Identify accounts or contacts not updated within decay threshold
+      - Rank records by staleness severity
+      - Surface decay patterns by team, segment, or owner
+      - Feed decay dimension into crm-hygiene-audit composite score
+    out_of_scope:
+      - Updating or correcting stale records (G9)
+      - Full CRM audit (use crm-hygiene-audit for composite view)
+
+    invocation_cues:
+      - "stale records"
+      - "data decay"
+      - "accounts not updated"
+      - "contact decay report"
+      - "what data is going stale"
+    anti_cues:
+      - Requests to update or refresh records — output is report only
+      - Full hygiene audit — use crm-hygiene-audit
+    priority: low
+    argument_hint: "Optionally specify decay threshold (days) and record type (account/contact/opportunity)"
+
+    required_context:
+      - CRM data access
+      - Decay threshold configuration (from domain CLAUDE.md or argument)
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Decay report ranked by staleness (Markdown)
+
+    tools_used: []
+    related_skills:
+      - rev-ops.crm-hygiene-audit
+      - rev-ops.cross-system-reconciliation
+      - rev-ops.field-completion-monitoring
+    execution_profile:
+      complexity: T1
+      typical_turns: 2-4
+      tool_calls_per_run: 1-2
+
+    constraints:
+      - G6: data-as-of timestamp on all reads
+      - G9: no autonomous CRM edits
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - Decay report produced ranked by staleness
+      - Threshold applied correctly; records within threshold excluded
+      - data-as-of timestamp present
+    known_failure_modes:
+      - Decay threshold not configured → use default (90 days) and disclose assumption
+      - CRM connector unavailable → surface failure immediately
+
+  - id: rev-ops.deal-classification
+    name: deal-classification
+    version: "1.0.0"
+    domain: rev-ops
+    category: forecasting
+    owner: rev-ops
+    summary: >
+      Classifies pipeline opportunities as Commit, Best Case, or Pipeline using
+      independent CRM-signal scoring across five dimensions (activity recency,
+      stakeholder coverage, stage-age, competitive signal, rep forecast accuracy).
+      Classification is an analytical input (G5); it never overrides rep judgment
+      or edits CRM records (G9).
+    intended_tasks:
+      - Score pipeline deals across five classification dimensions
+      - Assign Commit / Best Case / Pipeline category per deal
+      - Produce classification summary for forecast roll-up
+      - Flag deals where rep classification and signal-based classification diverge
+    out_of_scope:
+      - Overriding rep forecast category in CRM (G5 + G9)
+      - Deal health scoring (use deal-health-scoring for composite health)
+      - Approval routing (use deal-desk-workflow-management)
+
+    invocation_cues:
+      - "classify the pipeline"
+      - "commit vs best case vs pipeline"
+      - "deal classification"
+      - "forecast category scoring"
+      - "which deals are commits"
+    anti_cues:
+      - Deal health scoring (composite 0-100) — use deal-health-scoring
+      - Approval routing for non-standard terms — use deal-desk-workflow-management
+    priority: high
+    argument_hint: "Optionally scope to team, segment, or quarter"
+
+    required_context:
+      - Pipeline opportunity data from CRM (HubSpot preferred)
+      - Rep forecast category entries
+      - Historical win rate by segment (for stage-age benchmarks)
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Deal classification table with dimension scores and category (Markdown)
+      - Divergence flags where rep vs. signal classification conflict
+
+    tools_used: []
+    related_skills:
+      - rev-ops.deal-health-scoring
+      - rev-ops.forecast-variance-analysis
+      - rev-ops.pipeline-coverage-analysis
+      - rev-ops.revenue-brief-generation
+    execution_profile:
+      complexity: T2
+      typical_turns: 3-6
+      tool_calls_per_run: 1-3
+
+    constraints:
+      - G1: all ARR figures flagged [review — not yet a revenue commitment]
+      - G5: classification is analytical input only; does not override rep judgment
+      - G6: data-as-of timestamp on all CRM reads
+      - G9: no CRM edits; classification output is read-only
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - All pipeline deals scored across five dimensions
+      - Commit/Best Case/Pipeline category assigned per deal
+      - Rep vs. signal divergences explicitly flagged
+      - data-as-of timestamp present
+    known_failure_modes:
+      - Missing rep forecast entries → classify from signals only; flag missing rep input
+      - Historical win rate unavailable → note assumption used for stage-age benchmark
+
+  - id: rev-ops.deal-desk-workflow-management
+    name: deal-desk-workflow-management
+    version: "1.0.0"
+    domain: rev-ops
+    category: deal-management
+    owner: rev-ops
+    summary: >
+      Routes non-standard deal elements through the deal desk approval workflow.
+      Assembles context brief from CRM and sub-agent signals, applies 5-stage
+      approval routing (standard/elevated/executive/legal/finance), and enforces
+      SLAs (24h standard, 4h final-2-weeks). Coordinates discount-threshold-monitoring,
+      non-standard-terms-detection, revenue-leakage-scanning, and early-churn-downgrade-signal-detection.
+    intended_tasks:
+      - Identify non-standard deal elements requiring deal desk review
+      - Assemble deal context brief for approvers
+      - Route deal to correct approval tier based on discount, terms, and risk signals
+      - Track SLA adherence and escalate on breach
+      - Create Linear issues for approvals requiring written record
+    out_of_scope:
+      - Approving deals autonomously
+      - CRM record edits (G9)
+      - Final pricing decisions
+
+    invocation_cues:
+      - "deal desk"
+      - "approval routing"
+      - "non-standard deal"
+      - "deal needs approval"
+      - "route this deal for approval"
+    anti_cues:
+      - Standard deals with no non-standard elements — no deal desk needed
+      - Post-close outcome tracking — use deal-to-outcome-tracing
+    priority: high
+    argument_hint: "Provide opportunity ID or deal details including ARR, discount, and non-standard terms"
+
+    required_context:
+      - Opportunity record from CRM
+      - Discount thresholds and approval tier configuration
+      - SLA configuration
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Deal context brief (Markdown)
+      - Approval routing recommendation with tier and rationale
+      - Linear issue for written approval record (Write-tier)
+
+    tools_used:
+      - discount-threshold-monitoring (sub-agent)
+      - non-standard-terms-detection (sub-agent)
+      - revenue-leakage-scanning (sub-agent)
+      - early-churn-downgrade-signal-detection (sub-agent)
+      - Linear (issue creation)
+    related_skills:
+      - rev-ops.discount-threshold-monitoring
+      - rev-ops.non-standard-terms-detection
+      - rev-ops.revenue-leakage-scanning
+      - rev-ops.sales-cs-handoff-quality-scoring
+    execution_profile:
+      complexity: T2
+      typical_turns: 5-10
+      tool_calls_per_run: 4-8
+
+    constraints:
+      - G1: all ARR/revenue figures flagged [review — not yet a revenue commitment]
+      - Never approves deals autonomously
+      - G9: no CRM edits
+      - SLA breach triggers escalation; skill does not silently let SLAs slip
+    risk_level: high
+    approval_needed: true
+
+    success_criteria:
+      - Correct approval tier identified and routed
+      - Context brief assembled with all relevant sub-agent signals
+      - Linear issue created for approval record
+      - SLA tracked and breach escalation fired if needed
+    known_failure_modes:
+      - CRM opportunity data incomplete → assemble what is available; flag gaps
+      - Approver non-responsive within SLA → escalate per configured path
+      - Sub-agent failure → surface failure; do not route without complete signals
+
+  - id: rev-ops.deal-health-scoring
+    name: deal-health-scoring
+    version: "1.0.0"
+    domain: rev-ops
+    category: pipeline-management
+    owner: rev-ops
+    summary: >
+      Produces a 0-100 composite health score for pipeline deals across five
+      weighted dimensions: activity recency (25%), stakeholder coverage (25%),
+      stage-age ratio (20%), competitive signal (15%), rep forecast accuracy (15%).
+      Scores below 50 trigger next-best-action recommendation. Output is analytical
+      input only (G5); never edits CRM (G9).
+    intended_tasks:
+      - Score individual deals or full pipeline on five health dimensions
+      - Produce composite 0-100 health score per opportunity
+      - Flag deals below 50 for next-best-action routing
+      - Surface dimension-level detail for deal diagnosis
+    out_of_scope:
+      - Deal classification (Commit/Best Case/Pipeline) — use deal-classification
+      - Approval routing — use deal-desk-workflow-management
+      - CRM edits (G9)
+
+    invocation_cues:
+      - "deal health"
+      - "health score"
+      - "how healthy is this deal"
+      - "deal scoring"
+      - "at-risk deals"
+    anti_cues:
+      - Forecast category classification — use deal-classification
+      - Approval routing — use deal-desk-workflow-management
+    priority: high
+    argument_hint: "Provide opportunity ID(s) or scope (team/segment/quarter)"
+
+    required_context:
+      - Opportunity data from CRM (activity log, stage, stakeholder contacts)
+      - Rep forecast category entries
+      - Segment stage-age benchmarks
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Deal health scorecard with dimension scores and composite (Markdown)
+      - Sub-50 deal list with next-best-action routing flag
+
+    tools_used:
+      - next-best-action-recommendation (downstream for sub-50 deals)
+    related_skills:
+      - rev-ops.deal-classification
+      - rev-ops.next-best-action-recommendation
+      - rev-ops.pipeline-velocity-tracking
+      - rev-ops.revenue-brief-generation
+    execution_profile:
+      complexity: T2
+      typical_turns: 3-6
+      tool_calls_per_run: 2-4
+
+    constraints:
+      - G5: output is analytical input; never overrides rep judgment
+      - G6: data-as-of timestamp on all CRM reads
+      - G7: escalation path present when sub-50 deals identified
+      - G9: no CRM edits
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - All five dimensions scored for each deal
+      - Composite score computed with correct weights
+      - Sub-50 deals flagged and routed to next-best-action
+      - data-as-of timestamp present
+    known_failure_modes:
+      - Missing activity log → activity recency dimension scores 0; disclose assumption
+      - Competitive signal absent → dimension scores neutral; disclose
+      - Rep forecast not entered → rep accuracy dimension excluded; flag
+
+  - id: rev-ops.deal-to-outcome-tracing
+    name: deal-to-outcome-tracing
+    version: "1.0.0"
+    domain: rev-ops
+    category: outcome-tracking
+    owner: rev-ops
+    summary: >
+      Traces closed-won deals through post-close outcome milestones using the
+      L0-L3 rubric (L0 no measurement, L1 tracking started, L2 milestone hit,
+      L3 outcome validated). Runs at-close completeness checks (OCV entry,
+      trigger match, measurement source) and milestone assessments at 30/60/90/180d.
+      Coordinates with outcome-to-value-tracking for systemic pattern analysis.
+    intended_tasks:
+      - Run at-close completeness check for closed-won deals
+      - Assess outcome milestone achievement at 30/60/90/180d checkpoints
+      - Score each account-OCV pair on L0-L3 rubric
+      - Flag systemic L0 persistence when >40% of accounts show no measurement
+      - Structural fallback when OCV entry is absent
+    out_of_scope:
+      - Building OCV entries (use outcome-statement-builder)
+      - Full value tracking pattern analysis (use outcome-to-value-tracking)
+      - CRM edits (G9)
+
+    invocation_cues:
+      - "outcome tracing"
+      - "deal to outcome"
+      - "post-close milestone check"
+      - "how are outcomes tracking"
+      - "L0-L3 rubric assessment"
+    anti_cues:
+      - Building outcome statements — use outcome-statement-builder
+      - System-wide pattern analysis — use outcome-to-value-tracking
+    priority: medium
+    argument_hint: "Provide account ID(s) or closed-won cohort and checkpoint interval"
+
+    required_context:
+      - Closed-won deal data with OCV entries (where available)
+      - Milestone definitions per checkpoint interval
+      - CS platform activity data
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - At-close completeness check report (Markdown)
+      - L0-L3 milestone assessment per account-OCV pair
+      - Systemic pattern flags when L0 persistence >40%
+
+    tools_used:
+      - outcome-to-value-tracking (coordination)
+    related_skills:
+      - rev-ops.outcome-to-value-tracking
+      - rev-ops.outcome-statement-builder
+      - rev-ops.sales-cs-handoff-quality-scoring
+    execution_profile:
+      complexity: T2
+      typical_turns: 4-8
+      tool_calls_per_run: 2-5
+
+    constraints:
+      - G5: assessment is analytical input, not performance ruling
+      - G6: data-as-of timestamp on all reads
+      - G8: only Ratified OCV entries used; provisional OCV flagged
+      - Structural fallback when OCV absent; Low confidence on inferred outcomes
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - At-close completeness check completed for all provided deals
+      - L0-L3 rubric applied at each checkpoint
+      - Systemic L0 pattern flagged when threshold exceeded
+      - data-as-of timestamp present; OCV source declared
+    known_failure_modes:
+      - OCV entry absent → fallback to structural assessment; flag [Confidence: Low]
+      - Milestone data unavailable at checkpoint → flag gap; do not infer achievement
+      - CS platform connector unavailable → surface failure; do not proceed on stale data
+
+  - id: rev-ops.discount-threshold-monitoring
+    name: discount-threshold-monitoring
+    version: "1.0.0"
+    domain: rev-ops
+    category: deal-management
+    owner: rev-ops
+    summary: >
+      Monitors deal discounts against configured thresholds and routes approval
+      requirements to the correct tier (standard/elevated/executive). Creates
+      Linear issues for elevated and executive approvals. Never approves discounts
+      autonomously. Sub-component of deal-desk-workflow-management.
+    intended_tasks:
+      - Compare deal discount to standard/elevated/executive threshold tiers
+      - Identify which approval tier is required
+      - Create Linear issue for elevated or executive approval tracking
+      - Surface discount pattern trends across pipeline (when scoped to team/period)
+    out_of_scope:
+      - Approving discounts autonomously
+      - Full deal desk routing (use deal-desk-workflow-management for full workflow)
+      - CRM record edits (G9)
+
+    invocation_cues:
+      - "discount approval"
+      - "is this discount within threshold"
+      - "discount monitoring"
+      - "discount threshold check"
+    anti_cues:
+      - Full deal approval routing — use deal-desk-workflow-management
+      - Non-standard terms (not discount) — use non-standard-terms-detection
+    priority: medium
+    argument_hint: "Provide deal ARR and discount percentage; optionally specify segment"
+
+    required_context:
+      - Discount threshold configuration by tier (from domain CLAUDE.md)
+      - Deal ARR and proposed discount
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Threshold comparison result with approval tier (Markdown)
+      - Linear issue for elevated/executive approval (Write-tier)
+
+    tools_used:
+      - Linear (issue creation for elevated+ approvals)
+    related_skills:
+      - rev-ops.deal-desk-workflow-management
+      - rev-ops.non-standard-terms-detection
+    execution_profile:
+      complexity: T1
+      typical_turns: 2-4
+      tool_calls_per_run: 1-2
+
+    constraints:
+      - G1: ARR figures flagged [review — not yet a revenue commitment]
+      - Never approves discounts; routes only
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - Correct approval tier identified based on discount percentage
+      - Linear issue created when elevated or executive tier required
+      - Output clearly states whether discount is within standard threshold
+    known_failure_modes:
+      - Threshold not configured → request configuration before processing
+      - Discount percentage not provided → ask; do not assume
+
+  - id: rev-ops.duplicate-detection
+    name: duplicate-detection
+    version: "1.0.0"
+    domain: rev-ops
+    category: data-quality
+    owner: rev-ops
+    summary: >
+      Detects duplicate accounts, contacts, and opportunities using multi-signal
+      matching. Assigns confidence scores (High: 2+ signals no conflict,
+      Medium: 1 strong signal with differences, Low: partial match). Never
+      merges records autonomously (G9); all findings are proposals for human review.
+    intended_tasks:
+      - Identify duplicate account, contact, or opportunity records in CRM
+      - Score confidence of each duplicate match
+      - Produce merge candidate report for human review
+      - Feed duplicate dimension into crm-hygiene-audit
+    out_of_scope:
+      - Merging or deleting records autonomously (G9)
+      - Full CRM hygiene audit (use crm-hygiene-audit)
+
+    invocation_cues:
+      - "duplicate accounts"
+      - "duplicate contacts"
+      - "find duplicates"
+      - "deduplication"
+      - "duplicate detection"
+    anti_cues:
+      - Record merging — output is candidates only; user must approve and execute
+      - Full hygiene audit — use crm-hygiene-audit
+    priority: medium
+    argument_hint: "Specify record type (account/contact/opportunity) and optionally scope to segment"
+
+    required_context:
+      - CRM data access (HubSpot preferred)
+      - Matching signal configuration (domain, name similarity, email, phone)
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Duplicate candidate report with confidence scores (Markdown)
+
+    tools_used: []
+    related_skills:
+      - rev-ops.crm-hygiene-audit
+      - rev-ops.cross-system-reconciliation
+    execution_profile:
+      complexity: T1
+      typical_turns: 2-4
+      tool_calls_per_run: 1-2
+
+    constraints:
+      - G6: data-as-of timestamp on all CRM reads
+      - G9: no autonomous record merges or deletes
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - Duplicate candidates identified with confidence scores
+      - High/Medium/Low confidence correctly applied per signal count
+      - All findings presented as proposals, not actions
+    known_failure_modes:
+      - CRM connector unavailable → surface failure; do not proceed on stale data
+      - Matching signals not configured → use name similarity as fallback; disclose
+
+  - id: rev-ops.early-churn-downgrade-signal-detection
+    name: early-churn-downgrade-signal-detection
+    version: "1.0.0"
+    domain: rev-ops
+    category: risk-management
+    owner: rev-ops
+    summary: >
+      Detects early churn and downgrade signals using a 3-tier model:
+      Tier 1 at-close (rule-mode or cohort-mode; cohort requires 6+ months data),
+      Tier 2 30-90d behavioral, Tier 3 90-120d pre-renewal. Produces risk flags
+      with tier classification and recommended intervention. Output is analytical
+      input (G5); escalation path required on all flags (G7).
+    intended_tasks:
+      - Run Tier 1 rule-mode or cohort-mode detection at deal close
+      - Surface Tier 2 behavioral signals at 30-90d post-close
+      - Identify Tier 3 pre-renewal risk signals at 90-120d
+      - Produce risk flag report with tier classification
+      - Route flags to csm:risk-flag cross-plugin handoff
+    out_of_scope:
+      - Churn intervention execution (route to CSM skill)
+      - Renewal pipeline management (use renewals domain)
+      - CRM edits (G9)
+
+    invocation_cues:
+      - "churn signals"
+      - "downgrade risk"
+      - "early churn detection"
+      - "at-risk accounts"
+      - "Tier 1 churn check"
+    anti_cues:
+      - Renewal pipeline analysis — use renewals domain skills
+      - Post-churn analysis — use outcome-to-value-tracking
+    priority: high
+    argument_hint: "Specify tier (1/2/3), account(s), and cohort definition for Tier 1 cohort-mode"
+
+    required_context:
+      - Account activity and health data from CS platform
+      - Cohort baseline (6+ months of data for cohort-mode)
+      - Renewal date for Tier 3 detection window
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Risk flag report with tier classification and intervention recommendation (Markdown)
+
+    tools_used:
+      - csm.risk-flag (cross-plugin handoff)
+    related_skills:
+      - csm.risk-flag
+      - renewals.risk-assessment
+      - rev-ops.deal-desk-workflow-management
+    execution_profile:
+      complexity: T2
+      typical_turns: 3-6
+      tool_calls_per_run: 2-4
+
+    constraints:
+      - G5: output is analytical input, not performance ruling
+      - G6: data-as-of timestamp on all reads
+      - G7: escalation path required on all risk flags
+      - Cohort-mode requires 6+ months of data; fall back to rule-mode if insufficient
+    risk_level: high
+    approval_needed: false
+
+    success_criteria:
+      - Correct tier applied based on account lifecycle stage
+      - Cohort-mode data sufficiency check passed before use
+      - Escalation path present on all flagged accounts
+      - data-as-of timestamp present
+    known_failure_modes:
+      - Insufficient cohort data → fall back to rule-mode; disclose fallback
+      - CS platform unavailable → surface failure; do not infer signals
+      - Missing renewal date → Tier 3 window cannot be computed; request date
+
+  - id: rev-ops.field-completion-monitoring
+    name: field-completion-monitoring
+    version: "1.0.0"
+    domain: rev-ops
+    category: data-quality
+    owner: rev-ops
+    summary: >
+      Monitors CRM field completion at four stage gate transitions. Escalates
+      pre-close for Negotiation-stage deals with incomplete required fields within
+      2 weeks of quarter close. All findings are proposals (G9). Feeds into
+      crm-hygiene-audit field-completion dimension.
+    intended_tasks:
+      - Check field completion against stage-gate requirements
+      - Identify incomplete required fields blocking stage advancement
+      - Escalate pre-close incomplete Negotiation+ deals near quarter close
+      - Feed field-completion score into crm-hygiene-audit
+    out_of_scope:
+      - Updating CRM fields autonomously (G9)
+      - Full hygiene audit (use crm-hygiene-audit)
+
+    invocation_cues:
+      - "field completion"
+      - "required fields missing"
+      - "stage gate fields"
+      - "CRM fields incomplete"
+      - "field completion check"
+    anti_cues:
+      - Full CRM audit — use crm-hygiene-audit
+      - Stage integrity (skipping/backward movement) — use stage-integrity-audit
+    priority: medium
+    argument_hint: "Scope to stage, team, or quarter; optionally specify quarter-close date"
+
+    required_context:
+      - Required fields per stage gate (from domain CLAUDE.md)
+      - CRM data access
+      - Quarter-close date for pre-close escalation window
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Field completion gap report by stage and owner (Markdown)
+      - Pre-close escalation list for Negotiation+ deals
+
+    tools_used: []
+    related_skills:
+      - rev-ops.crm-hygiene-audit
+      - rev-ops.stage-integrity-audit
+    execution_profile:
+      complexity: T1
+      typical_turns: 2-4
+      tool_calls_per_run: 1-2
+
+    constraints:
+      - G6: data-as-of timestamp on all CRM reads
+      - G7: escalation path on pre-close incomplete deals
+      - G9: no autonomous CRM edits
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - Field completion gaps identified per stage gate
+      - Negotiation+ deals within 2-week quarter-close window escalated
+      - All findings presented as proposals
+    known_failure_modes:
+      - Stage gate field requirements not configured → request before running
+      - Quarter-close date not provided → ask before running pre-close escalation check
+
+  - id: rev-ops.forecast-variance-analysis
+    name: forecast-variance-analysis
+    version: "1.0.0"
+    domain: rev-ops
+    category: forecasting
+    owner: rev-ops
+    summary: >
+      Analyzes forecast vs. actuals variance across five root cause categories
+      (deal slippage, classification error, competitive loss, timing shift,
+      territory gap). Applies pattern confidence gate before surfacing systemic
+      diagnosis (≥3 deals or ≥2 consecutive quarters). Output feeds revenue-brief
+      generation and GTM metrics pulse.
+    intended_tasks:
+      - Compute forecast vs. actuals delta for a period
+      - Classify variance by root cause category
+      - Apply pattern confidence gate before systemic diagnosis
+      - Produce variance report with prioritized root cause ranking
+      - Feed variance findings into revenue-brief-generation
+    out_of_scope:
+      - Forecast generation (use deal-classification + scenario-modeling)
+      - CRM edits (G9)
+      - Pipeline coverage analysis (use pipeline-coverage-analysis)
+
+    invocation_cues:
+      - "forecast variance"
+      - "why did we miss"
+      - "forecast accuracy"
+      - "actuals vs forecast"
+      - "forecast analysis"
+    anti_cues:
+      - Pipeline coverage (forward-looking) — use pipeline-coverage-analysis
+      - Deal classification (input to forecast) — use deal-classification
+    priority: high
+    argument_hint: "Specify period (quarter/month) and optionally scope to team or segment"
+
+    required_context:
+      - Forecast figures by period (from CRM or Finance sheets)
+      - Actuals by period
+      - Deal-level data for root cause attribution
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Variance report with root cause ranking (Markdown)
+      - Systemic pattern memo when confidence gate passes
+
+    tools_used: []
+    related_skills:
+      - rev-ops.deal-classification
+      - rev-ops.revenue-brief-generation
+      - rev-ops.gtm-unified-metrics-pulse
+      - rev-ops.pipeline-coverage-analysis
+    execution_profile:
+      complexity: T2
+      typical_turns: 4-7
+      tool_calls_per_run: 2-4
+
+    constraints:
+      - G1: all ARR figures flagged [review — not yet a revenue commitment]
+      - G6: data-as-of timestamp on all reads
+      - Pattern confidence gate: ≥3 deals or ≥2 consecutive quarters before systemic diagnosis
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - Variance computed and root cause categories assigned
+      - Pattern confidence gate applied correctly
+      - Systemic diagnosis only surfaced when gate passes
+      - data-as-of timestamp present
+    known_failure_modes:
+      - Actuals data unavailable → cannot compute variance; surface failure
+      - Insufficient data for confidence gate → surface gap analysis only; no systemic diagnosis
+      - Forecast and actuals from different systems → reconcile via data authority hierarchy first
+
+  - id: rev-ops.growth-model-vs-actuals-tracking
+    name: growth-model-vs-actuals-tracking
+    version: "1.0.0"
+    domain: rev-ops
+    category: planning
+    owner: rev-ops
+    summary: >
+      Tracks actuals against the Unit of Growth (UoG) baseline across three vectors:
+      new logo ARR (threshold >15% drift), NRR (>5pp), and GRR (>3pp). When any
+      threshold fires, produces a variance memo and routes to mid-year-replan-triggering.
+      Reporting-mode only when UoG baseline is absent.
+    intended_tasks:
+      - Compare period actuals to UoG baseline on three vectors
+      - Fire variance memo when drift threshold exceeded on any vector
+      - Route to mid-year-replan-triggering on threshold breach
+      - Produce growth tracking report for RevOps lead review
+    out_of_scope:
+      - Building the UoG baseline (use unit-of-growth-calculator)
+      - Executing the replan (routes to mid-year-replan-triggering, which produces memo only)
+      - CRM edits (G9)
+
+    invocation_cues:
+      - "growth model tracking"
+      - "actuals vs growth model"
+      - "are we on track to the plan"
+      - "growth model variance"
+      - "UoG drift check"
+    anti_cues:
+      - Building the UoG baseline — use unit-of-growth-calculator
+      - Pipeline coverage analysis — use pipeline-coverage-analysis
+    priority: high
+    argument_hint: "Specify period and optionally provide actuals if not available via connector"
+
+    required_context:
+      - UoG baseline by vector (new logo ARR, NRR, GRR)
+      - Period actuals from CRM and Finance sheets
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Growth tracking report with vector-level delta (Markdown)
+      - Variance memo when threshold fires
+
+    tools_used:
+      - mid-year-replan-triggering (downstream on threshold breach)
+    related_skills:
+      - rev-ops.unit-of-growth-calculator
+      - rev-ops.mid-year-replan-triggering
+      - rev-ops.annual-planning-workflow
+    execution_profile:
+      complexity: T2
+      typical_turns: 3-6
+      tool_calls_per_run: 2-4
+
+    constraints:
+      - G1: all ARR figures flagged [review — not yet a revenue commitment]
+      - G6: data-as-of timestamp on all reads
+      - Reporting-mode only when UoG baseline absent; disclose limitation
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - All three vectors assessed against UoG baseline
+      - Variance memo fired when any threshold exceeded
+      - Replan routing triggered automatically on breach
+      - data-as-of timestamp present
+    known_failure_modes:
+      - UoG baseline absent → reporting-mode only; flag inability to assess drift
+      - Actuals unavailable from connector → surface failure; do not estimate
+
+  - id: rev-ops.gtm-unified-metrics-pulse
+    name: gtm-unified-metrics-pulse
+    version: "1.0.0"
+    domain: rev-ops
+    category: reporting
+    owner: rev-ops
+    summary: >
+      Produces the weekly 5-section GTM metrics pulse report: pipeline coverage,
+      deal health summary, forecast variance, CS headroom, and churn/contraction
+      flags. Section 4 churn flags are distributed to #cs-leadership only.
+      All Slack posts require RevOps lead approval before distribution (Write-tier).
+    intended_tasks:
+      - Compile 5-section weekly GTM metrics pulse
+      - Aggregate pipeline coverage, deal health, forecast variance, CS headroom, churn flags
+      - Route Section 4 churn flags to #cs-leadership channel only
+      - Draft Slack post for RevOps lead approval before distribution
+    out_of_scope:
+      - Deep drill-down on individual metrics (use domain-specific sub-skills)
+      - Revenue brief (more detailed, use revenue-brief-generation)
+      - Distributing Slack posts without RevOps lead approval
+
+    invocation_cues:
+      - "weekly metrics pulse"
+      - "GTM pulse"
+      - "weekly report"
+      - "metrics pulse"
+      - "weekly GTM update"
+    anti_cues:
+      - Detailed revenue brief — use revenue-brief-generation
+      - Single-metric deep-dive — route to the domain-specific skill
+    priority: high
+    argument_hint: "Specify reporting week; optionally scope to segment or team"
+
+    required_context:
+      - Current pipeline data from CRM
+      - CS headroom data from CS platform
+      - Prior week actuals for variance comparison
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - 5-section weekly GTM metrics pulse (Markdown, [DRAFT])
+      - Slack post draft pending RevOps lead approval
+
+    tools_used:
+      - pipeline-coverage-analysis (sub-reference)
+      - deal-health-scoring (sub-reference)
+      - forecast-variance-analysis (sub-reference)
+      - early-churn-downgrade-signal-detection (sub-reference)
+      - Slack (Write-tier, approval-gated)
+    related_skills:
+      - rev-ops.pipeline-coverage-analysis
+      - rev-ops.deal-health-scoring
+      - rev-ops.forecast-variance-analysis
+      - rev-ops.revenue-brief-generation
+    execution_profile:
+      complexity: T2
+      typical_turns: 5-9
+      tool_calls_per_run: 4-7
+
+    constraints:
+      - G1: all ARR figures flagged [review — not yet a revenue commitment]
+      - G6: data-as-of timestamp on all reads
+      - G7: escalation path on all churn/risk flags in Section 4
+      - Slack posts require RevOps lead approval; never distribute autonomously
+    risk_level: medium
+    approval_needed: true
+
+    success_criteria:
+      - All five sections present in weekly pulse
+      - Section 4 churn flags routed to #cs-leadership only
+      - Slack post draft produced and approval prompt issued
+      - data-as-of timestamp present
+    known_failure_modes:
+      - Connector unavailable for a section → produce partial pulse; flag missing section
+      - RevOps lead unavailable for approval → hold; do not distribute without approval
+
+  - id: rev-ops.mid-year-replan-triggering
+    name: mid-year-replan-triggering
+    version: "1.0.0"
+    domain: rev-ops
+    category: planning
+    owner: rev-ops
+    summary: >
+      Monitors four trigger conditions and produces a replan memo when any fires:
+      ARR drift >15% from UoG baseline, CS headroom <10%, AE attainment shortfall
+      >20pp for ≥2 consecutive months, or territory disruption event. Produces
+      the memo only — not the replan itself. Routes memo to RevOps lead.
+    intended_tasks:
+      - Monitor the four replan trigger conditions
+      - Produce replan trigger memo when any condition fires
+      - Route memo to RevOps lead for go/no-go on replan
+      - Coordinate with growth-model-vs-actuals-tracking for ARR drift trigger
+    out_of_scope:
+      - Executing the replan itself (requires human-led process)
+      - Annual planning workflow (use annual-planning-workflow)
+      - CRM edits (G9)
+
+    invocation_cues:
+      - "mid-year replan"
+      - "trigger replan"
+      - "do we need to replan"
+      - "replan trigger check"
+      - "are we off track enough to replan"
+    anti_cues:
+      - Annual planning — use annual-planning-workflow
+      - Growth tracking (monitoring, not triggering) — use growth-model-vs-actuals-tracking
+    priority: high
+    argument_hint: "Optionally specify which trigger condition to evaluate"
+
+    required_context:
+      - UoG baseline and current actuals (for ARR drift trigger)
+      - CS headroom current state
+      - AE attainment by rep for 2-month window
+      - Territory disruption event description if applicable
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Replan trigger memo with condition(s) fired and evidence (Markdown)
+
+    tools_used:
+      - growth-model-vs-actuals-tracking (upstream coordination)
+    related_skills:
+      - rev-ops.growth-model-vs-actuals-tracking
+      - rev-ops.annual-planning-workflow
+      - rev-ops.closed-won-to-cs-capacity-modeling
+    execution_profile:
+      complexity: T2
+      typical_turns: 3-5
+      tool_calls_per_run: 2-4
+
+    constraints:
+      - G1: all ARR figures flagged [review — not yet a revenue commitment]
+      - G2: capacity signals are structural; not hiring mandates
+      - Memo only; replan execution is human-led
+    risk_level: high
+    approval_needed: false
+
+    success_criteria:
+      - All four trigger conditions evaluated
+      - Memo produced with specific evidence for any fired condition
+      - Memo routed to RevOps lead for decision
+    known_failure_modes:
+      - Insufficient data for one trigger → assess available triggers; flag missing
+      - Multiple triggers firing simultaneously → include all in single memo; prioritize by magnitude
+
+  - id: rev-ops.next-best-action-recommendation
+    name: next-best-action-recommendation
+    version: "1.0.0"
+    domain: rev-ops
+    category: pipeline-management
+    owner: rev-ops
+    summary: >
+      Matches deal-health-scoring sub-50 signals to five intervention types
+      (re-engagement, executive sponsor introduction, competitive displacement,
+      pricing restructure, champion activation). Every recommendation includes
+      what/who/why. Routes applicable flags to csm:risk-flag cross-plugin handoff.
+      Output is guidance only (G5); escalation path required (G7).
+    intended_tasks:
+      - Receive deal health signals (sub-50 scores) and identify best intervention
+      - Match intervention type to signal pattern
+      - Produce structured recommendation with what/who/why for each deal
+      - Route CS-relevant flags to csm:risk-flag
+    out_of_scope:
+      - Executing interventions autonomously
+      - Deal health scoring (upstream — use deal-health-scoring)
+      - CRM edits (G9)
+
+    invocation_cues:
+      - "next best action"
+      - "what should we do with this deal"
+      - "intervention recommendation"
+      - "at-risk deal playbook"
+      - "deal recovery"
+    anti_cues:
+      - Deal health scoring — use deal-health-scoring (upstream)
+      - Approval routing — use deal-desk-workflow-management
+    priority: high
+    argument_hint: "Provide deal health scores or deal IDs; or pass sub-50 list from deal-health-scoring"
+
+    required_context:
+      - Deal health scores (from deal-health-scoring output)
+      - Deal context: stage, stakeholders, competitive flags
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Next-best-action recommendation per deal with what/who/why (Markdown)
+
+    tools_used:
+      - csm.risk-flag (cross-plugin handoff for CS-relevant flags)
+    related_skills:
+      - rev-ops.deal-health-scoring
+      - csm.risk-flag
+      - rev-ops.pipeline-velocity-tracking
+    execution_profile:
+      complexity: T2
+      typical_turns: 3-5
+      tool_calls_per_run: 1-3
+
+    constraints:
+      - G5: recommendations are guidance, not directives
+      - G7: escalation path present on all risk-flagged deals
+      - Never executes interventions autonomously
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - Intervention type matched to each sub-50 deal signal
+      - Every recommendation includes what/who/why
+      - CS-relevant flags routed to csm:risk-flag
+      - Escalation path present
+    known_failure_modes:
+      - Missing deal context → recommendation may be generic; request context before proceeding
+      - csm:risk-flag cross-plugin unavailable → note handoff failure; include flag in output for manual routing
+
+  - id: rev-ops.non-standard-terms-detection
+    name: non-standard-terms-detection
+    version: "1.0.0"
+    domain: rev-ops
+    category: deal-management
+    owner: rev-ops
+    summary: >
+      Detects non-standard contract terms across four pattern categories:
+      payment schedule deviations, liability/indemnification modifications,
+      SLA commitments outside standard tier, and IP or data provisions.
+      Routes findings to Legal or Finance; creates Linear issues for tracking.
+      Sub-component of deal-desk-workflow-management.
+    intended_tasks:
+      - Scan contract or deal terms for non-standard patterns
+      - Classify finding by category (payment/liability/SLA/IP)
+      - Route to Legal or Finance based on category
+      - Create Linear issue for tracking and approval record
+    out_of_scope:
+      - Approving non-standard terms (routes to Legal/Finance)
+      - Full deal desk workflow (use deal-desk-workflow-management)
+      - Discount monitoring (use discount-threshold-monitoring)
+
+    invocation_cues:
+      - "non-standard terms"
+      - "contract terms review"
+      - "unusual terms"
+      - "terms deviation"
+      - "contract red flags"
+    anti_cues:
+      - Discount analysis — use discount-threshold-monitoring
+      - Full deal routing — use deal-desk-workflow-management
+    priority: medium
+    argument_hint: "Provide contract text or deal terms; specify deal ID if available"
+
+    required_context:
+      - Contract or deal terms text
+      - Standard terms baseline (from domain CLAUDE.md)
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Non-standard terms finding report with category and routing (Markdown)
+      - Linear issue for each finding requiring approval
+
+    tools_used:
+      - Linear (issue creation)
+    related_skills:
+      - rev-ops.deal-desk-workflow-management
+      - rev-ops.discount-threshold-monitoring
+      - rev-ops.revenue-leakage-scanning
+    execution_profile:
+      complexity: T1
+      typical_turns: 2-4
+      tool_calls_per_run: 1-2
+
+    constraints:
+      - G1: never approves non-standard terms autonomously
+      - Routing to Legal/Finance is required for all findings
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - All non-standard terms identified and categorized
+      - Correct routing target (Legal/Finance) identified per category
+      - Linear issue created for each finding
+    known_failure_modes:
+      - Standard terms baseline not configured → flag; cannot assess deviations without baseline
+      - Contract text not provided → request; do not infer from deal record alone
+
+  - id: rev-ops.outcome-statement-builder
+    name: outcome-statement-builder
+    version: "1.0.0"
+    domain: rev-ops
+    category: outcome-tracking
+    owner: rev-ops
+    summary: >
+      Builds structured, verifiable outcome statements using the Seven-Stage
+      Value Chain. Two-phase with human approval gate between phases.
+      Produces a Markdown Outcome & Value Registry and an HTML review deck
+      for cross-functional ratification. Inputs are product capability descriptions
+      or draft outcome statements.
+    intended_tasks:
+      - Transform product/service capabilities into structured outcome statements
+      - Apply Seven-Stage Value Chain to each capability
+      - Produce Outcome & Value Registry (Markdown)
+      - Generate HTML review deck for Sales/Marketing/RevOps/CS ratification
+      - Gate approval between Phase 1 (structure) and Phase 2 (registry + deck)
+    out_of_scope:
+      - Tracking outcome achievement post-close (use deal-to-outcome-tracing)
+      - Value tracking per account (use outcome-to-value-tracking)
+      - CRM edits
+
+    invocation_cues:
+      - "outcome statement"
+      - "build outcome statements"
+      - "Seven-Stage Value Chain"
+      - "outcome registry"
+      - "product capabilities to outcomes"
+    anti_cues:
+      - Tracking outcomes post-close — use deal-to-outcome-tracing
+      - Per-account value tracking — use outcome-to-value-tracking
+    priority: medium
+    argument_hint: "Provide product capability list or draft outcome statements"
+
+    required_context:
+      - Product capability descriptions or draft outcome statements
+      - Target audience personas for value chain mapping
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Outcome & Value Registry (Markdown)
+      - HTML review deck for cross-functional ratification
+      - Phase 1 outcome structure document (approval gate output)
+
+    tools_used: []
+    related_skills:
+      - rev-ops.deal-to-outcome-tracing
+      - rev-ops.outcome-to-value-tracking
+      - rev-ops.sales-cs-handoff-quality-scoring
+    execution_profile:
+      complexity: T2
+      typical_turns: 6-10
+      tool_calls_per_run: 2-4
+
+    constraints:
+      - Two-phase with explicit human approval gate between phases
+      - Phase 2 does not proceed without Phase 1 approval
+    risk_level: low
+    approval_needed: true
+
+    success_criteria:
+      - Phase 1 outcome structure approved before Phase 2 executes
+      - Outcome & Value Registry produced in Markdown
+      - HTML review deck generated for ratification
+    known_failure_modes:
+      - Capability descriptions too vague → request specifics before structuring
+      - User skips Phase 1 approval → re-prompt; do not advance to Phase 2 silently
+
+  - id: rev-ops.outcome-to-value-tracking
+    name: outcome-to-value-tracking
+    version: "1.0.0"
+    domain: rev-ops
+    category: outcome-tracking
+    owner: rev-ops
+    summary: >
+      Tracks value realization per account against OCV-defined milestones using
+      L0-L3 rubric. Surfaces systemic patterns when L0 persistence exceeds 40%
+      of accounts. Coordinates with deal-to-outcome-tracing for account-level
+      detail. Only Ratified OCV entries used (G8).
+    intended_tasks:
+      - Assess value realization level (L0-L3) per account per OCV entry
+      - Track milestone achievement at OCV-defined intervals
+      - Flag systemic L0 persistence when >40% of accounts show no measurement
+      - Coordinate with deal-to-outcome-tracing for account-level detail
+    out_of_scope:
+      - Building OCV entries (use outcome-statement-builder)
+      - At-close completeness check (use deal-to-outcome-tracing)
+      - CRM edits (G9)
+
+    invocation_cues:
+      - "value tracking"
+      - "outcome to value"
+      - "are customers realizing value"
+      - "OCV milestone tracking"
+      - "L0-L3 value assessment"
+    anti_cues:
+      - At-close completeness check — use deal-to-outcome-tracing
+      - Building outcome statements — use outcome-statement-builder
+    priority: medium
+    argument_hint: "Specify account cohort or segment; optionally provide OCV list"
+
+    required_context:
+      - Ratified OCV entries per account (G8)
+      - CS platform activity and milestone data
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Value realization report with L0-L3 scores per account-OCV pair (Markdown)
+      - Systemic pattern memo when L0 persistence >40%
+
+    tools_used:
+      - deal-to-outcome-tracing (coordination)
+    related_skills:
+      - rev-ops.deal-to-outcome-tracing
+      - rev-ops.outcome-statement-builder
+      - rev-ops.growth-model-vs-actuals-tracking
+    execution_profile:
+      complexity: T2
+      typical_turns: 4-7
+      tool_calls_per_run: 2-4
+
+    constraints:
+      - G5: assessment is analytical input, not performance ruling
+      - G6: data-as-of timestamp on all reads
+      - G8: only Ratified OCV entries; provisional OCV flagged with [Low Confidence]
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - L0-L3 score applied per account-OCV pair
+      - Systemic L0 pattern flagged when threshold exceeded
+      - Only Ratified OCV entries used; provisional flagged
+      - data-as-of timestamp present
+    known_failure_modes:
+      - No Ratified OCV entries → report cannot be produced; surface gap to RevOps lead
+      - CS platform unavailable → surface failure; do not infer milestone achievement
+
+  - id: rev-ops.pipeline-coverage-analysis
+    name: pipeline-coverage-analysis
+    version: "1.0.0"
+    domain: rev-ops
+    category: forecasting
+    owner: rev-ops
+    summary: >
+      Computes pipeline coverage ratio (pipeline / quota) using segment-specific
+      win rates rather than a universal 3x assumption. Signal thresholds:
+      <2x CRITICAL, 2-3x AT-RISK, 3-5x HEALTHY, >5x INSPECT for concentration.
+      Ranks top-3 pipeline exposure risks. Feeds GTM metrics pulse and revenue brief.
+    intended_tasks:
+      - Compute coverage ratio using segment-specific win rates
+      - Apply signal thresholds and categorize coverage health
+      - Rank top-3 exposure risks by segment or team
+      - Feed coverage data into gtm-unified-metrics-pulse and revenue-brief-generation
+    out_of_scope:
+      - Pipeline velocity (stage-age tracking) — use pipeline-velocity-tracking
+      - Deal health scoring — use deal-health-scoring
+      - Forecast variance — use forecast-variance-analysis
+
+    invocation_cues:
+      - "pipeline coverage"
+      - "do we have enough pipeline"
+      - "coverage ratio"
+      - "pipeline health"
+      - "coverage analysis"
+    anti_cues:
+      - Pipeline velocity (deals aging) — use pipeline-velocity-tracking
+      - Deal health (individual deal scoring) — use deal-health-scoring
+    priority: high
+    argument_hint: "Specify quota period and optionally scope to segment or team"
+
+    required_context:
+      - Pipeline data from CRM (HubSpot preferred)
+      - Quota by segment/team for the period
+      - Win rate by segment (required; no universal 3x assumption)
+    consumes_files:
+      - rev-ops domain CLAUDE.md (cold-start preflight)
+    produces_artifacts:
+      - Coverage analysis report with signal classification by segment (Markdown)
+      - Top-3 exposure risk ranking
+
+    tools_used: []
+    related_skills:
+      - rev-ops.gtm-unified-metrics-pulse
+      - rev-ops.revenue-brief-generation
+      - rev-ops.pipeline-velocity-tracking
+      - rev-ops.scenario-modeling
+    execution_profile:
+      complexity: T2
+      typical_turns: 3-6
+      tool_calls_per_run: 2-4
+
+    constraints:
+      - G1: all ARR figures flagged [review — not yet a revenue commitment]
+      - G6: data-as-of timestamp on all reads
+      - Coverage = pipeline ÷ (quota ÷ win rate); never use universal 3x
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - Coverage computed using segment-specific win rates
+      - Signal classification applied per segment
+      - Top-3 exposure risks ranked
+      - data-as-of timestamp present
+    known_failure_modes:
+      - Win rate not configured for segment → request win rate; do not default to 3x without disclosure
+      - Quota not set for period → cannot compute coverage; flag to RevOps lead
+
+  - id: rev-ops.pipeline-velocity-tracking
+    name: pipeline-velocity-tracking
+    version: 1.0.0
+    domain: rev-ops
+    category: pipeline-intelligence
+    owner: rev-ops-lead
+
+    summary: >
+      Tracks average sales cycle time by segment, rep, and deal size. Flags deals aging
+      past 1.5x the historical average for their current stage. Surfaces velocity trend
+      vs. prior quarter to surface where pipeline is slowing before it shows up in a
+      missed quarter.
+
+    intended_tasks:
+      - Identify deals stalling in a specific stage before the quarter ends
+      - Compare current-quarter velocity trend vs. prior quarter
+      - Surface aging flags by rep and segment for manager coaching
+
+    out_of_scope:
+      - Prescribing manager coaching actions (G5 — analytical input only)
+      - Closing or updating deal stage records (G9 — no autonomous CRM edits)
+
+    invocation_cues:
+      - "pipeline velocity"
+      - "cycle time"
+      - "deals aging"
+      - "stalling pipeline"
+      - "how long are deals taking"
+
+    anti_cues:
+      - Individual rep performance review
+      - Pipeline forecast amounts (route to pipeline-coverage-analysis)
+
+    priority: standard
+    argument_hint: "Scope (rep, segment, or all pipeline)"
+
+    required_context:
+      - HubSpot stage entry/exit date history
+      - Historical median days-in-stage by segment (trailing 4Q)
+
+    consumes_files:
+      - reference/revops-domain-model.md §2
+
+    produces_artifacts:
+      - Pipeline velocity report with aging flags (stage-age ratio > 1.5x)
+
+    tools_used:
+      - HubSpot (stage history read)
+
+    related_skills:
+      - rev-ops.stage-integrity-audit
+      - rev-ops.deal-health-scoring
+      - rev-ops.pipeline-coverage-analysis
+
+    execution_profile:
+      reads_crm: true
+      writes_crm: false
+      reads_cs_platform: false
+      calls_llm: false
+      creates_linear_issue: false
+
+    constraints:
+      - G5 — velocity flags are analytical inputs; manager owns coaching response
+      - G6 — data-as-of required on all stage history reads
+      - G7 — aging flags require manager escalation path
+
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - All open deals have stage-age ratio calculated
+      - Deals exceeding 1.5x flagged with deal name, stage, days, avg, ratio, rep
+      - Quarter-over-quarter cycle time trend surfaced
+
+    known_failure_modes:
+      - HubSpot stage history unavailable → declare unavailable; do not estimate
+      - Segment avg not computable from <4Q history → flag data gap; widen window or note limitation
+
+  - id: rev-ops.quota-sensitivity-analysis
+    name: quota-sensitivity-analysis
+    version: 1.0.0
+    domain: rev-ops
+    category: planning
+    owner: rev-ops-lead
+
+    summary: >
+      Builds quota models from UoG-confirmed AE headcount and revenue target. Models
+      structural achievability at five attainment levels (50/65/75/85/100%). Flags when
+      hitting plan requires attainment above the 75th percentile of historical actuals.
+      Used inside annual-planning-workflow Phase 4 or standalone.
+
+    intended_tasks:
+      - Model per-rep quota from UoG output and revenue target
+      - Surface attainment scenarios and their ARR outcomes
+      - Flag structurally challenging quotas as risk disclosure for leadership
+
+    out_of_scope:
+      - Setting or approving quota (G2 — structural input; leadership decides)
+      - Changing OTE or comp structure without HR + Finance dual review (G3)
+
+    invocation_cues:
+      - "quota model"
+      - "is quota achievable"
+      - "quota sensitivity"
+      - "quota attainment model"
+      - "what does quota need to be"
+
+    anti_cues:
+      - Individual rep quota review (structural tool, not rep-level)
+      - Revenue forecast (route to scenario-modeling)
+
+    priority: standard
+    argument_hint: "--phase 4 (inside annual-planning-workflow) or standalone"
+
+    required_context:
+      - UoG-confirmed AE count and revenue target (from annual-planning-workflow Phase 2 or practice profile)
+      - ae_quota from practice profile
+      - Historical attainment actuals (trailing 4Q) for achievability flag
+
+    consumes_files:
+      - reference/revops-domain-model.md §5
+
+    produces_artifacts:
+      - Quota sensitivity table (five attainment levels × ARR outcomes)
+      - Structural achievability flag with KBCM median citation
+
+    tools_used: []
+
+    related_skills:
+      - rev-ops.annual-planning-workflow
+      - rev-ops.unit-of-growth-calculator
+      - rev-ops.scenario-modeling
+
+    execution_profile:
+      reads_crm: false
+      writes_crm: false
+      reads_cs_platform: false
+      calls_llm: false
+      creates_linear_issue: false
+
+    constraints:
+      - G1 — revenue projections require forecast qualification language
+      - G2 — quota output is structural input; decisions require leadership approval
+      - G3 — if output changes OTE/comp, HR + Finance dual review required
+      - Structural achievability flag is risk disclosure, not quota rejection
+
+    risk_level: medium
+    approval_needed: true
+
+    success_criteria:
+      - Five-row attainment table (50/65/75/85/100%) with ARR outcome and vs-plan delta
+      - Per-rep quota derived from target ÷ AEs required
+      - Structural achievability flag fires when plan requires > 75th percentile attainment
+
+    known_failure_modes:
+      - UoG inputs not confirmed → request from annual-planning-workflow Phase 2 before proceeding
+      - Historical attainment actuals not available → use KBCM 55–65% median; flag as estimate
+
+  - id: rev-ops.revenue-brief-generation
+    name: revenue-brief-generation
+    version: 1.0.0
+    domain: rev-ops
+    category: reporting
+    owner: rev-ops-lead
+
+    summary: >
+      Produces weekly or monthly executive revenue narrative by coordinating outputs from
+      all rev-ops agents. Five sections: forecast + pipeline, pipeline health, CS capacity
+      status, NRR trajectory, top 3 risks with recommended owner and action. One decision
+      required per brief. Delivered as DRAFT for RevOps lead review before distribution.
+
+    intended_tasks:
+      - Produce weekly executive revenue narrative from live connector data
+      - Synthesize cross-functional revenue picture into one coherent story
+      - Surface the single most important decision leadership needs to make
+
+    out_of_scope:
+      - Replacing pipeline-coverage-analysis, deal-health-scoring, or other source skills
+      - Final distribution without RevOps lead review
+
+    invocation_cues:
+      - "revenue brief"
+      - "weekly summary"
+      - "executive summary"
+      - "what happened this week"
+      - "run the revenue brief"
+
+    anti_cues:
+      - Deep-dive on a single deal (route to deal-health-scoring)
+      - CS capacity analysis in isolation (route to closed-won-to-cs-capacity-modeling)
+
+    priority: high
+    argument_hint: "Period: weekly (default) or monthly"
+
+    required_context:
+      - All practice profile fields
+      - Live connector data from HubSpot, CS platform
+      - Source skill outputs (pipeline-coverage-analysis, deal-health-scoring, etc.)
+
+    consumes_files:
+      - reference/revops-domain-model.md §11
+
+    produces_artifacts:
+      - Five-section executive revenue brief (DRAFT)
+      - One named decision required this week
+
+    tools_used:
+      - HubSpot (pipeline, deal health)
+      - CS platform (NRR, capacity)
+      - Coordinates: pipeline-coverage-analysis, deal-health-scoring, closed-won-to-cs-capacity-modeling, growth-model-vs-actuals-tracking, scenario-modeling
+
+    related_skills:
+      - rev-ops.pipeline-coverage-analysis
+      - rev-ops.deal-health-scoring
+      - rev-ops.closed-won-to-cs-capacity-modeling
+      - rev-ops.growth-model-vs-actuals-tracking
+      - rev-ops.scenario-modeling
+
+    execution_profile:
+      reads_crm: true
+      writes_crm: false
+      reads_cs_platform: true
+      calls_llm: false
+      creates_linear_issue: false
+
+    constraints:
+      - G1 — Section 1 forecast qualification mandatory
+      - G2 — Section 3 CS capacity structural qualifier mandatory
+      - G6 — data-as-of on every section
+      - G7 — Section 5 risks each require escalation path and named owner
+      - Delivered as DRAFT — RevOps lead reviews before distribution
+      - Unavailable source sections labeled clearly; brief still produced with available sections
+
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - All five sections present or explicitly labeled unavailable
+      - One named decision surfaced per brief
+      - All forward-looking content carries G1 qualification
+      - Output destination confirmed before delivery
+
+    known_failure_modes:
+      - Source skill unavailable → label section unavailable; do not omit entire brief
+      - Connector read fails mid-brief → surface failure in affected section; deliver remaining sections
+
+  - id: rev-ops.revenue-leakage-scanning
+    name: revenue-leakage-scanning
+    version: 1.0.0
+    domain: rev-ops
+    category: deal-intelligence
+    owner: rev-ops-lead
+
+    summary: >
+      Identifies deal structures leaving money on the table before close. Detects four
+      leakage patterns: underpriced professional services, missing expansion clauses in
+      multi-year deals, renewal terms misaligned with ARR classification, and missing
+      success milestone gates. Primary detection window is Negotiation stage — before
+      close locks the structure.
+
+    intended_tasks:
+      - Scan a specific deal for structural revenue leakage before contract signing
+      - Identify missing expansion clause on multi-year deals
+      - Flag PS pricing against deal complexity and estimated impact
+
+    out_of_scope:
+      - Post-close contract renegotiation (flagged as lower-value window)
+      - ARR forecasting or pipeline coverage (route to relevant skills)
+
+    invocation_cues:
+      - "revenue leakage"
+      - "missing expansion clause"
+      - "mispriced services"
+      - "deal structure review"
+      - "are we leaving money on the table"
+
+    anti_cues:
+      - Pipeline coverage analysis (route to pipeline-coverage-analysis)
+      - CRM hygiene issues (route to crm-hygiene-audit)
+
+    priority: standard
+    argument_hint: "Account name or deal ID; stage context"
+
+    required_context:
+      - HubSpot deal fields, product configuration, and notes for target deal
+      - avg_deal_acv, primary_segment from practice profile
+
+    consumes_files:
+      - reference/revops-domain-model.md §2
+
+    produces_artifacts:
+      - Leakage scan report per deal (pattern type, estimated impact, action before close)
+
+    tools_used:
+      - HubSpot (deal fields, product line, notes)
+
+    related_skills:
+      - rev-ops.non-standard-terms-detection
+      - rev-ops.deal-desk-workflow-management
+      - rev-ops.sales-cs-handoff-quality-scoring
+
+    execution_profile:
+      reads_crm: true
+      writes_crm: false
+      reads_cs_platform: false
+      calls_llm: false
+      creates_linear_issue: false
+
+    constraints:
+      - G1 — leakage estimates require qualification language when shared beyond RevOps
+      - Most valuable at Negotiation stage — flag explicitly when run on closed deals
+      - Impact estimates are models, not revenue commitments
+
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - All four leakage patterns evaluated for target deal
+      - Each finding includes pattern type, estimated impact, and specific action before close
+      - Window status declared (action window open / deal closed — lower leverage)
+
+    known_failure_modes:
+      - Deal notes sparse → flag inability to assess Pattern 4; request AE to populate risk notes
+      - Deal already closed → complete scan but surface lower-leverage context prominently
+
+  - id: rev-ops.sales-cs-handoff-quality-scoring
+    name: sales-cs-handoff-quality-scoring
+    version: 1.0.0
+    domain: rev-ops
+    category: cross-functional
+    owner: rev-ops-lead
+
+    summary: >
+      Scores each closed/won deal on five handoff dimensions (0–100). Pass threshold: 80.
+      Below-threshold deals trigger a Linear issue assigned to the AE manager with 48-hour
+      SLA. CS onboarding proceeds but CSM is notified of open issue. Dimensions: OCV entry
+      referenced, trigger match, measurement source accessible, stakeholder map, risk flags
+      documented.
+
+    intended_tasks:
+      - Score a specific deal or all recent closes on handoff quality
+      - Create Linear issue for below-threshold deals with named escalation path
+      - Notify CSM of handoff gaps without blocking onboarding
+
+    out_of_scope:
+      - Subjective prose quality assessment (scoring is binary per structured dimension)
+      - Handoff completion steps beyond scoring and escalation
+
+    invocation_cues:
+      - "handoff quality"
+      - "handoff score"
+      - "what's missing for [deal] handoff"
+      - "CS handoff check"
+      - "handoff completeness"
+
+    anti_cues:
+      - OCV catalog authoring (route to outcome-catalog-entry-builder)
+      - CS onboarding execution (route to csm domain skills)
+
+    priority: high
+    argument_hint: "Account name, deal ID, or 'recent closes this week'"
+
+    required_context:
+      - HubSpot deal fields for target deal(s)
+      - OCV catalog (ocv_catalog_path from practice profile) — Ratified entries only
+      - linear_connected flag from practice profile
+
+    consumes_files:
+      - reference/revops-domain-model.md §10
+      - reference/revops-domain-model.md §9
+
+    produces_artifacts:
+      - Handoff quality score per deal (N/100, pass/fail, failed dimensions)
+      - Linear issue for below-threshold deals (assigned to AE manager, 48h SLA)
+      - CSM notification for below-threshold deals
+      - Audit trail entry (timestamp, deal ID, score, failed dimensions, issue number)
+      - Weekly digest when run across all recent closes
+
+    tools_used:
+      - HubSpot (deal fields read)
+      - Linear (issue creation for below-threshold deals)
+
+    related_skills:
+      - rev-ops.revenue-leakage-scanning
+      - rev-ops.outcome-catalog-entry-builder
+      - onboarding domain skills
+
+    execution_profile:
+      reads_crm: true
+      writes_crm: false
+      reads_cs_platform: false
+      calls_llm: false
+      creates_linear_issue: true
+
+    constraints:
+      - G6 — data-as-of required on all reads
+      - G7 — every below-threshold flag includes named escalation path (AE manager, 48h SLA)
+      - G8 — only Ratified OCV entries count toward D1; Draft entries do not satisfy dimension
+      - G9 — no autonomous CRM edits; scoring is read-only
+
+    risk_level: medium
+    approval_needed: false
+
+    success_criteria:
+      - All five dimensions scored binary per structured field check
+      - Linear issue created for any deal scoring < 80 with failed dimensions listed
+      - CSM notified with specific gap summary and Linear issue number
+      - Audit trail entry written for each deal scored
+
+    known_failure_modes:
+      - Linear not connected → surface below-threshold deals in chat; note Linear issue cannot be created
+      - OCV catalog not configured → D1 cannot be scored; flag to RevOps and count as FAIL
+      - HubSpot fields missing → declare which fields unreadable; score dimension FAIL and note data gap
+
+  - id: rev-ops.scenario-modeling
+    name: scenario-modeling
+    version: 1.0.0
+    domain: rev-ops
+    category: planning
+    owner: rev-ops-lead
+
+    summary: >
+      Builds P10/P50/P90 range forecasts from current pipeline state. Models win rate
+      sensitivity, slip scenarios, and enterprise concentration risk. Produces structured
+      scenario output consumed by annual-planning-workflow for three-scenario UoG capacity
+      modeling.
+
+    intended_tasks:
+      - Build downside/base/upside ARR scenarios from current pipeline
+      - Model win rate sensitivity (±5pp impact on ARR)
+      - Surface enterprise concentration risk when top 3 accounts exceed 30% of pipeline
+      - Produce P10/P50/P90 growth percentages for annual-planning-workflow Phase 1
+
+    out_of_scope:
+      - Individual deal forecasting (route to deal-health-scoring)
+      - Quota modeling (route to quota-sensitivity-analysis)
+
+    invocation_cues:
+      - "forecast scenarios"
+      - "P10 P50 P90"
+      - "range forecast"
+      - "what if win rate drops"
+      - "downside scenario"
+      - "upside scenario"
+
+    anti_cues:
+      - Pipeline coverage ratio check (route to pipeline-coverage-analysis)
+      - Single-deal forecast (route to deal-health-scoring)
+
+    priority: high
+    argument_hint: "Quarter or period; optionally --phase 1 for annual-planning-workflow handoff"
+
+    required_context:
+      - HubSpot current pipeline with stage breakdown
+      - Win rate history (trailing 4Q) by stage and segment
+      - target_growth_pct, nrr_current, primary_segment, ae_quota, ae_attainment_planning_rate from practice profile
+
+    consumes_files:
+      - reference/revops-domain-model.md §4
+
+    produces_artifacts:
+      - Three-scenario table (P10/P50/P90) with ARR, vs-plan, and primary driver
+      - Win rate sensitivity table (±5pp impact)
+      - Concentration risk flag when top 3 accounts > 30% of pipeline
+      - p10/p50/p90_growth_pct fields for annual-planning-workflow handoff
+
+    tools_used:
+      - HubSpot (pipeline read, win rate history)
+
+    related_skills:
+      - rev-ops.annual-planning-workflow
+      - rev-ops.pipeline-coverage-analysis
+      - rev-ops.quota-sensitivity-analysis
+
+    execution_profile:
+      reads_crm: true
+      writes_crm: false
+      reads_cs_platform: false
+      calls_llm: false
+      creates_linear_issue: false
+
+    constraints:
+      - G1 — all scenario outputs carry: "This is a range model, not a revenue commitment"
+      - G6 — data-as-of timestamp required on all pipeline pulls
+      - Present all three scenarios; do not surface only the optimistic one
+      - Confirm output destination before delivering
+
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - P10/P50/P90 table includes ARR, vs-plan delta, and named primary driver per scenario
+      - Win rate sensitivity modeled at ±5pp
+      - Concentration risk flag present when applicable
+      - When invoked from annual-planning-workflow: p10/p50/p90_growth_pct fields output
+
+    known_failure_modes:
+      - HubSpot pipeline unavailable → declare unavailable; do not estimate scenarios from memory
+      - Win rate history < 4Q → flag data gap; use stated win rate from practice profile with Moderate confidence
+
+  - id: rev-ops.stage-integrity-audit
+    name: stage-integrity-audit
+    version: 1.0.0
+    domain: rev-ops
+    category: pipeline-intelligence
+    owner: rev-ops-lead
+
+    summary: >
+      Detects CRM hygiene issues that distort forecasts: stage-skipping (multi-stage jumps
+      in one update), backward movement, and stale stage (stuck > 2x historical avg).
+      Produces audit report for human review before any CRM edits. Never updates CRM
+      autonomously.
+
+    intended_tasks:
+      - Identify deals with retroactive stage-skip entries
+      - Flag deals that moved backward (may indicate lost deal not yet closed)
+      - Surface stale-stage deals inflating pipeline with unlikely-to-close opportunities
+
+    out_of_scope:
+      - Executing CRM stage corrections (G9 — all changes are proposals for human review)
+      - Velocity trend analysis (route to pipeline-velocity-tracking)
+
+    invocation_cues:
+      - "stage integrity"
+      - "stage skipping"
+      - "backward movement"
+      - "CRM stage hygiene"
+      - "stale stage"
+
+    anti_cues:
+      - General CRM hygiene (route to crm-hygiene-audit for field completeness)
+      - Forecast amount accuracy (route to forecast-variance-analysis)
+
+    priority: standard
+    argument_hint: "Quarter scope; optionally filter by rep or segment"
+
+    required_context:
+      - HubSpot stage change history (entry/exit dates per deal)
+      - avg_sales_cycle_days and historical median by stage from practice profile
+
+    consumes_files:
+      - reference/revops-domain-model.md §9
+
+    produces_artifacts:
+      - Stage integrity audit report (three pattern sections + recommended actions)
+
+    tools_used:
+      - HubSpot (stage history read)
+
+    related_skills:
+      - rev-ops.pipeline-velocity-tracking
+      - rev-ops.crm-hygiene-audit
+      - rev-ops.forecast-variance-analysis
+
+    execution_profile:
+      reads_crm: true
+      writes_crm: false
+      reads_cs_platform: false
+      calls_llm: false
+      creates_linear_issue: false
+
+    constraints:
+      - G9 (Write Protocol) — no autonomous CRM edits; all corrections are proposals requiring human confirmation
+      - G5 — stage anomalies are signals for manager and CRM admin review
+      - G6 — data-as-of required on all stage history reads
+
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - All three anomaly patterns (skip, backward, stale) evaluated across scope
+      - Each finding includes deal name, pattern detail, rep, and recommended action
+      - Recommended actions explicitly flagged as requiring human confirmation before CRM edits
+
+    known_failure_modes:
+      - Stage history not available in HubSpot → declare unavailable; cannot complete audit
+      - Historical stage median not established (<4Q data) → use avg_sales_cycle_days as proxy; flag as estimate
+
+  - id: rev-ops.territory-optimization
+    name: territory-optimization
+    version: 1.0.0
+    domain: rev-ops
+    category: planning
+    owner: rev-ops-lead
+
+    summary: >
+      Evaluates territory fairness across reps on four dimensions: TAM coverage, historical
+      attainment, account density, and whitespace. Proposes recarving when imbalances exceed
+      threshold. All proposals are DRAFT until dual-confirmed by RevOps lead and Sales lead.
+      Never finalizes territory changes autonomously.
+
+    intended_tasks:
+      - Score territory fairness across all AE territories on four dimensions
+      - Propose specific account recarving recommendations to address imbalances
+      - Surface attainment variance potentially explained by territory quality vs. rep performance
+
+    out_of_scope:
+      - Finalizing territory changes (G4 — requires dual confirmation by RevOps + Sales leadership)
+      - Headcount decisions (territory analysis is structural input, not hiring mandate)
+
+    invocation_cues:
+      - "territory balance"
+      - "recarve territories"
+      - "territory fairness"
+      - "territory analysis"
+      - "rep territory review"
+
+    anti_cues:
+      - Individual rep performance coaching (structural tool, not rep-level)
+      - Quota modeling (route to quota-sensitivity-analysis)
+
+    priority: standard
+    argument_hint: "Standalone or --inside annual-planning-workflow"
+
+    required_context:
+      - HubSpot account distribution data by rep
+      - current_ae_count, primary_segment, avg_deal_acv from practice profile
+      - Historical attainment by rep (trailing 4Q)
+
+    consumes_files:
+      - reference/revops-domain-model.md §9
+
+    produces_artifacts:
+      - Territory fairness scorecard (four dimensions × rep matrix)
+      - Recarving proposals (DRAFT — not final until dual-confirmed)
+
+    tools_used:
+      - HubSpot (account distribution read)
+
+    related_skills:
+      - rev-ops.annual-planning-workflow
+      - rev-ops.unit-of-growth-calculator
+      - rev-ops.quota-sensitivity-analysis
+
+    execution_profile:
+      reads_crm: true
+      writes_crm: false
+      reads_cs_platform: false
+      calls_llm: false
+      creates_linear_issue: false
+
+    constraints:
+      - G4 — every territory output labeled DRAFT until dual-confirmed by RevOps and Sales leadership
+      - G5 — structural analysis; Sales leadership owns territory decisions
+      - G2 — territory proposals do not constitute headcount decisions
+
+    risk_level: medium
+    approval_needed: true
+
+    success_criteria:
+      - All four fairness dimensions scored per rep
+      - Imbalance threshold breaches called out with evidence
+      - Recarving proposals include specific accounts/segments, rationale, and estimated attainment impact
+      - All output carries DRAFT label with dual-confirmation requirement stated
+
+    known_failure_modes:
+      - Account distribution not accessible from HubSpot → declare unavailable; cannot complete dimensional scoring
+      - Historical attainment by rep not available → flag attainment dimension as unscored; complete other three
+
+  - id: rev-ops.unit-of-growth-calculator
+    name: unit-of-growth-calculator
+    version: 1.0.0
+    domain: rev-ops
+    category: planning
+    owner: rev-ops-lead
+
+    summary: >
+      Computes GTM headcount requirements, capacity imbalances, and efficiency diagnostics
+      for B2B SaaS organizations using the AE-anchored or CSM-anchored pod model. Synthesizes
+      SuccessCOACHING Unit of Growth research with 2025 SaaS benchmarks. Works forward
+      (revenue targets → headcount) or reverse (current headcount → max supportable ARR).
+      Surfaces five imbalance signals across AE, SDR, CSM, and Support functions.
+
+    intended_tasks:
+      - Model GTM headcount requirements from ARR target and segment
+      - Run CS-anchored reverse to find max ARR current CSM count can support
+      - Detect CS under/over-capacity, Sales under/over-capacity, and lead volume insufficiency
+      - Produce pipeline coverage check from win rate and current pipeline value
+      - Generate AE:CSM:SDR headcount table with benchmark citations for board/CRO/CFO reviews
+
+    out_of_scope:
+      - Individual rep performance review (structural capacity tool, not rep coaching)
+      - Pricing or packaging analysis
+      - Customer health scoring or churn prediction on specific accounts
+      - Detailed financial modeling with COGS, EBITDA, or equity dilution
+
+    invocation_cues:
+      - "model my GTM headcount"
+      - "do I have enough CSMs"
+      - "how much ARR can my CS team support"
+      - "is my pipeline coverage healthy"
+      - "run the unit of growth calculation"
+      - "show me where my GTM org is over or under capacity"
+
+    anti_cues:
+      - Financial modeling with COGS or EBITDA (route to CFO model)
+      - Individual rep quota review (route to quota-sensitivity-analysis)
+
+    priority: high
+    argument_hint: "current_arr, target_growth_pct, segment, motion — or provide current headcount for reverse model"
+
+    required_context:
+      - current_arr, target_growth_pct or new_arr_target
+      - segment (SMB / Mid-Market / Enterprise / Strategic)
+      - motion (Outbound-Heavy / Mixed / Inbound-Dominant / PLG)
+      - ae_quota, ae_attainment (or accept benchmark defaults)
+      - csm_model preference (ARR-based or account-based)
+      - Optional: current AE/SDR/CSM counts, win rate, pipeline value, ACV, sales cycle
+
+    consumes_files:
+      - references/benchmark-library.md
+      - references/metrics-and-glossary.md
+
+    produces_artifacts:
+      - UoG analysis: headcount model (AE/SDR/CSM/Support required vs. current)
+      - CS capacity check (max supported ARR, headroom %, max AEs CS can support)
+      - Pipeline coverage check (required coverage ratio, gap, coverage signal)
+      - Imbalance signals (up to 5 categories, severity HIGH/MEDIUM)
+      - Remediation actions (priority-ranked, concrete)
+      - Optional: scenario comparison (conservative/base/aggressive)
+
+    tools_used: []
+
+    related_skills:
+      - rev-ops.annual-planning-workflow
+      - rev-ops.closed-won-to-cs-capacity-modeling
+      - rev-ops.quota-sensitivity-analysis
+      - rev-ops.scenario-modeling
+      - rev-ops.pipeline-coverage-analysis
+
+    execution_profile:
+      reads_crm: false
+      writes_crm: false
+      reads_cs_platform: false
+      calls_llm: false
+      creates_linear_issue: false
+
+    constraints:
+      - Benchmark defaults applied explicitly with source citation (benchmark-library.md section and confidence tier)
+      - All metrics and formulas answered from references/metrics-and-glossary.md — not training memory
+      - Pipeline coverage = 1 ÷ win rate; never hardcode 3x rule
+      - CS capacity check always runs when current CSM count is provided (non-optional)
+      - Headcount outputs presented as ranges (±1 FTE) given benchmark variability
+      - Distinguish planning attainment rate (75%) from KBCM actual median (55–65%)
+      - CS is the binding constraint check: if Max AEs CS Can Support < AEs Required → flag immediately
+
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - Headcount model complete (AE/SDR/CSM required, with gap vs. current if provided)
+      - CS capacity check in both directions when CSM count provided
+      - Pipeline coverage check present when win rate or pipeline value provided
+      - All imbalance signals that fire include: what's happening, evidence, risk, severity
+      - Every signal has at least one concrete remediation action
+      - All benchmark defaults declared with source citation
+
+    known_failure_modes:
+      - Only ARR and growth provided (no headcount) → derive from benchmarks; note as target state not gap analysis
+      - Only current headcount provided (no revenue target) → run CS-anchored reverse only; invite growth target
+      - Win rate not provided → default 25% with explicit flag; recommend CRM verification
+      - Segment ambiguous (mid-market + enterprise mix) → run both; present range; ask which is majority
+

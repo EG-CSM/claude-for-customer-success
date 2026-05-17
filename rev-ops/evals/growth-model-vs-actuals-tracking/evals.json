@@ -1,0 +1,132 @@
+{
+  "skill_name": "growth-model-vs-actuals-tracking",
+  "skill_path": "skills/growth-model-vs-actuals-tracking/SKILL.md",
+  "eval_type": "Type A",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 0,
+      "name": "happy-path-on-plan-all-vectors",
+      "category": "happy-path",
+      "prompt": "How are we tracking against the plan?",
+      "context": "UoG baseline present: new_arr_target=2000000, nrr_assumption=1.10, grr_assumption=0.92. Actuals: closed_won_ytd=980000 (vs. pro-rata plan=1000000, delta=-2%, threshold=15%), current_nrr=1.09 (delta=-1pp, threshold=5pp), current_grr=0.91 (delta=-1pp, threshold=3pp). All three vectors within thresholds.",
+      "expected_output": "Skill produces three-vector tracking table. All three vectors show ON PLAN signal. No variance memo fired. Output labeled [DRAFT] with G1 qualification.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output contains a three-vector tracking table with New logo ARR, Expansion NRR, and Retention GRR rows",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "All three vectors show ON PLAN or equivalent positive signal — no variance memo is produced",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "guardrail",
+          "text": "Output applies G1: forward-looking projection language is qualified (not presented as a commitment)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Output applies G6: data-as-of timestamp on CRM and CS platform reads",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "nrr-variance-fires-variance-memo",
+      "category": "guardrail",
+      "prompt": "Check our growth model tracking.",
+      "context": "UoG baseline: nrr_assumption=1.10. Actuals: current_nrr=1.04 (delta=-6pp, threshold=5pp — threshold crossed). New logo and GRR are on plan.",
+      "expected_output": "Skill fires a variance memo for the NRR vector only. Variance memo contains: what diverged, quantified impact on year-end ARR, most likely explanatory factor with evidence source, and whether a replan is triggered.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output fires a variance memo specifically for the NRR expansion vector (delta -6pp exceeds -5pp threshold)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "structural",
+          "text": "Variance memo contains: what diverged, ARR impact estimate, most likely factor, and replan trigger assessment",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output does NOT fire variance memos for new logo ARR or GRR (these are within their thresholds)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Variance memo labels its explanatory factor with a data source tag [CRM ✓ live / CS Platform ✓ live / Inferred] — not presented as fact without attribution",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A4",
+          "type": "guardrail",
+          "text": "Output applies G1: year-end ARR impact estimate is qualified as a projection, not a commitment",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "degraded-no-uog-baseline-reporting-mode",
+      "category": "degraded-input",
+      "prompt": "How are we tracking against plan?",
+      "context": "uog_baseline_path absent from practice profile. HubSpot connected: closed_won_ytd=1200000. CS platform connected: nrr=1.08.",
+      "expected_output": "Skill declares baseline absent before showing any numbers, runs in reporting mode only (actuals without comparison), labels output accordingly, does not produce variance memos or threshold assessments.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output declares UoG baseline absent using canonical language before showing any analysis",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output does NOT produce a three-vector comparison table with plan vs. actual columns (no baseline = no comparison)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output reports actuals (closed_won_ytd, current NRR) without comparison to plan",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Output applies [Confidence: Low] or equivalent with explicit reason (baseline absent)",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    }
+  ]
+}

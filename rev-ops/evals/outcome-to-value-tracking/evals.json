@@ -1,0 +1,185 @@
+{
+  "skill_name": "outcome-to-value-tracking",
+  "skill_path": "skills/outcome-to-value-tracking/SKILL.md",
+  "eval_type": "Type A",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 0,
+      "name": "single-account-l2-attainment",
+      "category": "happy-path",
+      "prompt": "What rubric level is Pinnacle Tech at on their outcomes?",
+      "context": "OCV catalog present. Pinnacle Tech has OCV-001 (Ratified) linked. OCV-001 verification milestone: 90 days. Pinnacle is at day 95. CS platform: health_score=85, product_usage_trend=growing, cs_documented_outcome_progress='Primary metric confirmed: reduced invoice processing time by 40% (measured in [source])'. L2 evidence criteria: 'primary metric verified at measurement source'. CRM: QBR logged 2 weeks ago.",
+      "expected_output": "Skill assesses Pinnacle Tech at L2 for OCV-001, citing the specific evidence (primary metric verified). Includes next checkpoint date. Applies G5 and G6. Uses [OCV catalog] source tag.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output contains a rubric level assessment of L2 for OCV-001 with the OCV entry ID cited",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "structural",
+          "text": "Output cites specific evidence from the OCV rubric criteria that maps to L2 (primary metric verified at measurement source)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "guardrail",
+          "text": "Output applies G5: rubric level described as analytical input with CS owning the response plan",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Output applies G8: OCV-001 confirmed as Ratified before use in assessment",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A4",
+          "type": "guardrail",
+          "text": "Output applies G6: data-as-of timestamps on CS platform and CRM reads",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A5",
+          "type": "structural",
+          "text": "Output includes next checkpoint date based on OCV verification milestone",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "portfolio-l0-pattern-threshold-crossed",
+      "category": "happy-path",
+      "prompt": "Run the portfolio outcome health check.",
+      "context": "OCV catalog present with OCV-002 (Ratified). 20 accounts with OCV-002 linked, all past 90-day checkpoint. Rubric levels: L0=10 (50%), L1=5 (25%), L2=4 (20%), L3=1 (5%). L0 rate = 50% exceeds 40% threshold.",
+      "expected_output": "Skill fires L0 pattern signal for OCV-002 (50% > 40% threshold). Surfaces pattern hypothesis about common L0 account attributes. Escalates to CS leadership via Linear. Does NOT name individual accounts in the portfolio pattern signal.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output contains a portfolio table showing L0/L1/L2/L3 counts and percentages for OCV-002",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output fires the L0 pattern signal with a specific threshold reference (50% > 40%)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "subjective",
+          "text": "L0 pattern signal includes a pattern hypothesis about common attributes of L0 accounts",
+          "auto_gradable": false,
+          "rubric": "PASS: Output attempts to identify what the L0 accounts have in common — at minimum acknowledges that investigation is needed and names likely variables (segment, product tier, onboarding path, deal size). FAIL: Output only reports the count and fires the flag without any explanatory hypothesis or direction for investigation."
+        },
+        {
+          "id": "A3",
+          "type": "behavioral",
+          "text": "Portfolio pattern section does NOT name individual accounts (account-level data is for separate delivery)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A4",
+          "type": "guardrail",
+          "text": "Output applies G5: portfolio analysis described as analytical input, not a directive to CS",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "degraded-no-ocv-catalog",
+      "category": "degraded-input",
+      "prompt": "How are customers tracking on outcomes?",
+      "context": "OCV catalog absent (ocv_catalog_path not configured). CS platform connected with health scores.",
+      "expected_output": "Skill cannot produce rubric-level tracking without OCV catalog. Declares catalog absent, explains what's unavailable, offers what it CAN do with CS health scores alone, and refers to outcome-statement-builder for resolution.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output explicitly declares OCV catalog absent before attempting any analysis",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output does NOT produce L0–L3 rubric level assessments (these require the catalog)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output references outcome-statement-builder as the path to resolve the missing catalog",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "behavioral",
+          "text": "Output offers an alternative — e.g., CS health score portfolio view — rather than simply refusing to run",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "scope-boundary-product-analytics-not-available",
+      "category": "edge-case",
+      "prompt": "Why are so many accounts stuck at L0 for OCV-003? Is it a product issue?",
+      "context": "OCV catalog present. OCV-003: L0 rate is 45% across 22 accounts. User is asking for feature-level product analytics to diagnose the root cause. No product analytics connector is configured.",
+      "expected_output": "Skill surface the L0 pattern, applies the portfolio analysis scope boundary (product analytics out of scope), explicitly states what investigation would require, and recommends a CS + Product review rather than attempting to infer from unavailable data.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output explicitly states that feature-level product analytics are outside the current connector scope",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output does NOT fabricate feature-level adoption analysis from unavailable data",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output recommends a CS + Product review as the appropriate escalation for root cause investigation",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "subjective",
+          "text": "Output is still useful despite the scope limitation — surfaces what it CAN tell from available signals",
+          "auto_gradable": false,
+          "rubric": "PASS: Output provides available signals (health score pattern, cohort attributes, CS-documented notes) even when product analytics are unavailable. Gives the CS + Product team a useful starting point. FAIL: Output simply says 'I can't answer this' without providing any available analysis."
+        }
+      ]
+    }
+  ]
+}

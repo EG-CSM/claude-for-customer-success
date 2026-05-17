@@ -1,0 +1,15 @@
+name: data-collector
+model: claude-sonnet-4-7
+system:
+  file: ./data-collector.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs: []
+  - { type: mcp_toolset, mcp_server_name: hubspot,      default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: cs-platform,  default_config: { enabled: true } }
+mcp_servers:
+  - { type: url, name: hubspot,      url: "${HUBSPOT_MCP_URL}" }
+  - { type: url, name: cs-platform,  url: "${CS_PLATFORM_MCP_URL}" }
+skills: []
+callable_agents: []

@@ -1,0 +1,107 @@
+{
+  "evaluation_date": "2026-05-15",
+  "rubric_version": "1.0",
+  "sample_size": 10,
+  "skills_evaluated": [
+    {
+      "skill": "stakeholder-map",
+      "agent": "csm",
+      "d1_format": { "pass": true, "elements_present": 6, "elements_missing": [] },
+      "d2_specificity": { "pass": true, "avg": 3.0, "scores": { "classify": 3, "constraints": 3, "expert_check": 3, "anti_patterns": 3 } },
+      "d3_alignment": { "pass": true, "ratio": 0.94, "blueprint_sourced": 17, "total_items": 18 },
+      "d4_anti_patterns": { "pass": true, "avg": 3.0, "count": 6, "scores": [3, 3, 3, 3, 3, 3] },
+      "d5_post_exec": { "pass": true, "elements_present": 6, "elements_missing": [] },
+      "overall": "Excellent"
+    },
+    {
+      "skill": "risk-flag",
+      "agent": "csm",
+      "d1_format": { "pass": false, "elements_present": 4, "elements_missing": ["'Before generating output, apply these primers:' opening line", "Numbered primers (uses bold labels without numbering)"] },
+      "d2_specificity": { "pass": true, "avg": 3.0, "scores": { "classify": 3, "constraints": 3, "expert_check": 3, "anti_patterns": 3 } },
+      "d3_alignment": { "pass": true, "ratio": 0.89, "blueprint_sourced": 16, "total_items": 18 },
+      "d4_anti_patterns": { "pass": true, "avg": 2.8, "count": 5, "scores": [3, 3, 2, 3, 3] },
+      "d5_post_exec": { "pass": false, "elements_present": 3, "elements_missing": ["G7 staleness check", "Mode-matching check", "3-band confidence format"] },
+      "overall": "Pass"
+    },
+    {
+      "skill": "qbr-builder",
+      "agent": "csm",
+      "d1_format": { "pass": false, "elements_present": 4, "elements_missing": ["'Before generating output, apply these primers:' opening line", "Numbered primers (uses bold headers instead of numbered list)"] },
+      "d2_specificity": { "pass": true, "avg": 3.0, "scores": { "classify": 3, "constraints": 3, "expert_check": 3, "anti_patterns": 3 } },
+      "d3_alignment": { "pass": true, "ratio": 0.88, "blueprint_sourced": 15, "total_items": 17 },
+      "d4_anti_patterns": { "pass": true, "avg": 2.8, "count": 5, "scores": [3, 3, 2, 3, 3] },
+      "d5_post_exec": { "pass": false, "elements_present": 3, "elements_missing": ["Implicit-need question", "G7 staleness check", "3-band confidence format"] },
+      "overall": "Pass"
+    },
+    {
+      "skill": "kickoff-prep",
+      "agent": "onboarding",
+      "d1_format": { "pass": true, "elements_present": 6, "elements_missing": [] },
+      "d2_specificity": { "pass": true, "avg": 3.0, "scores": { "classify": 3, "constraints": 3, "expert_check": 3, "anti_patterns": 3 } },
+      "d3_alignment": { "pass": true, "ratio": 0.89, "blueprint_sourced": 16, "total_items": 18 },
+      "d4_anti_patterns": { "pass": true, "avg": 3.0, "count": 6, "scores": [3, 3, 3, 3, 3, 3] },
+      "d5_post_exec": { "pass": true, "elements_present": 6, "elements_missing": [] },
+      "overall": "Excellent"
+    },
+    {
+      "skill": "success-criteria",
+      "agent": "onboarding",
+      "d1_format": { "pass": true, "elements_present": 6, "elements_missing": [] },
+      "d2_specificity": { "pass": true, "avg": 3.0, "scores": { "classify": 3, "constraints": 3, "expert_check": 3, "anti_patterns": 3 } },
+      "d3_alignment": { "pass": true, "ratio": 0.89, "blueprint_sourced": 17, "total_items": 19 },
+      "d4_anti_patterns": { "pass": true, "avg": 3.0, "count": 6, "scores": [3, 3, 3, 3, 3, 3] },
+      "d5_post_exec": { "pass": true, "elements_present": 5, "elements_missing": ["G7 staleness check"] },
+      "overall": "Excellent"
+    },
+    {
+      "skill": "blocker-review",
+      "agent": "onboarding",
+      "d1_format": { "pass": true, "elements_present": 6, "elements_missing": [] },
+      "d2_specificity": { "pass": true, "avg": 3.0, "scores": { "classify": 3, "constraints": 3, "expert_check": 3, "anti_patterns": 3 } },
+      "d3_alignment": { "pass": true, "ratio": 0.79, "blueprint_sourced": 15, "total_items": 19 },
+      "d4_anti_patterns": { "pass": true, "avg": 2.83, "count": 6, "scores": [3, 3, 3, 3, 2, 3] },
+      "d5_post_exec": { "pass": false, "elements_present": 4, "elements_missing": ["G7 staleness check", "Mode-matching check"] },
+      "overall": "Pass"
+    },
+    {
+      "skill": "churn-analysis",
+      "agent": "renewals",
+      "d1_format": { "pass": true, "elements_present": 6, "elements_missing": [] },
+      "d2_specificity": { "pass": true, "avg": 3.0, "scores": { "classify": 3, "constraints": 3, "expert_check": 3, "anti_patterns": 3 } },
+      "d3_alignment": { "pass": true, "ratio": 0.95, "blueprint_sourced": 19, "total_items": 20 },
+      "d4_anti_patterns": { "pass": true, "avg": 3.0, "count": 6, "scores": [3, 3, 3, 3, 3, 3] },
+      "d5_post_exec": { "pass": true, "elements_present": 5, "elements_missing": ["Implicit-need question"] },
+      "overall": "Excellent"
+    },
+    {
+      "skill": "negotiation-prep",
+      "agent": "renewals",
+      "d1_format": { "pass": true, "elements_present": 6, "elements_missing": [] },
+      "d2_specificity": { "pass": true, "avg": 3.0, "scores": { "classify": 3, "constraints": 3, "expert_check": 3, "anti_patterns": 3 } },
+      "d3_alignment": { "pass": true, "ratio": 0.84, "blueprint_sourced": 16, "total_items": 19 },
+      "d4_anti_patterns": { "pass": true, "avg": 2.67, "count": 6, "scores": [3, 2, 2, 3, 3, 3] },
+      "d5_post_exec": { "pass": true, "elements_present": 5, "elements_missing": ["G7 staleness check"] },
+      "overall": "Excellent"
+    },
+    {
+      "skill": "expansion-signal",
+      "agent": "renewals",
+      "d1_format": { "pass": true, "elements_present": 6, "elements_missing": [] },
+      "d2_specificity": { "pass": true, "avg": 3.0, "scores": { "classify": 3, "constraints": 3, "expert_check": 3, "anti_patterns": 3 } },
+      "d3_alignment": { "pass": true, "ratio": 0.83, "blueprint_sourced": 19, "total_items": 23 },
+      "d4_anti_patterns": { "pass": true, "avg": 2.83, "count": 6, "scores": [3, 3, 3, 3, 3, 2] },
+      "d5_post_exec": { "pass": true, "elements_present": 5, "elements_missing": ["G7 staleness check"] },
+      "overall": "Excellent"
+    },
+    {
+      "skill": "health-model-review",
+      "agent": "cs-ops",
+      "d1_format": { "pass": true, "elements_present": 6, "elements_missing": [] },
+      "d2_specificity": { "pass": true, "avg": 3.0, "scores": { "classify": 3, "constraints": 3, "expert_check": 3, "anti_patterns": 3 } },
+      "d3_alignment": { "pass": true, "ratio": 0.91, "blueprint_sourced": 21, "total_items": 23 },
+      "d4_anti_patterns": { "pass": true, "avg": 3.0, "count": 6, "scores": [3, 3, 3, 3, 3, 3] },
+      "d5_post_exec": { "pass": true, "elements_present": 6, "elements_missing": [] },
+      "overall": "Excellent"
+    }
+  ]
+}

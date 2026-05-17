@@ -39,14 +39,40 @@ Critical configuration to apply:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G2 (expansion signals require economic buyer qualification), G4 (no escalation triage without a named escalation path), G6 (TARO play outputs are leads for CSM judgment — not prescriptions).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of play execution request is this?
+   - **Reactive Recovery** — health alert, usage drop, detractor NPS, champion departure; account is deteriorating and needs stabilization first
+   - **Proactive Lifecycle Motion** — scheduled or milestone-driven (onboarding checkpoint, QBR cadence, renewal approach, value realization); no crisis, advancing the lifecycle
+   - **Expansion Qualification** — positive signals present (growth interest, new use cases, champion advocacy); play qualifies and routes the opportunity
+   - **Relationship Re-engagement** — engagement gone cold, sponsor dormant, responses slow; silence is the signal and the play must bring new value
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - Play must map to a confirmed trigger — CSM-reported triggers without data corroboration are flagged in the play note
+   - Expansion signals require economic buyer qualification before any AE routing (G2)
+   - Escalation steps require a named escalation path from the configured matrix (G4)
+   - TARO play outputs are leads for CSM judgment, not prescriptions (G6)
+   - No expansion language in at-risk or recovery play outreach — ever
+   - Customer-facing outputs must be scrubbed of internal health scores, risk classifications, and escalation routing
+
+3. **EXPERT CHECK**: What would a veteran CSM verify first?
+   - Is the trigger confirmed from data, or only CSM-reported? If single-source, flag it before proceeding.
+   - Does the account's current health actually support this play type? (A lifecycle play on a silently unhappy account accelerates churn.)
+   - Is the outreach routed to the right stakeholder level — or are we going through a junior contact when the issue is executive-level?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Running a play without a confirmed trigger — "it feels like they're at risk" is not a trigger
+   - Template outreach with no account-specific data points — signals low investment to the customer
+   - Overlapping plays on the same account creating conflicting signals
+   - Escalation avoidance — attempting solo recovery when the trigger severity requires leadership
+   - "Just checking in" re-engagement with no new value, insight, or data
+   - Premature AE handoff before economic buyer is identified and champion is willing to sponsor
+
+**After execution**, verify:
+- Does the output answer the implicit question the CSM is asking?
+- Are all data sources timestamped and staleness-flagged?
+- Is the output mode matched to the actual need?
+- Confidence: [High] if 2+ live sources corroborate / [Medium] if single-source or partially stale / [Low] if user-provided context only — state which.
 
 ## Play selection
 

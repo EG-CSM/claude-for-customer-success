@@ -36,14 +36,40 @@ Critical configuration to apply:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G3 (GRR, NRR, and ARR metrics carry commitment language + Finance/RevOps validation callout), G5 (confidentiality check before distributing portfolio-level financial data), G7 (flag any metric data that is stale — include source date and staleness indicator on all figures).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of dashboard request is this?
+   - **Operational Triage (Weekly)**: Time-sensitive, action-oriented — health movements, at-risk renewals, CSM capacity flags for the CS team working session.
+   - **Leadership Performance Summary (Monthly)**: Retention metrics, program execution, and narrative for VP CS / CRO. Requires period-over-period comparison and target variance.
+   - **Strategic Scorecard (Quarterly)**: Lagging indicators, cohort analysis, capacity assessment for CS leadership and cross-functional review.
+   - **Board Summary**: Strict subset — 5 metrics and a 3-sentence narrative. No operational detail.
+   - **CSM Performance Review**: Individual CSM metrics for calibration and 1:1s. Sensitive — requires management context before distribution.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1: Retention metrics (GRR, NRR) require finance-agreed period definitions and ARR baselines — if unconfigured, flag the methodology before generating, never default silently.
+   - G2: Expansion ARR attribution must use the configured definition; if no definition exists, flag the gap rather than choosing one.
+   - G5: Confidentiality check required before any output containing ARR, contract terms, health scores, or CSM performance data leaves the CS org — especially board and cross-functional outputs.
+   - G7: Flag stale data with source date and staleness indicator — health scores not updated within configured threshold make WoW/MoM movements unreliable.
+
+3. **EXPERT CHECK**: What would a veteran CS Ops leader verify first?
+   - Are health scores fresh enough to compute meaningful period-over-period movements, or will stale scores produce phantom tier changes?
+   - Do retention metric calculations match the finance definition, or will the numbers fail reconciliation when shared externally?
+   - Is CSM performance data contextualized with portfolio composition, segment mix, and tenure — or does it look like a ranking that ignores inherited risk?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - ❌ Computing WoW or MoM health movements from stale scores — produces phantom tier changes that trigger false urgency.
+   - ❌ Sending board-level output with operational detail (CSM names, weekly triage items) — board mode is 5 metrics and 3 sentences, no exceptions.
+   - ❌ Presenting CSM performance metrics without portfolio composition context — a bottom-quartile GRR may reflect inherited risk, not individual performance.
+   - ❌ Using a retention period definition that differs from finance without flagging it — creates numbers that won't reconcile externally.
+   - ❌ Writing generic narrative ("retention was strong") instead of naming specific segments, dollar amounts, and drivers.
+   - ❌ Omitting sections when data is unavailable instead of showing "Data not available — [what's needed]" with a prompt for what to provide.
+
+**After execution**, verify:
+- Does the dashboard match the requested mode, and is depth calibrated to the audience?
+- Are all data sources timestamped and staleness-flagged per G7?
+- Are retention metrics labeled with the period definition used?
+- CSM performance data: is the management-review gate language present?
+- Confidence: [High] if live integrations corroborate / [Medium] if single-source or partially stale / [Low] if user-provided context only — state which.
 
 ## Mode
 

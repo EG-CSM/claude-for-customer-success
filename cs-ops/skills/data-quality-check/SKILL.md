@@ -37,14 +37,40 @@ Critical configuration to apply:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G7 (the purpose of this skill is to surface stale data — every stale record flagged must include source date and staleness indicator).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of data quality audit is this?
+   - **Pre-Reporting Hygiene Check**: Audit before a reporting cycle, dashboard build, or capacity plan. Optimize for ARR-weighted completeness — downstream analytics depend on this data being clean.
+   - **Post-Transition Validation**: Triggered after CSM reassignment, territory rebalance, or CRM migration. Separate transition-caused gaps from pre-existing ones using last-updated timestamps.
+   - **Analytics Distrust Investigation**: A dashboard number looks wrong or a metric moved unexpectedly. Forensic audit — trace the suspicious metric back to its component fields. Start with --full, narrow after root cause is identified.
+   - **Recurring / Scheduled Audit**: Periodic data quality check with no specific trigger. Compare against prior audit results — highlight what improved, what regressed, and which remediation items remain unassigned.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G2: Staleness thresholds are configured — do not invent them. If no threshold is configured, flag the gap and recommend one; never apply an arbitrary default without surfacing it.
+   - G4: Consistency violations may be legitimate manual overrides (e.g., high-touch account below standard ARR floor for strategic reasons). Flag — do not auto-correct. Corrections require CS lead judgment.
+   - G5: Remediation backlog requires named ownership and due dates before any improvement occurs. A backlog without owners is documentation, not action.
+   - G7: Every stale record flagged must include source date and staleness indicator. Every data gap must be quantified by ARR impact, not just record count.
+   - Connected integrations limit what can be retrieved — flag gaps, never silently omit fields or sources.
+
+3. **EXPERT CHECK**: What would a veteran CS Ops analyst verify first?
+   - Is completeness ARR-weighted or just record-counted? 5% of accounts missing data could be 40% of ARR — the remediation priority is completely different.
+   - Are orphaned records (no CSM + no segment) quantified separately? These accounts are invisible to every CS workflow — they are coverage blindspots, not just hygiene issues.
+   - For consistency violations above 5% of accounts in a single check: is this a systemic definition problem (segment thresholds changed, field mapping drifted) or individual data entry errors?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - ❌ Reporting "95% complete" by record count when the missing 5% holds 30% of ARR — always compute ARR-weighted completeness alongside record counts.
+   - ❌ Applying staleness thresholds that aren't configured — state the configured source explicitly or flag the gap.
+   - ❌ Mass-assigning orphaned records to CSMs without checking whether accounts are active, churned, or legacy — require disposition (assign / archive / investigate) per orphan.
+   - ❌ Running only the mode that matches the symptom (e.g., --completeness) when the root cause may be a consistency or staleness issue — start with --full for investigations.
+   - ❌ Producing the same audit findings session after session with no remediation progress tracking — include "vs. prior audit" comparison when prior results are available.
+   - ❌ Recommending remediation without naming an owner role — unowned items are never fixed.
+
+**After execution**, verify:
+- Does the audit answer the implicit question ("can I trust the data feeding my reports and plans")?
+- Are all data sources timestamped and staleness-flagged per G7?
+- Is every data gap quantified by both account count AND ARR impact?
+- Is the output mode (--full / --completeness / --staleness / --consistency / --field) matched to the actual need?
+- Confidence: [High] if auditing live CRM + CS Platform data within configured thresholds / [Medium] if working from a user-provided export / [Low] if conversation context only — state which.
 
 ## Mode
 

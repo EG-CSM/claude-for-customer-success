@@ -6,7 +6,7 @@ description: >
   every other skill in this plugin reads. Use on fresh install, when CLAUDE.md
   still has [PLACEHOLDER] markers, or when re-running with --redo or
   --check-integrations.
-argument-hint: "[--redo | --check-integrations]"
+argument-hint: "[--redo | --check-integrations | --generate-outcome-catalog]"
 version: "1.0.0"
 config_skill: true
 ---
@@ -25,14 +25,39 @@ config_skill: true
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — No domain guardrails apply — this skill configures the environment rather than generating outputs.
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of cold-start setup is this?
+   - **Type A — Fresh Install**: No config file exists. No prior profile. Full or quick interview needed.
+   - **Type B — Resume from Pause**: Config exists with `<!-- SETUP PAUSED AT: -->` marker. Partial answers already written.
+   - **Type C — Redo (Full or Section)**: Populated config exists. User invoked `--redo` or `--redo <section>`.
+   - **Type D — Integration Check Only**: User invoked `--check-integrations`. No interview — probe connectors and rewrite the integrations table.
+   - **Type E — Quick Path**: User chose the 2-minute setup. Only Part 0 + CS motion. Everything else gets motion-aware `[DEFAULT]` markers. Outcome catalog gets `[PENDING]` — surface the `--generate-outcome-catalog` flag in the Close section.
+   - **Type F — Catalog Generation Only**: User invoked `--generate-outcome-catalog`. Skip the full interview. Read company-profile.md to retrieve product name and primary value metric, then run Part 6 only.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - Is the working directory project-scoped (limited filesystem access) or user-scoped?
+   - Does a shared company profile already exist (skip company questions) or not (ask and write it)?
+   - Which connectors are available — test with actual calls, not config declarations?
+   - What interview path did the user choose — quick or full?
+
+3. **EXPERT CHECK**: What would a veteran CSM verify first?
+   - Are there existing artifacts (playbooks, escalation docs, CRM exports) that replace manual Q&A?
+   - Does the CS motion answer (high-touch / tech-touch / hybrid / handoff) correctly drive all downstream defaults?
+   - On resume or redo: are previously written answers still accurate before continuing?
+   - On integration check: is the connector actually responding, or just configured?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - ❌ Asking more than 2-3 answerable prompts per turn (count subparts as separate questions)
+   - ❌ Reporting a connector as connected based on `.mcp.json` without an actual successful tool call
+   - ❌ Writing generic defaults without `[DEFAULT]` markers, making them indistinguishable from user-provided values
+   - ❌ Re-asking company-level questions when the shared company profile already exists
+   - ❌ Overwriting a populated config section during a targeted `--redo <section>` without preserving adjacent sections
+
+**After execution**, verify:
+- Does the written config satisfy both the user's explicit answers AND motion-appropriate defaults for unanswered fields?
+- Were all connector statuses verified by actual tool calls, not config inspection?
+- Confidence: [High] if full interview completed with user-provided answers; [Medium] if quick path with motion-aware defaults; [Low] if resumed from stale pause with unconfirmed prior answers
 
 
 ## Purpose
@@ -256,6 +281,69 @@ If the user doesn't have formal playbook sources, say: "No problem — skills wi
 
 ---
 
+### Part 6: Outcome catalog (optional — 5–10 min if generating)
+
+> "The last optional piece is an Outcome & Value Catalog — a structured inventory of the customer outcomes your product delivers, mapped to evidence and value signals. Other skills use it to ground TARO play recommendations, QBR value sections, and renewal narratives in verifiable, specific outcomes rather than generic claims.
+>
+> I can generate one now by researching your product's public-facing capabilities (release notes, docs, case studies, G2/Capterra reviews, LinkedIn posts) and translating them into deliverable customer outcome statements. It takes 5–10 minutes and requires no input from you beyond what you've already told me.
+>
+> Or you can skip it now and run `/csm:cold-start-interview --generate-outcome-catalog` whenever you're ready."
+
+**AskUserQuestion:** "Would you like me to generate your Outcome & Value Catalog now?"
+
+Options:
+- A) Yes — generate it now (5–10 min)
+- B) Skip for now — I'll run `--generate-outcome-catalog` later
+
+**If B or quick-path (Type E):**
+Write `catalog_path: [PENDING]` to the `## Outcome Catalog` section of `company-profile.md`. Surface the flag: "Run `/csm:cold-start-interview --generate-outcome-catalog` when you're ready to build it."
+
+**If A (or Type F — `--generate-outcome-catalog`):**
+
+1. **Gather inputs from context.** Read `company-profile.md` to retrieve:
+   - `product_name` (required)
+   - `primary_value_metric` (used to prioritize outcome framing)
+   - `cs_motion` (used to weight outcome types — adoption vs. expansion vs. retention)
+
+   If any required field is `[PLACEHOLDER]` or missing, ask for it before continuing.
+
+2. **Invoke `product-intelligence-gatherer`.**
+   [Calling product-intelligence-gatherer: discovering product capabilities for {product_name} from public sources]
+
+   Pass: product name, company name, primary value metric as framing context.
+
+   This skill searches public sources (docs, release notes, G2/Capterra, case studies, LinkedIn) and returns a structured capability inventory organized by product area. It requires no user input beyond what's already collected.
+
+3. **Invoke `provisional-outcome-catalog-generator`.**
+   [Calling provisional-outcome-catalog-generator: translating capability inventory into deliverable customer outcome statements]
+
+   Pass: the full capability inventory from step 2, plus the primary value metric and CS motion as framing. This skill produces a structured catalog of customer outcomes in SuccessCOACHING Outcome Catalog format, with evidence references and value signal mapping.
+
+4. **Save the catalog.**
+   Write the generated catalog to:
+   `~/.claude/plugins/config/claude-for-customer-success/outcome-catalog.md`
+
+   Create parent directories as needed.
+
+5. **Register the path in company-profile.md.**
+   In the `## Outcome Catalog` section of `~/.claude/plugins/config/claude-for-customer-success/company-profile.md`, write:
+   ```
+   catalog_path: ~/.claude/plugins/config/claude-for-customer-success/outcome-catalog.md
+   catalog_version: provisional-1.0
+   ratified_date: [PENDING — not yet ratified with CS leadership]
+   generation_status: generated
+   ```
+
+6. **Optional: Offer individual entry refinement.**
+   After generation, say: "Your catalog has [N] outcome entries. I can refine individual entries using `outcome-catalog-entry-builder` — useful for high-priority outcomes where you want tighter evidence standards or custom metric definitions. Want to refine any entries now, or come back to this later?"
+
+   If the user wants to refine entries, invoke `outcome-catalog-entry-builder` for each nominated entry. If they want to defer, move on.
+
+7. **Confirm completion.**
+   "Outcome catalog saved to `~/.claude/plugins/config/claude-for-customer-success/outcome-catalog.md` — [N] outcome entries across [M] product areas. Skills that reference outcome data will use this catalog. You can run `/csm:cold-start-interview --generate-outcome-catalog` to regenerate it after a major product release."
+
+---
+
 ## Writing the practice profile
 
 Write the completed practice profile to `~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md` using the template structure at `${CLAUDE_PLUGIN_ROOT}/CLAUDE.md`. Fill all sections. Mark any deliberately skipped answers as `[SKIPPED — user may add later]` (not `[PLACEHOLDER]`).
@@ -276,6 +364,7 @@ Show the capability tour. Make it concrete — these are the actual things this 
 > - **Flag a risk account** — structured risk memo with the specific signals, escalation routing from your matrix, and recommended next action. Try: `/csm:risk-flag [account name]`
 > - **Run a TARO play** — match an account trigger to your playbook, draft the outreach, route to you for approval. Try: `/csm:taro-play-runner [account name]`
 > - **Renewal readiness check** — risk signals, expansion leads, and a renewal talk track at the 90/60/30-day mark. Try: `/csm:renewal-readiness [account name]`
+> - **Outcome-grounded QBRs and renewals** — when an Outcome & Value Catalog is configured, value sections cite specific, verifiable customer outcomes rather than generic claims. If you skipped catalog generation: `/csm:cold-start-interview --generate-outcome-catalog`
 >
 > **My suggestion for your first one:** Run `/csm:account-research` on an account you know well — it's the fastest way to see how the profile calibration reads. Or tell me what's on your plate and I'll point you to the right skill.
 
@@ -291,6 +380,7 @@ Show the capability tour. Make it concrete — these are the actual things this 
 > - Run `/csm:cold-start-interview --redo` for a full re-interview
 > - Run `/csm:cold-start-interview --redo escalation` to re-do one section
 > - Run `/csm:cold-start-interview --check-integrations` to re-check what's connected
+> - Run `/csm:cold-start-interview --generate-outcome-catalog` to build or regenerate your Outcome & Value Catalog
 >
 > The settings people adjust most: **churn signal definitions** (as you learn what actually predicts risk at your company), **escalation thresholds** (as reporting lines shift), and **health model weights** (as you calibrate which signals matter). When a skill's output feels off, that's usually the thing to tune — it'll tell you which."
 

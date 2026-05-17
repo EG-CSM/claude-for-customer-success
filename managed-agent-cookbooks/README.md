@@ -21,10 +21,75 @@ managed agents run multi-stage pipelines when triggered by a CSM for account-spe
 | [`advocacy-agent`](./advocacy/) | csm | On-demand | Advocacy Package: burnout-protected advocate qualification, ask script or story structure, cs-platform task creation |
 | [`churn-intelligence-agent`](./churn-intelligence/) | renewals | On-demand | Churn Intelligence Report (8 sections) written to cs-platform: signal timeline, churn drivers, exit interview guide, postmortem, learnings, win-back assessment |
 
-Each cookbook directory contains:
-- `cookbook.md` — Full orchestrator specification and embedded system prompt used by the agent
-- `README.md` — Deployment guide, configuration reference, and prompting patterns
-- `subagents/` — Individual subagent system prompt files dispatched by the orchestrator
+---
+
+## Two-Layer Agent Architecture
+
+Each managed agent exists in two complementary forms. Understanding which layer is authoritative for what prevents configuration drift and deployment confusion.
+
+### Layer 1 — Deployable orchestrator spec (plugin `agents/` directory)
+
+Single-file agent specs in each plugin's `agents/` directory are the **authoritative deployment artifacts**. The Claude Agent SDK reads these files to resolve agent identity, routing, and invocation. Each file has a YAML frontmatter block followed by a human-readable spec:
+
+```
+csm/agents/
+├── adoption-motion-agent.md      ← SDK reads this; CSM triggers this
+├── expansion-builder-agent.md
+├── advocacy-agent.md
+├── health-watcher.md
+├── churn-signal-digest.md
+└── qbr-prep-agent.md
+
+renewals/agents/
+├── renewal-scanner.md
+└── churn-intelligence-agent.md
+```
+
+The `description` field in each file's YAML frontmatter contains a `Cookbook specification:` line that points to the matching cookbook directory. This is the canonical link between the two layers.
+
+### Layer 2 — Reference architecture (this directory)
+
+Cookbook directories in `managed-agent-cookbooks/` are the **authoritative reference architecture**. They define subagent design, configuration field specifications, deployment guidance, data gap behavior, scheduling patterns, and steering examples. Changes to subagent behavior, guardrails, or output format are specified here first.
+
+```
+managed-agent-cookbooks/
+├── adoption-motion/              ← reference architecture for adoption-motion-agent
+│   ├── README.md                 ← deployment guide, config reference, output spec
+│   ├── agent.yaml                ← SDK-format orchestrator yaml (alternate deploy format)
+│   ├── subagents/                ← subagent prompt files dispatched by orchestrator
+│   └── steering-examples.json
+├── expansion-builder/
+├── advocacy/
+├── churn-intelligence/
+├── health-watcher/
+│   ├── cookbook.md               ← narrative implementation guide (present in 6 cookbooks)
+│   ├── README.md
+│   ├── agent.yaml
+│   ├── subagents/
+│   └── steering-examples.json
+...
+```
+
+### cookbook.md vs. README.md
+
+Six cookbooks (health-watcher, churn-signal-digest, qbr-prep-agent, renewal-scanner, onboarding-milestone-tracker, portfolio-segment-digest) include a `cookbook.md` with a full **narrative implementation guide** — orchestrator logic reasoning, edge-case handling rationale, and embedded prompt design examples. This layer answers "why" the orchestrator is designed the way it is and is most useful during initial customization or when extending subagent behavior.
+
+Four cookbooks (adoption-motion, expansion-builder, advocacy, churn-intelligence) have no `cookbook.md`. For these agents, the `README.md` covers deployment configuration and output spec, and the Layer 1 single-file agent (in the plugin `agents/` directory) carries the full behavioral spec including guardrails, pipeline stages, and "does NOT do" boundaries. These four cookbooks are **deployment-complete without a narrative cookbook.md** — the behavioral detail lives in the single-file agent, which is more accessible to CSMs triggering the agent than a cookbook narrative would be.
+
+**The README.md is always present and always authoritative** for deployment configuration and output format. The `cookbook.md`, where present, provides additional narrative context useful during implementation or customization. Its absence in four cookbooks is intentional, not an omission.
+
+### Which layer to modify
+
+| Change type | Modify |
+|-------------|--------|
+| Trigger phrases, agent description, routing behavior | Layer 1 — plugin `agents/*.md` YAML frontmatter |
+| Agent guardrails, behavioral rules, output sections | Layer 1 — plugin `agents/*.md` body |
+| Subagent prompt, subagent logic, subagent output format | Layer 2 — `managed-agent-cookbooks/[agent]/subagents/*.md` |
+| Configuration field definitions, connector requirements | Layer 2 — `managed-agent-cookbooks/[agent]/README.md` |
+| Scheduling defaults, deployment guidance | Layer 2 — `managed-agent-cookbooks/[agent]/README.md` |
+| Steering examples, on-demand trigger phrases | Layer 2 — `managed-agent-cookbooks/[agent]/steering-examples.json` |
+
+When modifying subagent behavior in Layer 2, update the relevant Layer 1 guardrails and output sections if they reference the changed behavior. Both layers must remain consistent.
 
 ---
 

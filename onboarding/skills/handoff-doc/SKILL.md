@@ -48,14 +48,39 @@ Proceed with generic graduation criteria if confirmed.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G7 (flag any milestone or engagement data that is stale relative to the configured staleness threshold).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of handoff request is this?
+   - **Clean Graduation**: All criteria met, milestones on track, no blockers. Optimize for completeness and receiving-team readability over speed.
+   - **Conditional Graduation**: Most criteria met but 1-2 items pending — adoption gaps, incomplete integrations, or unconfirmed success criteria. Focus on open-item ownership and override justification.
+   - **Model-Variant Handoff**: Onboarding model (white-glove, implementation-plus-handoff, partner-led) requires model-specific sections. Verify config model and include the correct Section 8 variant.
+   - **Summary / Async Handoff**: Full document exists; CSM needs an abbreviated brief. Verify the --draft exists before generating; summary supplements, never replaces.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G2: Expansion signals are observations for the AE and receiving CSM — describe what was observed, never convert to pipeline commitment or qualification in the handoff document.
+   - G4: Post-onboarding escalation path must come from the configured escalation matrix with named owner and channel — no generic "escalate to your manager."
+   - G5: Handoff documents contain ARR, contract terms, and health context — confirm the receiving team is authorized before sharing. Flag if distribution extends beyond the named recipients.
+   - G7: Flag stale data with source date and staleness indicator — CRM >7 days, PM >3 days. Contact information is the most commonly stale field; always ask CSM to verify.
+   - Graduation criteria from config drive the readiness check — if criteria are placeholders, warn before proceeding with generic conditions.
+
+3. **EXPERT CHECK**: What would a veteran onboarding CSM verify first?
+   - Were success criteria confirmed by the customer (call notes, email, written acknowledgment), or assumed by the CSM? Customer-confirmed evidence must exist for each "Achieved" criterion.
+   - Does every open item in Section 6 have a named owner on the receiving side with a target date? An item owned by the departing onboarding CSM is effectively orphaned.
+   - Is the stakeholder map current — have any contacts changed roles during onboarding? Cross-reference CRM records against recent call attendees when call data is available.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Generating --draft without running --readiness first — transfers an account that may not be ready, with no documented graduation check.
+   - Marking success criteria "Achieved" based on CSM assumption without customer-confirmed evidence — the receiving team inherits false confidence.
+   - Listing open items without named owners — orphaned problems that no one picks up in the first 30 days.
+   - Omitting the model-specific Section 8 for white-glove, implementation-plus-handoff, or partner-led accounts — the receiving team misses critical service structure context.
+   - Using boilerplate override justification ("business decision") when overriding a HOLD finding — justification must name the unmet criterion, the risk, and the mitigation plan.
+   - Generating --summary when no full --draft document exists — the summary becomes the authoritative record by default, losing critical context.
+
+**After execution**, verify:
+- Does the handoff document give the receiving team everything they need for their first 30 days — or are there gaps they'll discover only after the onboarding CSM is gone?
+- Are all data sources timestamped and staleness-flagged per G7?
+- Is the output mode (--draft / --readiness / --summary) matched to the actual need?
+- Confidence: [High] if CRM + PM data corroborate and graduation check passed / [Medium] if single-source or partially stale data / [Low] if manual input only — state which.
 
 ## Mode
 

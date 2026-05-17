@@ -35,14 +35,42 @@ Critical configuration to load:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+> Blueprint: `references/reasoning-blueprint.md`
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G1 (health scores are heuristics — never frame as churn predictions), G4 (no escalation triage without a named escalation path in config), G5 (confidentiality check before distributing portfolio-level health data), G7 (flag any stale health data with source date and staleness indicator).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+**CLASSIFY** — Determine input type before proceeding:
+- **A: Single Account — Data-Rich** — CS Platform connected, component scores and trends available
+- **B: Single Account — Data-Sparse** — partial signals, user-provided data, missing components
+- **C: Portfolio Triage** — multiple accounts, ranked prioritization needed
+- **D: Alert-Triggered** — reactive review fired by health alert, usage drop, or escalation event
+- **E: Pre-Renewal** — renewal within 90 days, proactive review with stakeholder visibility
+
+**CONSTRAINTS** — Apply before generating any output:
+- **G1:** Health scores are heuristics — never frame output as churn prediction or likelihood. Show components and evidence; classification is the CSM's judgment.
+- **G2:** No churn signal marked "Present" without direct evidence. Absence of data = "Unknown," never "No."
+- **G4:** No escalation recommendation without a named escalation path from config (person, channel, SLA). Flag missing path before proceeding.
+- **G5:** Portfolio triage contains ARR and health classifications — run destination check before any output distributed beyond the CSM.
+- **G7:** Flag any health data older than 30 days with source date and staleness indicator. Stale NPS (>6 months) treated as Unknown.
+
+**EXPERT CHECK** — What a veteran CSM would verify first:
+- Which single component is driving the overall score? (Score-anchoring trap: composite hides the signal)
+- Is there a usage drop >20% in 30 days? (H1 — usage drops precede churn by 60-90 days)
+- Has the executive sponsor changed? (H4 — sponsor departure overrides component scores)
+- Are multiple moderate signals converging across independent components? (H7 — convergence > single strong signal)
+- For renewals <90 days: apply renewal proximity amplifier (H6 — Yellow becomes Red-tier urgency)
+- For portfolio: is ranking compound (health x ARR x renewal proximity), not health-only?
+
+**ANTI-PATTERNS** — Mistakes to avoid:
+- Reporting composite score without component decomposition
+- Classifying Red/Yellow/Green without naming which components are missing or stale
+- Flat portfolio ranking by health score alone (ignores ARR and renewal proximity)
+- Investigating only the triggering alert signal without full component scan
+- Treating days-since-contact as standalone metric (H3 — weight by current health tier)
+- Producing generic interventions ("monitor closely") instead of specific who/what/when actions
+
+**Post-execution verification:**
+1. **Intent satisfaction** — Does the output answer the actual request (single review, triage, deep dive)? Is mode selection appropriate?
+2. **Failure mode scan** — Check against classification-specific failure modes in blueprint. For Type B: are all gaps named? For Type C: is ranking compound? For Type E: was optimism bias checked?
+3. **Confidence assessment** — How many components have live data? Flag partial-data classifications. Any component >30 days old flagged in reviewer note?
 
 ## Mode
 

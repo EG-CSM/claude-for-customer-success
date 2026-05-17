@@ -36,14 +36,39 @@ Critical configuration to apply:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G4 (verify a named capacity alert escalation path is configured before surfacing over/under-allocation flags).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of capacity planning request is this?
+   - **Current-State Audit**: Snapshot of existing capacity — actual vs. target ratios, load distribution, overloaded/underloaded CSMs. Default mode.
+   - **Headcount Justification**: Building a hiring case — required FTEs at current or projected ARR against target ratios. Needs cost context and growth assumptions.
+   - **Redistribution / Rebalancing**: Balancing load across existing CSMs without adding headcount — account moves constrained by relationship continuity and renewal proximity.
+   - **Departure / Coverage Crisis**: CSM leaving or on leave; portfolio must be absorbed with urgency triage. Red accounts and imminent renewals get 24-hour assignment SLA.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G4: Verify a named capacity alert escalation path is configured before surfacing over/under-allocation flags — no generic "tell your manager."
+   - G5: Capacity reports contain ARR, contract terms, and per-CSM load — confidentiality check required before distributing beyond CS leadership.
+   - G7: Flag stale data with source date — CRM >7 days, CS Platform >3 days. Never silently present stale ratios as current state.
+   - G1: Capacity ratios are targets, not verdicts. A CSM at 110% is a flag, not a failure — surface deviation with context, not judgment.
+   - G2: Red accounts and accounts within 60 days of renewal are not movable without a warm handoff plan — redistribution math must respect relationship constraints.
+
+3. **EXPERT CHECK**: What would a veteran CS Ops leader verify first?
+   - Are segment-level ratios decomposed, or is a healthy portfolio average masking a segment at 2x target? Always decompose before declaring capacity healthy.
+   - Are unassigned accounts (no CSM owner) surfaced separately with ARR and health distribution, or silently excluded from per-CSM averages?
+   - In departure scenarios: is the portfolio triaged into immediate-priority (Red + renewal <60 days + active escalation) vs. standard-priority, with different assignment SLAs?
+
+4. **ANTI-PATTERNS**: Common capacity planning mistakes to avoid:
+   - Reporting portfolio-wide account-per-CSM averages without segment and motion breakdown — averages mask pockets of severe overload.
+   - Recommending account redistribution purely by count without checking renewal proximity, health status, or active escalations — relationship-blind moves worsen churn risk.
+   - Producing headcount recommendations without cost context or interim redistribution plan — hiring takes 3-6 months; the gap needs a bridge.
+   - Distributing a departing CSM's accounts evenly without urgency triage — flat distribution treats a Red account approaching renewal the same as a healthy Green account.
+   - Assigning accounts to receiving CSMs without showing their post-assignment capacity — solving one overload by creating another.
+   - Excluding unassigned accounts from the analysis — every account without a CSM owner is a coverage gap that must be surfaced.
+
+**After execution**, verify:
+- Does the assessment answer the implicit question ("do we have enough CSMs, and are they allocated correctly")?
+- Are all ratios decomposed by segment and motion, not just portfolio-wide averages?
+- Is the output mode (--current / --headcount / --redistribution / --departure) matched to the actual need?
+- Confidence: [High] if CRM + CS Platform live and ratios configured / [Medium] if user-provided roster or partially stale / [Low] if ratios assumed or conversation-context only — state which.
 
 ## Mode
 

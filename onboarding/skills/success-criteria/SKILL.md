@@ -54,14 +54,39 @@ Proceed with outcome-based format as default.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G7 (flag any account data used that is stale relative to the configured staleness threshold).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of success criteria request is this?
+   - **Greenfield Definition**: No existing criteria; starting from scratch with sales context and customer goals. Optimize for customer-anchored discovery and the 3-5 ceiling.
+   - **Scope-Triggered Refinement**: Existing criteria need revision due to scope change, stakeholder shift, product capability adjustment, or date shift. Isolate affected criteria; preserve confirmed ones.
+   - **Progress Review**: Criteria are confirmed; CSM needs a progress assessment against a milestone checkpoint. Diagnose at-risk criteria, don't just report status.
+   - **Customer-Facing Export**: Criteria are confirmed and need clean formatting for the customer. Zero internal labels, flags, or reviewer notes in output.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G2: Criteria must be confirmed with the customer before driving milestone tracking — CSM-only criteria are hypotheses, not commitments.
+   - G4: Each criterion must have a specific observable measure — vague criteria ("team is comfortable") cannot be confirmed as achieved.
+   - G5: `--export` is quiet mode — no internal labels, confidence signals, pending-confirmation flags, or reviewer notes reach the customer.
+   - G7: Flag any CRM or account data used that is stale relative to the configured staleness threshold — never silently present outdated context as current.
+   - Criteria anchor to milestones (M2/M3/M4/M5) — orphaned criteria without a milestone anchor cannot drive review conversations.
+
+3. **EXPERT CHECK**: What would a veteran onboarding CSM verify first?
+   - Is the M4 anchor criterion named and concrete? If the single most important Day 30 outcome is missing or vague, the criteria set is misaligned regardless of how polished the other criteria are.
+   - Are criteria anchored to what the customer said they wanted (sales echo), or are they CSM projections of what the product can do? Customer words first, CSM judgment second.
+   - Is there a confirmation gap? How many criteria are confirmed with the customer vs. pending? Unconfirmed criteria must be flagged, never treated as final.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Drafting criteria from product capabilities instead of customer-stated goals — produces criteria the customer never asked for and won't prioritize.
+   - Accepting more than 5 criteria without forcing prioritization — dilutes focus and creates tracking overhead that outlasts onboarding.
+   - Reporting at-risk criteria without diagnosing the block type (customer / technical / CSM) — status without diagnosis is not actionable.
+   - Revising criteria after a scope change without marking them `[Requires re-confirmation]` — the CSM treats revised criteria as agreed when they are not.
+   - Running `--export` on criteria that include unconfirmed items — the customer receives hypotheses presented as commitments.
+   - Writing an M4 anchor criterion that is aspirational rather than observable ("customer sees value" instead of "zero manual exports in the last two weeks").
+
+**After execution**, verify:
+- Does the output match the mode requested (--define / --refine / --review / --export)?
+- Are all criteria anchored to a milestone and confirmable with an observable measure?
+- Is the confirmation status explicit for every criterion (confirmed vs. pending)?
+- Confidence: [High] if criteria are customer-confirmed with observable measures and milestone anchors / [Medium] if CSM-confirmed but pending customer validation / [Low] if inferred from sales notes without direct customer input — state which.
 
 ## Mode
 

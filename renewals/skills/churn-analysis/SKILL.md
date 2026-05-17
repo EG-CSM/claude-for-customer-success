@@ -47,14 +47,40 @@ Fields read from config:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G1 (health scores and churn signals are heuristics — do not present as predictive certainty).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of churn analysis request is this?
+   - **Signal-Rich Loss**: CRM data, call recordings, health history available. Full timeline reconstruction possible — risk is over-attributing to the loudest signal rather than the earliest.
+   - **Data-Sparse Loss**: Minimal CRM history, no recordings. Depends on CSM recollection. Risk is accepting the stated close reason as root cause without corroboration.
+   - **Portfolio Pattern Scan**: Root cause already established; scanning active book for matching signal patterns. Risk is false positives from single-signal matching.
+   - **Batch Retrospective**: Multiple losses analyzed together (quarter-end, annual). Risk is mixing controllable and uncontrollable churn in aggregate patterns.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1: Health scores and churn signals are heuristics — never present as predictive certainty or frame as "this account was going to churn." Decompose into specific observable signals.
+   - G2: Portfolio scan results are leads for risk assessment, not risk tiers — never assign a risk tier or trigger an escalation from scan output alone.
+   - G4: Escalation assessment in the response adequacy section must reference the configured escalation matrix (owner, channel, SLA) — no generic "should have escalated sooner."
+   - G5: Full churn analysis contains ARR, health data, and stakeholder details — confirm recipient authorization before distribution. Lessons section can be shared broadly when stripped of account-specific data.
+   - G7: Flag data staleness — CRM >7 days, CS Platform >3 days, call data >14 days. Analyses run >60 days after the churn event get an explicit confidence downgrade.
+
+3. **EXPERT CHECK**: What would a veteran CS leader verify first?
+   - Is the root cause assignment based on the earliest signal in the timeline, or the most recent/dramatic one? Work backward from confirmation to the first crack.
+   - Does the stated CRM close reason match the evidence, or is it a surface narrative masking a deeper failure (e.g., "budget cut" masking a relationship gap)?
+   - Is the response adequacy assessment judged against what was visible at the time, or contaminated by hindsight? Fair assessment requires the "at the time" lens.
+
+4. **ANTI-PATTERNS**: Common churn analysis mistakes to avoid:
+   - Accepting the CRM close reason as the root cause without independent corroboration — stated reasons and actual root causes diverge frequently.
+   - Assigning root cause to the last signal before churn rather than the first — recency bias is the most common analytical error in timeline reconstruction.
+   - Running a portfolio scan on a single signal — require 2+ co-occurring signals plus contextual match (tenure, segment) to avoid noise that erodes trust.
+   - Including force majeure losses (acquisition, closure, regulatory) in process-improvement conclusions — uncontrollable losses should not drive response process changes.
+   - Framing response adequacy as individual blame rather than process diagnostics — the analysis surfaces signal coverage and escalation timing gaps, not performance assessments.
+   - Generating a complete-looking timeline from sparse data without flagging gaps — visible gaps are more honest than fabricated continuity.
+
+**After execution**, verify:
+- Does the root cause assignment cite specific, named evidence from the timeline (not general observations)?
+- Are all data sources timestamped and staleness-flagged per G7?
+- Is the response adequacy assessment based on what was visible at the time, not hindsight?
+- Are lessons actionable (specify what to do differently) rather than observational (state what went wrong)?
+- Confidence: [High] if 2+ independent sources corroborate root cause / [Moderate] if single-source or partial corroboration / [Low] if stated reason only — state which.
 
 ## This Skill vs. Risk Assessment
 

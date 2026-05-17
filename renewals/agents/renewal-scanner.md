@@ -8,6 +8,9 @@ description: >
   or on schedule. Config at
   `~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md` and
   `~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+  Reads practice configuration from: ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md
+  Cookbook specification: managed-agent-cookbooks/renewal-scanner/
 model: sonnet
 tools: ["Read", "Write", "mcp__*__get_*", "mcp__*__list_*", "mcp__*__query_*", "mcp__*__search_*", "mcp__*__slack_send_message", "mcp__*__slack_post_message", "Task"]
 ---

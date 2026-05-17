@@ -36,14 +36,40 @@ path to a complete configuration than section-by-section update.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — No domain guardrails apply — this skill configures the environment rather than generating outputs.
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of configuration request is this?
+   - **Single-Section Update**: User knows which section to change and has values ready. Straightforward guided update with confirmation.
+   - **Multi-Section Cascade**: Structural change (territory restructure, headcount shift, segment redefinition) requiring coordinated updates across 2+ sections.
+   - **Audit-Triggered Remediation**: User arrives from an audit skill output that flagged a configuration mismatch — trace root cause before fixing.
+   - **Cold-Start Completion**: Configuration exists but has multiple placeholder sections. User wants to fill gaps without re-running full cold-start-interview.
+   - **Configuration Review (--show)**: Read-only inspection of current state, health assessment, and completeness check.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1: Health tier thresholds must cover the full 0-100 range with no gaps or overlaps — validate arithmetic before confirming any health model write.
+   - G2: Segment changes do not automatically reclassify accounts — surface the migration impact before confirming the write.
+   - G4: Escalation matrix changes must be checked against published SOPs — config and documentation out of sync is worse than no documentation.
+   - G5: Playbook archival requires explicit CS lead approval confirmation before proceeding — governance is non-optional.
+   - G7: Never write without showing the before/after diff and receiving explicit user confirmation — no silent updates, even for "obvious" changes.
+
+3. **EXPERT CHECK**: What would an experienced CS-Ops administrator verify first?
+   - Does this change cascade to other sections? A segment change touches ratios, team assignments, health thresholds, and possibly playbook triggers — map the full cascade before the first write.
+   - Is the user fixing a symptom or a root cause? If they arrived from an audit output, trace the finding back to the specific config value that caused it before proposing a change.
+   - Has the configuration drifted from actual practice? If `--show` hasn't been run recently, current values may not reflect reality — ground the conversation in current state first.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Writing a segment update without creating or updating the matching ratio entry and team assignment — creates cross-section orphans.
+   - Filling placeholder sections with industry-average defaults instead of running the guided interview questions to get user-specific values.
+   - Batching multiple changes into a single confirmation prompt — each proposed change gets its own show-and-confirm cycle.
+   - Updating one section of a multi-section cascade and declaring done without mapping downstream sections that reference the changed entity.
+   - Proposing a config fix for an audit finding without asking "what changed in your org that caused this?" — symptom fixes leave root causes in place.
+   - Accepting a `--reset` without the two-gate confirmation sequence — resets are destructive and not easily reversible.
+
+**After execution**, verify:
+- Is the configuration internally consistent across all sections that reference the changed values?
+- Were all downstream impacts surfaced — which skills will behave differently and which published documents need updating?
+- Did every write follow the show-diff / confirm / write / confirm-write sequence?
+- Confidence: [High] if change is isolated to one section with no cross-references / [Medium] if cascade was mapped and all affected sections updated / [Low] if cascade may have missed downstream references — state which and why.
 
 ## Mode
 

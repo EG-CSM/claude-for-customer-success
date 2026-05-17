@@ -44,14 +44,40 @@ Fields read from config:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G3 (price impact projections carry commitment language + Finance validation callout).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of price increase request is this?
+   - **Standard Policy Increase**: Increase aligns with configured policy (CPI, flat %, contractual clause). Account is healthy, no contract constraints, within authority. Optimize for clear value framing and timely notification.
+   - **Above-Authority Increase**: Proposed increase exceeds configured approval threshold. Must route through approval chain before any customer communication is drafted — the approval gate is non-negotiable.
+   - **At-Risk Account Increase**: Account has active churn signals, declining health, or recent escalation. Requires risk assessment before increase planning — standard playbook will accelerate churn.
+   - **Cohort Rollout**: Multiple accounts receiving increases simultaneously. Requires segmentation by risk, contract terms, and relationship strength — uniform treatment produces avoidable churn.
+   - **Contract-Constrained Increase**: Account has price caps, MFN clauses, or CPI ceilings. Requires contract review before any communication — issuing an invalid increase is a legal and trust risk.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1: Revenue figures in increase plans are targets, not closed-won commitments — tag with `[review — not yet a revenue commitment]` if shared with leadership before the renewal is signed.
+   - G2: Approval routing must complete before any customer-facing communication is drafted or sent. Walking back a communicated increase damages trust and sets a negotiation precedent.
+   - G4: At-risk accounts require `/renewals:risk-assessment` before inclusion in any price increase plan — do not apply standard increase logic to an account with active churn signals.
+   - G5: Accounts with multi-year agreements, enterprise terms, or negotiated pricing require `/renewals:contract-review` before increase notification — assume price protection exists until confirmed otherwise.
+   - G7: Value claims in customer communication must be substantiated with account-specific evidence — generic value language that doesn't match the customer's experience undermines credibility at the worst moment.
+
+3. **EXPERT CHECK**: What would a veteran renewals leader verify first?
+   - Is the increase within authority, or does it need approval? Check the threshold before anything else — drafting before approval creates momentum toward a message you may not be authorized to send.
+   - Does the contract contain price protection clauses? A price cap or MFN clause makes the proposed increase partially or fully invalid — verify before calculating impact.
+   - What's the account's risk posture right now? A price increase on a healthy account is a conversation; on an at-risk account it's a potential churn trigger. Check health signals before planning.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Drafting customer communication before approval is confirmed — the `--draft` mode should only run after `--plan` confirms the approval gate is clear.
+   - Applying the same increase framing to at-risk and healthy accounts — at-risk accounts need a fundamentally different strategy, not a softer version of the standard email.
+   - Using value rationale that isn't substantiated by account-specific evidence — customers detect hollow justification and it damages trust at a moment that demands credibility.
+   - Including contract-protected accounts in a cohort rollout without individual contract review — one invalid increase notice undermines the entire rollout's credibility.
+   - Notifying inside 30 days without leadership sign-off — compressed timelines remove negotiation room and accelerate churn decisions.
+   - Offering concessions (deferrals, rate locks, phased increases) without understanding the actual objection — price resistance often masks a value or relationship problem that a discount won't solve.
+
+**After execution**, verify:
+- Does the plan address the right type (standard / above-authority / at-risk / cohort / contract-constrained)?
+- Is the approval gate resolved before any customer-facing output was produced?
+- Are all ARR figures flagged as targets, not commitments, if shared beyond the CSM?
+- Confidence: [High] if CRM data + contract terms confirmed and within 7 days / [Medium] if single-source or partially stale / [Low] if user-provided context only — state which.
 
 ## Mode
 

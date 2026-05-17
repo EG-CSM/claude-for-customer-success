@@ -1,0 +1,282 @@
+{
+  "cookbook": "churn-signal-scanner",
+  "version": "1.0.0",
+  "description": "Steering examples for the churn signal scanner. Covers the full signal surface: Tier 3 escalation, declined escalation, Tier 2 only, mixed tiers, CS platform degraded, HubSpot unavailable (hard stop), preview mode, and clean scan (no flags).",
+  "examples": [
+
+    {
+      "id": "css-001",
+      "name": "Tier 3 escalation — two accounts, both confirmed",
+      "description": "Two Tier 3 accounts with multiple signals each. Operator confirms all Linear issues. Full alert posted to both channels. Expected: escalation_status=completed, 2 issues created, G7 owner/response-time in alert.",
+      "input": {
+        "trigger": "run churn scan",
+        "practice_profile_snapshot": {
+          "company_name": "Acme Corp",
+          "primary_segment": "mid-market",
+          "tier1_mode": "rule",
+          "discount_elevated_threshold": 0.20,
+          "segment_avg_sales_cycle_days": 90,
+          "renewal_window_days": 180,
+          "onboarding_window_days": 90,
+          "tier3_acv_threshold": 50000
+        }
+      },
+      "expected_behavior": {
+        "orchestrator": "Reads practice profile → delegates to churn-signal-collector → receives 2 Tier 3 accounts → delegates to churn-escalation-writer with require_confirmation=true → operator confirms all → 2 Linear issues created → delegates to churn-alert-poster → posts to #revops-alignment and #cs-leadership",
+        "churn_signal_collector": "Returns 2 Tier 3 accounts (ACV $220K and $185K) each with 2+ signals fired. Both accounts have cs_manager populated.",
+        "churn_escalation_writer": "Renders proposal table for 2 accounts → operator replies 'confirm all' → creates 2 Linear issues with labels churn-risk, tier-3, cs-escalation, priority Urgent → returns write_log with 2 entries (human_approval_status=approved)",
+        "churn_alert_poster": "Posts full alert to #revops-alignment. Posts Tier 3-only summary to #cs-leadership. G7 enforced: both rows include owner name, 48h response time. G5 disclaimer present. G6 freshness lines present."
+      },
+      "expected_outputs": {
+        "escalation_status": "completed",
+        "issues_created_count": 2,
+        "channels_posted": ["#revops-alignment", "#cs-leadership"],
+        "tier3_alert_posted": true,
+        "g7_compliance": "owner, channel, and 48h response time present on every Tier 3 row",
+        "g5_disclaimer_present": true,
+        "g6_freshness_present": true
+      },
+      "must_not": [
+        "Create Linear issues before operator confirmation",
+        "Post to channels not in the received payload",
+        "Omit G5, G6, or G7 elements from the alert",
+        "Fabricate Linear issue IDs"
+      ]
+    },
+
+    {
+      "id": "css-002",
+      "name": "Tier 3 escalation — operator declines all",
+      "description": "Two Tier 3 accounts proposed. Operator replies 'skip all'. No Linear issues created. Alert still posted but notes operator-declined escalation. Expected: escalation_status=skipped.",
+      "input": {
+        "trigger": "run churn scan",
+        "operator_response_to_confirmation": "skip all"
+      },
+      "expected_behavior": {
+        "churn_escalation_writer": "Renders proposal table → operator replies 'skip all' → no Linear API calls made → returns escalation_status=skipped, issues_created=[], write_log entries with human_approval_status=skipped",
+        "churn_alert_poster": "Posts alert with Tier 3 section. Appends: 'Operator declined Linear issue creation for all Tier 3 accounts.' G7 owner rows still populated. G5 and G6 present."
+      },
+      "expected_outputs": {
+        "escalation_status": "skipped",
+        "issues_created_count": 0,
+        "channels_posted": ["#revops-alignment", "#cs-leadership"],
+        "alert_contains_declined_note": true
+      },
+      "must_not": [
+        "Create any Linear issues after operator declines",
+        "Skip the alert posting step because escalation was declined",
+        "Remove Tier 3 accounts from the alert because issues were not created"
+      ]
+    },
+
+    {
+      "id": "css-003",
+      "name": "Tier 3 escalation — partial confirmation (N of M)",
+      "description": "Three Tier 3 accounts proposed. Operator confirms accounts 1 and 3 only. Expected: 2 issues created, 1 skipped, escalation_status=partial.",
+      "input": {
+        "trigger": "run churn scan",
+        "operator_response_to_confirmation": "confirm 1, 3"
+      },
+      "expected_behavior": {
+        "churn_escalation_writer": "Renders proposal table for 3 accounts → operator replies 'confirm 1, 3' → creates Linear issues for accounts 1 and 3 only → account 2 write_log entry has human_approval_status=skipped, outcome=skipped → returns escalation_status=partial",
+        "churn_alert_poster": "Posts alert with all 3 Tier 3 accounts. Linear column shows issue IDs for accounts 1 and 3; shows 'Not created' for account 2. Note 'Operator declined Linear issue creation for 1 account' appended."
+      },
+      "expected_outputs": {
+        "escalation_status": "partial",
+        "issues_created_count": 2,
+        "issues_skipped_count": 1,
+        "write_log_entries": 3
+      },
+      "must_not": [
+        "Create an issue for account 2",
+        "Show only confirmed accounts in the Tier 3 alert table"
+      ]
+    },
+
+    {
+      "id": "css-004",
+      "name": "Tier 2 only — no Tier 3 accounts",
+      "description": "No accounts in the 90–120 day renewal window with Tier 3 signals. Four accounts are in Tier 2. churn-escalation-writer is not invoked. Alert posted to primary channel only. Expected: escalation_status=not_triggered.",
+      "input": {
+        "trigger": "run churn scan"
+      },
+      "expected_behavior": {
+        "orchestrator": "tier3_accounts is empty → does NOT invoke churn-escalation-writer → sets escalation_status=not_triggered → delegates directly to churn-alert-poster",
+        "churn_alert_poster": "Alert contains no Tier 3 section. Tier 2 section with 4 accounts. Tier 1 summary. Data freshness. G5 disclaimer. Posted to #revops-alignment only — no post to #cs-leadership."
+      },
+      "expected_outputs": {
+        "escalation_status": "not_triggered",
+        "issues_created_count": 0,
+        "channels_posted": ["#revops-alignment"],
+        "tier3_section_in_alert": false,
+        "tier2_account_count": 4
+      },
+      "must_not": [
+        "Invoke churn-escalation-writer when tier3_accounts is empty",
+        "Post to #cs-leadership when no Tier 3 accounts are present"
+      ]
+    },
+
+    {
+      "id": "css-005",
+      "name": "CS platform unavailable — degraded scan",
+      "description": "HubSpot is live. CS platform is unavailable. Tier 1 signals still evaluable. Tier 2 and Tier 3 signals that require health scores marked unevaluable. Scan proceeds in degraded mode. Confidence = Moderate.",
+      "input": {
+        "trigger": "run churn scan",
+        "connector_state": {
+          "hubspot": "live",
+          "cs_platform": "unavailable"
+        }
+      },
+      "expected_behavior": {
+        "churn_signal_collector": "Pulls HubSpot data successfully → CS platform calls fail → proceeds with HubSpot data only → Tier 1 evaluation runs in rule mode → Tier 2 accounts have partial_evaluation=true and unevaluable_signals=[health_score, usage, ocv_rubric] → Tier 3 health_score_trend signal unevaluable → confidence=Moderate → cs_platform_status=unavailable",
+        "churn_alert_poster": "Alert contains: 'CS Platform — Unavailable'. Warning appended: 'Degraded scan — some signals may be unevaluable.' Partial-evaluation note on affected accounts. G6 freshness line for HubSpot shows live timestamp. G5 present."
+      },
+      "expected_outputs": {
+        "confidence": "Moderate",
+        "cs_platform_status": "unavailable",
+        "partial_evaluation_accounts_flagged": true,
+        "tier1_still_evaluated": true,
+        "alert_contains_degraded_warning": true
+      },
+      "must_not": [
+        "Stop the scan because CS platform is unavailable",
+        "Fabricate health scores or usage data when CS platform is down",
+        "Show confidence=High when CS platform is unavailable"
+      ]
+    },
+
+    {
+      "id": "css-006",
+      "name": "HubSpot unavailable — hard stop",
+      "description": "HubSpot is unavailable. churn-signal-collector cannot proceed without CRM data. Returns error immediately. Orchestrator surfaces the hard stop and does not invoke downstream subagents.",
+      "input": {
+        "trigger": "run churn scan",
+        "connector_state": {
+          "hubspot": "unavailable",
+          "cs_platform": "live"
+        }
+      },
+      "expected_behavior": {
+        "churn_signal_collector": "Attempts HubSpot pull → fails → returns { error: 'hubspot_unavailable', message: 'Cannot run churn scan without CRM data.' } immediately. Does not attempt CS platform pull.",
+        "orchestrator": "Receives error from churn-signal-collector → stops → reports to operator: 'Churn Signal Scanner — cannot run. HubSpot unavailable. Retry when CRM data is accessible.' → does NOT invoke churn-escalation-writer or churn-alert-poster."
+      },
+      "expected_outputs": {
+        "scan_completed": false,
+        "error": "hubspot_unavailable",
+        "subagents_invoked": ["churn-signal-collector"],
+        "subagents_not_invoked": ["churn-escalation-writer", "churn-alert-poster"]
+      },
+      "must_not": [
+        "Proceed with an empty account list when HubSpot is unavailable",
+        "Invoke churn-escalation-writer or churn-alert-poster after a hard stop",
+        "Fabricate account data when HubSpot is unavailable"
+      ]
+    },
+
+    {
+      "id": "css-007",
+      "name": "Preview mode — no Slack delivery",
+      "description": "Run triggered with preview_mode=true. All evaluation runs normally. churn-escalation-writer still requires and waits for operator confirmation. Alert is formatted but not posted. Delivery receipt shows delivery_status=preview.",
+      "input": {
+        "trigger": "preview churn scan",
+        "preview_mode": true
+      },
+      "expected_behavior": {
+        "churn_signal_collector": "Runs normally — no changes for preview mode.",
+        "churn_escalation_writer": "Governance protocol still applies — renders confirmation table and waits for operator response. If approved, issues ARE created (Linear writes are not gated by preview mode). preview_mode only suppresses Slack delivery.",
+        "churn_alert_poster": "Formats full alert. Does NOT call any Slack tools. Returns delivery_status=preview and alert_preview with full formatted text."
+      },
+      "expected_outputs": {
+        "delivery_status": "preview",
+        "channels_posted": [],
+        "alert_preview_populated": true,
+        "linear_issues_created_if_confirmed": true
+      },
+      "must_not": [
+        "Post to any Slack channel in preview mode",
+        "Skip Linear issue creation in preview mode (preview only suppresses Slack)",
+        "Skip the governance confirmation gate in preview mode"
+      ]
+    },
+
+    {
+      "id": "css-008",
+      "name": "Clean scan — no flags at any tier",
+      "description": "Portfolio evaluated. No accounts meet Tier 1, 2, or 3 signal criteria. Clean scan. Alert still posted to primary channel confirming the scan ran. Completion summary shows zero accounts at any tier.",
+      "input": {
+        "trigger": "run churn scan"
+      },
+      "expected_behavior": {
+        "churn_signal_collector": "Returns tier3_accounts=[], tier2_accounts=[], tier1_summary.accounts_flagged=0. Confidence=High (both connectors live).",
+        "orchestrator": "tier3_accounts empty → does not invoke churn-escalation-writer. Delegates to churn-alert-poster.",
+        "churn_alert_poster": "Posts alert to #revops-alignment only. Alert body: header, no Tier 3 section, no Tier 2 section, Tier 1 summary showing 0 accounts flagged, data freshness, G5 disclaimer. Confirms scan ran. Does NOT post to #cs-leadership."
+      },
+      "expected_outputs": {
+        "escalation_status": "not_triggered",
+        "issues_created_count": 0,
+        "channels_posted": ["#revops-alignment"],
+        "alert_confirms_scan_ran": true,
+        "tier3_section_in_alert": false,
+        "tier2_section_in_alert": false
+      },
+      "must_not": [
+        "Skip posting the alert because no accounts were flagged",
+        "Post to #cs-leadership when no Tier 3 accounts are present",
+        "Omit G5 or G6 from a clean-scan alert"
+      ]
+    },
+
+    {
+      "id": "css-009",
+      "name": "Linear unavailable — escalation failed, alert continues",
+      "description": "Tier 3 accounts present. Operator confirms escalation. Linear MCP calls fail. Escalation returns status=failed. churn-alert-poster still runs and notes that issues were not created. Scan completes with partial output.",
+      "input": {
+        "trigger": "run churn scan",
+        "connector_state": {
+          "linear": "unavailable"
+        },
+        "operator_response_to_confirmation": "confirm all"
+      },
+      "expected_behavior": {
+        "churn_escalation_writer": "Governance gate fires → operator confirms → Linear MCP calls fail → returns { escalation_status: 'failed', error: 'linear_unavailable', issues_created: [], write_log: [] }",
+        "orchestrator": "Receives linear_unavailable error from churn-escalation-writer → does NOT stop → surfaces failure note → continues to churn-alert-poster with escalation_summary.status=failed",
+        "churn_alert_poster": "Tier 3 section present. Linear column shows 'Not created' for all rows. Appends: '⚠️ Linear unavailable — issues not created. Manual escalation required.' Posts to both channels."
+      },
+      "expected_outputs": {
+        "escalation_status": "failed",
+        "issues_created_count": 0,
+        "channels_posted": ["#revops-alignment", "#cs-leadership"],
+        "alert_contains_linear_failure_note": true
+      },
+      "must_not": [
+        "Stop the scan when Linear is unavailable",
+        "Skip the alert because Linear failed",
+        "Silently omit the Linear failure note from the alert"
+      ]
+    },
+
+    {
+      "id": "css-010",
+      "name": "Tier 2 truncation — more than 10 accounts",
+      "description": "No Tier 3 accounts. Tier 2 returns 14 accounts. Alert displays first 10 and appends truncation notice. No Tier 2 accounts are suppressed from the underlying data.",
+      "input": {
+        "trigger": "run churn scan"
+      },
+      "expected_behavior": {
+        "churn_signal_collector": "Returns tier2_accounts with 14 entries sorted by ACV descending.",
+        "churn_alert_poster": "Renders Tier 2 table with top 10 accounts by ACV. Appends '+ 4 more accounts — full list available on request'. All 14 accounts available in data for follow-up queries."
+      },
+      "expected_outputs": {
+        "tier2_rows_in_alert": 10,
+        "truncation_notice_present": true,
+        "truncated_count_correct": 4
+      },
+      "must_not": [
+        "Truncate Tier 3 accounts",
+        "Drop the 4 truncated accounts from the returned payload"
+      ]
+    }
+
+  ]
+}

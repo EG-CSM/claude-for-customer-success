@@ -38,14 +38,38 @@ Critical configuration to apply:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G7 (flag any account or ARR data that is stale relative to the configured staleness threshold).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of segment analysis request is this?
+   - **Full Portfolio Review**: All-segment analysis for planning, headcount, or board reporting. Optimize for cross-segment comparison and structural insights over per-account detail.
+   - **Single-Segment Deep Dive**: One segment under the microscope — health, coverage, motion fit. Benchmark against portfolio norms to distinguish segment-specific problems from portfolio-wide patterns.
+   - **Reclassification Queue**: Accounts crossing ARR thresholds that need segment reassignment. Separate upward (opportunity) from downward (relationship risk) moves — they require different handling.
+   - **At-Risk Triage**: Red and Yellow accounts by segment for weekly triage or escalation prioritization. ARR-weight everything — dollar exposure drives priority, not account count.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G2: Segment definitions from cs-ops config are authoritative — flag reclassification candidates, never silently reclassify.
+   - G4: Coverage ratios require CSM assignment data — if CSM owner is missing for accounts, flag the gap rather than extrapolating. Missing data skews ratios.
+   - G5: Output containing ARR, health scores, or coverage ratios is internal CS-Ops material — apply confidentiality check before distribution beyond the CS team.
+   - G7: Flag stale data with source date — CRM >7 days, CS Platform >3 days. At-risk ARR figures require validation against CRM renewal dates before sharing with finance or leadership.
+
+3. **EXPERT CHECK**: What would a veteran CS-Ops leader verify first?
+   - Is ARR concentration accounted for — or is the analysis misleading by treating all accounts as equal weight? One Enterprise Red account may outweigh 20 SMB Red accounts.
+   - Are coverage ratios paired with ARR-per-CSM, not just accounts-per-CSM? A CSM at target ratio but holding 60% of their ARR in 3 accounts has a concentration problem the ratio hides.
+   - Does the motion-to-segment fit assessment distinguish between a coverage quantity gap (not enough CSMs) and a coverage quality gap (wrong engagement model)?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Producing segment summary tables without cross-segment interpretation — tables are data, the interpretation naming the structural imbalance is the analysis.
+   - Comparing segments by account count instead of ARR weight — misleads headcount and resource allocation decisions.
+   - Treating reclassification as mechanical ARR-threshold math without flagging relationship risk on downward moves or elapsed time on stale crossings.
+   - Listing at-risk accounts without ARR ranking — wastes triage time; sort by dollar exposure, not health severity.
+   - Reporting a segment's Red percentage in isolation without benchmarking against the portfolio average — 30% Red looks alarming until the portfolio average is 28%.
+   - Omitting "Active play?" status on at-risk accounts — an account with an active intervention is a different triage priority than one with none.
+
+**After execution**, verify:
+- Does the analysis answer the operational question behind the request (headcount justification, motion recalibration, triage prioritization)?
+- Are all data sources timestamped and staleness-flagged per G7?
+- Is the output mode (--full / --segment / --reclassification / --at-risk) matched to the actual need?
+- Confidence: [High] if live CRM + CS Platform with configured segment definitions / [Medium] if single source or partially stale / [Low] if user-provided context only — state which.
 
 ## Mode
 

@@ -1,0 +1,14 @@
+name: capacity-reader
+model: claude-sonnet-4-7
+system:
+  file: ./capacity-reader.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: read, enabled: true }
+  - { type: mcp_toolset, mcp_server_name: hubspot, default_config: { enabled: true } }
+mcp_servers:
+  - { type: url, name: hubspot, url: "${HUBSPOT_MCP_URL}" }
+skills: []
+callable_agents: []

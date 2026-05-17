@@ -73,6 +73,20 @@ The deliverable should read like you wrote it. Meta-commentary goes in the revie
 
 ---
 
+## Cold-start readiness
+
+| Skill Area | Full capability | Partial | Degraded |
+|---|---|---|---|
+| SA1 — Health Monitoring | CS Platform connected + health model configured | CS Platform connected, model unconfigured | No connector; signals from conversation only |
+| SA2 — Account Intelligence | CRM + CS Platform + call recording connected | CRM only | No connector; account context from conversation |
+| SA3 — Adoption Motions | CRM + CS Platform + product analytics connected | CRM + CS Platform | CS Platform only |
+| SA4 — Expansion Pipeline | CRM + CS Platform + health gate passing | CRM + CS Platform, health gate partial | CRM only; no health gate |
+| SA5 — Renewal & Retention | CRM + CS Platform + OCV context set | CRM + CS Platform | CRM only |
+| SA6 — Advocacy & References | CS Platform + CRM + advocacy limits configured | CS Platform only | No connector; manual candidate input |
+| CSM Orchestrator | All connectors + full practice profile | Any two connectors | Single connector or profile incomplete |
+
+---
+
 ## Outputs
 
 **Reviewer note** — one block above every analysis, recommendation, or customer-facing draft:
@@ -136,18 +150,43 @@ If a skill uses CRM or CS Platform data and cannot confirm when that data was la
 
 ---
 
+## AskUserQuestion (AUQ) resilience
+
+These rules govern every `AskUserQuestion` call in this plugin. They are not skill-specific — they apply to all skills, commands, and agents.
+
+**One question per call.** Never batch multiple questions into a single `AskUserQuestion` invocation. If more than one decision is needed, ask the first, wait for a response, then ask the next. The single-question rule is absolute.
+
+**T2 — prose fallback.** The `AskUserQuestion` widget does not render in all clients. If the widget returns an empty, null, or unparseable response, immediately present a prose multiple-choice block and do not proceed as if the question was answered:
+
+```
+**[Question text here]**
+
+**A)** [Option 1]
+**B)** [Option 2]
+**C)** [Option 3] ← proceeding with this if no response
+
+*(Type A, B, C — or describe your preference)*
+```
+
+**T3 — embedded default.** The T2 prose block always marks one option with `← proceeding with this if no response`. If the user does not respond within the session, proceed with that option. The default should be the safest or most reversible choice — not the most aggressive action.
+
+**`/auq force-prose` command.** If the user sends `/auq force-prose`, skip the widget on all subsequent `AskUserQuestion` calls this session and go directly to T2 prose blocks. Acknowledge once: "Switching to prose-only questions for this session." Then apply without further comment.
+
+---
+
 ## Source attribution
 
 Tag outputs to describe what was actually used:
 
 - `[CRM — Salesforce]` or `[CRM — HubSpot]` — only if a live tool call returned this data this session
-- `[CSP — Gainsight]` etc. — only if a live tool call returned this data
-- `[Gong]` — only if a transcript or highlight appeared in a tool result this session
+- `[CS Platform — Gainsight]` etc. — only if a live tool call returned this data this session
+- `[Call recording — Gong]` etc. — only if a transcript or highlight appeared in a tool result this session
+- `[Computed]` — derived or calculated by the agent from live data (not a direct retrieval)
 - `[user provided]` — the CSM pasted it, described it, or uploaded it
 - `[model knowledge]` — background about the company or industry from training data; not account-specific
 - `[conversation context]` — facts established earlier in this session's conversation
 
-Do not promote a tag because the data "seems like" it came from the CRM. The tag describes provenance.
+Do not promote a tag because the data "seems like" it came from a connected source. The tag describes provenance, not assumption.
 
 **Tool-vs-context conflict.** When a tool result conflicts with what the CSM described in conversation (the CSP says health is Red, but the CSM said the account is healthy), surface both: "The CS Platform shows [Red health signal]. You described the account as healthy — these conflict. Which is more current?" Do not silently prefer either.
 
@@ -250,49 +289,134 @@ If SuccessCOACHING:
 
 ## Managed agents
 
-The csm plugin manages six agents across the SuccessCOACHING lifecycle. Three run on schedule; three are triggered on-demand by the CSM.
+The csm plugin manages six agents across the SuccessCOACHING lifecycle. Three run on schedule; three are triggered on-demand by the CSM. All agents read this config file for practice context, health thresholds, connector routing, and escalation matrix. All respect the shared guardrails above.
 
-### Scheduled agents
+---
 
-**health-watcher** (Stage 3 — Health Monitoring)
-Runs daily to score all active accounts, flag health changes, and post a digest to the configured Slack channel. Generates alerts when an account crosses a health band boundary (Healthy → Developing, Developing → At Risk, At Risk → Critical). Does not take action — surfaces signals for CSM review. No CSM trigger required; runs on cron.
+### health-watcher (scheduled)
 
-**churn-signal-digest** (Stage 5 — Retention)
-Runs weekly to surface accounts with multi-signal churn patterns. Aggregates signals from cs-platform, product-analytics, and CRM into a prioritized digest. Posts to Slack and delivers to CSM. Identifies accounts needing active save motion before they reach formal churn. No CSM trigger required; runs on cron.
+**What it does:** Runs daily to score all active accounts, flag health band transitions (Healthy → Developing, Developing → At Risk, At Risk → Critical), and post a digest to the configured Slack channel. Surfaces signals for CSM review — does not take action. No CSM trigger required; runs on cron.
 
-**qbr-prep-agent** (Stage 3 — Health Monitoring / Review)
-Runs on-schedule 14 days before each QBR date recorded in cs-platform. Pulls health history, usage trends, value milestones, open risks, and CSM notes. Assembles a QBR prep package for the CSM. Can also be triggered manually: `"Prep QBR for [Account Name]"`. Outputs a draft QBR structure — not a final deck.
+**Pipeline stages:**
+1. `health-scorer` — pulls CRM + CS Platform data; scores all accounts against configured health model
+2. `transition-detector` — identifies accounts that crossed a health band boundary since last run
+3. `digest-publisher` — formats digest and posts to Slack; writes summary to cs-platform
 
-### On-demand agents
+**Behavioral notes:**
+- Aborts silently if CS Platform is unavailable; logs failure and retries next cycle
+- Does not send customer-facing output — Slack digest is internal only
 
-**adoption-motion-agent** (Stage 2 — Adoption)
-Diagnoses adoption gaps and prescribes a TARO intervention motion for accounts with stalled, shallow, or declining usage. Three-stage pipeline: Product Surface Analyzer → Adoption Gap Identifier → Motion Planner. Requires cs-platform (aborts if unavailable); product-analytics optional (flagged if missing). Does not include expansion signals — those belong to Stage 4.
+---
 
-Trigger: `"Run adoption motion for [Account Name]"` or `"Diagnose adoption for [Account]"`.
+### churn-signal-digest (scheduled)
 
-Required: `account_name`, `deal_tier`. Optional: `analysis_period_days` (14/30/90, default 30), `csm_name`, `specific_concern`.
+**What it does:** Runs weekly to surface accounts with multi-signal churn patterns. Aggregates signals from cs-platform, product-analytics, and CRM into a prioritized list of accounts needing active save motion before they reach formal churn. Posts to Slack and delivers to CSM. No CSM trigger required; runs on cron.
 
-**expansion-builder-agent** (Stage 4 — Expansion)
-Identifies expansion whitespace, runs an adoption health gate, constructs a customer-centric business case, and produces an AE-ready handoff package. Four-stage pipeline: Whitespace Analyzer → Health Gate (orchestrator) → Business Case Builder → Expansion Handoff Coordinator. Health gate is mandatory and cannot be bypassed: accounts with coverage score below 60 require explicit CSM override with documented rationale before the business case is built. Do not run on At Risk or Critical accounts without override.
+**Pipeline stages:**
+1. `signal-aggregator` — pulls usage, support, engagement, and health signals across all accounts
+2. `pattern-matcher` — identifies accounts with 2+ concurrent churn indicators
+3. `digest-builder` — ranks by severity and ARR; formats prioritized save-motion list
+4. `digest-publisher` — posts to Slack; delivers to CSM inbox
 
-Trigger: `"Run expansion builder for [Account Name]"` or `"Find expansion opportunity for [Account]"`.
+**Behavioral notes:**
+- Outputs a prioritized list, not a recommendation to take action on any specific account
+- CSM owns the save decision; the digest is an input, not a mandate
 
-Required: `account_name`, `deal_tier`. Optional: `csm_name`, `ae_name`, `expansion_type_hint`, `target_expansion_sku`.
+---
 
-**advocacy-agent** (Stage 6 — Advocacy)
-Qualifies advocate candidates against burnout protection limits and produces an advocacy package (ask script + talking points or story structure). Hard limits are absolute — no override path exists. Soft limits pause the pipeline and require `PROCEED [rationale]` or `STOP`. Routes to reference-matcher (reference_call / event_speaker) or story-builder (case_study / testimonial). Creates a cs-platform tracking task on successful completion.
+### qbr-prep-agent (scheduled / on-demand)
 
-Trigger: `"Build advocacy package for [Account Name]"` or `"Set up a reference call for [Account]"`.
+**Trigger phrases:** "Prep QBR for [Account Name]", "Build QBR package for [Account]"
 
-Required: `account_name`, `request_type` (reference_call | case_study | testimonial | event_speaker). Optional: `contact_name`, `prospect_profile` (required for reference_call), `urgency` (standard | high).
+**What it does:** Runs automatically 14 days before each QBR date recorded in cs-platform. Pulls health history, usage trends, value milestones, open risks, and CSM notes. Assembles a QBR prep package. Can also be triggered manually at any time. Outputs a draft QBR structure — not a final deck.
 
-### Agent behavioral notes
+**Required params:** `account_name` (when triggered manually)
+**Optional params:** `qbr_date` (overrides cs-platform date), `focus_areas` (risk / expansion / adoption / relationship)
 
-- All six agents read this config file for practice context, health scoring thresholds, connector routing, and escalation matrix.
-- On-demand agents deliver output in chat only — they do not post to Slack or write to cs-platform unless the agent spec explicitly states otherwise (expansion-builder creates a cs-platform handoff task via the Expansion Handoff Coordinator subagent).
-- health-watcher and churn-signal-digest post to the Slack channel configured in this file's integration block.
-- All agents respect the shared guardrails in this file (sourcing, attribution, CSM boundary, no speculative health scores, connector failure handling).
-- The adoption-motion-agent and expansion-builder-agent are complementary: run adoption-motion first when usage is stalled; run expansion-builder when the account is healthy and expansion signals exist.
+**Pipeline stages:**
+1. `account-historian` — pulls 90-day health, usage, and milestone data from CRM + CS Platform
+2. `risk-opportunity-mapper` — identifies open risks, expansion signals, and value gaps
+3. `qbr-assembler` — structures prep package; flags items needing CSM input before the meeting
+
+**Behavioral notes:**
+- Outputs a draft structure only — CSM adds narrative, customizes for audience
+- If triggered manually without cs-platform connected, prompts CSM to paste account context
+
+---
+
+### adoption-motion-agent (on-demand)
+
+**Trigger phrases:** "Run adoption motion for [Account Name]", "Diagnose adoption for [Account]", "Account is stuck on [feature]"
+
+**What it does:** Diagnoses adoption gaps and prescribes a TARO intervention motion for accounts with stalled, shallow, or declining usage. Does not include expansion signals — those belong to Stage 4.
+
+**Required params:** `account_name`, `deal_tier`
+**Optional params:** `analysis_period_days` (14 / 30 / 90, default 30), `csm_name`, `specific_concern`
+
+**Pipeline stages:**
+1. `product-surface-analyzer` — maps feature adoption vs. contracted surface area; requires cs-platform (aborts if unavailable)
+2. `adoption-gap-identifier` — classifies gaps by type (depth / breadth / stalled onboarding / low engagement)
+3. `motion-planner` — prescribes a TARO play and drafts CSM outreach; product-analytics optional (flagged if missing)
+
+**Behavioral notes:**
+- Aborts and surfaces an error if cs-platform is unavailable — do not proceed without live adoption data
+- Complementary to expansion-builder-agent: run adoption-motion first when usage is stalled; run expansion-builder when the account is healthy
+
+---
+
+### expansion-builder-agent (on-demand)
+
+**Trigger phrases:** "Run expansion builder for [Account Name]", "Find expansion opportunity for [Account]", "Build expansion case for [Account]"
+
+**What it does:** Identifies expansion whitespace, runs a mandatory adoption health gate, constructs a customer-centric business case, and produces an AE-ready handoff package.
+
+**Required params:** `account_name`, `deal_tier`
+**Optional params:** `csm_name`, `ae_name`, `expansion_type_hint`, `target_expansion_sku`
+
+**Pipeline stages:**
+1. `whitespace-analyzer` — maps usage vs. available SKUs; identifies expansion surface area; requires CRM + CS Platform
+2. `health-gate` (orchestrator) — mandatory gate; accounts with coverage score below 60 require explicit CSM override with documented rationale before proceeding; cannot be bypassed
+3. `business-case-builder` — constructs customer-centric ROI case tied to account's value milestones
+4. `expansion-handoff-coordinator` — produces AE-ready handoff package; creates cs-platform tracking task
+
+**Behavioral notes:**
+- Do not run on At Risk or Critical accounts without explicit CSM override
+- Health gate is mandatory and cannot be bypassed — this is a hard constraint, not a suggestion
+
+---
+
+### advocacy-agent (on-demand)
+
+**Trigger phrases:** "Build advocacy package for [Account Name]", "Set up a reference call for [Account]", "Find me a case study candidate"
+
+**What it does:** Qualifies advocate candidates against burnout protection limits and produces an advocacy package (ask script + talking points or story structure). Routes to reference-matcher (reference_call / event_speaker) or story-builder (case_study / testimonial). Creates a cs-platform tracking task on successful completion.
+
+**Required params:** `account_name`, `request_type` (reference_call | case_study | testimonial | event_speaker)
+**Optional params:** `contact_name`, `prospect_profile` (required for reference_call), `urgency` (standard | high)
+
+**Pipeline stages:**
+1. `advocate-qualifier` — checks account health, relationship strength, and burnout protection limits against cs-platform records
+2. `reference-matcher` or `story-builder` — routes based on request_type; builds ask script or story structure
+3. `advocacy-tracker` — creates cs-platform tracking task on successful completion
+
+**Behavioral notes:**
+- Hard burnout protection limits are absolute — no override path exists
+- Soft limits pause the pipeline and require `PROCEED [rationale]` or `STOP` from CSM before continuing
+
+---
+
+## Shared assets
+
+These files are authoritative for the full plugin suite. Read them before acting on any
+cross-plugin workflow or when a skill description references shared definitions.
+
+- **`~/.claude/plugins/config/claude-for-customer-success/shared/cs-domain-model.md`**
+  Health score bands (Healthy / Developing / At Risk / Critical), shared guardrails G1–G7,
+  and CS domain vocabulary used across all plugins.
+
+- **`~/.claude/plugins/config/claude-for-customer-success/shared/cross-skill-registry.md`**
+  Canonical command registry for all five plugins. Use this to resolve skill names, mode
+  flags, and trigger conditions without hardcoding command strings in skill files.
 
 ---
 

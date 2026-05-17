@@ -36,14 +36,39 @@ Note from config:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G1 (health scores are heuristics — do not frame as churn probability), G2 (expansion signals require economic buyer qualification), G5 (confidentiality check before distributing internal account data externally).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of call prep request is this?
+   - **Discovery / Kickoff**: First or early-stage call — sparse historical data, goal is success criteria alignment and relationship establishment
+   - **QBR / Executive Business Review**: Periodic value review with executive audience — requires metrics against success criteria, forward-looking priorities
+   - **Health Check / At-Risk**: Triggered by a health signal — usage drop, NPS decline, support spike, or champion departure; shorter format, diagnostic focus
+   - **Renewal Conversation**: Within 90 days of renewal — commercial context present but CSM role is value alignment and objection surfacing, not close
+   - **Escalation / Recovery**: Active or recently resolved escalation — trust is damaged; goal is confidence restoration and remediation confirmation
+   - **Routine Check-in**: Regular cadence call with no major trigger — risk of perfunctory meeting; may recommend async instead
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - Which data sources are available? (CRM, CS platform, call recordings, documents) — fewer than 3 of 4 = low-confidence brief, flag explicitly
+   - Is the attendee list confirmed or assumed? Unconfirmed attendees cap the brief's value
+   - What was the outcome of the last call? Open action items carry forward — never drop them silently
+   - Is there an active escalation or competitive signal that changes the entire call framing?
+
+3. **EXPERT CHECK**: What would a veteran CSM verify first?
+   - Are the success criteria being referenced still the criteria the customer cares about, or have priorities shifted since they were set?
+   - Is the right stakeholder on this call? Missing executive sponsor on a QBR or missing economic buyer on a renewal changes the call's ceiling
+   - Has anything been promised to this customer (in escalation, prior calls, or success plans) that hasn't been delivered yet?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - :x: Building the brief around product usage metrics instead of business outcomes the customer's executive sponsor cares about
+   - :x: Leading a health check or escalation call with platform data instead of opening with curiosity and listening
+   - :x: Including expansion signals, health scores, or internal stakeholder assessments in any material that could reach the customer
+   - :x: Preparing a full brief for a routine check-in when there's nothing substantive to discuss — recommend async instead
+   - :x: Producing renewal prep that crosses into pricing, discount, or negotiation territory — that's AE/AM scope
+
+**After execution**, verify:
+- Does every talking point reference account-specific context, not generic advice?
+- Is the internal/external boundary respected — no health scores, expansion tags, or relationship assessments in customer-visible content?
+- Does the brief identify the single most important thing to accomplish on this call?
+- Confidence: [High/Medium/Low] because [data source coverage, attendee confirmation status, signal freshness]
 
 ## Call type detection
 

@@ -44,14 +44,40 @@ Fields read from config:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G2 (expansion ARR is not counted until an economic buyer has been qualified).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of expansion signal request is this?
+   - **Seat/Usage Capacity**: Quantitative signal — active users near licensed seats or usage approaching contracted volume. Data-driven, often auto-surfaced by CS Platform.
+   - **Feature/Tier Upsell**: Qualitative signal — customer requesting higher-tier features, expressing feature gaps in tickets or calls, or fully adopting current tier.
+   - **Cross-Sell / Multi-Product**: Adjacent product opportunity — customer solving a problem manually or with a competitor tool that your product line addresses.
+   - **Geographic/Organizational Expansion**: Structural signal — new offices, M&A activity, separate business units, or teams evaluating independently.
+   - **At-Risk Account with Expansion Signals**: Mixed signal — expansion indicators coexist with churn risk. Requires triage: renewal risk addressed before expansion pursuit.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G2: Expansion ARR is not counted until an economic buyer has been qualified — every signal is tagged `[early signal — not yet qualified]` until formal pipeline entry. Non-negotiable.
+   - G4: AE routing is mandatory for any signal reaching Qualified tier — the CSM owns signal identification and qualification handoff; the AE owns commercial conversion.
+   - G5: ARR potential estimates, contract terms, and qualification tiers are internal-only. Confidentiality check required before any output leaves the CSM's view.
+   - G7: Flag stale data with source date — CRM >7 days, CS Platform >3 days. Never silently omit a data gap.
+   - Pricing model from config constrains which signal types apply (usage-based expansion is irrelevant for flat-fee accounts).
+
+3. **EXPERT CHECK**: What would a veteran renewals manager verify first?
+   - Is there active churn risk on this account? If yes, expansion signals are deferred until the account is stabilized — run `/renewals:risk-assessment` first.
+   - Is the signal coming from a champion or an economic buyer? Champion enthusiasm alone never upgrades qualification tier — apply the Champion vs. Buyer Test.
+   - Does the 90-day trend support the signal, or is this a point-in-time anomaly? A single data point is anecdotal; three consecutive months of directional signal is a pattern.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Treating a seasonal usage spike as sustained growth — require 90-day trend confirmation before qualifying as pipeline-ready.
+   - Conflating feature frustration with purchase intent — a customer saying "why can't you do X?" is a support issue first, expansion signal second.
+   - Pursuing expansion on a Red account — expansion conversations on accounts with active churn risk feel tone-deaf and damage trust.
+   - Presenting ARR potential estimates as committed pipeline — all pre-proposal estimates are `[Low Confidence]` and must be labeled as such.
+   - Routing to AE at early signal stage — premature AE involvement wastes AE time and pressures the customer relationship. Route at pipeline-ready, not before.
+   - Assuming M&A or org expansion equals product expansion — the new entity may have existing vendor relationships or independent budget authority.
+
+**After execution**, verify:
+- Does each signal have a qualification tier with explicit justification for the tier assignment?
+- Are all ARR potential figures tagged `[Low Confidence]` unless a formal proposal exists?
+- Is the output mode (--deep / --quick / --catalog) matched to the actual need?
+- Confidence: [High] if 2+ live sources corroborate signals / [Medium] if single-source or partially stale / [Low] if user-provided context only — state which.
 
 ## Mode
 

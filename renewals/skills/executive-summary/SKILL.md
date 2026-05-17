@@ -48,14 +48,39 @@ Fields read from config:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G3 (revenue and forecast figures carry commitment language + Finance validation callout), G5 (confidentiality check before distributing portfolio-level financial data).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of executive summary request is this?
+   - **Escalation Brief**: Account is High/Critical risk, executive intervention needed within days. Optimize for specificity of the ask and urgency of the timeline.
+   - **Sponsorship Request**: Renewal requires sustained executive co-sponsorship — QBR participation, relationship rebuild, or strategic partnership signal over weeks.
+   - **Portfolio / Board Roll-Up**: Account included in board materials, investor briefings, or strategic portfolio reviews. Audience is non-operational; strip relationship detail.
+   - **Proactive Visibility**: Account meets strategic threshold but is on track — executive awareness without action. Clearly signal "no action needed" and name next checkpoint.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G4: Revenue commitment language — every ARR figure flagged `[review — not yet a revenue commitment]`; Finance/RevOps review required before distribution to leadership or board.
+   - G5: Confidentiality gradient — `--brief` and `--full` are internal-only; `--board` strips relationship detail; confirm audience authorization before generating.
+   - G7: Executive asks must name a specific person, specific action, and specific date — "executive involvement needed" is not an ask.
+   - Escalation routing must use the configured escalation matrix with named owner — no generic "escalate to your manager."
+   - Value claims require account-specific evidence — generic value language undermines executive credibility.
+
+3. **EXPERT CHECK**: What would a veteran CRO or Head of CS verify first?
+   - Does the bottom line stand alone in two sentences — would an executive who reads nothing else know the situation and what's being asked of them?
+   - Is the risk tier imported from `/renewals:risk-assessment`, not re-derived independently? If no prior assessment exists, flag that explicitly.
+   - Does the "what executive involvement changes" section articulate what the executive achieves that the CSM cannot — or is it just requesting presence?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - ❌ Vague executive ask — "We need CRO support" without naming who calls whom, about what, by when.
+   - ❌ Risk drivers stated as domain labels ("engagement is low") instead of specific data points ("no executive sponsor contact in 120 days").
+   - ❌ Including customer-specific relationship detail or save strategy language in `--board` output.
+   - ❌ Shipping `--full` mode with generic value language instead of downgrading to `--brief` with the gap flagged.
+   - ❌ Including unconfirmed competitive intelligence — hedged competitive context is worse than omission.
+   - ❌ Manufacturing urgency for on-track accounts — prompting unnecessary executive intervention on a healthy renewal.
+
+**After execution**, verify:
+- Does the summary pass the two-sentence test — can the bottom line stand alone?
+- Are all ARR figures flagged with `[review — not yet a revenue commitment]`?
+- Is the output mode (brief/full/board) matched to the actual audience, not just the requested mode?
+- Confidence: [High] if CRM + risk-assessment data corroborate / [Medium] if single-source or partially stale / [Low] if user-provided context only — state which.
 
 ## What makes an account eligible for executive summary
 

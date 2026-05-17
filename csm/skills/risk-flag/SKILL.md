@@ -36,14 +36,44 @@ Critical configuration to apply:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+> Load `references/reasoning-blueprint.md` for full taxonomy, heuristics, and failure modes.
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G1 (health scores are heuristics — do not frame as churn predictions), G3 (any revenue impact framing carries commitment language), G4 (no escalation triage without a named escalation path).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of risk is this?
+- **Sudden Signal Spike** — single high-weight signal appeared abruptly (sponsor exit, competitor eval, P1 escalation)
+- **Gradual Decay Pattern** — multiple medium signals accumulating over weeks (usage drift, missed QBRs, NPS decline)
+- **Renewal-Proximity Risk** — any risk signal present AND renewal within 90 days
+- **Stakeholder Disruption** — champion departure, sponsor reorg, power structure shift
+- **Escalation-in-Progress** — customer has already escalated; CSM is responding, not initiating
+
+2. **CONSTRAINTS** — enforce before generating output:
+- **G1**: Health scores are heuristics — never frame as churn predictions or state the account "will churn"
+- **G2**: Risk signals require direct evidence — absence of engagement is "Unknown" or "Declining," not "Confirmed at risk"
+- **G4**: No escalation recommendation without a named contact, channel, and SLA from the configured matrix
+- **G5**: Root cause is a hypothesis — present as leading interpretation with evidence, not as verdict
+- **G7**: Escalation memo omits health model internals, component weights, and internal stakeholder notes — those stay in the CSM brief
+
+3. **EXPERT CHECK** — what a veteran CSM verifies first:
+- Is the signal real or a data artifact? Cross-reference with CSM notes and recent calls before classifying severity
+- Signal clustering: two medium signals in 30 days outweighs one isolated high signal
+- Sponsor silence (2+ unanswered outreaches in 30 days) is a high-weight signal regardless of health score
+- Usage drops must be normalized against the customer's own baseline and business cycle
+- Does the intervention plan fit inside the time-to-renewal window? If not, escalate immediately
+
+4. **ANTI-PATTERNS** — common mistakes to avoid:
+- Writing a recovery plan with more runway than the renewal date allows
+- Classifying severity optimistically because the CSM "has a good relationship" — apply the matrix mechanically first
+- Leaking health model scoring methodology into the escalation memo
+- Presenting a risk memo that documents signals accurately but fails to convey aggregate urgency
+- Restating what the customer already told leadership without adding root cause hypothesis or specific ask
+
+**After execution**, verify:
+1. **Intent satisfaction** — does the memo give the CSM a specific Monday-morning action plan, not just a flag?
+2. **Mode matching** — does the output mode (`--brief` vs `--escalation-memo`) match the actual need? A brief that should be an escalation memo delays intervention; an escalation memo for a low-severity signal wastes leadership attention.
+3. **Failure mode scan** — check the classification type against its common failure modes in the blueprint
+4. **Staleness check (G7)** — is every data source timestamped? Flag CRM data >7 days stale, CS platform data >3 days stale, call/meeting data >14 days stale. Stale signals get a `[stale: <source> as of <date>]` tag.
+5. **Confidence calibration** — [High] if live data + CSM confirmation corroborate the classification / [Medium] if single-source or partially stale data / [Low] if working from CSM description alone with no corroborating system data — state which.
 
 ## Mode
 

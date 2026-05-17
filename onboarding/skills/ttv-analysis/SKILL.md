@@ -48,14 +48,39 @@ Proceed using milestone day targets as the reference if confirmed.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G7 (flag any milestone completion data that is stale — include source date and staleness indicator on all TtV figures).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of TtV analysis request is this?
+   - **Single-Account Pace Assessment**: One named account, milestone data available, CSM wants to know if TtV is on track and what to do if behind. Optimize for per-milestone variance decomposition.
+   - **Portfolio Comparative View**: Multiple accounts, ranked TtV performance across a book. All comparisons must be segment-normalized — never rank by raw days.
+   - **Pattern / Cohort Analysis**: 5+ accounts with complete data, systemic question — which transitions delay most, which segments underperform, which blockers correlate. State sample size in every finding.
+   - **Early-Warning Triage**: Account mid-onboarding with pace multiplier >1.15, CSM needs acceleration actions now. Lead with the recommendation, support with the data.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G2: TtV figures are internal planning metrics — every figure, projection, and comparison carries `[review — internal planning target]`. If asked to surface in customer materials, redirect to milestone-date language.
+   - G4: Acceleration recommendations are CSM-owned options, not instructions — present as choices for CSM judgment, never as directives.
+   - G5: Portfolio output containing segment performance or account-level TtV comparisons requires confidentiality check before distribution beyond the CSM.
+   - G7: Flag stale milestone completion data with source date and staleness indicator on all TtV figures. PM connector >7 days, CRM >3 days.
+   - Projected TtV requires at least M1 completion — zero-milestone projections are target-based estimates, not pace-based projections. Label accordingly.
+
+3. **EXPERT CHECK**: What would a veteran onboarding leader verify first?
+   - Is the pace multiplier calculated from enough milestones to be meaningful? One milestone is a data point, not a trend — flag single-milestone projections explicitly.
+   - Are early completions (negative variance >15%) verified against completion criteria, or could they be premature milestone closures masking data quality issues?
+   - For portfolio and pattern modes: are comparisons segment-normalized? A 45-day SMB TtV and a 45-day Enterprise TtV are not equivalent outcomes.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - ❌ Projecting TtV to the day from a single completed milestone — phantom precision that misleads planning.
+   - ❌ Ranking portfolio accounts by absolute TtV days instead of variance from segment target.
+   - ❌ Presenting pattern findings from <5 accounts without labeling them as directional only.
+   - ❌ Recommending generic acceleration ("increase engagement") without tying to the specific delayed milestone and a named owner.
+   - ❌ Treating negative variance as automatically good news without checking whether completion criteria were actually met.
+   - ❌ Reporting cumulative variance without decomposing which milestone transition caused the delay.
+
+**After execution**, verify:
+- Does the output answer the implicit question ("is this account/portfolio on track, and what should I do about it")?
+- Are all TtV figures tagged `[review — internal planning target]` without exception?
+- Are data sources timestamped and staleness-flagged per G7?
+- Confidence: [High] if 3+ milestones complete with consistent pace / [Medium] if 1-2 milestones or partially stale data / [Low] if zero milestones complete or user-provided context only — state which and why.
 
 ## Mode
 

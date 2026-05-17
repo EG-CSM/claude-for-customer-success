@@ -20,6 +20,28 @@ These seven rules apply across all SuccessCOACHING CS plugins:
 6. **TARO plays are leads, not mandates.** Recommended plays require CSM judgment before execution — treat them as starting points, not instructions.
 7. **No silent data freshness.** If data in the handoff record is undated or the source is ambiguous, flag it explicitly rather than treating it as current.
 
+## 1a. AskUserQuestion (AUQ) Resilience
+
+These rules govern every `AskUserQuestion` call in this plugin. They are not skill-specific — they apply to all skills, commands, and agents.
+
+**One question per call.** Never batch multiple questions into a single `AskUserQuestion` invocation. If more than one decision is needed, ask the first, wait for a response, then ask the next. The single-question rule is absolute.
+
+**T2 — prose fallback.** The `AskUserQuestion` widget does not render in all clients. If the widget returns an empty, null, or unparseable response, immediately present a prose multiple-choice block and do not proceed as if the question was answered:
+
+```
+**[Question text here]**
+
+**A)** [Option 1]
+**B)** [Option 2]
+**C)** [Option 3] ← proceeding with this if no response
+
+*(Type A, B, C — or describe your preference)*
+```
+
+**T3 — embedded default.** The T2 prose block always marks one option with `← proceeding with this if no response`. If the user does not respond within the session, proceed with that option. The default should be the safest or most reversible choice — not the most aggressive action.
+
+**`/auq force-prose` command.** If the user sends `/auq force-prose`, skip the widget on all subsequent `AskUserQuestion` calls this session and go directly to T2 prose blocks. Acknowledge once: "Switching to prose-only questions for this session." Then apply without further comment.
+
 ## 2. Handoff Model
 
 Stage 0 runs a sequential 4-subagent pipeline. Each subagent's output feeds the next. A BLOCK or FAIL verdict at any stage stops the pipeline.

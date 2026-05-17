@@ -1,0 +1,360 @@
+[
+  {
+    "id": "cm-001",
+    "label": "Healthy run — no capacity constraints",
+    "description": "Standard scheduled run where CS headroom is well above threshold. Confirms silent-green pattern: HEALTHY alert still posts to confirm the monitor ran.",
+    "input": {
+      "practice_profile": {
+        "company_name": "Acme CS Consulting",
+        "primary_segment": "Mid-Market",
+        "current_arr": 8000000,
+        "arr_per_csm": 1500000,
+        "current_csm_count": 8,
+        "csm_avg_ramp_days": 90,
+        "target_growth_pct": 0.20,
+        "nrr_current": 1.08,
+        "uog_baseline_path": ""
+      },
+      "hubspot_connected": true,
+      "preview_mode": false,
+      "alert_channel": "#revops-alignment"
+    },
+    "expected_behavior": {
+      "capacity_reader": {
+        "max_supported_arr": 12000000,
+        "cs_headroom_pct": 50.0,
+        "threshold_label": "HEALTHY",
+        "alert_level": "HEALTHY",
+        "csms_to_hire": 0,
+        "hire_by_date": null,
+        "hire_by_urgency": null,
+        "confidence": "Moderate"
+      },
+      "capacity_reporter": {
+        "format_used": "HEALTHY",
+        "channels_posted": ["#revops-alignment"],
+        "cc_channel_used": false,
+        "g2_disclaimer_included": false,
+        "delivery_status": "posted"
+      },
+      "orchestrator_completion_summary": {
+        "alert_level": "HEALTHY",
+        "g2_applied": false
+      }
+    },
+    "assert": [
+      "HEALTHY format rendered with ✅ emoji",
+      "Post sent to #revops-alignment",
+      "No cc to #cs-leadership",
+      "G2 disclaimer NOT included",
+      "Completion summary shows HEALTHY",
+      "hubspot_data_as_of timestamp present in alert",
+      "csms_to_hire not shown (0)"
+    ]
+  },
+  {
+    "id": "cm-002",
+    "label": "NEAR_CEILING threshold breach — HIGH alert with cc",
+    "description": "CS headroom has dropped to 7%, crossing the 10% NEAR_CEILING threshold. Alert posts to primary channel and ccs CS leadership.",
+    "input": {
+      "practice_profile": {
+        "company_name": "Meridian SaaS",
+        "primary_segment": "Enterprise",
+        "current_arr": 18500000,
+        "arr_per_csm": 2000000,
+        "current_csm_count": 10,
+        "csm_avg_ramp_days": 120,
+        "target_growth_pct": 0.25,
+        "nrr_current": 1.12,
+        "uog_baseline_path": "~/.cs-agent/uog-baseline.json"
+      },
+      "hubspot_connected": true,
+      "preview_mode": false,
+      "alert_channel": "#revops-alignment",
+      "cc_channel": "#cs-leadership"
+    },
+    "expected_behavior": {
+      "capacity_reader": {
+        "max_supported_arr": 20000000,
+        "cs_headroom_pct": 8.1,
+        "threshold_label": "NEAR_CEILING",
+        "alert_level": "HIGH",
+        "csms_to_hire": 2,
+        "hire_by_urgency": "OK",
+        "confidence": "High"
+      },
+      "capacity_reporter": {
+        "format_used": "HIGH",
+        "channels_posted": ["#revops-alignment", "#cs-leadership"],
+        "cc_channel_used": true,
+        "g2_disclaimer_included": true,
+        "delivery_status": "posted"
+      }
+    },
+    "assert": [
+      "HIGH format rendered with ⚠️ emoji",
+      "G2 disclaimer included: 'This model is a structural input.'",
+      "Post sent to both #revops-alignment and #cs-leadership",
+      "UoG baseline section rendered (annual plan comparison)",
+      "hire_by_date shown",
+      "Confidence: High (HubSpot live + UoG baseline present)",
+      "hubspot_data_as_of timestamp present"
+    ]
+  },
+  {
+    "id": "cm-003",
+    "label": "OVER_CAPACITY — CRITICAL alert",
+    "description": "CS headroom is negative: current ARR exceeds max supportable ARR. CRITICAL alert with full CSM gap analysis and OVERDUE hire-by flag.",
+    "input": {
+      "practice_profile": {
+        "company_name": "Vertex Growth Inc",
+        "primary_segment": "Mid-Market",
+        "current_arr": 11000000,
+        "arr_per_csm": 1200000,
+        "current_csm_count": 8,
+        "csm_avg_ramp_days": 90,
+        "target_growth_pct": 0.30,
+        "nrr_current": 1.10,
+        "uog_baseline_path": ""
+      },
+      "hubspot_connected": true,
+      "preview_mode": false,
+      "alert_channel": "#revops-alignment",
+      "cc_channel": "#cs-leadership"
+    },
+    "expected_behavior": {
+      "capacity_reader": {
+        "max_supported_arr": 9600000,
+        "cs_headroom_pct": -12.7,
+        "threshold_label": "OVER_CAPACITY",
+        "alert_level": "CRITICAL",
+        "csms_to_hire": 3,
+        "hire_by_urgency": "OVERDUE",
+        "confidence": "Moderate"
+      },
+      "capacity_reporter": {
+        "format_used": "CRITICAL",
+        "channels_posted": ["#revops-alignment", "#cs-leadership"],
+        "cc_channel_used": true,
+        "g2_disclaimer_included": true,
+        "delivery_status": "posted"
+      }
+    },
+    "assert": [
+      "CRITICAL format rendered with 🚨 emoji",
+      "threshold_label shows OVER_CAPACITY",
+      "G2 disclaimer included",
+      "hire_by_urgency shown as OVERDUE",
+      "cs_headroom_pct displayed as negative value",
+      "Both channels receive the alert",
+      "Completion summary applies G2 disclaimer",
+      "No UoG baseline section (uog_baseline_path empty)"
+    ]
+  },
+  {
+    "id": "cm-004",
+    "label": "Hire-by date approaching within 30 days — URGENT flag",
+    "description": "Headroom is in the LIMITED band (15%) but csm_avg_ramp_days means the hire-by date is within 30 days. Alert level upgrades to HIGH due to URGENT urgency override.",
+    "input": {
+      "practice_profile": {
+        "company_name": "Clearpath Analytics",
+        "primary_segment": "SMB",
+        "current_arr": 5100000,
+        "arr_per_csm": 800000,
+        "current_csm_count": 7,
+        "csm_avg_ramp_days": 60,
+        "target_growth_pct": 0.35,
+        "nrr_current": 1.05,
+        "uog_baseline_path": ""
+      },
+      "hubspot_connected": true,
+      "preview_mode": false,
+      "alert_channel": "#revops-alignment",
+      "cc_channel": "#cs-leadership"
+    },
+    "expected_behavior": {
+      "capacity_reader": {
+        "threshold_label": "LIMITED",
+        "alert_level": "HIGH",
+        "hire_by_urgency": "URGENT",
+        "confidence": "Moderate"
+      },
+      "capacity_reporter": {
+        "format_used": "HIGH",
+        "channels_posted": ["#revops-alignment", "#cs-leadership"],
+        "cc_channel_used": true,
+        "g2_disclaimer_included": true,
+        "delivery_status": "posted"
+      }
+    },
+    "assert": [
+      "alert_level is HIGH despite headroom being in LIMITED band (URGENT override applied)",
+      "🔶 hire-by date line rendered in HIGH format",
+      "hire_by_urgency shown as URGENT",
+      "G2 disclaimer included",
+      "cc to #cs-leadership triggered by HIGH (not just by CRITICAL)"
+    ]
+  },
+  {
+    "id": "cm-005",
+    "label": "Preview mode — no Slack delivery",
+    "description": "Operator runs capacity-monitor with preview_mode=true to inspect alert output before enabling live delivery. Formatted alert rendered in session; no Slack calls made.",
+    "input": {
+      "practice_profile": {
+        "company_name": "Acme CS Consulting",
+        "primary_segment": "Mid-Market",
+        "current_arr": 14000000,
+        "arr_per_csm": 1500000,
+        "current_csm_count": 10,
+        "csm_avg_ramp_days": 90,
+        "target_growth_pct": 0.22,
+        "nrr_current": 1.09,
+        "uog_baseline_path": ""
+      },
+      "hubspot_connected": true,
+      "preview_mode": true,
+      "alert_channel": "#revops-alignment"
+    },
+    "expected_behavior": {
+      "capacity_reporter": {
+        "delivery_status": "preview",
+        "channels_posted": [],
+        "slack_called": false
+      }
+    },
+    "assert": [
+      "Alert content rendered in session",
+      "No Slack tool calls made",
+      "Preview mode banner shown: 'No messages posted to Slack (preview mode active).'",
+      "Completion summary shows 'Preview only'",
+      "delivery_receipt.delivery_status = 'preview'"
+    ]
+  },
+  {
+    "id": "cm-006",
+    "label": "HubSpot unavailable — profile-only model with confidence downgrade",
+    "description": "HubSpot connector fails during capacity-reader execution. Model runs on practice-profile ARR only; confidence degrades to Low; alert rendered with 'HubSpot — Unavailable' freshness label.",
+    "input": {
+      "practice_profile": {
+        "company_name": "Summit RevOps",
+        "primary_segment": "Enterprise",
+        "current_arr": 22000000,
+        "arr_per_csm": 2500000,
+        "current_csm_count": 9,
+        "csm_avg_ramp_days": 120,
+        "target_growth_pct": 0.18,
+        "nrr_current": 1.11,
+        "uog_baseline_path": ""
+      },
+      "hubspot_connected": true,
+      "hubspot_simulated_failure": true,
+      "preview_mode": false,
+      "alert_channel": "#revops-alignment"
+    },
+    "expected_behavior": {
+      "capacity_reader": {
+        "hubspot_status": "unavailable",
+        "closed_won_qtd": null,
+        "hubspot_data_as_of": "unavailable",
+        "confidence": "Low"
+      },
+      "capacity_reporter": {
+        "freshness_line": "HubSpot — Unavailable",
+        "delivery_status": "posted"
+      }
+    },
+    "assert": [
+      "capacity_reader proceeds without HubSpot data (no hard stop)",
+      "confidence = 'Low' (HubSpot unavailable → confidence degrades)",
+      "Alert freshness line shows 'HubSpot — Unavailable' (not a live timestamp)",
+      "Alert still delivered to Slack (degraded model, not a blocker)",
+      "Confidence band shown in alert: 'Low'",
+      "closed_won_qtd absent from model (null, not fabricated)"
+    ]
+  },
+  {
+    "id": "cm-007",
+    "label": "First run with UoG baseline — High confidence, plan comparison rendered",
+    "description": "Full run with HubSpot live, UoG baseline file present, and headroom in the MEDIUM (LIMITED) band. Validates the UoG plan comparison section in the alert and High confidence assignment.",
+    "input": {
+      "practice_profile": {
+        "company_name": "NorthStar Customer Success",
+        "primary_segment": "Enterprise",
+        "current_arr": 30000000,
+        "arr_per_csm": 3000000,
+        "current_csm_count": 12,
+        "csm_avg_ramp_days": 150,
+        "target_growth_pct": 0.20,
+        "nrr_current": 1.10,
+        "uog_baseline_path": "~/.cs-agent/uog-baseline.json"
+      },
+      "uog_baseline_file_contents": {
+        "annual_new_arr_target": 6000000,
+        "csm_headcount_plan": 14,
+        "csms_required": 14
+      },
+      "hubspot_connected": true,
+      "preview_mode": false,
+      "alert_channel": "#revops-alignment"
+    },
+    "expected_behavior": {
+      "capacity_reader": {
+        "max_supported_arr": 36000000,
+        "cs_headroom_pct": 20.0,
+        "threshold_label": "LIMITED",
+        "alert_level": "MEDIUM",
+        "uog_baseline_status": "loaded",
+        "confidence": "High"
+      },
+      "capacity_reporter": {
+        "format_used": "MEDIUM",
+        "channels_posted": ["#revops-alignment"],
+        "cc_channel_used": false,
+        "g2_disclaimer_included": false,
+        "delivery_status": "posted"
+      }
+    },
+    "assert": [
+      "confidence = 'High' (HubSpot live + UoG baseline present + data fresh)",
+      "MEDIUM format rendered with 📊 emoji",
+      "No cc to #cs-leadership (MEDIUM level)",
+      "G2 disclaimer NOT included (MEDIUM)",
+      "'No immediate action required. Recommend quarterly review.' line present",
+      "uog_baseline section NOT rendered in MEDIUM format (UoG comparison only shown in HIGH/CRITICAL)",
+      "Confidence band shown in alert: 'High'"
+    ]
+  },
+  {
+    "id": "cm-008",
+    "label": "Practice profile missing required fields — graceful stop",
+    "description": "Orchestrator reads practice profile but arr_per_csm is absent. Agent stops before delegating to subagents and reports the missing field.",
+    "input": {
+      "practice_profile": {
+        "company_name": "Incomplete Corp",
+        "primary_segment": "SMB",
+        "current_arr": 3000000,
+        "current_csm_count": 4,
+        "csm_avg_ramp_days": 60,
+        "target_growth_pct": 0.25,
+        "nrr_current": 1.05
+      },
+      "hubspot_connected": true,
+      "preview_mode": false,
+      "alert_channel": "#revops-alignment"
+    },
+    "expected_behavior": {
+      "orchestrator": {
+        "subagents_invoked": false,
+        "stop_reason": "missing_required_fields",
+        "missing_fields": ["arr_per_csm"]
+      }
+    },
+    "assert": [
+      "Orchestrator stops at Step 1 — does NOT invoke capacity-reader",
+      "Error message lists missing field: arr_per_csm",
+      "Message includes: 'Run rev-ops cold-start to configure.'",
+      "No Slack posts made",
+      "capacity-reporter never invoked"
+    ]
+  }
+]

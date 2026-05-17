@@ -39,14 +39,41 @@ If configured, note:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G1 (health scores are heuristics — do not frame as churn probability), G2 (expansion signals require economic buyer qualification), G4 (no escalation triage without a named escalation path), G5 (confidentiality check before distributing portfolio-level financial data), G7 (flag any stale data with source date and staleness indicator).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of account research request is this?
+   - **Pre-Call Snap Brief**: Time-pressured, single account, call imminent. Optimize for speed and recency over completeness.
+   - **QBR / Executive Meeting Prep**: Higher-stakes audience, needs polished structure with validated health components and stakeholder context.
+   - **Risk / Escalation Review**: Account is Red or trending down. Brief feeds an escalation workflow — separate leading from lagging indicators.
+   - **Portfolio Scan**: Multiple accounts for pipeline review or 1:1. Requires consistent structure, per-account staleness, and confidentiality controls.
+   - **Stakeholder-Focused**: Request centers on who matters — engagement gaps, shadow stakeholders, influence mapping.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1: Health scores are component signals, not churn verdicts — decompose into observable signals, never frame as "will churn."
+   - G2: Expansion signals are internal-only, tagged `[early signal — not yet qualified]`, and routed to AE/AM — never in customer-facing output.
+   - G4: Escalation recommendations must route through the configured escalation matrix with named owner, channel, and SLA — no generic "escalate to your manager."
+   - G5: Confidentiality check required before any output containing ARR, contract terms, or health scores leaves the CSM's view — especially portfolio-level briefs.
+   - G7: Flag stale data with source date and staleness indicator — CRM >7 days, CS Platform >3 days, call data >14 days.
+   - Connected integrations limit what can be retrieved — flag gaps, never silently omit.
+
+3. **EXPERT CHECK**: What would a veteran CSM verify first?
+   - What changed since the last touchpoint? The delta matters more than the current state — surface it explicitly.
+   - Is the health score decomposed into actionable components, or is it just a color? If just a color, decompose before presenting.
+   - Are there shadow stakeholders (on calls but not in CRM) or ghost stakeholders (in CRM but never on calls)? Cross-reference when call data is available.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Presenting stale CRM or usage data without a timestamp or staleness flag — the CSM acts on outdated information.
+   - Treating a composite health score as a churn prediction instead of decomposing its component signals.
+   - Listing contacts without engagement recency — a name/title list is not a stakeholder map.
+   - Surfacing expansion signals in output that could reach the customer.
+   - Providing a generic escalation path ("talk to your manager") instead of routing through the configured matrix.
+   - Generating deep-mode output for a CSM who needs a quick snap brief before a call in 10 minutes.
+
+**After execution**, verify:
+- Does the brief answer the implicit question ("am I prepared for this interaction")?
+- Are all data sources timestamped and staleness-flagged per G7?
+- Is the output mode (brief/deep/stakeholders) matched to the actual need?
+- Confidence: [High] if 2+ live sources corroborate / [Medium] if single-source or partially stale / [Low] if user-provided context only — state which.
 
 ## Output mode
 

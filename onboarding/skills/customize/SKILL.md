@@ -22,14 +22,40 @@ Onboarding profile configuration management.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — No domain guardrails apply — this skill configures the environment rather than generating outputs.
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of configuration request is this?
+   - **View / Status Check**: Read-only — CSM wants current state, completeness indicators, or section-level detail. No writes. Optimize for clarity on what's complete, what's blocking, and what to fix first.
+   - **Section Update**: CSM wants to change values within a named section. Requires before/after confirmation, consistency checks against adjacent sections, and immediate-effect warning.
+   - **Section Reset**: Destructive operation — restores template defaults, erasing custom values. Verify intent (reset vs. update confusion is common), show current values before executing, require typed confirmation.
+   - **Validation / Health Check**: Cross-section audit — placeholder scan, required field presence, and internal consistency. Must map failures to downstream skill impact, not just report PASS/FAIL.
+   - **Scope Redirect**: Request targets company-level settings (company name, products, segments) that belong in `company-profile.md`. Redirect to `/cs-ops:customize` — never write company-level values into the onboarding config.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - Config changes take effect immediately — no staging environment. Warn the CSM when a change could alter in-progress account workflows.
+   - Section-targeted writes only — updates modify the named section; adjacent sections are preserved exactly as they exist. Read-before-write is mandatory.
+   - TtV values are always labeled `[review — internal planning target]` — these must never appear in customer-facing output.
+   - Escalation contact accuracy is the CSM's responsibility — record what they provide, remind them to verify contacts are aware and current.
+   - Reset is destructive and cannot be undone without manual re-entry — always offer `--update` as the less destructive alternative first.
+
+3. **EXPERT CHECK**: What would a veteran CS ops practitioner verify first?
+   - Does this change create a cross-section consistency conflict? Milestone day changes ripple into TtV targets; model changes ripple into escalation path requirements. Check the cascade before writing.
+   - Is the CSM asking to reset when they actually want to update one value? The reset-vs-update confusion accounts for most unintended data loss in config management.
+   - Are placeholder sections mapped to the specific downstream skills they block? A generic "section incomplete" message doesn't convey urgency — "graduation missing blocks `/onboarding:handoff-doc`" does.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - ❌ Writing a milestone day target without cross-checking TtV consistency — M4 changes invalidate TtV targets silently.
+   - ❌ Executing a reset without first asking whether the CSM wants to fix a specific value or truly restore defaults for the whole section.
+   - ❌ Reformatting or rewriting sections not targeted by the current update — adjacent sections must be preserved byte-for-byte.
+   - ❌ Reporting validation PASS on sections that are structurally complete but operationally nonsensical (all milestones at the same day target, TtV of 1 day).
+   - ❌ Displaying section status without mapping incomplete sections to the specific skills they block.
+   - ❌ Writing company-level settings (company name, products, segments) into the onboarding config instead of redirecting to `/cs-ops:customize`.
+
+**After execution**, verify:
+- Did the output match the classified request type (view/update/reset/validate/redirect)?
+- For writes: was before/after shown and confirmation obtained before writing?
+- For updates: were cross-section consistency checks run before confirming?
+- Confidence: [High] for read operations and structural validation / [Medium] for advice on appropriate values (company-specific) / [Low] for content suggestions (only the CSM knows their org).
 
 
 ## Config file location

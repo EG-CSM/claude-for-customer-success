@@ -116,16 +116,47 @@ If a skill uses CRM, CS Platform, or contract data and cannot confirm when it wa
 
 ---
 
+## AskUserQuestion (AUQ) resilience
+
+These rules govern every `AskUserQuestion` call in this plugin. They are not skill-specific — they apply to all skills, commands, and agents.
+
+**One question per call.** Never batch multiple questions into a single `AskUserQuestion` invocation. If more than one decision is needed, ask the first, wait for a response, then ask the next. The single-question rule is absolute.
+
+**T2 — prose fallback.** The `AskUserQuestion` widget does not render in all clients. If the widget returns an empty, null, or unparseable response, immediately present a prose multiple-choice block and do not proceed as if the question was answered:
+
+```
+**[Question text here]**
+
+**A)** [Option 1]
+**B)** [Option 2]
+**C)** [Option 3] ← proceeding with this if no response
+
+*(Type A, B, C — or describe your preference)*
+```
+
+**T3 — embedded default.** The T2 prose block always marks one option with `← proceeding with this if no response`. If the user does not respond within the session, proceed with that option. The default should be the safest or most reversible choice — not the most aggressive action.
+
+**`/auq force-prose` command.** If the user sends `/auq force-prose`, skip the widget on all subsequent `AskUserQuestion` calls this session and go directly to T2 prose blocks. Acknowledge once: "Switching to prose-only questions for this session." Then apply without further comment.
+
+---
+
 ## Source attribution
 
+Tag outputs to describe what was actually used:
+
 - `[CRM — Salesforce]` / `[CRM — HubSpot]` — only if a live tool call returned data this session
-- `[CS Platform — Gainsight]` etc. — only if a live tool call returned data
+- `[CS Platform — Gainsight]` etc. — only if a live tool call returned data this session
 - `[Contract — DocuSign CLM]` / `[Contract — Ironclad]` / `[Contract — Drive]` etc. — only if retrieved this session
 - `[CPQ — Salesforce CPQ]` / `[CPQ — DealHub]` etc. — only if retrieved this session
-- `[Gong]` — only if a transcript appeared in a tool result this session
+- `[Call recording — Gong]` etc. — only if a transcript appeared in a tool result this session
+- `[Computed]` — derived or calculated by the agent from live data (not a direct retrieval)
 - `[user provided]` — you pasted it, described it, or uploaded it
 - `[model knowledge]` — background from training data; not account-specific
 - `[conversation context]` — facts established earlier in this session
+
+Do not promote a tag because the data "seems like" it came from a connected source. The tag describes provenance, not assumption.
+
+**Tool-vs-context conflict.** When a tool result conflicts with what you described in conversation (the CRM shows Active but you said the account gave notice), surface both: "The CRM shows Active status. You described the account as having given non-renewal notice — these conflict. Which is more current?" Do not silently prefer either.
 
 ---
 
@@ -213,6 +244,20 @@ When you ask a question in this plugin's domain, I'll read the practice profile 
 
 ---
 
+## Cold-start readiness
+
+| Skill Area | Full capability | Partial | Degraded |
+|---|---|---|---|
+| SA1 — Renewal Risk Intelligence | CRM + CS Platform + call recording connected | CRM + CS Platform | CRM only |
+| SA2 — Contract & Commercial Analysis | CRM + contract storage + CPQ connected | CRM + contract storage | CRM only; no contract retrieval |
+| SA3 — Renewal Forecast | CRM + CS Platform + pricing model set | CRM + CS Platform | CRM only; no health signals |
+| SA4 — Negotiation Support | CRM + pricing posture + discount authority configured | CRM + pricing posture | No connector; training knowledge |
+| SA5 — Churn Intelligence | CRM + CS Platform + product analytics connected | CRM + CS Platform | CS Platform only |
+| SA6 — Win-Back Profiling | CRM + CS Platform + OCV context set | CRM + CS Platform | CRM only |
+| Renewals Orchestrator | All connectors + full renewals profile | Any two connectors | Single connector or profile incomplete |
+
+---
+
 ## Escalation matrix
 
 | Situation | Route to | How | SLA |
@@ -249,38 +294,68 @@ When you ask a question in this plugin's domain, I'll read the practice profile 
 
 ## Managed agents
 
-The renewals plugin manages two agents: one scheduled, one on-demand.
+The renewals plugin manages two agents: one scheduled, one on-demand. Both read this config file for renewals practice context, risk signal thresholds, escalation matrix, and connector routing. Both respect the shared guardrails above.
 
-### Scheduled agents
+---
 
-**renewal-scanner** (Stage 5 — Retention / Renewal)
-Runs weekly to scan all active accounts for renewal risk signals. Aggregates signals from CRM (opportunity stage, close date proximity, deal flags), cs-platform (health score trend, escalation history, champion changes), and product-analytics (usage cliff, session frequency drop, feature regression). Produces a prioritized renewal watchlist ranked by risk level, ARR at stake, and days to contract end. Posts digest to the configured Slack channel and delivers to the renewals manager. Does not initiate customer outreach — surfaces signals for human review and action.
+### renewal-scanner (scheduled / on-demand)
 
-No CSM trigger required; runs on cron. Can be triggered manually: `"Run renewal scan"` or `"What's my renewal watchlist?"`.
+**Trigger phrases:** "Run renewal scan", "What's my renewal watchlist?", "Show me at-risk renewals"
 
-### On-demand agents
+**What it does:** Runs weekly to scan all active accounts for renewal risk signals. Aggregates signals from CRM (opportunity stage, close date proximity, deal flags), CS Platform (health score trend, escalation history, champion changes), and product analytics (usage cliff, session frequency drop, feature regression). Produces a prioritized renewal watchlist ranked by risk level, ARR at stake, and days to contract end. Posts to Slack. Does not initiate customer outreach — surfaces signals for human review.
 
-**churn-intelligence-agent** (Stage 7 — Churn Intelligence)
-Runs the post-churn learning workflow after a customer has given formal non-renewal notice or a contract has ended without renewal. This is a learning and documentation workflow — not a recovery workflow. No save strategies, retention offers, or discount proposals appear in any output.
+**Required params:** none (scheduled); `cohort` optional when triggered manually
+**Optional params:** `days_to_renewal` (filter by window, e.g. 30 / 60 / 90), `min_arr` (filter by ARR threshold), `risk_level` (red / yellow / all)
 
-Seven-step workflow: parallel account context pull (cs-platform + CRM + product-analytics) → parallel exit-interviewer and postmortem-facilitator dispatch → learning extraction → orchestrator win-back eligibility assessment → conditional winback-profiler dispatch → Churn Intelligence Report compiled and written to cs-platform → CSM-facing summary delivered.
+**Pipeline stages:**
+1. `renewal-signal-aggregator` — pulls CRM opportunity data, CS Platform health trends, and product analytics signals across all active accounts
+2. `risk-ranker` — scores and ranks accounts by risk level, ARR at stake, and contract end proximity
+3. `watchlist-builder` — formats prioritized watchlist with signal summaries per account
+4. `digest-publisher` — posts to Slack; delivers to renewals manager inbox
 
-The Churn Intelligence Report (8 sections) is written to cs-platform before the final response is returned. If the write fails, the failure is reported and the full report is delivered inline. A Win-Back Stage 0 Handoff Record is written separately to cs-platform and flagged for CS manager review when the account is win-back eligible — the CS manager decides whether to activate the win-back motion.
+**Behavioral notes:**
+- No CSM trigger required for scheduled runs; runs on cron weekly
+- Does not initiate outreach or write to CRM — output is a watchlist for human review only
+- If CS Platform is unavailable, runs on CRM signals only; flags: "CS Platform unavailable — watchlist based on CRM signals only"
 
-**Do not invoke while active save efforts are underway.** This agent is post-decision only.
+---
 
-Trigger: `"Run churn intelligence for [Account Name]"` or `"Account [Name] churned — run the churn workflow"` or `"[Account] gave non-renewal notice"`.
+### churn-intelligence-agent (on-demand)
 
-Required: `account_name`, `notice_date`, `contract_end_date`. Optional: `contact_name`, `churn_reason`, `winback_eligible` (boolean).
+**Trigger phrases:** "Run churn intelligence for [Account Name]", "Account [Name] churned — run the churn workflow", "[Account] gave non-renewal notice"
 
-### Agent behavioral notes
+**What it does:** Runs the post-churn learning workflow after a customer has given formal non-renewal notice or a contract has ended without renewal. This is a learning and documentation workflow — not a recovery workflow. No save strategies, retention offers, or discount proposals appear in any output.
 
-- Both agents read this config file for renewals practice context, risk signal thresholds, escalation matrix, and connector routing.
-- renewal-scanner posts to the Slack channel configured in this file's integration block.
-- churn-intelligence-agent writes the Churn Intelligence Report to cs-platform — it does not post to Slack.
-- The churn-intelligence-agent is the only agent in the plugin that reads this file (`renewals/CLAUDE.md`) rather than the csm plugin config. This separation is intentional: churn intelligence is a renewals-domain workflow with its own escalation paths, commercial context, and postmortem framing.
-- All agents respect the shared guardrails in this file (no health score as verdict, expansion requires qualification, revenue commitment language, no triage without escalation path and owner, confidentiality, retrieved-content trust).
-- Run `/renewals:cold-start-interview` to complete this config before deploying either agent. The churn-intelligence-agent will not produce useful output against a file with [PLACEHOLDER] values.
+**Required params:** `account_name`, `notice_date`, `contract_end_date`
+**Optional params:** `contact_name`, `churn_reason`, `winback_eligible` (boolean)
+
+**Pipeline stages:**
+1. `account-context-puller` — parallel pull from cs-platform + CRM + product-analytics; assembles full account history
+2. `exit-interviewer` + `postmortem-facilitator` — dispatched in parallel; exit-interviewer structures the account-facing debrief, postmortem-facilitator structures the internal learning extraction
+3. `learning-extractor` — synthesizes root cause, contributing factors, and signals that were present but missed
+4. `winback-assessor` (orchestrator) — evaluates win-back eligibility against configured criteria; conditionally dispatches `winback-profiler`
+5. `report-compiler` — assembles 8-section Churn Intelligence Report; writes to cs-platform before returning response (if write fails, delivers inline and reports failure)
+6. `winback-profiler` (conditional) — writes Win-Back Stage 0 Handoff Record to cs-platform and flags for CS manager review when account is win-back eligible
+
+**Behavioral notes:**
+- **Do not invoke while active save efforts are underway.** This agent is post-decision only — for accounts that have formally churned or given non-renewal notice
+- Win-back eligibility is assessed, not decided: the CS manager receives the Handoff Record and decides whether to activate the win-back motion
+- Reads this file (`renewals/CLAUDE.md`) rather than the csm plugin config — this separation is intentional; churn intelligence is a renewals-domain workflow with its own escalation paths and commercial framing
+
+---
+
+## Shared assets
+
+These files are authoritative for the full plugin suite. Read them before acting on any
+cross-plugin workflow or when a skill description references shared definitions.
+
+- **`~/.claude/plugins/config/claude-for-customer-success/shared/cs-domain-model.md`**
+  Health score bands (Healthy / Developing / At Risk / Critical), shared guardrails G1–G7,
+  and CS domain vocabulary used across all plugins.
+
+- **`~/.claude/plugins/config/claude-for-customer-success/shared/cross-skill-registry.md`**
+  Canonical command registry for all five plugins. Use this to resolve skill names, mode
+  flags, and trigger conditions without hardcoding command strings in skill files.
 
 ---
 

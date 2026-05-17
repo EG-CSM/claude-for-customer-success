@@ -38,14 +38,41 @@ Critical configuration to apply:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G1 (health scores are heuristics — calibration findings must not be framed as churn predictions).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of health model review is this?
+   - **Distribution Anomaly**: Portfolio tier distribution is skewed or shifting — ARR concentration in Red/Yellow, sudden migration patterns, or benchmark deviation. Focus on whether the shift is real deterioration or model miscalibration.
+   - **Predictive Accuracy Audit**: Health classifications vs. actual renewal outcomes — do Red accounts churn more than Green? Requires historical data. Separate false positives (over-flagging) from false negatives (missing churners).
+   - **Component/Weight Review**: Individual component scoring, data coverage, staleness, or weight distribution issues. Critical distinction: zero coverage (data pipeline problem) vs. low scores with full coverage (calibration problem).
+   - **Threshold Recalibration**: Explicit request to adjust Green/Yellow/Red boundaries. Must model the cascade — how many accounts and ARR migrate between tiers, and what active CTAs/escalations break.
+   - **Full Audit**: Comprehensive review spanning distribution, components, calibration, and recommendations. Default mode — apply all four lenses.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1: Health scores are heuristics — calibration findings must not be framed as churn predictions. Decompose into observable component signals.
+   - G2: Calibration assessment without historical churn data produces a description, not a verdict — surface the data gap explicitly rather than speculating on predictive accuracy.
+   - G4: Coverage gaps vs. score problems require different corrective actions — never conflate missing data with poor health.
+   - G5: ARR-at-risk figures must be validated against CRM renewal dates and contract values before sharing with finance or leadership.
+   - G7: Flag stale data with source date and staleness indicator per configured freshness thresholds.
+   - Connected integrations limit what can be retrieved — flag gaps, never silently omit.
+
+3. **EXPERT CHECK**: What would a veteran CS-Ops leader verify first?
+   - Is the distribution anomaly real deterioration or just threshold miscalibration? Check whether tier shifts correlate with actual churn outcomes before sounding alarms.
+   - Are component scores being interpreted without checking coverage first? A component at 30% coverage is a data problem, not a health signal — verify coverage before interpreting any average score.
+   - Before recommending threshold changes, has the cascade been quantified? How many accounts move, how much ARR migrates, and what in-flight escalations break?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Comparing portfolio distribution to industry benchmarks without normalizing by segment — Enterprise and SMB distributions differ structurally.
+   - Reporting "N accounts churned from Green" without stating what percentage of Green that represents — count without rate is misleading.
+   - Treating zero-coverage components as zero-score components — missing data is not bad health.
+   - Recommending threshold changes without listing affected accounts, ARR impact, and active workflows that would break.
+   - Averaging component scores across segments when segment-level anomalies exist (e.g., Enterprise usage strong, SMB usage collapsing).
+   - Running a calibration verdict on fewer than 12 months of churn data or fewer than 30 renewal events without flagging the confidence ceiling.
+
+**After execution**, verify:
+- Does the audit answer the real question ("is our health model actually predictive, or just classifying")?
+- Are all data sources timestamped and staleness-flagged per G7?
+- Is the output mode (--full/--distribution/--calibration/--component-audit) matched to the actual need?
+- Confidence: [High] if live integrations + 12mo churn data corroborate / [Medium] if partial data or user-provided exports / [Low] if conversation context only — state which.
 
 ## Mode
 

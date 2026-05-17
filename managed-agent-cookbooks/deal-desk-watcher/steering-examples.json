@@ -1,0 +1,163 @@
+{
+  "cookbook": "deal-desk-watcher",
+  "version": "1.0.0",
+  "description": "Steering examples for the deal-desk-watcher orchestrator and its three subagents. Each example demonstrates operator intent, expected subagent behavior, and guardrail enforcement.",
+  "examples": [
+
+    {
+      "id": "ddw-001",
+      "label": "Full breach scan — all records confirmed",
+      "scenario": "Operator runs the watcher. HubSpot returns three breached deals (one Critical, one High, one Medium). Operator confirms all log writes. Digest posts to Slack.",
+      "operator_trigger": "Run deal desk watcher.",
+      "orchestrator_behavior": [
+        "Reads practice profile from ~/.cs-agent/practice-profile.json",
+        "Sends config payload to deal-stage-reader",
+        "Receives 3 breaches: one approval_aging Critical, one stage_sla High, one single_threaded_late_stage Medium",
+        "Invokes sla-log-writer with require_confirmation: true",
+        "After operator confirms all, receives write_status=completed, records_written=3",
+        "Invokes deal-alert-poster with full breach list and write_summary",
+        "Reports completion summary"
+      ],
+      "subagent_behaviors": {
+        "deal-stage-reader": "Pulls all open deals, filters out Closed-Won/Closed-Lost, computes time-in-stage and approval age, returns sorted breach list with scan_metadata",
+        "sla-log-writer": "Renders proposal table with all 3 records, pauses for confirmation, appends all 3 records to ~/.cs-agent/deal-desk-sla-log.json after operator responds 'confirm all', returns write receipt with write_log",
+        "deal-alert-poster": "Formats digest with 🔴 Critical row first, 🟠 High second, 🟡 Medium third. Posts to #revops-alignment. Returns delivery_status=posted."
+      },
+      "guardrails_enforced": ["G5 (analytical footer)", "G6 (data freshness timestamp)", "G8 (owner + age + breach type on every row)"]
+    },
+
+    {
+      "id": "ddw-002",
+      "label": "Partial log write — operator confirms subset",
+      "scenario": "Two Critical breaches found. Operator confirms only the first record for logging. The second is skipped. Digest still posts both breach rows.",
+      "operator_trigger": "Run deal desk watcher.",
+      "operator_confirmation_response": "confirm 1",
+      "orchestrator_behavior": [
+        "deal-stage-reader returns 2 Critical breaches",
+        "sla-log-writer pauses with 2-row proposal table",
+        "Operator confirms record 1 only",
+        "sla-log-writer writes record 1, skips record 2, returns write_status=partial, records_written=1, records_skipped=1",
+        "deal-alert-poster receives both breach rows (unfiltered) and write_summary with status=partial",
+        "Digest footer shows: '1 record(s) written, 1 skipped by operator'"
+      ],
+      "key_behavior": "Log write scope (partial) does not filter the breach rows posted to Slack. Both deals are surfaced in the digest regardless of log write decision.",
+      "guardrails_enforced": ["G8", "write_summary accurately reflects partial write"]
+    },
+
+    {
+      "id": "ddw-003",
+      "label": "Operator declines all log writes",
+      "scenario": "Three breaches found. Operator responds 'skip all' to the write proposal. SLA log is not written. Digest still posts.",
+      "operator_trigger": "Run deal desk watcher.",
+      "operator_confirmation_response": "skip all",
+      "orchestrator_behavior": [
+        "sla-log-writer receives skip all response",
+        "Returns write_status=skipped, records_written=0, records_skipped=3",
+        "write_log contains skipped entries with human_approval_status=skipped for all 3",
+        "Orchestrator sets write_summary.status=skipped and passes to deal-alert-poster",
+        "Digest footer shows: 'Log write skipped by operator — no records written'",
+        "Digest breach rows are unaffected — all 3 deals surface in Slack"
+      ],
+      "key_behavior": "Operator declining writes is a valid governance outcome. Downstream digest delivery proceeds normally. The watcher never treats skipped writes as errors.",
+      "guardrails_enforced": ["G5", "G6", "G8", "Governance write gate respected"]
+    },
+
+    {
+      "id": "ddw-004",
+      "label": "No breaches — clean pipeline",
+      "scenario": "HubSpot returns 12 open deals, none exceeding any SLA threshold. No subagents downstream of deal-stage-reader are invoked for write or alert.",
+      "operator_trigger": "Run deal desk watcher.",
+      "orchestrator_behavior": [
+        "deal-stage-reader evaluates all 12 deals, returns breaches=[], deals_evaluated=12",
+        "Orchestrator skips sla-log-writer (breaches empty): write_status=not_triggered, records_written=0",
+        "Invokes deal-alert-poster with empty breach array",
+        "deal-alert-poster formats no-breach digest: '✅ No SLA breaches detected.'",
+        "Posts to #revops-alignment",
+        "Completion summary: Breaches found: 0, Log entries: 0 (not_triggered)"
+      ],
+      "key_behavior": "sla-log-writer is not invoked when breaches is empty — the orchestrator sets write_status=not_triggered without calling the subagent.",
+      "guardrails_enforced": ["G6 (freshness still shown in digest even with no breaches)"]
+    },
+
+    {
+      "id": "ddw-005",
+      "label": "HubSpot unavailable — hard stop",
+      "scenario": "deal-stage-reader cannot reach HubSpot. Orchestrator hard-stops. Neither sla-log-writer nor deal-alert-poster is invoked.",
+      "operator_trigger": "Run deal desk watcher.",
+      "orchestrator_behavior": [
+        "deal-stage-reader returns { 'error': 'hubspot_unavailable', 'message': 'Cannot evaluate deals without CRM data.' }",
+        "Orchestrator stops immediately",
+        "Reports to operator: 'Deal Desk Watcher — cannot run. HubSpot unavailable.'",
+        "sla-log-writer NOT invoked",
+        "deal-alert-poster NOT invoked"
+      ],
+      "key_behavior": "This is the same hard-stop pattern used in churn-signal-scanner. No partial run — if CRM data is unavailable, no breach evaluation can be trusted, so the entire run aborts.",
+      "guardrails_enforced": ["No fabricated breach data", "No Slack noise on incomplete data"]
+    },
+
+    {
+      "id": "ddw-006",
+      "label": "Filesystem write failure — digest still posts",
+      "scenario": "sla-log-writer fails to write to ~/.cs-agent/deal-desk-sla-log.json (permission error). Orchestrator continues to deal-alert-poster with write_status=failed.",
+      "operator_trigger": "Run deal desk watcher.",
+      "orchestrator_behavior": [
+        "sla-log-writer returns write_status=failed, error=filesystem_write_failed, records_written=0",
+        "Orchestrator does NOT stop — routes failure to deal-alert-poster via write_summary",
+        "deal-alert-poster formats digest footer: '⚠️ SLA log write failed — manual logging required at ~/.cs-agent/deal-desk-sla-log.json'",
+        "Posts digest to Slack with failure noted",
+        "Completion summary shows write failure clearly"
+      ],
+      "key_behavior": "Filesystem failures are surfaced, not silent. Downstream Slack delivery still proceeds — the RevOps team needs visibility even if local logging is broken.",
+      "guardrails_enforced": ["G5", "G6", "G8", "No silent failure"]
+    },
+
+    {
+      "id": "ddw-007",
+      "label": "Preview mode — digest rendered but not posted",
+      "scenario": "Operator passes preview_mode=true. deal-alert-poster formats the full digest but suppresses Slack delivery.",
+      "operator_trigger": "Run deal desk watcher in preview mode.",
+      "orchestrator_behavior": [
+        "Passes preview_mode: true in deal-alert-poster payload",
+        "deal-alert-poster formats full digest, sets delivery_status=preview, channels_posted=[]",
+        "alert_preview is populated with full text",
+        "Orchestrator surfaces digest in-session",
+        "Completion summary shows: 'Posted to: Preview only'"
+      ],
+      "key_behavior": "Preview mode allows RevOps to validate digest formatting before enabling the scheduled run. All breach data, severity rows, and guardrail footers are rendered exactly as they would appear in Slack.",
+      "guardrails_enforced": ["G5", "G6", "G8 enforced even in preview — invalid rows would still be caught"]
+    },
+
+    {
+      "id": "ddw-008",
+      "label": "Mixed severity breaches — sort order enforced",
+      "scenario": "Five deals in breach: 1 Critical (approval_aging, $210k ACV), 1 Critical (stage_sla 2×+ overage, $95k ACV), 2 High (stage_sla and close_date_drift, $150k and $80k ACV), 1 Medium (single_threaded, $320k ACV). Digest must sort Critical first by ACV desc, then High by ACV desc, then Medium.",
+      "expected_sort_order": [
+        "🔴 Critical — $210k (approval_aging)",
+        "🔴 Critical — $95k (stage_sla overage > 2×)",
+        "🟠 High — $150k (stage_sla)",
+        "🟠 High — $80k (close_date_drift)",
+        "🟡 Medium — $320k (single_threaded_late_stage)"
+      ],
+      "key_behavior": "The $320k Medium-severity deal sorts BELOW the $80k High-severity deal. Severity tier takes precedence over ACV. This prevents high-probability, high-ACV but low-urgency deals from dominating the digest.",
+      "guardrails_enforced": ["G8 — each row includes owner, days/hours, breach type"]
+    },
+
+    {
+      "id": "ddw-009",
+      "label": "Unevaluable signals — partial breach record",
+      "scenario": "A deal is missing stage_entered_date in HubSpot. deal-stage-reader marks the stage_sla signal unevaluable for that deal but still evaluates the other three breach types.",
+      "operator_trigger": "Run deal desk watcher.",
+      "deal_stage_reader_behavior": [
+        "Encounters deal where stage_entered_date is null",
+        "Sets stage_sla breach_detail.unevaluable = true for that deal",
+        "Evaluates approval_aging, close_date_drift, and single_threaded_late_stage normally",
+        "Includes unevaluable_signals: ['stage_sla'] in the deal's output",
+        "Does NOT fabricate a stage_sla value"
+      ],
+      "deal_alert_poster_behavior": "Renders: 'stage_sla: unevaluable (field missing from HubSpot)' in the breach row instead of computed days_in_stage",
+      "key_behavior": "Partial data never blocks the rest of the evaluation. Missing fields are surfaced explicitly in the digest so the RevOps team knows which signals were not assessed — they can check HubSpot directly for the missing field.",
+      "guardrails_enforced": ["No fabricated data", "G8 still met for signals that were evaluable"]
+    }
+
+  ]
+}

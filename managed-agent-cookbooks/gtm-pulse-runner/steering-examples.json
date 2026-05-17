@@ -1,0 +1,42 @@
+[
+  {
+    "scenario": "Standard weekly run",
+    "prompt": "Run the weekly GTM pulse and post to the configured channels.",
+    "expected_behavior": "data-collector pulls all five sections, pulse-composer formats them, delivery-router checks first-run state and routes Sections 1/2/3/5 to #revops-alignment and Sections 4/5 to #cs-leadership"
+  },
+  {
+    "scenario": "Preview mode — review before posting",
+    "prompt": "Run the GTM pulse in preview mode — show me the output but don't post to Slack.",
+    "expected_behavior": "Full pipeline runs, delivery-router renders all sections in session, no Slack posts made, preview mode clearly noted"
+  },
+  {
+    "scenario": "Scope to specific sections",
+    "prompt": "Run the weekly pulse but only Sections 1 and 3 this week — skip the churn section.",
+    "expected_behavior": "data-collector pulls only Sections 1 and 3, pulse-composer formats only those sections, delivery-router posts only to #revops-alignment"
+  },
+  {
+    "scenario": "Churn-only pulse for CS leadership",
+    "prompt": "Run just the churn signals section this week and send it to CS leadership.",
+    "expected_behavior": "data-collector pulls Section 4 only, pulse-composer formats Section 4, delivery-router posts to #cs-leadership. Tier 3 gate applies if high-ACV flags present."
+  },
+  {
+    "scenario": "First run — operator onboarding",
+    "prompt": "Set up and run the GTM pulse for the first time.",
+    "expected_behavior": "delivery-router detects first_run_confirmed = false, displays routing confirmation and schedule prompt, waits for operator confirmation, writes state file, then proceeds with delivery"
+  },
+  {
+    "scenario": "Tier 3 review required",
+    "prompt": "Run the weekly GTM pulse.",
+    "expected_behavior": "When tier3_flags contains accounts with ACV > $250K, delivery-router pauses before posting Section 4 and requests explicit confirmation. Posts Sections 1/2/3/5 immediately; holds Section 4 until confirmed."
+  },
+  {
+    "scenario": "HubSpot unavailable",
+    "prompt": "Run the weekly GTM pulse.",
+    "expected_behavior": "data-collector returns hubspot = unavailable, Sections 1–3 degrade, delivery-router prepends data availability note to posts, Sections 4 and 5 post normally if CS platform is live"
+  },
+  {
+    "scenario": "Slack unavailable — manual distribution",
+    "prompt": "Run the weekly GTM pulse.",
+    "expected_behavior": "delivery-router attempts Slack post, receives failure, renders all sections in session, reports delivery failed, provides output for manual distribution"
+  }
+]

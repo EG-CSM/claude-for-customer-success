@@ -54,14 +54,41 @@ Fields read from config:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G1 (health scores are heuristics — never frame risk level as a churn prediction).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of risk assessment request is this?
+   - **Signal-Rich Triage**: Multiple live data sources available (CRM, CS Platform, call recording). Full five-domain signal collection is feasible. Optimize for cross-domain compound risk detection.
+   - **Signal-Sparse Manual**: Limited or no connectors. CSM provides context verbally. Probe for absent signals — silence is not health. Flag every unassessed domain explicitly.
+   - **Auto-Escalate Trigger Present**: A non-negotiable trigger is active (non-renewal notice, executive escalation, NPS below threshold). Tier is Critical — route escalation immediately, then backfill signal picture.
+   - **Multi-Account Triage (--triage)**: Batch of accounts for pipeline review prep. Screen for auto-escalate triggers across the batch first, then assign preliminary tiers. Reserve deep mode for Critical/High only.
+   - **Quick Spot-Check (--quick)**: Time-pressured single account. Collect the three highest-signal domains, assign preliminary tier, surface immediate next action. Do not attempt full five-domain aggregation.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1: Health scores are component signals, not churn verdicts — decompose into observable signals, never frame as "this account will churn."
+   - G2: No escalation recommendation without a named owner, channel, and SLA from the configured matrix — no generic "escalate to your manager."
+   - G4: Auto-escalate triggers are non-negotiable — if present, tier is Critical regardless of other signals. These do not require aggregation to meet threshold.
+   - G5: Account content is confidential — confirm the destination before sharing. ARR, health data, and stakeholder information require a recipient authorization check.
+   - G7: State data-as-of for every source. CRM data >7 days old triggers a freshness warning before tier assignment. Flag connector gaps — never silently omit a domain.
+   - Discount authority ceiling applies to every save offer — flag any proposed discount that exceeds configured authority before surfacing.
+
+3. **EXPERT CHECK**: What would a veteran renewal risk analyst verify first?
+   - Are there cross-domain compound signals that individually read Medium but together indicate High or Critical? Two Medium signals in different domains are worse than one High in a single domain.
+   - Is the health score decomposed into domain-level signals, or is it being used as a shortcut for tier assignment? Composite scores mask domain-level degradation.
+   - Has the champion or executive sponsor changed in the last 90 days? Relationship loss amplifies every other signal — treat it as a tier multiplier, not just another red flag.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - ❌ Using the composite health score as the risk tier instead of aggregating signals across all five domains.
+   - ❌ Treating absent data as neutral — no logins, no calls, no tickets inside a renewal window is a red flag, not a non-signal.
+   - ❌ Running full five-domain collection when an auto-escalate trigger is already present — route first, backfill second.
+   - ❌ Surfacing a save offer above configured discount authority without flagging it for approval.
+   - ❌ Anchoring on the signal the CSM mentions first (usually the most recent or dramatic) without probing all five domains.
+   - ❌ Ranking triage accounts by signal severity alone without weighting by ARR at stake.
+
+**After execution**, verify:
+- Does the tier assignment trace to specific named signals, not a summary or composite score?
+- Are all data sources timestamped and staleness-flagged per G7?
+- Is the escalation route drawn from the configured matrix with named owner, method, and SLA?
+- Confidence: [High] if 3+ domains have live-sourced <7-day-old data corroborating the tier / [Medium] if single-source or partially stale / [Low] if user-provided context only — state which.
 
 ## Mode
 

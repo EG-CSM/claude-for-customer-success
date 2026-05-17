@@ -45,14 +45,40 @@ Proceed with generic defaults if confirmed.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G7 (flag any milestone status data that is stale — always include source date and staleness indicator).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of milestone tracking request is this?
+   - **Single-Account Status**: One named account, CSM wants current milestone state before a touchpoint or review. Optimize for recency and actionable next-step.
+   - **Portfolio Health Scan**: Cross-account milestone view for book-of-business management or 1:1 prep. Requires segment normalization and consistent structure.
+   - **At-Risk Triage**: Surface accounts needing intervention — overdue or signal-triggered. Score by signal severity first, then date proximity.
+   - **Escalation-Ready Brief**: Specific account has breached escalation thresholds — output feeds an escalation workflow. Pair flag with root cause and escalation matrix routing.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G7: All milestone data must carry a source timestamp and staleness indicator — PM connector data >24h old is flagged, manual input is labeled as such.
+   - G5: TtV projections and internal planning targets appear only in internal sections and reviewer notes — never in customer-facing output.
+   - G4: Escalation recommendations route through the configured escalation matrix with named owner, channel, and SLA — no generic "escalate to your manager."
+   - G2: Portfolio output is internal-only by default — apply confidentiality check before any distribution beyond the CSM.
+   - G1: Overdue is a flag, not a verdict — do not present an overdue milestone as a failure without CSM context on agreed deferrals or dependencies.
+   - Contract start date is the anchor for all date calculations — if missing, all milestone dates for that account are `[unverified]`. Never silently estimate.
+
+3. **EXPERT CHECK**: What would a veteran onboarding manager verify first?
+   - Are behavioral at-risk signals (no login, missing attendees, credentials not received) assessed independently of date math? A milestone with 15 days remaining but a confirmed signal is more urgent than one 2 days overdue with no signal.
+   - Is milestone pace normalized to segment-specific duration targets from config? Enterprise M3 at Day 30 is on track; SMB M3 at Day 30 may be overdue.
+   - When PM connector data conflicts with CSM-reported status, is the discrepancy surfaced rather than silently resolved? The conflict itself is a signal.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Presenting stale PM data without a timestamp or staleness flag — the CSM acts on outdated milestone completion status.
+   - Sorting at-risk triage by days-overdue alone, missing accounts with behavioral signals that haven't breached date thresholds yet.
+   - Recommending generic actions ("follow up with the customer") instead of pulling specific escalation steps from the configured matrix.
+   - Comparing SMB and enterprise accounts on the same absolute day thresholds without normalizing to segment duration targets.
+   - Running date calculations when contract start date is missing or estimated — every downstream milestone target becomes unverified.
+   - Escalating from portfolio view alone without running single-account status first for full context.
+
+**After execution**, verify:
+- Does the output match the requested mode (--status / --portfolio / --flag) and the actual need?
+- Are all data sources timestamped and staleness-flagged per G7?
+- Are at-risk signals assessed independently of date math, not just as a date countdown?
+- Confidence: [High] if PM connector + CRM data corroborate / [Medium] if single-source or partially stale / [Low] if manual input only — state which.
 
 ## Mode
 

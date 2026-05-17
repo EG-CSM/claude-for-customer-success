@@ -1,0 +1,12 @@
+name: phase-gate-writer
+model: claude-sonnet-4-7
+system:
+  file: ./phase-gate-writer.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: write, enabled: true }
+mcp_servers: []
+skills: []
+callable_agents: []

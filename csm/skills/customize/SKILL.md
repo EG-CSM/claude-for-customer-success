@@ -23,14 +23,39 @@ skill runs against your actual model, not a generic template.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — No domain guardrails apply — this skill configures the environment rather than generating outputs.
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of customization request is this?
+   - **Full Configuration**: First install or major practice change — all 8 interview sections, both config files from scratch
+   - **Section Reconfiguration**: Single section update — preserve existing config around the edit, validate cross-section consistency
+   - **Motion Change**: CS motion shift — cascading impact on engagement model, escalation matrix, playbook, and account loads
+   - **Integration Swap**: CS platform or CRM replacement — health model source, churn signal data dependencies, and integration priority all shift
+   - **Reset and Rebuild**: Destructive clear — requires double confirmation, cross-plugin impact warning
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - Config files govern all downstream skills — every value propagates; no silent defaults
+   - `company-profile.md` is shared across four plugins — edits have cross-plugin blast radius
+   - User must review and explicitly confirm before any file write
+   - Placeholders are acceptable; invented values are not
+
+3. **EXPERT CHECK**: What would a veteran CSM verify first?
+   - Does the mode (`--full`, `--section`, `--reset`) match the actual scope of change?
+   - Are there cross-section dependencies affected by this change (e.g., health model change → churn signal thresholds)?
+   - Does every escalation row have a named, contactable owner — not just a role title?
+   - Do health model components have a confirmed data source, not just a label?
+   - If motion is changing, are engagement cadences, account loads, and escalation SLAs also being updated?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - ❌ Pre-filling config values the user hasn't provided — gaps must be `[PLACEHOLDER]`, never guesses
+   - ❌ Updating one section without checking cross-references in adjacent sections
+   - ❌ Accepting "all High" churn signal weights without challenge — if everything is high priority, nothing is
+   - ❌ Writing config files before displaying them for user review and confirmation
+   - ❌ Running `--section company-profile` without warning about impact on cs-ops, renewals, and onboarding plugins
+
+**After execution**, verify:
+- Does every config section contain real values or explicit `[PLACEHOLDER]` markers — no silent gaps?
+- Are cross-section references consistent (churn signals align with health model, escalation matrix covers all segments)?
+- Confidence: [High] if all interview questions answered and confirmed; [Medium] if placeholders remain; [Low] if motion change with unchecked downstream sections
 
 
 ## What this does

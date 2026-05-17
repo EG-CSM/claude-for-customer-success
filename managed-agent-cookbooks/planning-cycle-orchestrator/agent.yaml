@@ -1,0 +1,21 @@
+name: planning-cycle-orchestrator
+model: claude-sonnet-4-7
+system:
+  file: ./agents/planning-cycle-orchestrator.md
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: read,  enabled: true }
+      - { name: task,  enabled: true }
+  - { type: mcp_toolset, mcp_server_name: hubspot, default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: slack,   default_config: { enabled: true } }
+mcp_servers:
+  - { type: url, name: hubspot, url: "${HUBSPOT_MCP_URL}" }
+  - { type: url, name: slack,   url: "${SLACK_MCP_URL}" }
+skills:
+  - { from_plugin: ../../rev-ops }
+callable_agents:
+  - { manifest: ./subagents/phase-state-reader.yaml }
+  - { manifest: ./subagents/phase-gate-writer.yaml }
+  - { manifest: ./subagents/cycle-digest-poster.yaml }

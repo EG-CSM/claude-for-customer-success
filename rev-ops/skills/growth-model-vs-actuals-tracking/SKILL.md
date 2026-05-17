@@ -1,0 +1,98 @@
+---
+name: growth-model-vs-actuals-tracking
+version: 1.0.0
+description: "Monitors unit economics of growth against the UoG annual plan baseline on three vectors: new logo (CAC, time-to-first-value, ARR-at-12-months), expansion (NRR by cohort vs. modeled), retention (GRR vs. modeled). Fires a variance memo when any vector diverges >15% (NRR: >5pp, GRR: >3pp). Routes to mid-year-replan-triggering when threshold is crossed. Triggers: 'plan vs actual', 'growth model drift', 'are we on plan', 'unit economics', 'NRR vs plan', 'GRR vs plan'."
+---
+
+# Growth Model vs Actuals Tracking
+
+Unit economics of growth — measured against the plan, not reported in isolation.
+The skill that turns "here are the numbers" into "here's what's drifting and why."
+
+**Reference:** UoG formulas → `reference/revops-domain-model.md §5`
+**Reference:** Confidence bands → `reference/revops-domain-model.md §2`
+**Config reads:** `uog_baseline_path`, `nrr_current`, `cs_platform_connected`
+
+---
+
+## Reasoning Protocol
+
+1. Confirm activation — user asking about plan vs. actual, unit economics, or NRR/GRR trend
+2. Read UoG baseline from `uog_baseline_path` — if absent, run in reporting mode only
+3. Check CS platform connector for NRR/GRR actuals; HubSpot for new logo actuals
+4. Apply G1 — variance projections require forecast language qualification
+5. Apply G6 — data-as-of on all reads
+
+---
+
+## Three Growth Vectors
+
+**Vector 1 — New logo**
+```
+Baseline fields: new_arr_target, ae_required (from UoG output)
+Actuals: closed_won_ytd [CRM ✓ live]
+Variance threshold: >15% behind or ahead of pro-rata plan
+```
+
+**Vector 2 — Expansion**
+```
+Baseline fields: nrr assumption (from UoG inputs)
+Actuals: current NRR by cohort [CS Platform ✓ live]
+Variance threshold: >5 NRR points
+```
+
+**Vector 3 — Retention**
+```
+Baseline fields: GRR assumption (from UoG inputs if provided)
+Actuals: current GRR [CS Platform ✓ live]
+Variance threshold: >3 GRR points
+```
+
+**When baseline absent:**
+```
+Run in reporting mode: surface actuals only, no variance analysis.
+Label: [Variance analysis unavailable — UoG baseline not configured.
+Reporting actuals only — Confidence: Low]
+```
+
+---
+
+## Variance Memo (fires when threshold crossed)
+
+```
+Variance memo for [vector]:
+  What diverged: [Vector] — actual [X] vs. plan [Y] (delta: [Z], threshold: [T])
+  Impact: At this rate, year-end ARR = $XXXk vs. $XXXk plan (−$XXXk)
+  Most likely factor: [Named evidence — not speculation]
+    Source: [CRM ✓ live / CS Platform ✓ live / Inferred]
+  Replan trigger: [Yes — route to mid-year-replan-triggering / No]
+```
+
+---
+
+## Output Format
+
+```
+GROWTH MODEL VS ACTUALS — [Period]
+[CRM ✓ live — as of YYYY-MM-DD] [CS Platform: ✓ live / Unavailable]
+[UoG baseline: present [path] / absent — reporting mode only]
+[Confidence: High/Moderate/Low]
+
+Vector          Plan      Actual    Delta    Signal
+New logo ARR    $XXXk     $XXXk     −XX%     [ON PLAN / ⚠ DRIFTING]
+Expansion NRR   XXX%      XXX%      −Xpp     [ON PLAN / ⚠ DRIFTING]
+Retention GRR   XXX%      XXX%      −Xpp     [ON PLAN / ⚠ DRIFTING]
+
+[Variance memo if threshold crossed]
+
+[DRAFT — RevOps and CS leadership]
+[G1: Projections are models. Not revenue commitments.]
+```
+
+---
+
+## Guardrails
+
+- G1: All forward-looking variance projections require qualification
+- G6: Data-as-of required on all reads
+- When baseline absent: declare explicitly before any number is shown

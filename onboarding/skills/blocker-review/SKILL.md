@@ -47,14 +47,42 @@ Proceed with a generic escalation path description if the user confirms.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G4 (verify a named escalation path is configured before generating triage output).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of blocker review request is this?
+   - **Active Technical Impediment**: Something is broken or blocked in the product/environment — integration failure, provisioning gap, data quality, or product bug. Customer wants to proceed but cannot.
+   - **Customer Engagement Stall**: Customer has stopped progressing — low activity, missed meetings, champion unavailable, internal reprioritization. No technical impediment exists.
+   - **CSM Execution Gap**: Blocker traces back to something the CSM or vendor team failed to deliver — unclear instructions, missing resources, dropped follow-through.
+   - **Vendor/Product Constraint**: Bug, feature gap, or support queue delay outside the CSM's direct control. Resolution depends on internal product or engineering teams.
+   - **Multi-Party Coordination Failure**: Partner-led or multi-stakeholder blocker where ownership is ambiguous. Multiple parties each believe another owns the next step.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G4: Escalation recommendations must route through the configured escalation matrix with a named owner, channel, and SLA — no generic "escalate to your manager." If the matrix is `[PLACEHOLDER]`, flag before proceeding.
+   - G5: Confidentiality check required before any output containing account details leaves the CSM's view — especially escalation briefs sent to external parties.
+   - G7: Flag stale CRM or usage data with source date and staleness indicator — never present undated data as current.
+   - Mode constraint: Match output depth to the actual need — `--diagnose` for uncharacterized problems, `--escalate` only after diagnosis, `--log` only after resolution.
+   - Partner-led model constraint: In partner-led accounts, blockers route through the partner before reaching the customer directly.
+
+3. **EXPERT CHECK**: What would a veteran onboarding CSM verify first?
+   - Is this actually a blocker, or is the customer simply not engaged? Ask whether the customer has attempted the blocked step before classifying it as technical.
+   - Does the milestone math support the stated severity? Calculate days remaining minus estimated resolution time — trust the math over the CSM's emotional urgency.
+   - Has the CSM already tried the obvious resolution paths? Never recommend actions already attempted — ask what's been tried before generating the action plan.
+
+4. **ANTI-PATTERNS**: Common blocker review mistakes to avoid:
+   - Accepting the first symptom description as the root cause — the presenting symptom is almost never the actual blocker. Run the full diagnostic sequence before classifying.
+   - Classifying an engagement problem as a technical blocker because the CSM framed it that way — probe for actual customer activity before accepting the label.
+   - Generating an escalation brief with a vague ask ("please help with this account") instead of a specific action, owner, and deadline.
+   - Recommending outreach the CSM already attempted — repeating failed actions destroys credibility with the customer.
+   - Routing directly to the customer in a partner-led model without confirming partner awareness first.
+   - Logging a vendor blocker with a ticket number but no escalation trigger date — passive waiting is not a resolution path.
+
+**After execution**, verify:
+- Does the action plan address the root cause, not just the presenting symptom?
+- Is every escalation path routed through the configured matrix with named contacts (or flagged if unconfigured)?
+- Does the severity rating match the milestone impact math, not the CSM's emotional framing?
+- Are all data sources timestamped and staleness-flagged per G7? (CRM >7 days, CS platform >3 days, call data >14 days.)
+- Does the output mode (`--diagnose` / `--escalate` / `--log`) match the actual need — not a mode the CSM defaulted to?
+- Confidence: [High] if CRM data + CSM confirmation corroborate the classification / [Medium] if single-source or partially stale data / [Low] if working from CSM description alone — state which.
 
 ## Mode
 

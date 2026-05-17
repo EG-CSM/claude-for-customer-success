@@ -1,0 +1,199 @@
+{
+  "skill_name": "early-churn-downgrade-signal-detection",
+  "skill_path": "skills/early-churn-downgrade-signal-detection/SKILL.md",
+  "eval_type": "Type A",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 0,
+      "name": "tier1-fires-at-deal-close-rule-mode",
+      "category": "guardrail",
+      "prompt": "Check churn signals for the Apex deal that just closed.",
+      "context": "Practice profile: tier1_mode=rule, discount_elevated_threshold_pct=0.20, avg_sales_cycle_days=45, tier1_single_thread_flag=true. Apex deal: discount=25% (exceeds 20% threshold), sales_cycle_days=48 (within 2x = 90 days), stakeholder_threads=1 (single-threaded), ocv_entry_referenced=false. HubSpot connected.",
+      "expected_output": "Skill fires Tier 1 signals for: discount above elevated threshold, single-threaded stakeholder map, and absent OCV entry. Declares Rule mode. Routes to CS leadership at handoff. Applies G7 (escalation path named). Applies G5.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output fires Tier 1 for discount (25% > 20% elevated threshold)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output fires Tier 1 for single-threaded stakeholder map (tier1_single_thread_flag=true)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output fires Tier 1 for absent OCV entry (ocv_entry_referenced=false)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "behavioral",
+          "text": "Output does NOT fire Tier 1 for sales cycle (48 days is within the 90-day threshold = 45 × 2.0)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A4",
+          "type": "behavioral",
+          "text": "Output declares '[Tier 1: Rule mode]' label on the assessment",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A5",
+          "type": "guardrail",
+          "text": "Output applies G7: names CS leadership as the escalation recipient and specifies the channel and timeframe",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A6",
+          "type": "guardrail",
+          "text": "Output applies G5: signals described as analytical inputs with CS owning the response",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "tier3-fires-pre-renewal-linear-escalation",
+      "category": "guardrail",
+      "prompt": "Check churn risk for all accounts renewing in the next 90 days.",
+      "context": "CS platform connected. Linear connected. Three accounts in the 90-120 day pre-renewal window. Account X: health_score_declining_trend=4 consecutive weeks, renewal_conversation_not_initiated=true (past 90-day window), support_ticket_spike=false. Account Y: all clear. Account Z: health_score_declining_trend=2 weeks (below 3-week threshold).",
+      "expected_output": "Skill fires Tier 3 for Account X only (health declining 4 weeks + renewal not initiated). Account Y is clear. Account Z does not fire Tier 3 (only 2 weeks declining, below 3-week threshold). Creates Linear escalation issue for Account X. Applies G7.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output fires Tier 3 for Account X (4 weeks declining + renewal not initiated both meet criteria)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output does NOT fire Tier 3 for Account Z (only 2 weeks declining — below 3-week threshold)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output shows Account Y as clear (no signals)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Output applies G7 for Account X's Tier 3 flag: Linear issue created, CS manager named, response timeframe specified",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A4",
+          "type": "guardrail",
+          "text": "Output applies G6: CS platform data-as-of timestamp present",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "portfolio-scan-prioritized-by-tier-and-acv",
+      "category": "happy-path",
+      "prompt": "Give me the full churn signal scan for the portfolio.",
+      "context": "CS platform and HubSpot connected. 5 accounts with Tier 3 signals (total ARR at risk: $2.1M), 12 accounts with Tier 2 signals ($4.3M), 8 accounts with Tier 1 structural flags ($1.8M). tier1_mode=rule.",
+      "expected_output": "Skill produces portfolio scan with three tiers. Tier 3 accounts listed by ACV descending. Tier 2 accounts listed by ACV descending. Tier 1 shown as summary count only (not individual accounts). Applies G7 note that each flagged account needs escalation path. Declares Rule mode.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output separates accounts into three tiers with separate sections for Tier 3, Tier 2, and Tier 1",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "structural",
+          "text": "Output shows Tier 3 ARR at risk as $2.1M and Tier 2 as $4.3M (or equivalents from context)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Tier 1 section shows summary count only (8 accounts, $1.8M) without listing individual accounts",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "behavioral",
+          "text": "Output declares '[Tier 1: Rule mode]' label",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A4",
+          "type": "guardrail",
+          "text": "Output applies G7: states that each flagged account requires a named escalation path (even if not listing all accounts individually)",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "cross-plugin-route-to-renewals",
+      "category": "edge-case",
+      "prompt": "Orion Inc has a Tier 3 signal and their renewal is in 60 days. What should we do?",
+      "context": "CS platform connected. Orion Inc: Tier 3 active (health declining + renewal not initiated). Renewal date in 60 days. Renewals plugin is installed.",
+      "expected_output": "Skill produces the Tier 3 assessment for Orion Inc with G7 escalation path. Also suggests routing to /renewals:renewal-prep given the 60-day renewal window. Cross-plugin route is a suggestion, not an automatic invocation.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output contains a complete Tier 3 assessment for Orion Inc with the active signals",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "guardrail",
+          "text": "Output applies G7: escalation path with named owner and timeframe",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output suggests /renewals:renewal-prep as an appropriate next step given the 60-day renewal window",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "behavioral",
+          "text": "Output does NOT automatically invoke the renewals skill — it suggests it as a next step for the user to choose",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    }
+  ]
+}

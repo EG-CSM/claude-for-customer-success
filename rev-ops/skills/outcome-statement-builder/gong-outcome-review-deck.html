@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gong.io Outcome & Value Registry — CRO Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #24718E;
+    --secondary: #2B89AC;
+    --accent: #34A7D2;
+    --success: #90C83D;
+    --success-dark: #2D801B;
+    --alert: #DC3F30;
+    --text: #424343;
+    --bg: #F8F8F8;
+    --white: #ffffff;
+    --blue-deep: #0C2731;
+    --blue-mid: #194E61;
+    --blue-light: #E4F7FD;
+    --blue-pale: #6BBFDE;
+    --gray-100: #f0f2f4;
+    --gray-200: #e2e6ea;
+    --gray-400: #9ca3af;
+    --gray-600: #6b7280;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    background: linear-gradient(135deg, var(--blue-deep) 0%, var(--primary) 55%, var(--accent) 100%);
+    color: white;
+    padding: 64px 72px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: rgba(52,167,210,0.12);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 30%;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: rgba(144,200,61,0.08);
+  }
+  .cover-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue-pale);
+    margin-bottom: 16px;
+  }
+  .cover-title {
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    max-width: 640px;
+  }
+  .cover-subtitle {
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 40px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .cover-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .cover-meta-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--blue-pale);
+  }
+  .cover-meta-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: white;
+  }
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .status-draft { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.25); }
+  .status-review { background: rgba(52,167,210,0.25); color: #34A7D2; border: 1px solid rgba(52,167,210,0.4); }
+  .status-ratified { background: rgba(144,200,61,0.2); color: #90C83D; border: 1px solid rgba(144,200,61,0.4); }
+
+  /* ── WARNING BANNER ── */
+  .warning-banner {
+    background: #fff8e6;
+    border-left: 4px solid #f59e0b;
+    padding: 14px 72px;
+    font-size: 12.5px;
+    color: #92400e;
+    font-weight: 500;
+  }
+
+  /* ── NAVIGATION ── */
+  .nav-section {
+    padding: 40px 72px 32px;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .nav-section h2 {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-600);
+    margin-bottom: 20px;
+  }
+  .nav-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .nav-card {
+    background: var(--bg);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-decoration: none;
+    display: block;
+  }
+  .nav-card:hover {
+    border-color: var(--accent);
+    background: var(--blue-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(36,113,142,0.12);
+  }
+  .nav-card-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .nav-card-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .nav-card-stage {
+    font-size: 11px;
+    color: var(--gray-600);
+    font-weight: 400;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main { padding: 48px 72px; }
+
+  /* ── ENTRY ── */
+  .entry {
+    background: var(--white);
+    border-radius: 12px;
+    margin-bottom: 40px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  }
+
+  .entry-header {
+    background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+    padding: 24px 32px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .entry-header-left { flex: 1; }
+  .entry-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--blue-pale);
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+  }
+  .entry-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    line-height: 1.2;
+  }
+  .entry-stage-pill {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    white-space: nowrap;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  .entry-body { padding: 32px; }
+
+  /* outcome statement */
+  .outcome-block {
+    background: var(--blue-light);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+  }
+  .outcome-block-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+  .outcome-block p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text);
+    font-style: italic;
+  }
+
+  /* two-col layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+
+  .info-card {
+    background: var(--bg);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+  .info-card-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-600);
+    margin-bottom: 12px;
+  }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--gray-200);
+    gap: 12px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-label {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--gray-600);
+    flex-shrink: 0;
+    min-width: 100px;
+  }
+  .info-value {
+    font-size: 12px;
+    color: var(--text);
+    text-align: right;
+    font-weight: 400;
+  }
+  .tbd-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    background: #fff3cd;
+    color: #856404;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  /* rubric */
+  .rubric-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray-600);
+    margin-bottom: 12px;
+  }
+  .rubric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .rubric-level {
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .rubric-l0 { background: var(--gray-100); border: 1px solid var(--gray-200); }
+  .rubric-l1 { background: #fffbeb; border: 1px solid #fde68a; }
+  .rubric-l2 { background: var(--blue-light); border: 1px solid var(--blue-pale); }
+  .rubric-l3 { background: #f0fdf4; border: 1px solid #86efac; }
+
+  .rubric-level-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    width: fit-content;
+  }
+  .badge-l0 { background: var(--gray-200); color: var(--gray-600); }
+  .badge-l1 { background: #fde68a; color: #92400e; }
+  .badge-l2 { background: var(--accent); color: white; }
+  .badge-l3 { background: var(--success); color: var(--success-dark); }
+
+  .rubric-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .rubric-evidence {
+    font-size: 11.5px;
+    color: var(--text);
+    line-height: 1.5;
+    flex: 1;
+  }
+  .rubric-action {
+    font-size: 11px;
+    color: var(--gray-600);
+    font-style: italic;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    padding-top: 8px;
+    line-height: 1.4;
+  }
+
+  /* ratification row */
+  .ratification-row {
+    background: var(--bg);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .rat-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gray-600);
+  }
+  .rat-status { display: flex; align-items: center; gap: 8px; }
+  .rat-note {
+    font-size: 12px;
+    color: var(--gray-400);
+    font-style: italic;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--blue-deep);
+    color: rgba(255,255,255,0.6);
+    padding: 28px 72px;
+    font-size: 11.5px;
+    line-height: 1.7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  footer strong { color: rgba(255,255,255,0.85); }
+
+  /* ── PRINT / SECTION DIVIDER ── */
+  .section-divider {
+    text-align: center;
+    padding: 8px 0 32px;
+    font-size: 11px;
+    color: var(--gray-400);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 900px) {
+    .cover, .nav-section, .main, footer { padding-left: 24px; padding-right: 24px; }
+    .nav-grid { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+    .rubric-grid { grid-template-columns: repeat(2, 1fr); }
+    .cover-title { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eyebrow">Outcome & Value Registry — Review Draft</div>
+  <div class="cover-title">Gong.io Revenue Intelligence<br>Outcome Catalog</div>
+  <div class="cover-subtitle">CRO — Mid-Market to Enterprise B2B SaaS</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Version</span>
+      <span class="cover-meta-value">1.0.0</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Date</span>
+      <span class="cover-meta-value">May 14, 2026</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Entries</span>
+      <span class="cover-meta-value">6</span>
+    </div>
+    <div class="cover-meta-item">
+      <span class="cover-meta-label">Status</span>
+      <span class="status-badge status-draft">⬤ Draft</span>
+    </div>
+  </div>
+</div>
+
+<!-- WARNING BANNER -->
+<div class="warning-banner">
+  ⚠️ All magnitude values are placeholders marked [TBD]. These must be replaced with verified customer evidence or documented benchmarks before any entry is used in a Sales commitment or CS plan.
+</div>
+
+<!-- NAVIGATION INDEX -->
+<div class="nav-section">
+  <h2>Entry Index — 6 Outcomes</h2>
+  <div class="nav-grid">
+    <a href="#ocv-001" class="nav-card">
+      <div class="nav-card-id">OCV-001</div>
+      <div class="nav-card-name">Win Rate via Conversation Intelligence</div>
+      <div class="nav-card-stage">Stage 3 — Desired Outcome</div>
+    </a>
+    <a href="#ocv-002" class="nav-card">
+      <div class="nav-card-id">OCV-002</div>
+      <div class="nav-card-name">Outbound Pipeline Efficiency</div>
+      <div class="nav-card-stage">Stage 4 — Business Goal</div>
+    </a>
+    <a href="#ocv-003" class="nav-card">
+      <div class="nav-card-id">OCV-003</div>
+      <div class="nav-card-name">Late-Stage Deal Slippage Reduction</div>
+      <div class="nav-card-stage">Stage 3 — Desired Outcome</div>
+    </a>
+    <a href="#ocv-004" class="nav-card">
+      <div class="nav-card-id">OCV-004</div>
+      <div class="nav-card-name">Forecast Variance Reduction</div>
+      <div class="nav-card-stage">Stage 4 — Business Goal</div>
+    </a>
+    <a href="#ocv-005" class="nav-card">
+      <div class="nav-card-id">OCV-005</div>
+      <div class="nav-card-name">Rep Ramp and Performance Scaling</div>
+      <div class="nav-card-stage">Stage 3 — Desired Outcome</div>
+    </a>
+    <a href="#ocv-006" class="nav-card">
+      <div class="nav-card-id">OCV-006</div>
+      <div class="nav-card-name">Regulated Segment Revenue Coverage</div>
+      <div class="nav-card-stage">Stage 3 — Desired Outcome</div>
+    </a>
+  </div>
+</div>
+
+<!-- ENTRIES -->
+<div class="main">
+
+  <!-- OCV-001 -->
+  <div class="entry" id="ocv-001">
+    <div class="entry-header">
+      <div class="entry-header-left">
+        <div class="entry-id">OCV-001</div>
+        <div class="entry-name">Win Rate via Conversation Intelligence</div>
+        <span class="entry-stage-pill">Stage 3 — Desired Outcome</span>
+      </div>
+      <span class="status-badge status-draft">Draft</span>
+    </div>
+    <div class="entry-body">
+      <div class="outcome-block">
+        <div class="outcome-block-label">Outcome Statement</div>
+        <p>When a CRO at a mid-market B2B SaaS company is managing a revenue organization where deal outcomes are inconsistent across reps and loss reasons are based on rep self-reporting rather than evidence, the CRO reduces revenue lost to undetected deal risk by <span class="tbd-tag">TBD</span> within <span class="tbd-tag">TBD days</span> of full call capture adoption, enabling the CRO to identify which talk tracks, objection responses, and competitive moments correlate with closed-won outcomes across the entire pipeline — not just the top performers' anecdotes — that advances win rate as a board-level revenue metric.</p>
+      </div>
+      <div class="two-col">
+        <div class="info-card">
+          <div class="info-card-title">Business Metric</div>
+          <div class="info-row"><span class="info-label">Metric</span><span class="info-value">Win rate (% closed-won)</span></div>
+          <div class="info-row"><span class="info-label">Source</span><span class="info-value">CRM closed-won/lost by rep cohort</span></div>
+          <div class="info-row"><span class="info-label">Baseline</span><span class="info-value">Trailing 2 quarters pre-adoption</span></div>
+          <div class="info-row"><span class="info-label">Direction</span><span class="info-value">↑ Higher is better</span></div>
+          <div class="info-row"><span class="info-label">Verify at</span><span class="info-value">90-day + 180-day post adoption</span></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Value Chain Rationale</div>
+          <div class="info-row"><span class="info-label">Stage</span><span class="info-value">3 — Desired Outcome</span></div>
+          <div class="info-row" style="border:none; padding-top:8px;"><span class="info-value" style="text-align:left; font-size:12px; line-height:1.5; color: var(--gray-600);">The CRO's goal is evidence-based visibility into what drives wins and losses at scale — not recorded calls (Stage 2) — feeding into win rate as a Stage 4 board metric.</span></div>
+        </div>
+      </div>
+      <div class="rubric-title">Achievement Rubric</div>
+      <div class="rubric-grid">
+        <div class="rubric-level rubric-l0">
+          <span class="rubric-level-badge badge-l0">L0</span>
+          <div class="rubric-label">Not Achieved</div>
+          <div class="rubric-evidence">Call capture adoption &lt;70% of reps; CRM win/loss data not yet segmented by conversation signal.</div>
+          <div class="rubric-action">Escalate adoption; no outcome measurement possible yet.</div>
+        </div>
+        <div class="rubric-level rubric-l1">
+          <span class="rubric-level-badge badge-l1">L1</span>
+          <div class="rubric-label">Partial</div>
+          <div class="rubric-evidence">Capture &gt;70%; topics and sentiment flowing; managers running ≥2 call reviews/week; win rate trending up but below threshold.</div>
+          <div class="rubric-action">Confirm coaching cadence; identify top/bottom rep cohorts.</div>
+        </div>
+        <div class="rubric-level rubric-l2">
+          <span class="rubric-level-badge badge-l2">L2</span>
+          <div class="rubric-label">Achieved</div>
+          <div class="rubric-evidence">Win rate improvement of <span class="tbd-tag">TBD%</span> from baseline sustained across 2 consecutive quarters; CRO can attribute delta to specific talk track in Gong.</div>
+          <div class="rubric-action">Document in QBR; present attribution evidence to CEO; advance renewal.</div>
+        </div>
+        <div class="rubric-level rubric-l3">
+          <span class="rubric-level-badge badge-l3">L3</span>
+          <div class="rubric-label">Exceeded</div>
+          <div class="rubric-evidence">Win rate at <span class="tbd-tag">TBD%</span> threshold AND rep win rate variance between top-quartile and median reps narrowed by <span class="tbd-tag">TBD pp</span>.</div>
+          <div class="rubric-action">Flag for case study; surface expansion conversation.</div>
+        </div>
+      </div>
+      <div class="ratification-row">
+        <span class="rat-label">Ratification Status</span>
+        <div class="rat-status"><span class="status-badge status-draft">Draft</span></div>
+        <span class="rat-note">Pending cross-functional review — Sales, Marketing, RevOps, CS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OCV-002 -->
+  <div class="entry" id="ocv-002">
+    <div class="entry-header">
+      <div class="entry-header-left">
+        <div class="entry-id">OCV-002</div>
+        <div class="entry-name">Outbound Pipeline Efficiency</div>
+        <span class="entry-stage-pill">Stage 4 — Business Goal</span>
+      </div>
+      <span class="status-badge status-draft">Draft</span>
+    </div>
+    <div class="entry-body">
+      <div class="outcome-block">
+        <div class="outcome-block-label">Outcome Statement</div>
+        <p>When a CRO is accountable for pipeline generation targets but outbound productivity per rep is inconsistent and follow-up execution degrades after multi-touch sequences beyond three contacts, the CRO increases outbound pipeline generated per rep per quarter by <span class="tbd-tag">TBD%</span> within <span class="tbd-tag">TBD days</span> of full AI Composer adoption, enabling the CRO to hold the pipeline coverage ratio without headcount increases that advances sales efficiency (pipeline per fully-loaded rep cost) as an operating metric reported to the CFO.</p>
+      </div>
+      <div class="two-col">
+        <div class="info-card">
+          <div class="info-card-title">Business Metric</div>
+          <div class="info-row"><span class="info-label">Metric</span><span class="info-value">Pipeline per rep per quarter ($)</span></div>
+          <div class="info-row"><span class="info-label">Source</span><span class="info-value">CRM outbound pipeline ÷ active headcount</span></div>
+          <div class="info-row"><span class="info-label">Baseline</span><span class="info-value">Trailing 2 quarters pre-adoption</span></div>
+          <div class="info-row"><span class="info-label">Direction</span><span class="info-value">↑ Higher is better</span></div>
+          <div class="info-row"><span class="info-label">Verify at</span><span class="info-value">90-day post full Composer adoption</span></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Value Chain Rationale</div>
+          <div class="info-row"><span class="info-label">Stage</span><span class="info-value">4 — Business Goal</span></div>
+          <div class="info-row" style="border:none; padding-top:8px;"><span class="info-value" style="text-align:left; font-size:12px; line-height:1.5; color: var(--gray-600);">Pipeline per rep cost is a CFO and board metric. This outcome connects directly to the CRO's operational efficiency mandate — not just a sales activity metric.</span></div>
+        </div>
+      </div>
+      <div class="rubric-title">Achievement Rubric</div>
+      <div class="rubric-grid">
+        <div class="rubric-level rubric-l0">
+          <span class="rubric-level-badge badge-l0">L0</span>
+          <div class="rubric-label">Not Achieved</div>
+          <div class="rubric-evidence">AI Composer adoption &lt;60%; outbound sequences not running through Gong; pipeline source attribution not configured in CRM.</div>
+          <div class="rubric-action">Escalate to implementation; pipeline attribution setup required before measurement.</div>
+        </div>
+        <div class="rubric-level rubric-l1">
+          <span class="rubric-level-badge badge-l1">L1</span>
+          <div class="rubric-label">Partial</div>
+          <div class="rubric-evidence">Composer adoption &gt;60%; reply rates or meeting booking rates trending positive; pipeline per rep trending up but below threshold.</div>
+          <div class="rubric-action">Confirm sequence templates used, not bypassed; review reply rate data.</div>
+        </div>
+        <div class="rubric-level rubric-l2">
+          <span class="rubric-level-badge badge-l2">L2</span>
+          <div class="rubric-label">Achieved</div>
+          <div class="rubric-evidence">Outbound pipeline per rep increased <span class="tbd-tag">TBD%</span> from baseline over one full quarter; same or reduced headcount holding same coverage ratio.</div>
+          <div class="rubric-action">Document coverage ratio before/after; present to CFO as efficiency metric.</div>
+        </div>
+        <div class="rubric-level rubric-l3">
+          <span class="rubric-level-badge badge-l3">L3</span>
+          <div class="rubric-label">Exceeded</div>
+          <div class="rubric-evidence">Pipeline per rep at <span class="tbd-tag">TBD%</span> threshold AND pipeline coverage ratio improved; CRO held or reduced SDR headcount while growing pipeline.</div>
+          <div class="rubric-action">Flag as efficiency case study; expansion signal for additional workflow seats.</div>
+        </div>
+      </div>
+      <div class="ratification-row">
+        <span class="rat-label">Ratification Status</span>
+        <div class="rat-status"><span class="status-badge status-draft">Draft</span></div>
+        <span class="rat-note">Pending cross-functional review — Sales, Marketing, RevOps, CS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OCV-003 -->
+  <div class="entry" id="ocv-003">
+    <div class="entry-header">
+      <div class="entry-header-left">
+        <div class="entry-id">OCV-003</div>
+        <div class="entry-name">Late-Stage Deal Slippage Reduction</div>
+        <span class="entry-stage-pill">Stage 3 — Desired Outcome</span>
+      </div>
+      <span class="status-badge status-draft">Draft</span>
+    </div>
+    <div class="entry-body">
+      <div class="outcome-block">
+        <div class="outcome-block-label">Outcome Statement</div>
+        <p>When a CRO is running weekly pipeline reviews that rely on rep-reported CRM data and deal slippage is consistently discovered in the final two weeks of the quarter, the CRO reduces late-stage deal slippage by <span class="tbd-tag">TBD%</span> within <span class="tbd-tag">TBD days</span> of full deal health integration, enabling the CRO to intervene on at-risk deals with enough lead time for executive engagement or commercial restructuring that advances forecast accuracy and quarterly attainment as primary board metrics.</p>
+      </div>
+      <div class="two-col">
+        <div class="info-card">
+          <div class="info-card-title">Business Metric</div>
+          <div class="info-row"><span class="info-label">Metric</span><span class="info-value">Late-stage slippage rate (%)</span></div>
+          <div class="info-row"><span class="info-label">Source</span><span class="info-value">CRM: commit-stage wk10 vs. quarter-end close</span></div>
+          <div class="info-row"><span class="info-label">Baseline</span><span class="info-value">Avg slippage rate trailing 4 quarters</span></div>
+          <div class="info-row"><span class="info-label">Direction</span><span class="info-value">↓ Lower is better</span></div>
+          <div class="info-row"><span class="info-label">Verify at</span><span class="info-value">End of first full quarter post integration</span></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Value Chain Rationale</div>
+          <div class="info-row"><span class="info-label">Stage</span><span class="info-value">3 — Desired Outcome (→ Stage 4)</span></div>
+          <div class="info-row" style="border:none; padding-top:8px;"><span class="info-value" style="text-align:left; font-size:12px; line-height:1.5; color: var(--gray-600);">The CRO's desired outcome is intervention capability — catching deals before they slip. Slippage reduction feeds quarterly attainment (Stage 4) downstream.</span></div>
+        </div>
+      </div>
+      <div class="rubric-title">Achievement Rubric</div>
+      <div class="rubric-grid">
+        <div class="rubric-level rubric-l0">
+          <span class="rubric-level-badge badge-l0">L0</span>
+          <div class="rubric-label">Not Achieved</div>
+          <div class="rubric-evidence">Deal health scoring not calibrated; at-risk flags not surfacing in pipeline review; CRM integration incomplete.</div>
+          <div class="rubric-action">Escalate to implementation; deal health calibration required.</div>
+        </div>
+        <div class="rubric-level rubric-l1">
+          <span class="rubric-level-badge badge-l1">L1</span>
+          <div class="rubric-label">Partial</div>
+          <div class="rubric-evidence">At-risk flags surfacing; managers actioning on Gong alerts; at least one executive save executed based on Gong signal in the quarter.</div>
+          <div class="rubric-action">Confirm alert-to-action workflow; document saves with deal ID.</div>
+        </div>
+        <div class="rubric-level rubric-l2">
+          <span class="rubric-level-badge badge-l2">L2</span>
+          <div class="rubric-label">Achieved</div>
+          <div class="rubric-evidence">Slippage rate reduced <span class="tbd-tag">TBD%</span> from baseline; at least <span class="tbd-tag">TBD</span> documented saves based on Gong signal in the quarter.</div>
+          <div class="rubric-action">Present saved-deal log at QBR with estimated ARR protected; use in renewal.</div>
+        </div>
+        <div class="rubric-level rubric-l3">
+          <span class="rubric-level-badge badge-l3">L3</span>
+          <div class="rubric-label">Exceeded</div>
+          <div class="rubric-evidence">Slippage rate at <span class="tbd-tag">TBD%</span> threshold AND average deal cycle time in final stage has shortened — closing faster, not just losing less.</div>
+          <div class="rubric-action">Quantify ARR protected; flag for CFO conversation on forecast reliability.</div>
+        </div>
+      </div>
+      <div class="ratification-row">
+        <span class="rat-label">Ratification Status</span>
+        <div class="rat-status"><span class="status-badge status-draft">Draft</span></div>
+        <span class="rat-note">Pending cross-functional review — Sales, Marketing, RevOps, CS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OCV-004 -->
+  <div class="entry" id="ocv-004">
+    <div class="entry-header">
+      <div class="entry-header-left">
+        <div class="entry-id">OCV-004</div>
+        <div class="entry-name">Forecast Variance Reduction</div>
+        <span class="entry-stage-pill">Stage 4 — Business Goal</span>
+      </div>
+      <span class="status-badge status-draft">Draft</span>
+    </div>
+    <div class="entry-body">
+      <div class="outcome-block">
+        <div class="outcome-block-label">Outcome Statement</div>
+        <p>When a CRO is committing to a quarterly revenue number to the CEO and board and the commit is built from manually reconciled CRM data with no signal from actual customer conversations, the CRO reduces forecast variance — the gap between the committed number and closed revenue — by <span class="tbd-tag">TBD pp</span> within <span class="tbd-tag">TBD quarters</span> of full Gong forecasting adoption, enabling the CRO to commit to a number with documented evidence rather than rep sentiment that advances revenue predictability as a metric the CFO uses in investor and board reporting.</p>
+      </div>
+      <div class="two-col">
+        <div class="info-card">
+          <div class="info-card-title">Business Metric</div>
+          <div class="info-row"><span class="info-label">Metric</span><span class="info-value">Forecast variance (pp, commit vs. closed)</span></div>
+          <div class="info-row"><span class="info-label">Source</span><span class="info-value">CRO commit vs. actual closed-won ARR</span></div>
+          <div class="info-row"><span class="info-label">Baseline</span><span class="info-value">Avg variance trailing 4 quarters</span></div>
+          <div class="info-row"><span class="info-label">Direction</span><span class="info-value">↓ Lower is better</span></div>
+          <div class="info-row"><span class="info-label">Verify at</span><span class="info-value">End of Q2 post adoption (Q1 = calibration)</span></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Value Chain Rationale</div>
+          <div class="info-row"><span class="info-label">Stage</span><span class="info-value">4 — Business Goal</span></div>
+          <div class="info-row" style="border:none; padding-top:8px;"><span class="info-value" style="text-align:left; font-size:12px; line-height:1.5; color: var(--gray-600);">Forecast accuracy at the CRO level is a board and investor metric. Highest-value outcome in the set — most directly tied to CRO credibility and retention economics.</span></div>
+        </div>
+      </div>
+      <div class="rubric-title">Achievement Rubric</div>
+      <div class="rubric-grid">
+        <div class="rubric-level rubric-l0">
+          <span class="rubric-level-badge badge-l0">L0</span>
+          <div class="rubric-label">Not Achieved</div>
+          <div class="rubric-evidence">Gong forecast model not yet calibrated; CRO still committing from manual CRM reconciliation; conversational data not informing the commit number.</div>
+          <div class="rubric-action">Escalate calibration timeline; set Q1 as calibration quarter expectation.</div>
+        </div>
+        <div class="rubric-level rubric-l1">
+          <span class="rubric-level-badge badge-l1">L1</span>
+          <div class="rubric-label">Partial</div>
+          <div class="rubric-evidence">Gong forecast running alongside manual process; both numbers reviewed weekly; trending toward convergence within <span class="tbd-tag">TBD pp</span> of manual commit.</div>
+          <div class="rubric-action">Run both models in parallel; document which was closer to actuals each week.</div>
+        </div>
+        <div class="rubric-level rubric-l2">
+          <span class="rubric-level-badge badge-l2">L2</span>
+          <div class="rubric-label">Achieved</div>
+          <div class="rubric-evidence">Forecast variance reduced to <span class="tbd-tag">TBD pp</span> from baseline for 2 consecutive quarters; CRO committing the Gong-informed number.</div>
+          <div class="rubric-action">Present variance trend to CEO and CFO; primary renewal proof point for this outcome.</div>
+        </div>
+        <div class="rubric-level rubric-l3">
+          <span class="rubric-level-badge badge-l3">L3</span>
+          <div class="rubric-label">Exceeded</div>
+          <div class="rubric-evidence">Variance at <span class="tbd-tag">TBD</span> threshold AND board/CFO has adopted Gong-informed forecast as planning input for headcount and budget modeling.</div>
+          <div class="rubric-action">Executive story candidate; highest-leverage renewal and expansion narrative in the set.</div>
+        </div>
+      </div>
+      <div class="ratification-row">
+        <span class="rat-label">Ratification Status</span>
+        <div class="rat-status"><span class="status-badge status-draft">Draft</span></div>
+        <span class="rat-note">Pending cross-functional review — Sales, Marketing, RevOps, CS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OCV-005 -->
+  <div class="entry" id="ocv-005">
+    <div class="entry-header">
+      <div class="entry-header-left">
+        <div class="entry-id">OCV-005</div>
+        <div class="entry-name">Rep Ramp and Performance Scaling</div>
+        <span class="entry-stage-pill">Stage 3 — Desired Outcome</span>
+      </div>
+      <span class="status-badge status-draft">Draft</span>
+    </div>
+    <div class="entry-body">
+      <div class="outcome-block">
+        <div class="outcome-block-label">Outcome Statement</div>
+        <p>When a CRO is managing a sales org where new rep ramp time exceeds <span class="tbd-tag">TBD months</span> and win rate variance between top-quartile and median reps is greater than <span class="tbd-tag">TBD pp</span>, the CRO reduces average new rep time-to-first-close by <span class="tbd-tag">TBD%</span> and narrows the win rate gap by <span class="tbd-tag">TBD pp</span> within <span class="tbd-tag">TBD months</span> of full coaching workflow adoption, enabling the CRO to scale what works from top performers across the entire org without relying on rep tenure or intuition that advances revenue per head as the primary sales productivity metric.</p>
+      </div>
+      <div class="two-col">
+        <div class="info-card">
+          <div class="info-card-title">Business Metric</div>
+          <div class="info-row"><span class="info-label">Metric (a)</span><span class="info-value">Time-to-first-close (days)</span></div>
+          <div class="info-row"><span class="info-label">Metric (b)</span><span class="info-value">Win rate gap, top-quartile vs. median (pp)</span></div>
+          <div class="info-row"><span class="info-label">Source</span><span class="info-value">CRM: rep start date vs. first closed-won</span></div>
+          <div class="info-row"><span class="info-label">Direction</span><span class="info-value">↓ Both lower is better</span></div>
+          <div class="info-row"><span class="info-label">Verify at</span><span class="info-value">(a) 90-day / (b) 180-day post adoption</span></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Value Chain Rationale</div>
+          <div class="info-row"><span class="info-label">Stage</span><span class="info-value">3 — Desired Outcome</span></div>
+          <div class="info-row" style="border:none; padding-top:8px;"><span class="info-value" style="text-align:left; font-size:12px; line-height:1.5; color: var(--gray-600);">Revenue per head (Stage 4) is the goal; scaled rep performance through systematized coaching is the mechanism. Connects to P&L at L3.</span></div>
+        </div>
+      </div>
+      <div class="rubric-title">Achievement Rubric</div>
+      <div class="rubric-grid">
+        <div class="rubric-level rubric-l0">
+          <span class="rubric-level-badge badge-l0">L0</span>
+          <div class="rubric-label">Not Achieved</div>
+          <div class="rubric-evidence">Call library not built; scorecards not configured; managers not running structured Gong reviews; no coaching workflow active.</div>
+          <div class="rubric-action">Escalate to enablement setup; outcomes not measurable without coaching workflow.</div>
+        </div>
+        <div class="rubric-level rubric-l1">
+          <span class="rubric-level-badge badge-l1">L1</span>
+          <div class="rubric-label">Partial</div>
+          <div class="rubric-evidence">Call library populated; scorecards in use; new reps completing structured reviews; managers running weekly sessions; ramp time trending down.</div>
+          <div class="rubric-action">Confirm coaching cadence; identify which scorecard dimensions correlate with early closes.</div>
+        </div>
+        <div class="rubric-level rubric-l2">
+          <span class="rubric-level-badge badge-l2">L2</span>
+          <div class="rubric-label">Achieved</div>
+          <div class="rubric-evidence">Time-to-first-close reduced <span class="tbd-tag">TBD%</span> for at least one full hire cohort; win rate gap between top-quartile and median narrowed by <span class="tbd-tag">TBD pp</span>.</div>
+          <div class="rubric-action">Document cohort comparison; present ramp data at QBR; connect to revenue-per-head metric.</div>
+        </div>
+        <div class="rubric-level rubric-l3">
+          <span class="rubric-level-badge badge-l3">L3</span>
+          <div class="rubric-label">Exceeded</div>
+          <div class="rubric-evidence">Both metrics at <span class="tbd-tag">TBD</span> thresholds AND revenue per head across the full org has increased — productivity showing in the P&L, not just the performance report.</div>
+          <div class="rubric-action">P&L-level story; strongest CFO and board narrative in the coaching category.</div>
+        </div>
+      </div>
+      <div class="ratification-row">
+        <span class="rat-label">Ratification Status</span>
+        <div class="rat-status"><span class="status-badge status-draft">Draft</span></div>
+        <span class="rat-note">Pending cross-functional review — Sales, Marketing, RevOps, CS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OCV-006 -->
+  <div class="entry" id="ocv-006">
+    <div class="entry-header">
+      <div class="entry-header-left">
+        <div class="entry-id">OCV-006</div>
+        <div class="entry-name">Regulated Segment Revenue Coverage</div>
+        <span class="entry-stage-pill">Stage 3 — Desired Outcome</span>
+      </div>
+      <span class="status-badge status-draft">Draft</span>
+    </div>
+    <div class="entry-body">
+      <div class="outcome-block">
+        <div class="outcome-block-label">Outcome Statement</div>
+        <p>When a CRO at an enterprise B2B company in a regulated industry (financial services, healthcare, legal) is blocked from deploying a revenue intelligence platform because security review or legal has flagged call recording, data residency, or access control compliance requirements, the CRO reduces time-to-deployment blocked by compliance review by <span class="tbd-tag">TBD weeks</span> and eliminates the category of deal-intelligence data excluded from analysis due to regulatory risk, enabling the CRO to run the same evidence-based pipeline and coaching motions in regulated accounts that advances full revenue org coverage as a strategic capability metric.</p>
+      </div>
+      <div class="two-col">
+        <div class="info-card">
+          <div class="info-card-title">Business Metric</div>
+          <div class="info-row"><span class="info-label">Metric</span><span class="info-value">% of total revenue org covered by Gong</span></div>
+          <div class="info-row"><span class="info-label">Source</span><span class="info-value">Gong seat report vs. total licensed users</span></div>
+          <div class="info-row"><span class="info-label">Baseline</span><span class="info-value">Coverage % pre-compliance clearance</span></div>
+          <div class="info-row"><span class="info-label">Direction</span><span class="info-value">↑ Higher is better</span></div>
+          <div class="info-row"><span class="info-label">Verify at</span><span class="info-value">60-day post compliance clearance + deploy</span></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Value Chain Rationale</div>
+          <div class="info-row"><span class="info-label">Stage</span><span class="info-value">3 — Desired Outcome</span></div>
+          <div class="info-row" style="border:none; padding-top:8px;"><span class="info-value" style="text-align:left; font-size:12px; line-height:1.5; color: var(--gray-600);">A constraint removal outcome — enables the other five outcomes to operate without exception carve-outs in regulated segments. Full org coverage is the desired state.</span></div>
+        </div>
+      </div>
+      <div class="rubric-title">Achievement Rubric</div>
+      <div class="rubric-grid">
+        <div class="rubric-level rubric-l0">
+          <span class="rubric-level-badge badge-l0">L0</span>
+          <div class="rubric-label">Not Achieved</div>
+          <div class="rubric-evidence">Compliance review not completed; regulated accounts still excluded; data redaction configuration not validated by legal or security.</div>
+          <div class="rubric-action">Identify specific blocker: data residency, redaction, or access controls.</div>
+        </div>
+        <div class="rubric-level rubric-l1">
+          <span class="rubric-level-badge badge-l1">L1</span>
+          <div class="rubric-label">Partial</div>
+          <div class="rubric-evidence">Compliance review passed; deployment in progress; at least <span class="tbd-tag">TBD%</span> of previously excluded accounts now covered; full workflow not yet adopted.</div>
+          <div class="rubric-action">Confirm data redaction validated by legal before expanding; document clearance artifact.</div>
+        </div>
+        <div class="rubric-level rubric-l2">
+          <span class="rubric-level-badge badge-l2">L2</span>
+          <div class="rubric-label">Achieved</div>
+          <div class="rubric-evidence"><span class="tbd-tag">TBD%</span> of total revenue org covered including previously excluded accounts; same workflows running in regulated segment as in standard segment.</div>
+          <div class="rubric-action">Document coverage delta; present to CRO as constraint removal proof point.</div>
+        </div>
+        <div class="rubric-level rubric-l3">
+          <span class="rubric-level-badge badge-l3">L3</span>
+          <div class="rubric-label">Exceeded</div>
+          <div class="rubric-evidence">Full org coverage achieved AND deal intelligence from regulated accounts informing CRO-level win/loss analysis — regulated segment no longer a blind spot.</div>
+          <div class="rubric-action">Constraint removal story complete; flag for expansion into additional regulated segments or geographies.</div>
+        </div>
+      </div>
+      <div class="ratification-row">
+        <span class="rat-label">Ratification Status</span>
+        <div class="rat-status"><span class="status-badge status-draft">Draft</span></div>
+        <span class="rat-note">Pending cross-functional review — Sales, Marketing, RevOps, CS</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider">— End of Draft Registry — 6 entries — All magnitudes TBD —</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <strong>Gong.io Outcome &amp; Value Registry</strong> · CRO Segment · v1.0.0 · May 14, 2026<br>
+    Schema: OCV-1.0 · Generated by outcome-statement-builder v1.0.0 · SuccessCOACHING Outcome Catalog Framework
+  </div>
+  <div style="text-align:right; max-width:420px;">
+    Entries marked <strong>Draft</strong> require cross-functional ratification (Sales, Marketing, RevOps, CS) and magnitude verification before use in Sales commitments or CS plans.
+  </div>
+</footer>
+
+</body>
+</html>

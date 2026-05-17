@@ -38,14 +38,40 @@ Critical configuration to apply:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+> Full reasoning blueprint: `references/reasoning-blueprint.md`
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G3 (any revenue impact language must carry commitment language + Finance validation callout), G4 (verify a named escalation path is configured before generating the memo), G5 (confidentiality check before distributing the memo beyond the CS team).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY** — What type of escalation is this?
+   - **Technical (P1/P2)**: Unresolved support ticket, SLA breach or approaching breach, product bug with customer impact, engineering involvement required. Route via Support → Engineering path.
+   - **Customer Complaint**: Formal dissatisfaction — NPS detractor follow-up unresolved, written complaint, executive frustration, public-facing concern. Emotion is high; separate perception from verified facts.
+   - **Executive Escalation**: Named executive at customer requests VP/C-level involvement. Triggered by relationship posture, not health score. Match response seniority to request seniority.
+   - **Internal Process Failure**: Customer harmed by internal miss — dropped handoff, broken commitment, internal SLA breach. Name the failure honestly in the internal brief; acknowledge without blame-chaining in the customer draft.
+
+2. **CONSTRAINTS** — Apply before generating any output:
+   - **G1 — Skill activation**: Does this request match escalation-memo? If the issue is a pattern of concern without a triggering event, redirect to `/csm:risk-flag`.
+   - **G2 — Connector check**: Which integrations are needed (Support, CRM, CS Platform, call recording)? Flag any unconfigured or returning stale data.
+   - **G4 — Escalation path required**: Verify a named escalation owner is configured in the matrix for this type and severity before generating the memo. No owner = no memo.
+   - **G5 — Confidentiality firewall**: Internal language (health scores, escalation IDs, ARR, routing names, revenue-at-risk) never appears in customer-facing drafts. Review customer draft as if the customer's CEO will read it.
+   - **G7 — Revenue language validation**: If memo includes ARR, renewal dates, or revenue-at-risk, validate figures with CRM before sharing with leadership or finance.
+
+3. **EXPERT CHECK** — What a veteran CSM verifies first:
+   - Is the SLA clock already running? Check status before composing narrative — urgency determines communication depth.
+   - What has already been promised to the customer? Audit call recordings, ticket notes, and CSM context for "we will" or "by [date]" commitments.
+   - Is this a repeat escalation type for this account? If CRM shows prior same-type escalations, flag the pattern — this is systemic, not episodic.
+   - Does ARR exceed the configured threshold? Above-threshold = automatic VP CS / CRO inclusion.
+   - Route confirmation: Is the escalation owner correct for this type + severity + ARR combination?
+
+4. **ANTI-PATTERNS** — Domain mistakes to catch before output:
+   - Citing an SLA window that has already passed without flagging the breach
+   - Writing recommended actions for the wrong audience (routing not confirmed before drafting)
+   - Using "I understand your frustration" instead of naming the specific business impact
+   - Closing an escalation without a root cause hypothesis — even a preliminary one
+   - Merging internal diagnostic tone with customer-facing communication
+   - Passive voice in customer drafts to hide internal accountability ("there was a miscommunication" vs. "we missed the handoff")
+
+5. **Post-execution verification**:
+   - **Intent satisfaction**: Does the output match the requested mode (--open/--update/--close) and escalation type?
+   - **Failure mode scan**: Check output against common failure modes for the classified type (see blueprint). Flag any match.
+   - **Confidence assessment**: Are data sources live or stale? Is root cause confirmed or preliminary? Label accordingly.
 
 ## Mode
 

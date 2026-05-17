@@ -39,14 +39,40 @@ Critical configuration to apply:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G2 (expansion value claims require economic buyer qualification), G3 (revenue value language carries commitment language + Finance validation callout), G5 (confidentiality check before distributing internal metrics externally).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of value statement request is this?
+   - **Evidence-Rich ROI Narrative** — account has quantitative data and agreed success criteria; build a metrics-backed value story
+   - **Criteria-Gap Value Framing** — no formal success criteria exist; infer value from usage signals and flag every claim as unvalidated
+   - **Renewal-Context Value Defense** — value statement serves an upcoming renewal; lead with strongest verified outcome, acknowledge gaps honestly
+   - **Expansion-Signal Packaging** — value statement supports an AE handoff; separate proven ROI from speculative expansion signals
+   - **Executive Visibility Summary** — C-level audience; prose-only, 2-3 headline outcomes with one number each, under 400 words
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - Value claims require evidence with source annotation — unsupported claims get `[review]` or are omitted from customer output
+   - Expansion signals never appear in customer-facing output under any circumstances
+   - Revenue implications (ARR trajectory, renewal probability) require reviewer validation before distribution
+   - Customer-facing output uses the customer's business language, not product terminology
+   - Success criteria gaps must be acknowledged explicitly — never construct post-hoc success framing silently
+
+3. **EXPERT CHECK**: What would a veteran CSM verify first?
+   - Are the success criteria sourced from an agreed document (success plan, kickoff, prior QBR), or are they inferred? If inferred, flag before proceeding.
+   - Does every metric map to a goal the customer actually stated, or is it a product adoption proxy dressed as customer value?
+   - Is the data current enough to stake a conversation on? (Usage >30 days old is directional; NPS >90 days is stale.)
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Metric dump without narrative — tables of numbers the customer cannot interpret as business value
+   - Proxy metric substitution — reporting DAU when the customer's goal was cost reduction
+   - Gap hiding in renewal context — omitting known underperformance the customer already sees
+   - Signal-as-opportunity leap — treating a champion's casual mention as a qualified expansion opportunity
+   - Feature-language leakage — using product names in customer-facing or exec-level output
+   - Confidence inflation — presenting single-source or anecdotal evidence with the same certainty as verified outcomes
+
+**After execution**, verify:
+- Does the output answer the implicit question the CSM is asking?
+- Are all data sources timestamped and staleness-flagged?
+- Is the output mode matched to the actual need?
+- Confidence: [High] if 2+ live sources corroborate / [Medium] if single-source or partially stale / [Low] if user-provided context only — state which.
 
 ## Mode
 

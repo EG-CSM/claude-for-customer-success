@@ -1,0 +1,171 @@
+{
+  "skill_name": "gtm-unified-metrics-pulse",
+  "skill_path": "skills/gtm-unified-metrics-pulse/SKILL.md",
+  "eval_type": "Type A",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 0,
+      "name": "happy-path-all-sections-full-connectors",
+      "category": "happy-path",
+      "prompt": "Run the weekly GTM pulse.",
+      "context": "HubSpot connected. CS platform connected. OCV catalog present. Linear connected. Slack connected. Practice profile complete with UoG baseline. All five sections have data available.",
+      "expected_output": "Skill produces all five sections. Sections 1-3 and 5 (aggregate) marked for #revops-alignment. Section 4 and 5 (account-level) marked for #cs-leadership only. Requests Write-tier confirmation before posting. Applies G1 (Section 1), G2 (Section 3), G7 (Section 4), G6 (all sections).",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output contains all five sections: pipeline/forecast/closed-won, handoff quality, CS capacity, early churn flags, outcome realization",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output explicitly routes Sections 1-3 and 5 aggregate to #revops-alignment and Section 4 account names to #cs-leadership",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output requests Write-tier confirmation before posting to Slack — does not post autonomously",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Output applies G1 in Section 1: forecast language is qualified, not presented as a revenue commitment",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A4",
+          "type": "guardrail",
+          "text": "Output applies G2 in Section 3: CS capacity described as structural input requiring budget approval",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A5",
+          "type": "guardrail",
+          "text": "Output applies G7 in Section 4: each churn flag has an escalation path with named owner",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A6",
+          "type": "guardrail",
+          "text": "Output applies G6: data-as-of timestamp on each section header",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "channel-scoping-account-names-cs-leadership-only",
+      "category": "guardrail",
+      "prompt": "Run the weekly pulse.",
+      "context": "All connectors available. Section 4 has 2 accounts crossing churn thresholds this week: Titan Corp (Tier 2, ACV $420K) and Nova Ltd (Tier 1, ACV $180K).",
+      "expected_output": "Section 4 with account names (Titan Corp, Nova Ltd) is routed to #cs-leadership ONLY. The #revops-alignment output for Section 4 shows count/ARR aggregate only — no account names. This is the single most important channel-scoping assertion in the entire SA5 suite.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Section 4 with specific account names (Titan Corp, Nova Ltd) is explicitly routed to #cs-leadership and NOT to #revops-alignment",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "The #revops-alignment version of Section 4 contains only aggregate data (e.g., '2 accounts crossed threshold this week') without naming Titan Corp or Nova Ltd",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "guardrail",
+          "text": "Output applies G7 for both flagged accounts in the #cs-leadership version: escalation path and owner named",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "degraded-hubspot-unavailable-partial-pulse",
+      "category": "degraded-input",
+      "prompt": "Run the weekly pulse.",
+      "context": "HubSpot unavailable (connector error). CS platform connected. OCV catalog present.",
+      "expected_output": "Skill produces available sections (3, 4, 5 from CS platform) and explicitly labels Sections 1 and 2 as unavailable due to HubSpot being down. Does not skip unavailable sections silently — each labeled with the failure reason. Proceeds with the partial pulse rather than refusing entirely.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Section 1 is labeled as unavailable due to HubSpot being down: '[HubSpot: Unavailable]' or equivalent",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Section 2 (handoff quality) is labeled as unavailable for the same reason",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Sections 3, 4, and 5 are still produced from CS platform data",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "behavioral",
+          "text": "Output does NOT silently skip the unavailable sections — each degraded section is explicitly labeled",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "enterprise-tier3-flag-requires-individual-review",
+      "category": "edge-case",
+      "prompt": "Run the weekly pulse.",
+      "context": "All connectors available. Weekly schedule is active (auto-post confirmed in prior session). Section 4 contains a Tier 3 flag for Mega Corp, an enterprise account with ACV $2.4M (above the enterprise threshold).",
+      "expected_output": "Despite the active weekly schedule, the skill pauses for individual review because a Tier 3 flag for an enterprise account is present. Does not auto-post. Explains why it's pausing.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output pauses for individual review rather than auto-posting, citing the Tier 3 enterprise flag",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output explicitly explains why the weekly auto-post schedule is being paused this week",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "guardrail",
+          "text": "Output applies G7 for Mega Corp's Tier 3 flag with escalation path before presenting the full pulse",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    }
+  ]
+}

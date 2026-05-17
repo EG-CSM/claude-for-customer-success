@@ -1,6 +1,6 @@
 # Claude for Customer Success
 
-A suite of four Claude Code plugins that bring AI-native support to every function in a modern Customer Success organization — CSMs, CS Ops, renewals specialists, and onboarding teams. Methodology-opinionated (SuccessCOACHING), tool-agnostic.
+A suite of five Claude Code plugins that bring AI-native support to every function in a modern Customer Success and Revenue Operations organization — CSMs, CS Ops, renewals specialists, onboarding teams, and RevOps. Methodology-opinionated (SuccessCOACHING), tool-agnostic.
 
 ---
 
@@ -12,6 +12,7 @@ A suite of four Claude Code plugins that bring AI-native support to every functi
 | [`cs-ops/`](./cs-ops/) | CS Operations — portfolio analytics and systems | Health model review, segmentation, capacity planning, playbook audits, data quality |
 | [`renewals/`](./renewals/) | Renewals managers and AMs owning GRR/NRR | Renewal forecasting, expansion signals, churn analysis, negotiation prep, contract review |
 | [`onboarding/`](./onboarding/) | Onboarding teams and implementation managers | Kickoff prep, onboarding plans, milestone tracking, TtV review, handoff documentation |
+| [`rev-ops/`](./rev-ops/) | RevOps leads, CROs, and CS Ops owning revenue operations | Forecast intelligence, pipeline health, annual planning, CRM quality, deal desk governance |
 
 Each plugin installs independently. Install only what your team needs.
 
@@ -43,6 +44,7 @@ Subsequent plugin installs reuse the shared company profile and skip company-lev
 /cs-ops:cold-start-interview
 /renewals:cold-start-interview
 /onboarding:cold-start-interview
+/rev-ops:cold-start-interview
 ```
 
 ### Integrations
@@ -57,27 +59,51 @@ Each plugin works with whatever you have connected. Cold-start will detect what'
 
 **Onboarding** — Project management (Asana, Linear, Jira, Monday), CRM
 
+**Rev-Ops** — CRM (HubSpot), Slack, Google Drive, Linear, CS Platform, Zapier
+
 ---
 
 ## Managed Agent Cookbooks
 
-The [`managed-agent-cookbooks/`](./managed-agent-cookbooks/) directory contains five headless agents for teams running Claude behind a workflow engine:
+The [`managed-agent-cookbooks/`](./managed-agent-cookbooks/) directory contains ten agents for teams running Claude as a background workflow engine, plus five rev-ops agents in [`rev-ops/managed-agent-cookbooks/`](./rev-ops/managed-agent-cookbooks/). Six CS suite agents are scheduled headless agents that run autonomously on a cron cadence; four are on-demand agents. All five rev-ops agents support both scheduled and on-demand modes.
+
+### Scheduled agents
 
 | Agent | What it does | Primary plugin |
 |-------|-------------|----------------|
-| `health-watcher` | Scans portfolio health daily; routes alerts | csm |
-| `renewal-scanner` | Reviews upcoming renewals; surfaces risk 90/60/30 days out | renewals |
-| `qbr-prep-agent` | Researches and drafts QBR decks on a schedule | csm |
-| `churn-signal-digest` | Aggregates churn signals across the portfolio; weekly digest | csm / cs-ops |
-| `onboarding-milestone-tracker` | Tracks milestone completion; flags at-risk accounts | onboarding |
+| [`health-watcher`](./managed-agent-cookbooks/health-watcher/) | Scans portfolio health daily; routes movement alerts | csm |
+| [`churn-signal-digest`](./managed-agent-cookbooks/churn-signal-digest/) | Aggregates cross-source churn signals; P1/P2/P3 digest | csm |
+| [`qbr-prep-agent`](./managed-agent-cookbooks/qbr-prep-agent/) | Researches and drafts QBR packages on a schedule or on-demand | csm |
+| [`renewal-scanner`](./managed-agent-cookbooks/renewal-scanner/) | Reviews upcoming renewals; risk classification 90/60/30 days out | renewals |
+| [`onboarding-milestone-tracker`](./managed-agent-cookbooks/onboarding-milestone-tracker/) | Tracks M1–M5 milestone completion; flags at-risk accounts | onboarding |
+| [`portfolio-segment-digest`](./managed-agent-cookbooks/portfolio-segment-digest/) | Segment-level health roll-up; ARR at risk by band; CS Ops / leadership | cs-ops |
 
-See each cookbook's `README.md` for deployment instructions and `steering-examples.json` for prompting patterns.
+### On-demand agents
+
+| Agent | What it does | Primary plugin |
+|-------|-------------|----------------|
+| [`adoption-motion-agent`](./managed-agent-cookbooks/adoption-motion/) | Feature coverage map, gap diagnosis (6-type taxonomy), TARO play prescription | csm |
+| [`expansion-builder-agent`](./managed-agent-cookbooks/expansion-builder/) | Whitespace inventory, business case, AE handoff package | csm |
+| [`advocacy-agent`](./managed-agent-cookbooks/advocacy/) | Burnout-protected advocate qualification, ask script or story structure | csm |
+| [`churn-intelligence-agent`](./managed-agent-cookbooks/churn-intelligence/) | Signal timeline, churn drivers, exit interview guide, postmortem, win-back assessment | renewals |
+
+### Rev-ops agents (scheduled and on-demand)
+
+| Agent | What it does |
+|-------|-------------|
+| [`gtm-pulse-runner`](./rev-ops/managed-agent-cookbooks/gtm-pulse-runner/) | Weekly GTM metrics pulse — pipeline, run-rate, velocity, churn signals; five Slack sections with HITL gate |
+| [`capacity-monitor`](./rev-ops/managed-agent-cookbooks/capacity-monitor/) | CS capacity headroom vs. closed-won actuals; NRR-adjusted projections; silent-green Slack pattern |
+| [`churn-signal-scanner`](./rev-ops/managed-agent-cookbooks/churn-signal-scanner/) | Tier 1/2/3 churn signal scan; Tier-3 triggers Linear escalation with human confirmation |
+| [`deal-desk-watcher`](./rev-ops/managed-agent-cookbooks/deal-desk-watcher/) | SLA breach monitor across stage age, approval aging, close date drift, and single-threaded risk |
+| [`planning-cycle-orchestrator`](./rev-ops/managed-agent-cookbooks/planning-cycle-orchestrator/) | Five-phase GTM planning cycle with phase-gate governance and Slack digest after every run |
+
+Agent registration files for the CS suite agents live in `csm/agents/` and `renewals/agents/`; rev-ops agent cookbooks live in `rev-ops/managed-agent-cookbooks/`. See each cookbook's `README.md` for deployment instructions and `steering-examples.json` for prompting patterns. Full architecture documentation is in [`managed-agent-cookbooks/README.md`](./managed-agent-cookbooks/README.md).
 
 ---
 
 ## Shared Guardrails
 
-All four plugins enforce these constraints — they are not optional and cannot be overridden by plugin configuration:
+All five plugins enforce these constraints — they are not optional and cannot be overridden by plugin configuration:
 
 1. **Health scores are heuristics, not verdicts.** Never present a health score as a definitive churn prediction. Surface the signal; the CSM owns the judgment.
 2. **Expansion requires qualification.** Flag early-stage expansion signals as leads. Do not present expansion opportunity as confirmed pipeline without sales qualification.
@@ -91,9 +117,9 @@ All four plugins enforce these constraints — they are not optional and cannot 
 
 ## Architecture Extensions
 
-The 41 skills across these four plugins are built on the standard Claude Code SKILL.md pattern — frontmatter metadata, trigger blocks, instruction body, and guardrails. That baseline is sufficient for a standalone skill. It isn't sufficient for a coordinated suite where 41 skills across 4 plugins need to produce consistent outputs, apply the same domain formulas, enforce the same behavioral constraints, and remain maintainable over time.
+The 72 skills across these five plugins are built on the standard Claude Code SKILL.md pattern — frontmatter metadata, trigger blocks, instruction body, and guardrails. That baseline is sufficient for a standalone skill. It isn't sufficient for a coordinated suite where 72 skills across 5 plugins need to produce consistent outputs, apply the same domain formulas, enforce the same behavioral constraints, and remain maintainable over time.
 
-A single-skill codebase gets away with embedding domain logic in the skill itself. A 41-skill suite that does that drifts — health score bands defined differently in the CSM health review skill vs. the CS Ops health model review skill, GRR formulas that don't match across renewals and ops, guardrails that exist in some skills but not others. The extensions below solve that problem.
+A single-skill codebase gets away with embedding domain logic in the skill itself. A 72-skill suite that does that drifts — health score bands defined differently in the CSM health review skill vs. the CS Ops health model review skill, GRR formulas that don't match across renewals and ops, guardrails that exist in some skills but not others. The extensions below solve that problem.
 
 ### Shared Domain Model
 
@@ -116,7 +142,7 @@ What it contains:
 
 **File:** [`shared/cross-skill-registry.md`](./shared/cross-skill-registry.md)
 
-A canonical routing table listing all 41 skills with their command format, available modes, and typical trigger conditions. Skills that reference other skills (e.g., a renewal prep skill that hands off to a negotiation skill) point here instead of hardcoding command strings.
+A canonical routing table listing all 72 skills with their command format, available modes, and typical trigger conditions. Skills that reference other skills (e.g., a renewal prep skill that hands off to a negotiation skill) point here instead of hardcoding command strings.
 
 **Why this matters:** Hardcoded command strings in SKILL.md files break when skill names change or plugins are reorganized. The registry is the single place to update routing; every skill that references it picks up the change automatically. It also gives contributors and operators a complete map of the suite at a glance.
 
@@ -169,14 +195,31 @@ A skill that uses all six extensions: reads domain constants from `shared/cs-dom
 
 ```
 ~/.claude/plugins/config/claude-for-customer-success/
-├── company-profile.md          # Shared — all four plugins read this
+├── company-profile.md          # Shared — all five plugins read this
 ├── csm/CLAUDE.md               # CSM practice profile (written at cold-start)
 ├── cs-ops/CLAUDE.md            # CS Ops practice profile
 ├── renewals/CLAUDE.md          # Renewals practice profile
-└── onboarding/CLAUDE.md        # Onboarding practice profile
+├── onboarding/CLAUDE.md        # Onboarding practice profile
+└── rev-ops/CLAUDE.md           # Rev-Ops practice profile
 ```
 
 Plugin templates (this directory) ship with the plugin and are replaced on update. User data lives only in `~/.claude/plugins/config/`.
+
+---
+
+## Add-ons
+
+### AUQ Failsafe
+
+**Package:** [`auq-failsafe/`](./auq-failsafe/)
+
+An optional infrastructure add-on that makes `ask_user_input_v0` resilient to render failures. The CS suite plugins use `ask_user_input_v0` extensively — when it works, the user gets an interactive multiple-choice widget; when it fails (unsupported client, missed render, tool error), Claude receives an empty response with no recoverable path.
+
+The `auq-failsafe` plugin installs two Claude Code hooks that detect failures and inject a plain-text multiple-choice fallback so Claude can always proceed. It does not change how AUQ works when it works — it only catches failures.
+
+Installing the plugin is a one-step install. Wiring it into a plugin requires adding two entries to that plugin's `hooks/hooks.json`. All five CS plugins ship with empty hook slots ready to receive the wiring.
+
+See [`auq-failsafe/README.md`](./auq-failsafe/README.md) for install steps and the full T1/T2/T3 protocol.
 
 ---
 

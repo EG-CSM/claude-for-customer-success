@@ -1,1 +1,19 @@
-{"hooks": []}
+{
+  "hooks": [
+    {
+      "event": "PreToolUse",
+      "matcher": "ask_user_input_v0",
+      "command": "python3 ../auq-failsafe/hooks/auq_hook.py"
+    },
+    {
+      "event": "PostToolUse",
+      "matcher": "ask_user_input_v0",
+      "command": "python3 ../auq-failsafe/hooks/auq_hook.py"
+    },
+    {
+      "event": "UserPromptSubmit",
+      "matcher": ".*",
+      "command": "python3 ../auq-failsafe/hooks/auq_hook.py"
+    }
+  ]
+}

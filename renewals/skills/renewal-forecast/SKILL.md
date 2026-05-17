@@ -46,14 +46,40 @@ Fields pulled from config:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G2 (expansion ARR not included until economic buyer qualified), G3 (all forecast figures carry commitment language + Finance/RevOps validation callout), G4 (verify a named escalation path before surfacing at-risk forecast items), G7 (flag any stale pipeline or health data with source date and staleness indicator).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of renewal forecast request is this?
+   - **Full Book Forecast**: Complete book-of-business with all pipeline stages, scenario modeling, cohort breakdown, and GRR/NRR projection. Default mode. Optimize for completeness and cross-account consistency.
+   - **Cohort-Scoped Forecast**: Focused on a single renewal window (90/60/30-day). Optimize for escalation readiness — 30-day accounts need named owners and decision-forcing actions.
+   - **Segment Forecast**: Single customer segment against book targets. Validate whether default forecast weights apply to this segment's renewal dynamics.
+   - **Single-Account Addition**: One account placed into the pipeline. Smallest scope — validate stage placement against risk signals before accepting user classification.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G2: Expansion ARR is never included in GRR. It enters NRR only after economic buyer qualification AND formal pipeline stage — otherwise tagged `[early signal — not yet qualified]`.
+   - G4: Every at-risk account must have a named escalation owner, channel, and SLA routed through the configured escalation matrix. No generic "escalate to your manager."
+   - G5: Forecast output containing ARR, scenario totals, or GRR/NRR projections requires Finance/RevOps review before distribution — flag with `[review — could be read as a revenue commitment]`.
+   - G7: Timestamp every data source. CRM >7 days old is stale — flag it. Manual input has no timestamp — note it. Never present undated figures as current.
+   - No fabricated ARR: unknown ARR is excluded from totals, never estimated or interpolated.
+
+3. **EXPERT CHECK**: What would a veteran renewals leader verify first?
+   - Is the data fresh enough to forecast on? Check per-account staleness, not just the CRM pull timestamp — one stale account in the 30-day cohort can invalidate the escalation plan.
+   - Do pipeline stages match observable signals? A "verbal commitment" with active churn signals is mislabeled — reclassify before weighting.
+   - Is the likely scenario actually defensible for leadership? It should use default weights, zero unqualified expansion, and current save rates — not optimistic assumptions.
+
+4. **ANTI-PATTERNS**: Common renewal forecasting mistakes to avoid:
+   - Presenting a stale CRM pull as a current forecast without per-source freshness flags — the numbers look precise but the inputs are outdated.
+   - Leaking expansion ARR into GRR calculations — expansion belongs in NRR only, and only when qualified.
+   - Listing at-risk accounts without named escalation owners — a risk flag without an owner does not unblock the account.
+   - Accepting user-stated pipeline stages without cross-referencing risk signals — "open" with active churn signals is "at risk."
+   - Interpolating or estimating ARR when the figure is not provided — mark unknown and request it.
+   - Applying book-level default weights to a segment with different renewal dynamics without flagging the assumption.
+
+**After execution**, verify:
+- Does the forecast answer the implicit question ("where does my book stand and what needs action this week")?
+- Are all data sources timestamped and staleness-flagged per G7?
+- Is every scenario total and GRR/NRR figure flagged for Finance/RevOps review?
+- Are all at-risk accounts in the 30-day cohort paired with named escalation owners?
+- Confidence: [High] if 2+ live sources corroborate / [Medium] if single-source or partially stale / [Low] if user-provided context only — state which.
 
 ## Mode
 

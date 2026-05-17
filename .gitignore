@@ -30,3 +30,4 @@ venv/
 
 # Claude / Cowork internals
 .claude-plugin/
+context/

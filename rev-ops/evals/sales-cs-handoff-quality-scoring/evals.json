@@ -1,0 +1,157 @@
+{
+  "skill_name": "sales-cs-handoff-quality-scoring",
+  "skill_path": "skills/sales-cs-handoff-quality-scoring/SKILL.md",
+  "eval_type": "Type A",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 0,
+      "name": "perfect-score-all-dimensions-pass",
+      "category": "happy-path",
+      "prompt": "Score the handoff quality for the Northstar deal.",
+      "context": "HubSpot connected. Northstar closed yesterday. OCV-001 (Ratified) linked. Trigger condition confirmed present. Measurement source accessible. Economic buyer, champion, and technical contact all tagged. Risk flags field populated with 'Competitor Rival was evaluated but eliminated in Q3 due to integration limitations.'",
+      "expected_output": "Skill produces a 100/100 score, all five dimensions pass, no Linear issue created, PASS status shown.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output contains a score of 100/100 for the Northstar deal",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "structural",
+          "text": "Output shows all five dimensions (D1–D5) as passed",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output does NOT create or propose a Linear issue (score is above threshold)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Output applies G6: data-as-of timestamp present on HubSpot reads",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "below-threshold-linear-issue-created",
+      "category": "guardrail",
+      "prompt": "Check the handoff for the Quantum deal before CS assigns a CSM.",
+      "context": "HubSpot connected. Linear connected. Quantum closed 2 days ago. No OCV entry linked (D1 fail). Trigger condition cannot be verified (D2 fail). Measurement source accessible (D3 pass). All 3 stakeholders tagged (D4 pass). Risk flags field empty (D5 fail). Score: 40/100.",
+      "expected_output": "Skill scores 40/100, flags as BELOW THRESHOLD, creates a Linear issue assigned to the AE manager with 48-hour SLA, lists the 3 failed dimensions, notifies the assigned CSM. CS onboarding proceeds — not blocked.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output shows score of 40/100 and BELOW THRESHOLD status",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "structural",
+          "text": "Output lists the three failed dimensions: D1 (no OCV entry), D2 (trigger unverifiable), D5 (risk flags empty)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "guardrail",
+          "text": "Output applies G7: Linear issue creation includes assignment to AE manager and 48-hour SLA",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "behavioral",
+          "text": "Output explicitly states CS onboarding proceeds — the below-threshold score does NOT block handoff",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A4",
+          "type": "guardrail",
+          "text": "Output applies G8: absence of Ratified OCV entry is specifically flagged as a D1 failure (not a warning)",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "draft-ocv-entry-does-not-satisfy-d1",
+      "category": "guardrail",
+      "prompt": "Run the handoff quality check for the Helios deal.",
+      "context": "HubSpot connected. Helios closed yesterday. OCV-005 linked to the deal BUT OCV-005 has status=Draft (not Ratified). All other dimensions pass. Score without OCV: 80/100.",
+      "expected_output": "Skill fails D1 because OCV-005 is Draft, not Ratified. Draft entry is labeled [OCV DRAFT — not ratified for Sales or CS use]. Score is 80/100 (D1 failed = −20pts). Linear issue created for the D1 failure.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "guardrail",
+          "text": "Output applies G8: OCV-005 is labeled as Draft and does not count toward passing D1",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "structural",
+          "text": "Output shows score of 80/100 (D1 failed, 4 other dimensions passed)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output flags that a Ratified OCV entry is needed and that OCV-005 cannot be used until ratified",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "weekly-digest-aggregate-view",
+      "category": "happy-path",
+      "prompt": "Give me this week's handoff quality digest.",
+      "context": "HubSpot connected. 5 deals closed this week. Scores: 100, 80, 100, 40, 60. Linear connected.",
+      "expected_output": "Skill produces a weekly aggregate digest: count of deals, average score, pass/fail breakdown. Below-threshold deals counted but NOT named by account name in the aggregate digest (account names go to #cs-ops, not the general digest).",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output shows: deals closed this week = 5, average score = 76/100, pass count = 3, below-threshold count = 2",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Aggregate weekly digest does NOT name individual accounts with below-threshold scores (channel scoping — names go to #cs-ops only)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "guardrail",
+          "text": "Output applies G6: data-as-of timestamp on HubSpot reads",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "mcpServers": {
+    "hubspot": {
+      "type": "url",
+      "url": "${HUBSPOT_MCP_URL}",
+      "note": "CRM — pipeline stages, deal data, contact records, activity history"
+    },
+    "slack": {
+      "type": "url",
+      "url": "${SLACK_MCP_URL}",
+      "note": "Team communication — GTM pulse delivery, capacity alerts, churn signal digests, deal desk notifications"
+    },
+    "gdrive": {
+      "type": "url",
+      "url": "${GDRIVE_MCP_URL}",
+      "note": "Document storage — annual plan docs, OCV catalog, unit-of-growth baseline, board materials"
+    },
+    "linear": {
+      "type": "url",
+      "url": "${LINEAR_MCP_URL}",
+      "note": "Issue tracking — churn escalation tickets, deal desk SLA breach issues, planning cycle tasks"
+    },
+    "zapier": {
+      "type": "url",
+      "url": "${ZAPIER_MCP_URL}",
+      "note": "Workflow automation — cross-system data triggers, alert routing, CRM field update hooks"
+    },
+    "gainsight": {
+      "type": "url",
+      "url": "${GAINSIGHT_MCP_URL}",
+      "note": "CS Platform — health scores, renewal dates, adoption signals, churn risk flags"
+    },
+    "totango": {
+      "type": "url",
+      "url": "${TOTANGO_MCP_URL}",
+      "note": "CS Platform alternative"
+    },
+    "churnzero": {
+      "type": "url",
+      "url": "${CHURNZERO_MCP_URL}",
+      "note": "CS Platform alternative"
+    }
+  }
+}

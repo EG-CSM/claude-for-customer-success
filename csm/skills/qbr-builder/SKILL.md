@@ -37,14 +37,44 @@ Note from config:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+> Full reasoning blueprint: `references/reasoning-blueprint.md`
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G2 (expansion signals require economic buyer qualification before inclusion), G3 (revenue-related content must carry commitment language + Finance validation callout).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of QBR is this?
+- **Net-New QBR** — no prior QBR exists; build from scratch with available data
+- **Continuation QBR** — prior QBR provides baseline; score prior commitments before writing new ones
+- **Review of Existing Draft** — user-provided draft; audit for evidence quality and guardrail compliance
+- **Executive Brief** — 1-page C-level narrative; every sentence must carry a decision-relevant insight
+- **At-Risk Account QBR** — health red/yellow, escalation active, or renewal <90 days; lead with acknowledged challenges
+
+2. **CONSTRAINTS** — enforce before generating:
+- **G1 — Data freshness:** Timestamp every data pull; flag anything >72 hours stale before QBR presentation
+- **G2 — Expansion stays internal:** Expansion signals appear only in the internal working document; never in customer-facing content without explicit AE/AM authorization
+- **G4 — Evidence-backed claims only:** Every value claim requires a named data source; unsourced claims are flagged `[review]` internally and omitted from customer-facing output
+- **G5 — Renewal language review:** Any content touching renewal probability or ARR trajectory requires CS leadership validation before distribution
+- **G7 — Internal/external separation:** Health scores, expansion tags, stakeholder relationship notes, and `[review]` flags must never appear in the customer-facing deliverable
+
+3. **EXPERT CHECK** — what a veteran CSM verifies first:
+1. Do account-specific success criteria exist? If not, the QBR demonstrates activity, not value — escalate criteria establishment as top priority
+2. If a prior QBR exists, is every prior-period commitment scored (achieved / partial / missed)?
+3. Does the challenges section contain at least one real challenge? Zero challenges = zero credibility
+4. Are next-quarter priorities framed as joint actions with customer-side owners, not a CSM to-do list?
+5. Is metric context provided — does every number have a "so what" sentence tied to a business outcome?
+
+4. **ANTI-PATTERNS** — common QBR mistakes to block:
+- Generic value language without metrics ("we drove strong adoption") — require specific numbers or flag
+- Dropped prior commitments — cherry-picking wins while silently omitting missed items
+- Metric dumping without narrative — tables of numbers with no insight about what they mean
+- Over-optimism on at-risk accounts — glossing over known problems destroys trust faster than naming them
+- Internal data leakage — health scores or expansion signals bleeding into customer-facing content
+
+**After execution**, verify:
+1. **Implicit need check:** Did the CSM ask for a QBR type that doesn't match their situation? (e.g., requesting Net-New when a prior QBR exists — redirect to Continuation to avoid dropping prior commitments.)
+2. **Intent satisfaction:** Does the output match the classified input type and requested mode (`--draft` / `--review` / `--exec-brief`)?
+3. **Failure mode scan:** Review output against the failure modes for the classified type in the reasoning blueprint
+4. **Staleness check (G7):** Is every data source timestamped? Flag CRM data >7 days stale, CS platform data >3 days stale, call/meeting data >14 days stale. Stale metrics get a `[stale: <source> as of <date>]` tag in the internal working document.
+5. **Confidence calibration:** [High] if all value claims sourced from live data / [Medium] if some claims inferred or partially stale / [Low] if working primarily from CSM-provided narrative without corroborating system data — state which.
 
 ## Mode
 

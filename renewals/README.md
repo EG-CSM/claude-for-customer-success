@@ -100,6 +100,22 @@ Skills reference the SuccessCOACHING TARO framework (Trigger, Action, Resource, 
 
 ---
 
+## Managed Agents
+
+The renewals plugin hosts one scheduled agent and one on-demand agent.
+
+**Scheduled (runs on a cron cadence):**
+- [`renewal-scanner`](../managed-agent-cookbooks/renewal-scanner/) — daily renewal pipeline scan; per-account risk classification 90/60/30 days out; expansion signals
+
+**On-demand (triggered in chat):**
+- [`churn-intelligence-agent`](../managed-agent-cookbooks/churn-intelligence/) — signal timeline, churn drivers, exit interview guide, blameless postmortem, learnings, and win-back assessment for a churned or at-risk account
+
+Before deploying the churn-intelligence-agent, run `/renewals:cold-start-interview` to build `renewals/CLAUDE.md` — it is the only managed agent in this plugin that reads a dedicated config file separate from `csm/CLAUDE.md`.
+
+Agent registration files are in [`renewals/agents/`](./agents/). Full cookbook documentation is in [`managed-agent-cookbooks/`](../managed-agent-cookbooks/).
+
+---
+
 ## Related plugins
 
 | Plugin | For |

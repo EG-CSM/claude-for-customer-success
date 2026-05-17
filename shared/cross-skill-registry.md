@@ -4,7 +4,7 @@ Canonical reference for all skills across all plugins. Use this registry to dete
 which skill and command to invoke for a given task. Do not hardcode skill command
 strings in individual SKILL.md files — reference this document instead.
 
-Last updated: 2026-05-14
+Last updated: 2026-05-15
 
 ---
 
@@ -87,6 +87,81 @@ skill. It is not an exhaustive trigger list — see individual SKILL.md for full
 | playbook-auditor | `/cs-ops:playbook-auditor` | `--full` · `--coverage` · `--adoption` · `--dead-plays` · `--play <name>` | Auditing playbook coverage and adoption; identifying unused or stale plays |
 | process-doc | `/cs-ops:process-doc` | `--csm-handoff` · `--playbook-governance` · `--data-quality` · `--escalation` · `--segment-change` · `--sop <name>` | Generating or updating CS process documentation; creating SOPs for specific workflows |
 | segment-analyzer | `/cs-ops:segment-analyzer` | `--full` · `--segment <name>` · `--reclassification` · `--at-risk` | Analyzing segment health and distribution; identifying misclassified accounts; at-risk segment view |
+
+---
+
+## Rev-Ops Plugin (`/rev-ops:*`)
+
+Rev-ops skills are single-mode — no mode flags. Trigger by natural language. Skills are
+grouped by Skill Area for navigation; all commands follow the `/rev-ops:<skill-name>` pattern.
+
+### SA1 — Forecast Intelligence
+
+| Skill | Command | Modes | Typical trigger condition |
+|-------|---------|-------|--------------------------|
+| forecast-variance-analysis | `/rev-ops:forecast-variance-analysis` | — | Analyzing why forecast was missed; classifying variance by rep, deal band, or segment |
+| scenario-modeling | `/rev-ops:scenario-modeling` | — | Building P10/P50/P90 range forecast; modeling win-rate sensitivity or downside scenarios |
+| pipeline-coverage-analysis | `/rev-ops:pipeline-coverage-analysis` | — | Assessing pipeline coverage before a forecast call, board review, or quarter-close |
+| pipeline-velocity-tracking | `/rev-ops:pipeline-velocity-tracking` | — | Tracking deal cycle time; flagging deals aging past historical stage averages |
+| deal-classification | `/rev-ops:deal-classification` | — | Independent Commit / Best Case / Pipeline scoring without relying on rep self-reporting |
+| deal-health-scoring | `/rev-ops:deal-health-scoring` | — | Five-dimension health score per open opportunity; identifying at-risk deals this quarter |
+| next-best-action-recommendation | `/rev-ops:next-best-action-recommendation` | — | Producing specific interventions for deals flagged at-risk by health scoring or velocity tracking |
+| revenue-brief-generation | `/rev-ops:revenue-brief-generation` | — | Generating weekly or monthly executive revenue narrative for RevOps lead review |
+| gtm-unified-metrics-pulse | `/rev-ops:gtm-unified-metrics-pulse` | — | Weekly cross-functional metrics report covering pipeline, handoff quality, CS capacity, and churn flags |
+
+### SA2 — Pipeline Health
+
+| Skill | Command | Modes | Typical trigger condition |
+|-------|---------|-------|--------------------------|
+| stage-integrity-audit | `/rev-ops:stage-integrity-audit` | — | Detecting stage-skipping, backward movement, or stale stage in CRM before forecast pulls |
+| field-completion-monitoring | `/rev-ops:field-completion-monitoring` | — | Tracking required field completion by rep and stage gate; pre-quarter-close hygiene |
+| revenue-leakage-scanning | `/rev-ops:revenue-leakage-scanning` | — | Identifying underpriced services, missing expansion clauses, or renewal misalignment before close |
+| non-standard-terms-detection | `/rev-ops:non-standard-terms-detection` | — | Flagging off-playbook payment terms, SLA commitments, or custom provisions for Legal/Finance routing |
+| sales-cs-handoff-quality-scoring | `/rev-ops:sales-cs-handoff-quality-scoring` | — | Scoring closed/won deals on handoff completeness; triggering AE manager issue when below threshold |
+
+### SA3 — Planning Engine
+
+| Skill | Command | Modes | Typical trigger condition |
+|-------|---------|-------|--------------------------|
+| annual-planning-workflow | `/rev-ops:annual-planning-workflow` | — | Initiating the seven-phase annual or mid-year planning cycle (gated, phase-by-phase) |
+| unit-of-growth-calculator | `/rev-ops:unit-of-growth-calculator` | — | Computing GTM headcount requirements and capacity diagnostics using the UoG pod model |
+| quota-sensitivity-analysis | `/rev-ops:quota-sensitivity-analysis` | — | Modeling quota achievability at multiple attainment levels; standalone or inside annual planning |
+| territory-optimization | `/rev-ops:territory-optimization` | — | Evaluating territory fairness across reps; proposing recarves when imbalance exceeds threshold |
+| closed-won-to-cs-capacity-modeling | `/rev-ops:closed-won-to-cs-capacity-modeling` | — | Converting sales forecast into CS resource demand; flagging CS capacity ceiling against headcount |
+| growth-model-vs-actuals-tracking | `/rev-ops:growth-model-vs-actuals-tracking` | — | Monitoring NRR, GRR, and CAC against UoG plan baseline; routing to replan when drift exceeds threshold |
+| mid-year-replan-triggering | `/rev-ops:mid-year-replan-triggering` | — | Monitoring plan-vs-actual drift; producing a replan recommendation memo when thresholds are crossed |
+| change-communication-packaging | `/rev-ops:change-communication-packaging` | — | Producing a data-backed rationale memo + FAQ + rollout sequence for territory, quota, or comp changes |
+
+### SA4 — CRM Data Quality
+
+| Skill | Command | Modes | Typical trigger condition |
+|-------|---------|-------|--------------------------|
+| crm-hygiene-audit | `/rev-ops:crm-hygiene-audit` | — | Overall CRM health score and rep-level scorecard (completeness, accuracy, recency) |
+| duplicate-detection | `/rev-ops:duplicate-detection` | — | Identifying duplicate accounts, contacts, or opportunities with merge-candidate confidence scores |
+| data-decay-tracking | `/rev-ops:data-decay-tracking` | — | Flagging stale contacts and account data overdue for enrichment |
+| cross-system-reconciliation | `/rev-ops:cross-system-reconciliation` | — | Tracing conflicting ARR or pipeline numbers across CRM, Finance Sheets, and CS platform |
+
+### SA5 — Revenue Continuity
+
+| Skill | Command | Modes | Typical trigger condition |
+|-------|---------|-------|--------------------------|
+| early-churn-downgrade-signal-detection | `/rev-ops:early-churn-downgrade-signal-detection` | — | Three-tier churn model: structural risk at close, behavioral signals 30–90 days post-onboarding, late-stage risk pre-renewal |
+| outcome-to-value-tracking | `/rev-ops:outcome-to-value-tracking` | — | Mapping customers to L0–L3 rubric levels on OCV entries; surfacing systemic outcome delivery gaps |
+| deal-to-outcome-tracing | `/rev-ops:deal-to-outcome-tracing` | — | Linking closed/won deals to CS trajectory and OCV rubric checkpoints at 30/60/90/180 days |
+| outcome-statement-builder | `/rev-ops:outcome-statement-builder` | — | Transforming product capabilities into structured outcome statements for OCV catalog development |
+
+### SA6 — Deal Desk
+
+| Skill | Command | Modes | Typical trigger condition |
+|-------|---------|-------|--------------------------|
+| deal-desk-workflow-management | `/rev-ops:deal-desk-workflow-management` | — | Managing deal desk approval routing (submit → review → route → decide → log); SLA enforcement |
+| discount-threshold-monitoring | `/rev-ops:discount-threshold-monitoring` | — | Flagging deals exceeding approved discount thresholds; routing to correct approval authority |
+
+### Rev-Ops Setup
+
+| Skill | Command | Modes | Typical trigger condition |
+|-------|---------|-------|--------------------------|
+| cold-start-interview | `/rev-ops:cold-start-interview` | — | First-run rev-ops plugin setup; re-run after major planning cycle changes |
 
 ---
 

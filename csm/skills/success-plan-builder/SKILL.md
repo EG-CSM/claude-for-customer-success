@@ -38,14 +38,42 @@ Note from config:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G3 (revenue outcome targets carry commitment language + Finance validation callout), G5 (confidentiality check before distributing the plan beyond the CS team).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of success plan request is this?
+   - **New Account Plan**: Fresh account post-kickoff; no prior plan exists; goals from sales handoff or kickoff notes.
+   - **Plan Reset**: Existing plan has drifted — sponsor change, use case pivot, criteria never validated, or material context shift.
+   - **Plan Review**: User submits an existing plan for quality assessment against measurability, co-ownership, and CS motion alignment.
+   - **Milestone Recalibration**: Sound plan but timelines or targets need adjustment due to adoption pace, customer delays, or scope changes.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - Success criteria must originate from customer-stated business outcomes, never inferred from product features.
+   - Primary value metric from company profile must be traceable in the success criteria.
+   - Customer-facing plan must contain zero internal health scores, expansion signals, or escalation routing.
+   - Engagement cadence must match configured CS motion (high-touch / tech-touch / hybrid).
+   - Renewal language requires reviewer validation before sharing with leadership or finance.
+
+3. **EXPERT CHECK**: What would a veteran CSM verify first?
+   - Are the success criteria stated in the customer's own language, or has the CSM translated them into product-speak?
+   - Does the mutual commitments section include actual customer commitments, or is this a one-sided CSM delivery plan?
+   - Is the renewal-ready milestone (M5) positioned at least 60 days before renewal date?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Building criteria from product features because kickoff notes are thin — ask for customer goals explicitly instead.
+   - Generic milestones that don't trace to specific success criteria from Section 3.
+   - Plans with no `[review]` flags — either perfect information (rare) or insufficient scrutiny.
+   - Patching dates on a fundamentally misaligned plan instead of rebuilding from current goals.
+   - Mutual commitments section with only CSM commitments — this isn't a co-authored plan.
+   - Adjusting targets downward without documenting the rationale or addressing root cause.
+
+**After execution**, verify:
+- Does the output answer the implicit question the CSM is asking?
+- Are all data sources timestamped and staleness-flagged?
+- Is the output mode matched to the actual need?
+- Confidence: [High] if 2+ live sources corroborate / [Medium] if single-source or partially stale / [Low] if user-provided context only — state which.
+
+**For complex scenarios**, load additional reasoning:
+- Domain blueprint: `references/reasoning-blueprint.md`
 
 ## Mode
 

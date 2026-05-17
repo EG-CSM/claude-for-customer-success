@@ -24,14 +24,39 @@ full interview.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — No domain guardrails apply — this skill configures the environment rather than generating outputs.
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of profile customization request is this?
+   - **Single-Field Update**: One field changed (new AE partner, revised discount ceiling, updated GRR target). Rest of profile is accurate — targeted edit with downstream trace.
+   - **Section Rebuild**: Multiple fields within one section need updating (new escalation matrix, full pricing restructure, team turnover). Treat the section as a unit — validate internal consistency across all fields.
+   - **Validation Audit**: User runs `--validate` or asks what's missing. Diagnostic only — no edits. Run structural completeness AND logical consistency checks.
+   - **Post-Cold-Start Completion**: Cold-start left placeholders or incomplete sections. Sequence completions by downstream dependency, not file order.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1 (Read before write): Always display current field values before collecting new input — config fields drive financial decisions and an incorrect silent overwrite is worse than a missing field.
+   - G2 (Confirm before writing): Present a diff-style summary and require explicit confirmation — never auto-write, even for single-field changes.
+   - G4 (Section isolation): Writing one section must not alter any other section. If the write mechanism can't guarantee isolation, abort and alert.
+   - G5 (No speculative values): Never infer or suggest field values without user confirmation — "your discount authority is probably around X%" is prohibited.
+   - G7 (Three-section threshold): If 3+ sections need updating, route to `/renewals:cold-start-interview` — customize is a scalpel, not a rebuild tool.
+
+3. **EXPERT CHECK**: What would a veteran renewal operations lead verify first?
+   - Does the changed field create a cross-field consistency violation? Run the four checks: GRR/NRR inversion, discount floor vs. anchor, escalation SLA vs. renewal window, strategic threshold vs. deal size.
+   - Which downstream skills consume this field? Surface affected skills in the confirmation output so the user knows what to re-run.
+   - If multiple placeholders exist, are they being resolved in dependency order (company → team → targets → escalation → rest)?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - ❌ Writing an update without tracing downstream skill impact — user acts on stale skill output without realizing a config change invalidated it.
+   - ❌ Updating one field in a section while leaving related fields stale — partial section updates create internal contradictions.
+   - ❌ Running validate mode and reporting only missing fields without checking logical consistency (GRR < NRR, threshold math).
+   - ❌ Collecting all field values at once instead of field-by-field — increases error rate on structured values like escalation contacts.
+   - ❌ Accepting a value in a format downstream skills don't expect (e.g., "about ten percent" instead of "10%") without normalizing against field definitions.
+   - ❌ Routing a user through customize when 3+ sections need work — cold-start-interview has lower error surface for bulk configuration.
+
+**After execution**, verify:
+- Were current values displayed before every edit and confirmation obtained before every write?
+- Were cross-field consistency checks run for any change to `targets`, `discount-authority`, or `pricing`?
+- Were downstream skill implications surfaced in the confirmation output?
+- Confidence: [High] if field has clear schema and unambiguous value / [Medium] if downstream consistency implications not yet validated / [Low] if target field is ambiguous or value seems inconsistent with other configured fields.
 
 
 ## This Skill vs. Cold-Start Interview

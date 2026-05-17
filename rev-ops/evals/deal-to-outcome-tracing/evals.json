@@ -1,0 +1,178 @@
+{
+  "skill_name": "deal-to-outcome-tracing",
+  "skill_path": "skills/deal-to-outcome-tracing/SKILL.md",
+  "eval_type": "Type A",
+  "version": "1.0.0",
+  "evals": [
+    {
+      "id": 0,
+      "name": "happy-path-account-with-ratified-ocv",
+      "category": "happy-path",
+      "prompt": "Run outcome tracing for Acme Corp.",
+      "context": "HubSpot connected. Acme Corp closed 90 days ago. OCV catalog present with OCV-001 (Ratified) linked to the deal. OCV-001 trigger condition matches account situation. CS platform connected: health_score=72, product_usage_trend=stable.",
+      "expected_output": "Skill produces a single-account longitudinal trace. Confirms catalog completeness (all 3 checks pass). Assesses rubric level using OCV-001 evidence criteria and CS platform signals. Labels data sources. Applies G5 and G6.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output contains a catalog completeness section with results for all three checks: OCV entry referenced, trigger condition match, measurement source accessible",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "structural",
+          "text": "Output contains a current rubric level assessment (L0, L1, L2, or L3) with the OCV entry ID cited",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "guardrail",
+          "text": "Output applies G6: includes a data-as-of timestamp on CRM and CS platform data",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Output applies G5: includes language assigning CS ownership of the response plan",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A4",
+          "type": "structural",
+          "text": "Output includes a next checkpoint date derived from the OCV verification milestone",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A5",
+          "type": "guardrail",
+          "text": "Output applies G8: does not use any Draft OCV entries in the assessment",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "degraded-no-ocv-catalog",
+      "category": "degraded-input",
+      "prompt": "Trace the outcome for Buildco.",
+      "context": "HubSpot connected. Buildco closed 45 days ago. No OCV catalog configured (ocv_catalog_path absent from practice profile). CS platform connected.",
+      "expected_output": "Skill detects absent OCV catalog, switches to structural fallback mode, runs Tier 1 structural risk signals only (discount level, cycle length, stakeholder count), and explicitly labels the output with the degraded confidence declaration.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output explicitly declares OCV catalog absent using the canonical label: '[Outcome data: OCV reference absent — structural signals only — Confidence: Low]' or equivalent",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output does NOT produce a rubric level assessment (L0–L3) — this requires the OCV catalog",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "behavioral",
+          "text": "Output produces a structural risk assessment using available deal attributes (discount, cycle, stakeholder count)",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "behavioral",
+          "text": "Output does not proceed silently — the degraded state is declared before any analysis is shown",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "trigger-condition-mismatch",
+      "category": "edge-case",
+      "prompt": "Check outcome tracing for Zeta Inc.",
+      "context": "HubSpot connected. Zeta Inc closed 60 days ago. OCV-002 (Ratified) is linked to the deal. OCV-002 trigger condition: 'When a mid-market SaaS company is losing revenue to manual billing errors'. Zeta Inc is an enterprise manufacturing company — trigger condition does NOT match.",
+      "expected_output": "Skill passes Check 1 (OCV entry present), fails Check 2 (trigger mismatch), flags this as 'Sold to wrong problem', surfaces it to CS and Sales manager, but continues with the available analysis rather than stopping entirely.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "behavioral",
+          "text": "Output flags a trigger condition mismatch for OCV-002 — the account situation does not match the OCV trigger",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output uses language equivalent to 'Sold to wrong problem' or 'trigger condition not present in account context'",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "guardrail",
+          "text": "Output applies G7: names who should be notified of the mismatch (CS and Sales manager) and through which channel",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Output applies G6: data-as-of timestamp present",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "cohort-view-l0-pattern-detection",
+      "category": "happy-path",
+      "prompt": "Run a cohort outcome trace for all Enterprise accounts closed in Q1.",
+      "context": "HubSpot connected. 12 Enterprise accounts closed in Q1. OCV catalog present with OCV-003 (Ratified) on all 12 deals. At the 90-day checkpoint: 6 accounts at L0, 4 at L1, 2 at L2. L0 rate = 50% (threshold: >40%).",
+      "expected_output": "Skill produces cohort view with L0/L1/L2/L3 breakdown per OCV entry. Fires L0 pattern signal because >40% at L0 past 90-day checkpoint. Surfaces common attributes of L0 accounts. Does not name individual accounts in the pattern signal.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "A0",
+          "type": "structural",
+          "text": "Output contains a cohort rubric level table showing L0/L1/L2/L3 counts and percentages for OCV-003",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A1",
+          "type": "behavioral",
+          "text": "Output fires the L0 pattern signal because L0 rate (50%) exceeds the 40% threshold",
+          "auto_gradable": true,
+          "rubric": null
+        },
+        {
+          "id": "A2",
+          "type": "subjective",
+          "text": "L0 pattern signal surfaces common attributes of L0 accounts rather than just counting them",
+          "auto_gradable": false,
+          "rubric": "PASS: Output attempts to identify what L0 accounts have in common — segment, onboarding path, product tier, or other deal attribute. FAIL: Output only reports the count/percentage without any pattern hypothesis."
+        },
+        {
+          "id": "A3",
+          "type": "guardrail",
+          "text": "Output applies G5: rubric levels described as analytical inputs with CS owning the response",
+          "auto_gradable": true,
+          "rubric": null
+        }
+      ]
+    }
+  ]
+}

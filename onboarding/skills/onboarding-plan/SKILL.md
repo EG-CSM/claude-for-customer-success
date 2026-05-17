@@ -58,14 +58,39 @@ missing config.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G7 (flag any account or success-criteria data that is stale relative to the configured staleness threshold).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of onboarding plan request is this?
+   - **New Plan Draft**: Post-kickoff, first plan generation. CSM has contract start date, stakeholders, and initial priorities. Optimize for completeness and model-correct structure.
+   - **Plan Update**: Existing plan needs revision — milestone completed, date shifted, scope changed, or stakeholder changed. Preserve change log; update only affected sections.
+   - **Status Summary**: Abbreviated current-state view for async communication (Slack, email, stakeholder update). Quiet mode — zero internal labels, no plan modifications.
+   - **Incomplete Config / Recovery**: Config files missing or contain placeholders. Surface every gap explicitly; do not silently generate with defaults.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1 (dates anchor to contract start): All milestone dates derive from contract start date + config day targets. If contract start is unavailable, placeholder every date — never estimate.
+   - G2 (TtV is internal): TtV targets appear only in Section 7 with `[review — internal planning target]` label. Zero TtV references in Sections 1-6 or `--summary` output.
+   - G4 (model adaptation is structural): The onboarding model changes section structure, ownership columns, and prose tone materially. If model is `[PLACEHOLDER]`, default to white-glove and flag — never produce a generic plan silently.
+   - G5 (confidentiality): Customer-facing export contains no internal labels, TtV references, at-risk signals, reviewer notes, or escalation paths. Audit before delivery.
+   - G7 (success criteria is a placeholder until confirmed): Section 6 is always a placeholder on first `--draft` unless success-criteria skill has already run. Never populate from assumptions or sales notes.
+
+3. **EXPERT CHECK**: What would a veteran onboarding CSM verify first?
+   - Is the onboarding model configured and applied, or did the plan silently use a default structure? A white-glove plan shared with a guided-self-serve account damages the relationship framing from day one.
+   - Are all milestone dates calculated from contract start date, not from today's date or kickoff date? One wrong anchor cascades every date in the plan.
+   - For `--update` requests: is the change log preserved and are downstream milestone dates recalculated if a date shift cascades?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - ❌ Calculating milestone dates from today's date or kickoff date instead of contract start date — creates scheduling drift from the anchor.
+   - ❌ Producing a plan without applying the configured model adaptation — a partner-led plan missing the three-party header and communication structure looks like a template, not a plan.
+   - ❌ Regenerating the full plan on an `--update` request instead of updating affected sections and appending to the change log — destroys milestone history.
+   - ❌ Including TtV references, at-risk signals, or escalation paths in `--summary` or customer-facing output — leaks internal planning assumptions.
+   - ❌ Populating Section 6 (success criteria) from sales notes or kickoff conversation when the success-criteria skill has not been run — these require explicit customer agreement.
+   - ❌ Silently generating with default milestone day targets when config contains `[PLACEHOLDER]` values — surface the gap and offer the cold-start-interview path.
+
+**After execution**, verify:
+- Does the plan match the correct onboarding model with all model-specific adaptations applied?
+- Are all milestone dates anchored to contract start date and internally consistent?
+- Is the output mode (draft/update/summary) matched to the actual request, with internal content suppressed in customer-facing output?
+- Confidence: [High] if config is complete + CRM data verified / [Medium] if config partial or CRM unavailable / [Low] if user-provided context only — state which.
 
 ## Mode
 

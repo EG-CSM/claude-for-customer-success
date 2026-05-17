@@ -1,0 +1,266 @@
+[
+  {
+    "id": "SE-PCO-001",
+    "title": "Mode A — Fresh state file, HubSpot live, all phases pending",
+    "description": "Standard status check on first run. No state file exists yet. HubSpot returns pipeline data. Digest posted to Slack.",
+    "input": {
+      "operator_command": "show planning cycle",
+      "practice_profile_snippet": {
+        "company_name": "Meridian Systems",
+        "planning_cycle_name": "FY27 GTM Planning",
+        "planning_quarter": "Q2 2026",
+        "pipeline_coverage_target": 3.0,
+        "quota_lock_date": "2026-06-30",
+        "alert_channel": "#revops-alignment"
+      },
+      "state_file_exists": false,
+      "hubspot_available": true
+    },
+    "expected_behavior": {
+      "phase_state_reader_invoked": true,
+      "phase_gate_writer_invoked": false,
+      "cycle_digest_poster_invoked": true,
+      "state_file_created": false,
+      "overall_status": "on_track",
+      "next_actionable_phase": "pipeline-review",
+      "pipeline_coverage_evaluated": true
+    },
+    "notes": "phase-state-reader initializes 5-phase empty structure in memory only. No disk write occurs without an explicit advance operation. pipeline-review entry criterion 'HubSpot pipeline data accessible' should be marked met: true."
+  },
+  {
+    "id": "SE-PCO-002",
+    "title": "Mode A — HubSpot unavailable; pipeline-review criteria unevaluable",
+    "description": "Status check when HubSpot is offline. pipeline-review entry and exit criteria that require HubSpot data are marked unevaluable, not failed. Digest still posts.",
+    "input": {
+      "operator_command": "planning cycle status",
+      "practice_profile_snippet": {
+        "company_name": "Meridian Systems",
+        "planning_cycle_name": "FY27 GTM Planning",
+        "planning_quarter": "Q2 2026",
+        "pipeline_coverage_target": 3.0
+      },
+      "state_file_exists": false,
+      "hubspot_available": false
+    },
+    "expected_behavior": {
+      "phase_state_reader_invoked": true,
+      "phase_gate_writer_invoked": false,
+      "cycle_digest_poster_invoked": true,
+      "hard_stop": false,
+      "hubspot_status_in_metadata": "unavailable",
+      "pipeline_coverage_criteria_unevaluable": true,
+      "digest_shows_hubspot_unavailable": true
+    },
+    "notes": "HubSpot unavailability does NOT trigger a hard stop for this orchestrator (unlike deal-desk-watcher). The pipeline-review phase criteria that depend on HubSpot are marked unevaluable: true with reason 'HubSpot unavailable'. The digest header shows 'Data as of: unavailable — HubSpot offline'. The G6 data freshness line is never omitted."
+  },
+  {
+    "id": "SE-PCO-003",
+    "title": "Mode B — Advance pipeline-review from pending to in_progress",
+    "description": "Operator opens the first phase. Entry criteria are met (first cycle). phase-gate-writer is invoked with require_confirmation: true. Operator confirms. State file is written.",
+    "input": {
+      "operator_command": "open pipeline-review",
+      "current_phase_states": {
+        "pipeline-review": "pending"
+      },
+      "operator_confirmation_response": "confirm"
+    },
+    "expected_behavior": {
+      "phase_state_reader_invoked": true,
+      "phase_gate_writer_invoked": true,
+      "confirmation_presented": true,
+      "write_status": "completed",
+      "phase_transition_written": {
+        "phase_id": "pipeline-review",
+        "from_status": "pending",
+        "to_status": "in_progress"
+      },
+      "transitions_array_appended": true,
+      "state_file_created_or_updated": true,
+      "cycle_digest_poster_invoked": true
+    },
+    "notes": "This is the first write to the state file in the cycle lifecycle. The state file is created (or written for the first time) by phase-gate-writer only after operator confirmation. The transition record in the phase's transitions array includes transitioned_at ISO timestamp and approved_by: 'operator'."
+  },
+  {
+    "id": "SE-PCO-004",
+    "title": "Mode B — Sequence violation: attempt to open quota-setting before pipeline-review is complete",
+    "description": "Operator requests advancing quota-setting while pipeline-review is still in_progress. The orchestrator detects the violation and reports it without invoking phase-gate-writer.",
+    "input": {
+      "operator_command": "open quota-setting",
+      "current_phase_states": {
+        "pipeline-review": "in_progress",
+        "quota-setting": "pending"
+      }
+    },
+    "expected_behavior": {
+      "phase_state_reader_invoked": true,
+      "phase_gate_writer_invoked": false,
+      "cycle_digest_poster_invoked": true,
+      "violation_reported": true,
+      "violation_message_contains": "pipeline-review must be complete before quota-setting can open",
+      "write_status_in_digest": "not_triggered"
+    },
+    "notes": "The orchestrator evaluates sequence rules BEFORE invoking phase-gate-writer. A violation means phase-gate-writer is never called. The cycle-digest-poster is still invoked so the operator sees the current state board. The write_summary passed to cycle-digest-poster is { status: 'not_triggered', operation_performed: null }."
+  },
+  {
+    "id": "SE-PCO-005",
+    "title": "Mode B — Mark pipeline-review complete; quota-setting entry criteria now met",
+    "description": "Operator marks pipeline-review complete. phase-gate-writer appends the complete transition and sets completed_date. The resulting digest shows quota-setting as 'ready to open'.",
+    "input": {
+      "operator_command": "mark pipeline-review complete",
+      "current_phase_states": {
+        "pipeline-review": "in_progress",
+        "quota-setting": "pending"
+      },
+      "operator_confirmation_response": "confirm"
+    },
+    "expected_behavior": {
+      "phase_state_reader_invoked": true,
+      "phase_gate_writer_invoked": true,
+      "write_status": "completed",
+      "phase_transition_written": {
+        "phase_id": "pipeline-review",
+        "from_status": "in_progress",
+        "to_status": "complete"
+      },
+      "completed_date_set": true,
+      "next_actionable_phase_after_write": "quota-setting",
+      "quota_setting_entry_criteria_met": true
+    },
+    "notes": "Exit criteria on pipeline-review are marked met: true ONLY because the phase status was explicitly transitioned to complete by the operator — not because HubSpot data suggested the criteria were satisfied. This is the core integrity constraint of the exit criteria system."
+  },
+  {
+    "id": "SE-PCO-006",
+    "title": "Mode C — Add blocker to quota-setting",
+    "description": "Operator adds a blocker to the quota-setting phase while it is in_progress. phase-gate-writer appends the blocker, sets phase status to blocked, and appends a transition record.",
+    "input": {
+      "operator_command": "add blocker to quota-setting: Finance approval for Q3 quota bands pending — Sarah Chen OOO until May 20",
+      "current_phase_states": {
+        "pipeline-review": "complete",
+        "quota-setting": "in_progress"
+      },
+      "operator_confirmation_response": "confirm"
+    },
+    "expected_behavior": {
+      "phase_state_reader_invoked": true,
+      "phase_gate_writer_invoked": true,
+      "operation": "add_blocker",
+      "write_status": "completed",
+      "blocker_appended": true,
+      "blocker_fields": {
+        "blocker_id_format": "blk-quota-setting-[epoch]",
+        "raised_by": "operator",
+        "resolved_at": null
+      },
+      "phase_status_set_to_blocked": true,
+      "transition_appended": {
+        "from_status": "in_progress",
+        "to_status": "blocked"
+      },
+      "overall_status_becomes": "blocked",
+      "digest_shows_g8_blocker_detail": true
+    },
+    "notes": "G8 enforcement: the digest blocked-phase detail block must show the blocker description, raised_by, and raised_at. The blocker_id is generated by phase-gate-writer using the pattern blk-[phase_id_slug]-[epoch_seconds]."
+  },
+  {
+    "id": "SE-PCO-007",
+    "title": "Mode C — Resolve blocker; phase returns to in_progress",
+    "description": "Operator resolves the single blocker on quota-setting. Since all blockers are now resolved, the phase status returns to in_progress and a transition record is appended.",
+    "input": {
+      "operator_command": "resolve blocker blk-quota-setting-1747302000",
+      "current_phase_states": {
+        "quota-setting": "blocked"
+      },
+      "existing_blockers": [
+        {
+          "blocker_id": "blk-quota-setting-1747302000",
+          "description": "Finance approval for Q3 quota bands pending — Sarah Chen OOO until May 20",
+          "raised_at": "2026-05-15T10:30:00Z",
+          "raised_by": "operator",
+          "resolved_at": null
+        }
+      ],
+      "operator_confirmation_response": "confirm"
+    },
+    "expected_behavior": {
+      "phase_gate_writer_invoked": true,
+      "operation": "resolve_blocker",
+      "write_status": "completed",
+      "blocker_resolved_at_set": true,
+      "all_blockers_resolved": true,
+      "phase_status_set_to_in_progress": true,
+      "transition_appended": {
+        "from_status": "blocked",
+        "to_status": "in_progress"
+      },
+      "overall_status_becomes": "on_track"
+    },
+    "notes": "The status only returns to in_progress if ALL blockers have resolved_at set. A partial resolution (multiple blockers, one resolved) leaves the phase blocked. The resolved_at is set on the individual blocker, not removed from the array — the blocker record persists for audit."
+  },
+  {
+    "id": "SE-PCO-008",
+    "title": "Hard stop — company_name missing from practice profile",
+    "description": "Practice profile exists but company_name field is absent. Orchestrator stops immediately, reports the missing field, and invokes no subagents.",
+    "input": {
+      "operator_command": "show planning cycle",
+      "practice_profile_snippet": {
+        "planning_cycle_name": "FY27 GTM Planning",
+        "planning_quarter": "Q2 2026"
+      }
+    },
+    "expected_behavior": {
+      "phase_state_reader_invoked": false,
+      "phase_gate_writer_invoked": false,
+      "cycle_digest_poster_invoked": false,
+      "hard_stop": true,
+      "error_message_contains": "Required practice profile field missing: company_name",
+      "recovery_hint_shown": true
+    },
+    "notes": "This is the earliest possible hard stop — before any subagent is invoked. The orchestrator reports 'Run rev-ops cold-start to configure.' as the recovery hint. No state file is read, no HubSpot is contacted."
+  },
+  {
+    "id": "SE-PCO-009",
+    "title": "Hard stop — cycle state file corrupt (invalid JSON)",
+    "description": "The state file at cycle_state_path exists but cannot be parsed. phase-state-reader returns { error: 'state_file_corrupt' }. Orchestrator stops and reports the corruption without invoking phase-gate-writer or cycle-digest-poster.",
+    "input": {
+      "operator_command": "planning cycle status",
+      "practice_profile_snippet": {
+        "company_name": "Meridian Systems",
+        "planning_quarter": "Q2 2026"
+      },
+      "state_file_exists": true,
+      "state_file_valid_json": false
+    },
+    "expected_behavior": {
+      "phase_state_reader_invoked": true,
+      "phase_gate_writer_invoked": false,
+      "cycle_digest_poster_invoked": false,
+      "hard_stop": true,
+      "error_message_contains": "Cycle state file at",
+      "recovery_hint_shown": true,
+      "recovery_hint_contains": "Back up the file and delete it to reset"
+    },
+    "notes": "The hard stop occurs when phase-state-reader returns { error: 'state_file_corrupt' }. The orchestrator surfaces the corruption, gives the recovery path, and exits cleanly. A MISSING state file is not corruption — it initializes the empty cycle structure in memory."
+  },
+  {
+    "id": "SE-PCO-010",
+    "title": "Mode B — Operator declines gate write (skip); digest still posts",
+    "description": "Operator requests marking quota-setting complete but cancels at the confirmation prompt. write_status is skipped. cycle-digest-poster is invoked with the pre-write state and reports the skip in the Gate Write section.",
+    "input": {
+      "operator_command": "mark quota-setting complete",
+      "current_phase_states": {
+        "pipeline-review": "complete",
+        "quota-setting": "in_progress"
+      },
+      "operator_confirmation_response": "skip"
+    },
+    "expected_behavior": {
+      "phase_gate_writer_invoked": true,
+      "write_status": "skipped",
+      "state_file_unchanged": true,
+      "cycle_digest_poster_invoked": true,
+      "digest_gate_write_section": "⏭️  Operator skipped gate write — no state changes made",
+      "quota_setting_status_in_digest": "in_progress"
+    },
+    "notes": "Operator declining is not an error — it is a valid outcome. The orchestrator continues to cycle-digest-poster with the pre-write phases array. The digest accurately reflects the unchanged state. The write_log from phase-gate-writer records human_approval_status: 'skipped'."
+  }
+]

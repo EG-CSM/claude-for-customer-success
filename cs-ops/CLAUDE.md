@@ -102,19 +102,46 @@ If a skill uses warehouse or CS Platform data and cannot confirm when that data 
 
 ---
 
+## AskUserQuestion (AUQ) resilience
+
+These rules govern every `AskUserQuestion` call in this plugin. They are not skill-specific — they apply to all skills, commands, and agents.
+
+**One question per call.** Never batch multiple questions into a single `AskUserQuestion` invocation. If more than one decision is needed, ask the first, wait for a response, then ask the next. The single-question rule is absolute.
+
+**T2 — prose fallback.** The `AskUserQuestion` widget does not render in all clients. If the widget returns an empty, null, or unparseable response, immediately present a prose multiple-choice block and do not proceed as if the question was answered:
+
+```
+**[Question text here]**
+
+**A)** [Option 1]
+**B)** [Option 2]
+**C)** [Option 3] ← proceeding with this if no response
+
+*(Type A, B, C — or describe your preference)*
+```
+
+**T3 — embedded default.** The T2 prose block always marks one option with `← proceeding with this if no response`. If the user does not respond within the session, proceed with that option. The default should be the safest or most reversible choice — not the most aggressive action.
+
+**`/auq force-prose` command.** If the user sends `/auq force-prose`, skip the widget on all subsequent `AskUserQuestion` calls this session and go directly to T2 prose blocks. Acknowledge once: "Switching to prose-only questions for this session." Then apply without further comment.
+
+---
+
 ## Source attribution
 
 Tag outputs to describe what was actually used:
 
 - `[Warehouse — Snowflake]` / `[Warehouse — BigQuery]` etc. — only if a live tool call returned this data this session
-- `[CS Platform — Gainsight]` etc. — only if a live tool call returned this data
-- `[CRM — Salesforce]` etc. — only if a live tool call returned data
-- `[BI — Looker]` / `[BI — Tableau]` etc. — only if a live dashboard query returned data
+- `[CS Platform — Gainsight]` / `[CS Platform — Vitally]` etc. — only if a live tool call returned this data this session
+- `[CRM — Salesforce]` / `[CRM — HubSpot]` etc. — only if a live tool call returned data this session
+- `[BI — Looker]` / `[BI — Tableau]` etc. — only if a live dashboard query returned data this session
+- `[Computed]` — derived or calculated by the agent from live data (not a direct retrieval)
 - `[user provided]` — the CS Ops analyst pasted it, described it, or uploaded it
 - `[model knowledge]` — background about the domain from training data; not portfolio-specific
 - `[conversation context]` — facts established earlier in this session
 
-Do not promote a tag because the data "seems like" it came from the warehouse. The tag describes provenance.
+Do not promote a tag because the data "seems like" it came from the warehouse. The tag describes provenance, not assumption.
+
+**Tool-vs-context conflict.** When a tool result conflicts with what you described in conversation (the warehouse shows GRR at 92%, but you said the team is tracking 88%), surface both: "The warehouse shows GRR at 92%. You described it as 88% — these conflict. Which is the current working figure?" Do not silently prefer either.
 
 ---
 
@@ -221,6 +248,20 @@ If SuccessCOACHING:
 
 ---
 
+## Cold-start readiness
+
+| Skill Area | Full capability | Partial | Degraded |
+|---|---|---|---|
+| SA1 — Portfolio Health | Data warehouse + CS Platform + CRM connected | CS Platform + CRM | CRM only; no usage signals |
+| SA2 — Health Model Analysis | CS Platform connected + model components configured | CS Platform connected, model unconfigured | No connector; health from conversation |
+| SA3 — Capacity Planning | CRM + CS Platform + team headcount configured | CRM + headcount | Headcount only; no load data |
+| SA4 — Playbook Effectiveness | CS Platform + data warehouse + playbook inventory configured | CS Platform + playbook inventory | Playbook inventory only |
+| SA5 — Segmentation Analysis | Data warehouse + CRM + segmentation model configured | CRM + segmentation model | CRM only; no usage stratification |
+| SA6 — Reporting & Dashboards | Data warehouse + BI tool + CS Platform connected | Data warehouse + CS Platform | CS Platform only; no warehouse queries |
+| CS Ops Orchestrator | All connectors + full CS Ops profile | Any two connectors | Single connector or profile incomplete |
+
+---
+
 ## Escalation matrix
 
 | Situation | Route to | How | SLA |
@@ -250,6 +291,86 @@ If SuccessCOACHING:
 **CS leadership audience:** [PLACEHOLDER — level of operational detail for Head of CS]
 **Analyst output format:** [PLACEHOLDER — tables + narrative / dashboards / raw data + interpretation]
 **Data presentation preference:** [PLACEHOLDER — absolute numbers / percentages / trends / benchmarks]
+
+---
+
+---
+
+## Managed agents
+
+The cs-ops plugin manages one scheduled agent. It reads this config file for segment definitions, health band thresholds, capacity targets, connector routing, baseline file path, and output targets. It respects the shared guardrails above.
+
+---
+
+### portfolio-segment-digest (scheduled)
+
+**What it does:** Runs each Monday morning to produce a segment-level health roll-up for CS Ops, Head of CS, and CRO audiences. Pulls current health distributions across all configured segments, compares them against last week's baseline, and surfaces meaningful distribution shifts, ARR at risk by segment, capacity coverage gaps, and top at-risk accounts per segment. This agent operates at the portfolio layer — it tells you whether segments are shifting, not which individual accounts to call. Account-level alerting lives in `health-watcher` and `churn-signal-digest`.
+
+**Pipeline stages:**
+1. `segment-data-puller` — pulls all accounts from CRM and CS Platform; returns per-account records (ID, segment, ARR, health tier, CSM); groups records into segment-level collections; halts if zero accounts returned
+2. `distribution-analyzer` — computes per-segment band distributions (Red / Yellow / Green count and ARR); calculates week-over-week shifts against the baseline; flags distribution shifts that exceed `red_shift_threshold_pp`; identifies at-risk account lists and capacity coverage gaps per segment; no external connectors
+3. `portfolio-summarizer` — computes cross-segment comparison table ranked by Red ARR descending; produces portfolio-level totals (all segments combined); no external connectors
+4. `report-composer` — formats markdown and Slack mrkdwn output; applies first-run or standard template based on whether a baseline exists; writes updated baseline to `baseline_file_path` before delivery
+
+**Trigger phrases:** "Run portfolio digest", "Segment health report", "Weekly segment rollup", "Run portfolio segment digest", or on schedule.
+
+| Agent | Triggers | Subagents | Cadence | Plugin that owns it |
+|-------|----------|-----------|---------|---------------------|
+| portfolio-segment-digest | Scheduled (Monday 7 AM) · "run portfolio digest" · "segment health report" · "weekly segment rollup" | segment-data-puller, distribution-analyzer, portfolio-summarizer, report-composer | Weekly (Monday) | cs-ops |
+
+**Required config fields (from this file):**
+- `segment_definitions` — named segments with membership criteria (e.g., ARR range, industry)
+- `health_band_definitions` — Red / Yellow / Green boundaries and score scale
+- `capacity_targets` — accounts-per-CSM target by segment
+- `crm_connector` — connector name and field paths (account ID, segment, ARR, CSM)
+- `cs_platform_connector` — connector name and field paths (health score or tier by account ID)
+- `baseline_file_path` — full path to the baseline JSON file for week-over-week comparison
+- `slack_output_channel` — CS Ops Slack channel ID or name
+- `file_output_path` — directory for markdown file output
+
+**Optional config fields:**
+- `at_risk_account_limit` — max at-risk accounts listed per segment (default: 5)
+- `red_shift_threshold_pp` — minimum Red % increase in percentage points to flag as meaningful shift (default: 5)
+- `health_refresh_cadence` — used to warn if current data may not reflect the latest refresh (default: weekly)
+- `health_data_owner` — name or role shown in data freshness warnings
+- `reporting_cadence` — cron schedule (default: `"0 7 * * 1"`)
+
+**Behavioral notes:**
+- If the CRM or CS Platform connector is unavailable at run time, the agent stops and surfaces the error — it does not run on stale or partial data
+- Baseline is written after all subagents complete but before delivery; if the write fails, the agent surfaces the error and does not proceed silently
+- First run (no baseline file): initializes with current distributions; omits week-over-week columns and shift flags; posts first-run summary instead of standard digest format
+- Corrupted baseline: treated as first run; logs "Baseline file could not be read — initializing fresh. Prior week-over-week data unavailable."
+- Internal planning target metrics appear in file output only — never in the Slack post
+- Capacity notes are flags, not analyses; for full capacity planning use `/cs-ops:capacity-planner`
+
+**Cold-start readiness for this agent:**
+
+| Capability | Full | Partial | Degraded |
+|------------|------|---------|----------|
+| Segment Data Puller | CRM + CS Platform connected | CRM only (no health tier data) | Either connector unavailable — agent halts |
+| Distribution Analyzer | segment_definitions + health_band_definitions + capacity_targets configured | Partial segment config | Required fields contain [PLACEHOLDER] — halts |
+| Portfolio Summarizer | All segments defined | Subset of segments defined | No segments defined — halts |
+| Orchestrator | All connectors + full config + baseline writable | Connectors available, first-run (no baseline) | CRM or CS Platform unavailable — halts |
+
+**Cookbook:** `managed-agent-cookbooks/portfolio-segment-digest/`
+**Schedule:** `"0 7 * * 1"` (Monday at 7:00 AM)
+
+If required config fields contain `[PLACEHOLDER]`, run `/cs-ops:cold-start-interview` to configure this agent before scheduling.
+
+---
+
+## Shared assets
+
+These files are authoritative for the full plugin suite. Read them before acting on any
+cross-plugin workflow or when a skill description references shared definitions.
+
+- **`~/.claude/plugins/config/claude-for-customer-success/shared/cs-domain-model.md`**
+  Health score bands (Healthy / Developing / At Risk / Critical), shared guardrails G1–G7,
+  and CS domain vocabulary used across all plugins.
+
+- **`~/.claude/plugins/config/claude-for-customer-success/shared/cross-skill-registry.md`**
+  Canonical command registry for all five plugins. Use this to resolve skill names, mode
+  flags, and trigger conditions without hardcoding command strings in skill files.
 
 ---
 

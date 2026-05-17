@@ -50,14 +50,41 @@ despite missing config.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G7 (flag any account or deal data that is stale relative to the configured staleness threshold).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of kickoff preparation request is this?
+   - **Standard Kickoff**: Config is populated, CRM returns account data. Apply model adaptation and generate with full context.
+   - **Incomplete Config Kickoff**: Config has `[PLACEHOLDER]` markers or missing fields. Surface every default visibly — silent genericity is the primary risk.
+   - **Missing Account Data Kickoff**: No CRM connector or sparse CRM data. Distinguish "leave blank for CSM" from "ask CSM now" — names and M1 date require asking.
+   - **Partner-Led / Multi-Party Kickoff**: Three-party engagement requiring explicit partner naming, role clarity, and escalation paths in the agenda.
+   - **Mode-Specific Request**: User asked for `--agenda` or `--checklist` only. Deliver exactly the requested mode — do not upsell `--prep` unless kickoff is <48h away with no checklist.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G2: Expansion or upsell signals from CRM must not appear in any customer-facing output (`--agenda` mode). Internal checklist only.
+   - G4: If attendee confirmation flags trigger an escalation recommendation, route through configured escalation matrix with named owner — not generic "reach out to your manager."
+   - G5: Confidentiality — `--agenda` output must contain zero internal artifacts: no confidence tags, no reviewer notes, no checklist items, no staleness flags. Scan before presenting.
+   - G7: Flag stale CRM data with source date and staleness indicator. CRM >7 days = stale. Never silently use stale data for M1 date calculation or stakeholder names.
+   - Model adaptation is structural, not cosmetic — if the onboarding model didn't change at least 2 agenda sections, it wasn't actually applied.
+
+3. **EXPERT CHECK**: What would a veteran onboarding CSM verify first?
+   - Did the model adaptation actually change the agenda structure, or just swap a label? Compare against the default 60-minute template.
+   - Is the M1 target date calculated and shown, or is it a placeholder? If contract start date is missing, the date must read `[confirm date]` — never estimate.
+   - Are required attendees confirmed or flagged? Any unconfirmed attendee within 48 hours of kickoff is a blocker, not a note.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Producing an agenda that says "white-glove" but uses the same structure as guided-self-serve — model adaptation must be structural.
+   - Generating a two-party agenda ("us and you") for a partner-led three-party engagement — confuses the relationship from day one.
+   - Letting `[account name]` or `[CSM name]` placeholders leak into `--agenda` customer-facing output.
+   - Substituting missing config values with reasonable defaults without flagging them — the CSM must know what's configured vs. defaulted.
+   - Calculating M1 date from an unverified or stale contract start date — a wrong milestone in a customer document erodes trust at first contact.
+   - Presenting a contact list from CRM as a complete stakeholder map without noting which required roles (exec sponsor, champion, technical lead) are missing.
+
+**After execution**, verify:
+- Does the output match the requested mode (`--prep` / `--agenda` / `--checklist`)?
+- Is `--agenda` output clean of all internal content (reviewer notes, confidence tags, checklist items)?
+- Is the M1 date calculated and shown (or explicitly marked `[confirm date]` if contract start is unavailable)?
+- Are all required attendees from config accounted for — confirmed or flagged?
+- Confidence: [High] if config complete + CRM fresh + attendees confirmed / [Medium] if config complete but CRM stale or partial / [Low] if config has placeholders or data is entirely manual — state which gaps drive the rating.
 
 ## Mode
 

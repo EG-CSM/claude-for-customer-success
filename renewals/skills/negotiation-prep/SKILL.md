@@ -50,14 +50,40 @@ Fields read from config:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G4 (verify a named escalation path is configured before generating negotiation guidance).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of negotiation prep request is this?
+   - **Standard Renewal**: Account healthy, no pressure signals, renewal is routine with a possible price-increase conversation. Optimize for completeness over urgency.
+   - **Price-Sensitive Renewal**: Budget freeze signals, prior price objections, declining usage, or scope reduction requests. Anchor integrity and concession sequencing are critical.
+   - **Competitive Displacement Threat**: Competitor named in calls or CRM, active evaluation or RFP. Hold the anchor — do not panic-discount. Lead with value and switching cost.
+   - **Stakeholder Disruption**: Champion departure, exec sponsor change, reorg. Validate the stakeholder map before building the brief — a stale map invalidates the negotiation posture.
+   - **Expansion-Attached Renewal**: Renewal coincides with upsell or tier upgrade. Separate the renewal anchor from the expansion proposal — each needs its own walk-away.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G4: Escalation path must be configured before generating negotiation guidance — no generic "escalate to your manager." Named owner, channel, and SLA required.
+   - G5: Internal positioning, walk-away figures, competitive analysis, and discount authority details are confidential — suppressed entirely in `--export` mode. Verify output destination before generating.
+   - G7: All data sources must carry a timestamp and staleness flag — CRM >7 days, call recordings >14 days. Never present stale commercial data without flagging it.
+   - Discount authority ceiling from config gates every offer scenario — any offer below authority requires pre-call approval from the configured escalation owner.
+   - Connected integrations limit what can be retrieved — flag gaps explicitly, never silently omit a data source.
+
+3. **EXPERT CHECK**: What would a veteran renewal negotiator verify first?
+   - Has the customer actually raised a price objection, or am I solving a problem that doesn't exist? Preemptive discounting trains customers to expect it.
+   - Are the three numbers locked (anchor, first concession, walk-away) before the brief is complete? If any number requires on-call calculation, the brief is incomplete.
+   - Is the stakeholder map current? Cross-reference CRM contacts against recent call attendees — a name/title list from CRM is not a verified stakeholder map.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Opening below anchor without pre-approved authority — every dollar below anchor in the opening is unrecoverable.
+   - Treating the walk-away floor as the opening offer — the floor is the minimum acceptable outcome, not the starting position.
+   - Fabricating competitor intelligence — if no competitive data is configured or confirmed from calls, say so. Do not invent competitor weaknesses or pricing.
+   - Generating `--export` output before reviewing the internal brief — the export suppresses all strategy; the CSM must see the brief first.
+   - Presenting a below-authority offer on a call without prior escalation approval — it sets a precedent and cannot be retracted.
+   - Producing a thin brief for a "healthy" account without running the objection scan — latent objections surface on calls, not in CRM status fields.
+
+**After execution**, verify:
+- Does the brief give the CSM everything needed to walk into the negotiation prepared — anchor, concession path, floor, objection responses, and escalation routing?
+- Are all offer scenarios validated against the configured discount authority ceiling?
+- Is internal content fully suppressed if `--export` mode was used?
+- Confidence: [High] if CRM + call data corroborate and authority is configured / [Medium] if single-source or partially stale data / [Low] if user-provided context only — state which.
 
 ## Mode
 

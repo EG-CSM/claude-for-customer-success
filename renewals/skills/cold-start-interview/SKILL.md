@@ -53,14 +53,40 @@ when the interview completes.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — No domain guardrails apply — this skill configures the environment rather than generating outputs.
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of configuration interview request is this?
+   - **First-Run Full Configuration**: No existing config file; all 8 sections needed. Optimize for pacing — front-load high-impact sections before fatigue sets in.
+   - **Targeted Reconfiguration**: Existing config present; user updating one section via `--section` or `--redo`. Check cross-section dependencies before writing.
+   - **Integration Verification**: `--check-integrations` mode; no config content changes, only connector status verification. Distinguish configured vs. verified vs. live.
+   - **Quick-Start Bootstrap**: `--quick` mode; minimum viable config to start using skills. Select questions that maximize downstream skill output quality.
+   - **Company Profile Update**: `--redo-company-profile` mode; shared company-level questions only. Changes propagate to all plugins, not just renewals.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1: Never write configuration without explicit user confirmation — config values propagate to every renewals skill output.
+   - G2: Discount authority must be bounded — if user claims "unlimited," probe for the practical threshold and log with advisory note if they insist.
+   - G4: Escalation matrix entries require all three parts (who, notification method, SLA) — incomplete entries degrade escalation-dependent skills.
+   - G5: GRR/NRR targets and ARR figures in configuration carry revenue commitment implications — flag Finance/RevOps review requirement on write.
+   - G7: Integration status must distinguish "configured" from "verified" — only mark verified after a successful test call this session.
+
+3. **EXPERT CHECK**: What would a veteran renewals operations lead verify first?
+   - Is the interview mode matched to the user's actual need? A user asking for `--full` who has zero integrations may be better served by `--quick` first.
+   - Are churn signals specific and measurable, or vague labels? "Low adoption" is not actionable — push for the metric and threshold.
+   - Do discount authority, escalation thresholds, and price increase policy form a consistent chain? A 10% discount authority with a 5% escalation trigger is contradictory.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Running all 8 sections in rigid order regardless of user fatigue — offer a save point after Section 3 (book of business).
+   - Accepting vague churn signals without probing for specific metrics or thresholds that skills can actually evaluate against.
+   - Writing a `--section` update without checking whether the change invalidates values in dependent sections.
+   - Marking integrations as "verified" because they appear in the config, without running a live test call.
+   - Collecting quick-start answers that skip GRR/NRR targets and churn signals — these are the values most skills need to produce useful output.
+   - Displaying proposed configuration in raw markdown instead of readable, section-organized format before confirmation.
+
+**After execution**, verify:
+- Does the written configuration contain enough specificity for downstream skills to produce calibrated (not generic) output?
+- Are all integration statuses accurately reflecting their actual verification state?
+- Is the output mode (full/quick/section/check-integrations) matched to what the user actually needed?
+- Confidence: [High] if all sections completed with specific, bounded values / [Medium] if placeholders remain or integration verification incomplete / [Low] if quick-start with majority placeholders — state which and recommend next step.
 
 ## Interview — full configuration
 

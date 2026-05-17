@@ -23,14 +23,39 @@ capacity planning run against your actual data model — not generic defaults.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — No domain guardrails apply — this skill configures the environment rather than generating outputs.
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of configuration request is this?
+   - **First-Install Full Config**: No config file exists. Running the complete seven-section interview for the first time. Optimize for pacing and completeness — every unanswered field gets `[PLACEHOLDER]`.
+   - **Section Reconfiguration**: Config exists but one section needs updating (e.g., `--section metrics` after a reorg). Optimize for cross-section dependency checking — changed values may invalidate other sections.
+   - **Conflict Resolution**: Interview answers contradict `company-profile.md` or existing cross-plugin config values. Surface every conflict before writing — let the user decide which source of truth wins.
+   - **Incomplete-Data Config**: User cannot answer multiple questions (early-stage CS org, no formal health model). Use `[PLACEHOLDER]` liberally and flag which downstream skills will be limited.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1 (No invented values): Unanswered questions receive `[PLACEHOLDER]` — never synthesize plausible defaults or "industry benchmarks" to fill gaps.
+   - G2 (Review before write): Never write the config file without displaying the full output and receiving explicit user confirmation. Per-section "looks fine" does not count.
+   - G4 (Cross-file consistency): If segment definitions, metrics, or tooling answers conflict with `company-profile.md`, surface the conflict before writing — do not silently overwrite.
+   - G5 (Scope boundary): This skill captures current state only. Maturity assessments, recommendations, and gap analysis belong in downstream skills — do not scope-creep into consulting.
+   - G7 (Dependency awareness): When reconfiguring a single section, trace the dependency chain (segments -> capacity -> reporting -> tooling) and flag downstream sections that may need updates.
+
+3. **EXPERT CHECK**: What would a veteran CS Ops practitioner verify first?
+   - Is every unanswered question accounted for — either answered, explicitly marked `[PLACEHOLDER]`, or recorded as "Not tracked / No formal process"? Silent gaps are the primary failure mode.
+   - For section reconfiguration: does the changed section reference or get referenced by other sections? Check for orphaned dependencies (e.g., updated segment names that capacity planning still references by old name).
+   - For any write: does the final config file differ from `company-profile.md` on any shared values? If so, is the divergence intentional and surfaced?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Filling in "industry standard" values when the user said they don't track a metric — record what they said, not what you think they should say.
+   - Writing config after completing only some sections without flagging remaining sections as incomplete.
+   - Overwriting the entire config file when only one section was reconfigured — read existing, merge, display diff, confirm.
+   - Turning the interview into a maturity assessment ("you should consider formalizing your health model") — capture, don't consult.
+   - Skipping the full-file confirmation gate because individual sections were confirmed — the assembled file may have cross-section inconsistencies.
+   - Silently diverging from `company-profile.md` on segment definitions or metric names without surfacing the conflict.
+
+**After execution**, verify:
+- Does the config file contain zero silent gaps — every field is either answered or `[PLACEHOLDER]`?
+- Were all cross-file conflicts with `company-profile.md` surfaced and resolved?
+- For section reconfiguration: were downstream dependency impacts flagged?
+- Confidence: [High] if all sections answered with user confirmation / [Medium] if `[PLACEHOLDER]` markers present in non-critical sections / [Low] if critical sections (metrics, segments) are placeholders — state which.
 
 
 ## When this runs

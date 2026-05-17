@@ -34,14 +34,43 @@ Note from config:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G1 (health scores referenced in stakeholder context are heuristics only), G5 (confidentiality check before distributing stakeholder contact data externally).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of stakeholder mapping request is this?
+   - **Coverage Assessment** — baseline view of known contacts, missing roles, and role coverage against CS motion requirements
+   - **Engagement Gap Detection** — contacts are known but engagement is cold or uneven; focus on who dropped off and what it signals
+   - **Sponsor Risk Evaluation** — executive sponsor stability concern: departure signals, tenure, succession gaps, renewal proximity
+   - **Influence Mapping** — understanding decision dynamics: who blocks, who accelerates, who holds real authority vs. named authority
+   - **Pre-Event Preparation** — map built or refreshed for an upcoming QBR, renewal, or executive meeting; recency is critical
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - CS motion (high-touch vs. tech-touch) determines minimum role coverage and dormancy thresholds — check config before applying defaults
+   - Data source freshness: CRM contact lists decay; never present contacts as current without verifying last-activity date
+   - Confidentiality: stakeholder maps are internal documents — never include in customer-facing deliverables
+   - Escalation matrix must be configured before routing sponsor risk actions — flag if missing
+   - Detractor designation requires direct evidence (stated opposition, negative NPS) — inference from silence or title is prohibited
+
+3. **EXPERT CHECK**: What would a veteran CSM verify first?
+   - Is this account single-threaded? (Only one active contact across all roles = immediate risk regardless of other signals)
+   - Does the executive sponsor's observed behavior match their CRM role? (Title ≠ authority — verify through contract signatures, QBR attendance, stated decision power)
+   - Are dormancy thresholds role-appropriate? (Executive quarterly contact is healthy; champion 30-day silence in high-touch is declining)
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Presenting CRM contact lists as stakeholder coverage — CRM includes departed, inactive, and irrelevant contacts; filter by recency and verify role
+   - Treating all silence equally — a 45-day gap means different things for an executive sponsor vs. a day-to-day champion
+   - Inferring influence from org-chart proximity instead of observed behavior (call attendance, stated authority, escalation patterns)
+   - Labeling contacts as detractors based on silence or tone without direct evidence
+   - Escalating sponsor risk from a single signal (one missed QBR, one LinkedIn update) — require 2+ independent signals
+   - Building an exhaustive 20+ contact map when the top 8-10 by influence and recency would surface the actual signal
+
+**After execution**, verify:
+- Does the output answer the implicit question the CSM is asking?
+- Are all data sources timestamped and staleness-flagged?
+- Is the output mode matched to the actual need?
+- Confidence: [High] if 2+ live sources corroborate / [Medium] if single-source or partially stale / [Low] if user-provided context only — state which.
+
+**For complex scenarios**, load additional reasoning:
+- Domain-specific blueprint: `references/reasoning-blueprint.md`
 
 ## Mode
 

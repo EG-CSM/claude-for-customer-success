@@ -43,14 +43,40 @@ If config is missing or contains `[PLACEHOLDER]` markers in standard contract te
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G7 (flag any contract data that is stale relative to the configured staleness threshold).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of contract review request is this?
+   - **Standard Renewal Extraction**: Executed MSA, no amendments, standard terms, adequate notice window. Full eight-category pass — non-standard terms hide in exhibits.
+   - **Amended or Multi-Document**: MSA plus amendments, order forms, or SOWs. Amendment language governs where it conflicts — build consolidated term view before extracting.
+   - **Price-Constrained Renewal**: Price caps, CPI linkage, MFN, or rate locks present. Extract exact constraint mechanics and validate against any proposed increase before commercial action.
+   - **Time-Critical Review**: Auto-renewal notice, quote obligation, or price increase deadline inside 60 days. Surface every date-sensitive obligation first; escalate anything inside 30 days before completing the full extraction.
+   - **Unverified Source**: No executed contract — working from notes, summaries, or partial uploads. Flag all outputs `[Low Confidence]` and block commercial decisions until signed document is obtained.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1: This output is a commercial risk register, not a legal opinion — never interpret contract language as legal advice or present clause analysis as a legal conclusion.
+   - G2: Amendments govern where they conflict with the MSA — never extract terms from the MSA alone when amendments exist; confirm amendment count before starting.
+   - G4: All red-flag clauses route through the configured escalation matrix to Legal with named owner, channel, and SLA — no generic "check with Legal."
+   - G5: Contract terms, ARR, and risk flags are internal-only — confidentiality check required before any output leaves the CSM's view.
+   - G7: Flag stale contract data with source date and staleness indicator — contract system data >7 days, uploaded documents flagged if version currency is unconfirmed.
+
+3. **EXPERT CHECK**: What would a veteran contracts reviewer verify first?
+   - Are all amendments pulled and reviewed, or is this an MSA-only extraction that may reflect superseded terms?
+   - Is there a price protection clause that must be confirmed before any price-increase-prep or negotiation-prep runs downstream?
+   - Are there hard deadlines (auto-renewal notice, quote obligation, price increase notification) inside 60 days that require immediate surfacing before the full extraction completes?
+
+4. **ANTI-PATTERNS**: Common contract review mistakes to avoid:
+   - Extracting from the MSA without incorporating amendments — produces a risk register built on superseded terms.
+   - Skipping Category 7 (non-standard terms) or Category 8 (governing law) because the contract "looks standard" — buried clauses create renewal liability.
+   - Treating an MFN clause as a single-account yellow flag instead of routing immediately to Legal and Head of CS — MFN has book-wide pricing implications.
+   - Producing crisp, structured output from unverified sources (notes, verbal accounts) that reads as authoritative — inflates confidence and enables bad commercial decisions.
+   - Surfacing a deadline inside 30 days in the body of the report instead of escalating immediately to the configured escalation owner.
+   - Running price-increase-prep or negotiation-prep without confirming whether a price protection clause exists — sequence is non-negotiable.
+
+**After execution**, verify:
+- Does the risk register cover all eight term categories, or were any skipped?
+- Are all red-flag clauses routed to Legal with specific clause references, not generic routing?
+- Are all date-sensitive obligations converted to specific calendar dates with days-remaining counts?
+- Confidence: [Verified] if pulled from contract system and cross-referenced / [Moderate] if uploaded document, version unconfirmed / [Low Confidence] if working from notes or verbal accounts — state which and why.
 
 ## This Skill vs. Other Renewals Skills
 

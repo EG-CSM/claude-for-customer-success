@@ -36,14 +36,40 @@ Critical configuration to apply:
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — G6 (playbook audit outputs are leads for CS Ops judgment — not prescriptions for immediate play retirement).
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of playbook audit request is this?
+   - **Coverage Gap Analysis**: Mapping configured plays against baseline scenarios to find holes. Weight gaps by ARR exposure and scenario frequency.
+   - **Play Quality Audit**: Assessing trigger specificity, outcome measurability, and TARO completeness of existing plays. Apply the "two CSMs, same account, same moment" trigger test.
+   - **Adoption & Effectiveness Review**: Analyzing whether plays are actually used and producing results. Requires activation history data — skip section if unavailable rather than guessing.
+   - **Dead Play / Bloat Cleanup**: Identifying plays never triggered — candidates for archival, trigger revision, or retraining. Check scenario frequency before recommending removal.
+   - **Single-Play Deep Dive**: Focused audit of one named play — trigger, steps, outcome, history, TARO structure. Check for trigger overlap with adjacent plays.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1: Coverage gaps are directional, not prescriptive — some gaps may be intentional for the configured CS motion. Flag gaps with rationale, don't auto-prescribe plays that don't fit the segment.
+   - G2: Trigger vagueness is systemic risk — inconsistent activation means the play cannot be measured. Prioritize trigger specificity fixes over coverage additions.
+   - G4: Dead plays may cover infrequent-but-critical scenarios — no archival recommendation without CS lead sign-off and scenario frequency check.
+   - G5: Adoption data requires context — zero activations may reflect segment fit, trigger narrowness, or platform logging gaps, not CSM non-compliance.
+   - G7: TARO structure is the completeness standard — a play without a defined Outcome cannot be closed and will accumulate as perpetually open.
+
+3. **EXPERT CHECK**: What would a veteran CS Ops leader verify first?
+   - Are coverage gaps weighted by ARR concentration in affected segments, or listed with equal severity? A gap affecting 40% of ARR is a P1; a gap affecting 5% is backlog.
+   - Do triggers pass the two-CSM test — would two CSMs independently activate the play at the same moment for the same account? If not, the trigger lacks a threshold.
+   - Is adoption data being interpreted in context — checking trigger design, segment fit, and logging behavior before attributing low activation to CSM performance?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Listing all coverage gaps with equal severity instead of weighting by ARR exposure and scenario frequency.
+   - Marking a trigger as "specific" because it names a metric without verifying it includes a threshold and time window.
+   - Accepting "improve health" or "resolve issue" as measurable outcomes — require observable state, timeframe, and evidence source.
+   - Interpreting zero play activations as CSM non-compliance without checking the three systemic causes first (trigger too narrow, segment mismatch, logging gap).
+   - Recommending archival for a dead play covering a rare but high-impact scenario (acquisition, regulatory event) without frequency check.
+   - Applying the full 24-scenario baseline to a segment where the CS motion makes half the scenarios irrelevant.
+
+**After execution**, verify:
+- Does the audit answer the implicit question ("is this playbook working, and what should change first")?
+- Are coverage gaps ranked by severity with ARR context, not just listed?
+- Is the output mode (full/coverage/adoption/dead-plays/play) matched to the actual need and available data?
+- Confidence: [High] if CS platform + CRM data corroborate / [Medium] if single-source or partially stale / [Low] if user-provided playbook list only — state which.
 
 ## Mode
 

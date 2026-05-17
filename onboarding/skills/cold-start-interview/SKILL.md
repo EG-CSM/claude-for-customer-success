@@ -48,14 +48,40 @@ If the company profile does not exist, run Section 1 as normal.
 
 ## Reasoning Protocol
 
-Before generating output, work through these steps:
+Before generating output, apply these primers:
 
-1. **Confirm skill activation** — does the request match this skill's intended use? If not, name the better skill.
-2. **Identify required connectors** — which integrations are needed? Flag any that are unconfigured or returning stale data.
-3. **Check escalation path** — is a named escalation owner configured for this output type? If not, flag before proceeding.
-4. **Apply applicable guardrails** — No domain guardrails apply — this skill configures the environment rather than generating outputs.
-5. **Assess output destination** — who will see this output? Apply confidentiality check if distributing beyond the CSM.
-6. **Confirm mode selection** — is the requested mode (--brief, --deep, etc.) appropriate for the situation?
+1. **CLASSIFY**: What type of cold-start interview request is this?
+   - **First-Time Full Setup**: No existing config. Running `--full` or default. Optimize for question sequencing and internal consistency validation across all 9 sections.
+   - **Quick-Start Minimum Viable**: `--quick` flag. Collect 9 abbreviated questions, write placeholders for the rest, and produce an accurate unlock/blocked skill report.
+   - **Reconfiguration / Redo**: `--redo` or `--section` against existing config. Display current values before asking, flag cross-section dependencies that the change may invalidate.
+   - **Integration Health Check**: `--check-integrations` only. Test data accessibility (not just auth), update status fields, touch nothing else in the config.
+   - **Company Profile Redo**: `--redo-company-profile`. Scoped to Section 1 only. Shared file across practice areas — changes propagate to renewals and other configs.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G1 (No write without confirmation): Always display the full proposed configuration and require explicit "yes" before writing to any config file.
+   - G2 (Never speculate field values): Do not suggest or infer values for fields the user has not provided — a silently incorrect config value is worse than a `[PLACEHOLDER]`.
+   - G4 (Preserve untouched sections): When `--section` is used, write only to the target section. Verify file structure supports section-level isolation before writing.
+   - G5 (Company profile boundary): `company-profile.md` is shared across practice areas. Never overwrite it during standard `--redo` — only `--redo-company-profile` touches it.
+   - G7 (Escalation defaults require review): If user accepts all escalation defaults without named contacts, flag that blocker-review and milestone-tracker will produce unusable escalation output.
+
+3. **EXPERT CHECK**: What would a veteran onboarding leader verify first?
+   - Does the selected onboarding model match the user's described behaviors? "White-glove" with 50+ accounts or "guided-self-serve" with dedicated implementation engineers signals a mismatch — surface it before writing.
+   - Are TtV targets, milestone day targets, and graduation criteria internally consistent? A TtV target of "21 days" with M4 (First value) at Day 30 is a misalignment worth flagging.
+   - After any `--section` update, do adjacent sections still hold? Changing model from white-glove to guided-self-serve may invalidate milestone targets, kickoff format, and escalation SLAs.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Batching multiple questions in a single interaction instead of asking one at a time — prevents adaptive sequencing where earlier answers change what to ask next.
+   - Reporting a skill as "unlocked" in the `--quick` summary without verifying the exact field-to-skill dependency — inaccurate unlock reports erode trust.
+   - Accepting all defaults without flagging that default escalation contacts are role labels, not named people — downstream skills will produce generic, unusable escalation paths.
+   - Overwriting an existing config without `--redo` flag and without explicit overwrite confirmation — silent data loss.
+   - Updating one section during `--redo` without listing adjacent sections that may need review given the change — orphaned dependencies.
+   - Testing integration connectivity (auth handshake) without verifying data accessibility (can actually pull account records, task lists, etc.).
+
+**After execution**, verify:
+- Does the written config accurately reflect every answer the user provided, with no inferred or default-substituted values they didn't confirm?
+- Are all `[PLACEHOLDER]` fields traceable to the specific skills they block, and is the unlock/blocked report accurate?
+- Is the config file structurally valid for section-level updates by `/onboarding:customize`?
+- Confidence: [High] if user confirmed final summary and all sections completed / [Medium] if `--quick` with placeholders remaining / [Low] if `--section` update without cross-section dependency review — state which.
 
 ## Flags
 
