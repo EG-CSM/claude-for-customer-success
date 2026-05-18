@@ -1,6 +1,18 @@
 # Claude for Customer Success
 
-A suite of five Claude Code/Claude Cowork plugins that bring AI-native support to every function in a modern Customer Success and Revenue Operations organization — CSMs, CS Ops, renewals specialists, onboarding teams, and RevOps. Methodology-opinionated (SuccessCOACHING methodologies and frameworks), tool-agnostic.
+A reference implementation showing what AI-native Customer Success looks like when built on deep domain knowledge — not a deployment-ready product, but a working demonstration of what's possible and what a minimum viable architecture requires. Six Claude Code/Claude Cowork plugins covering every function in a modern CS organization: CSMs, CS Ops, renewals specialists, onboarding teams, RevOps (for Customer Success), and the infrastructure that connects them. Methodology-opinionated (SuccessCOACHING Customer Success methodologies and frameworks), tool-agnostic.
+
+---
+
+## Who This Document Is For
+
+This README serves three audiences. Jump to the section most relevant to you.
+
+**CS leaders and practitioners** using this as a reference for what AI-enabled CS looks like in practice: read [Plugins](#plugins), [Methodology](#methodology), and [Managed Agents](#managed-agents). The plugin and agent breakdown shows what capability coverage across the full lifecycle actually requires — scope, skill count, and architectural decisions most point solutions never reach.
+
+**Operators and developers** building on or adapting the suite: read [Architecture Extensions](#architecture-extensions), [Skill Design](#skill-design), [File Locations](#file-locations), and [Documentation](#documentation). The machine-readable capability model and cross-skill registry are your primary reference artifacts.
+
+**Architects** evaluating the design as a pattern for building multi-plugin suites: the [Methodology](#methodology) section explains why domain knowledge is the real work, and the [Architecture Extensions](#architecture-extensions) section documents the six structural decisions that make an 81-skill coordinated suite maintainable.
 
 ---
 
@@ -8,25 +20,123 @@ A suite of five Claude Code/Claude Cowork plugins that bring AI-native support t
 
 | Plugin | Who it's for | Core skills |
 |--------|-------------|-------------|
-| [`csm/`](./csm/) | Customer Success Managers — daily account work | Account research, QBR prep, success plans, health review, risk flags, TARO plays |
-| [`cs-ops/`](./cs-ops/) | CS Operations — portfolio analytics and systems | Health model review, segmentation, capacity planning, playbook audits, data quality |
+| [`csm/`](./csm/) | Customer Success Managers on daily account work | Account research, QBR prep, success plans, health review, risk flags, TARO plays, value statements |
+| [`cs-ops/`](./cs-ops/) | CS Operations handling portfolio analytics and systems | Health model review, segmentation, capacity planning, playbook audits, data quality |
 | [`renewals/`](./renewals/) | Renewals managers and AMs owning GRR/NRR | Renewal forecasting, expansion signals, churn analysis, negotiation prep, contract review |
 | [`onboarding/`](./onboarding/) | Onboarding teams and implementation managers | Kickoff prep, onboarding plans, milestone tracking, TtV review, handoff documentation |
-| [`rev-ops/`](./rev-ops/) | RevOps leads, CROs, and CS Ops owning revenue operations | Forecast intelligence, pipeline health, annual planning, CRM quality, deal desk governance |
+| [`rev-ops/`](./rev-ops/) | CS revenue operations — the infrastructure CS needs to report and forecast like a revenue center | CRM data quality, expansion and renewal pipeline, forecasting, quota and incentive planning, deal desk governance, outcome-to-value tracking, revenue leakage scanning |
+| [`auq-resilience/`](./auq-resilience/) | Infrastructure for all teams using interactive workflows | Fallback protocol when `ask_user_input_v0` fails to render; T1/T2/T3 recovery hooks |
 
 Each plugin installs independently. Install only what your team needs.
+
+The rev-ops plugin carries the largest footprint (34 of the 81 total skills) and acts as the portfolio intelligence and revenue operations layer for the suite. The auq-resilience plugin is optional infrastructure: it adds no skills but makes interactive AUQ prompts resilient to render failures across all five CS plugins.
+
+All six plugins are distributed as pre-built `.plugin` files in [`dist/`](./dist/).
+
+### A note on rev-ops for CS
+
+These plugins are organized by function, not by role. Several of them — rev-ops in particular — exist because the capability is missing from most CS organizations, not because there's a dedicated person to own it.
+
+The core problem: CS teams that want to be treated as a revenue center need to operate like one. That means owning expansion and renewal pipeline visibility, providing forecasting guidance on both, and reporting on revenue outcomes the way sales does. Most CS organizations don't have this infrastructure. Rev-ops for CS is the part of CS Ops that fills that gap.
+
+Within the rev-ops plugin, four skill clusters are not optional enhancements — they are blockers. A CS organization missing them is running blind on its most important commercial responsibilities:
+
+**CRM Data Quality** (3 skills) — Garbage in, garbage out. Clean CRM data is a prerequisite for every other revenue operation. Health signals, pipeline forecasts, and expansion models all degrade without it.
+
+**Forecasting and Pipeline** (4 skills) — CS needs to visualize and forecast expansion and renewal pipeline the same way sales forecasts new business. Without this, CS leadership cannot make credible revenue commitments or defend budget.
+
+**Planning and Incentive** (5 skills) — Critical for quota-carrying CSM organizations. Compensation design, quota setting, and attainment tracking require the same rigor in CS as in sales.
+
+**Deal Desk and Commercial Terms** (3 skills) — Deal desk serves two functions in CS: bridging the handoff from sales (ensuring commercial terms land correctly with the CS team) and governing expansion sales that originate inside the CS motion. Both are frequently unmanaged.
+
+If your CS organization is not quota-carrying and has no expansion pipeline accountability, some of these clusters may not apply. If it is, they are the foundation everything else runs on.
 
 ---
 
 ## Methodology
 
-This suite is built on the **SuccessCOACHING** Customer Success Managment methodologies and frameworks — specifically the **TARO Playbook framework** (Trigger, Action, Resource, Outcome) and the **Customer Value Chain** (Onboarding → Adoption → Value Realization → Renewal/Expansion). Skills reference these frameworks natively.
+The agents and skills in this suite are tools. What makes the solution work is the domain knowledge underneath them.
 
-You don't need prior experience with the SuccessCOACHING methodologies and fraemworks as they are encoded into the design of the plugins. Cold-start interviews introduce relevant methodology concepts contextually, tied to your actual accounts and tools.
+Customer Success and SaaS revenue operations are complex systems. Without deep, structured domain knowledge encoding how these systems actually behave — how customers move through a lifecycle, how value is realized, how churn signals accumulate, how renewal motions work — agentic solutions stay point solutions. They make individual tasks faster. They don't change what's possible. They can't deliver the capability addition that is the actual promise of agentic AI: doing things that weren't previously achievable, not just doing existing things more efficiently.
+
+The reason this domain resists point solutions is structural. The customer lifecycle isn't a sequence of independent tasks. It's a complex adaptive system. Value doesn't arrive at a single stage; it threads through the entire relationship, evolving from theoretical (the outcome promised at sale) to demonstrated (evidence accumulated through adoption) to networked (the expanded value a customer builds on top of your product over time). A tool that optimizes one stage in isolation — faster QBR prep, better renewal forecasting — doesn't touch this progression. It accelerates a piece of work without changing what that work produces.
+
+Effective lifecycle management creates reinforcing feedback loops across CLV, CAC recovery, revenue predictability, and competitive differentiation. Capturing those requires understanding how the stages interlock, not just executing them faster.
+
+### What this suite is not
+
+Most vertical AI plugins are task accelerants. A pitch-deck agent compresses the analyst work inside one stage of a deal process. A contract renewal-watcher screens a document portfolio faster than a paralegal can. Both are genuinely useful. Neither changes what the practitioner does on either side of that moment: the mandate conversation still happens, the negotiation still happens, the close still happens. A human holds the arc. The agent handles one artifact cluster within it.
+
+That model works for domains where the practitioner workflow is a sequence of largely independent tasks. Legal contract review is a bounded artifact problem. Pitch deck preparation is a bounded research-to-document problem. Automating either changes the speed at which an individual deliverable gets produced.
+
+Customer Success doesn't decompose that way. The relationship doesn't have discrete deliverables at each stage — it has a progression, and the quality of that progression determines whether the relationship compounds or deteriorates. An agent that makes QBR prep faster doesn't change the arc. An agent that monitors health signals, diagnoses adoption gaps, prescribes the right motion, builds the expansion case, protects advocates, and reconstructs the churn story — across 15 agents spanning every stage from onboarding through non-renewal — changes what's possible for the team running it.
+
+This suite is built on **SuccessCOACHING** Customer Success Management methodologies because those methodologies are what makes the domain knowledge operational. The **TARO Playbook framework** (Trigger, Action, Resource, Outcome) encodes how CS practitioners should respond to account signals. The **Customer Lifecycle** (Onboarding → Adoption → Value Realization → Renewal/Expansion) encodes how customer relationships actually progress. The **Customer Value Chain** (Product Capabilities → Deliverable Outcomes → Desired Outcomes → Business Goals → Expected Value → Realized Value → Impact) maps how product capabilities transform into business impact — the value transformation mechanism operating within and across those lifecycle stages. The **Two-Layer Outcome/Value Model** separates what the product can deliver at the market level from what it has delivered for a specific account.
+
+These aren't decorative. They are the guiding intelligence of every skill in the suite. A skill without this structure is a more efficient way to produce a document. A skill built on it can reason about whether the right action is being taken at the right lifecycle stage for the right reason.
+
+The skills carry that reasoning. You don't need prior experience with the SuccessCOACHING frameworks. They're encoded into the design of the plugins. Cold-start interviews introduce relevant methodology concepts contextually, tied to your actual accounts and tools.
+
+### Why SuccessCOACHING
+
+The choice isn't arbitrary. Over the past two-plus years, SuccessCOACHING has been building the structural foundations that make deep-domain agentic systems possible for Customer Success.
+
+The **CSMBOK Knowledge Graph** maps the body of knowledge for Customer Success as a discipline — concepts, competencies, relationships, and the connections between them — in a form that machines can traverse and reason over, not just search. What's encoded in it is the full SuccessCOACHING corpus: 12+ years of CS education and advisory work, every curriculum, research paper, framework, playbook, coaching engagement, and published article the firm has produced. Behind that institutional record sits the founding team's 30+ years each in the field — practitioner experience that predates the Customer Success job title itself. The **CS Skill Graph** maps what CS professionals need to be able to do at each career stage and role type, grounded in observable behaviors rather than job description language. Together they give the agents a shared semantic foundation for the domain that no prompt engineering exercise can replicate.
+
+The **Agentic Capability Graph** takes that foundation and maps it to the Customer Lifecycle and Value Chain specifically — what capabilities are needed at each stage, how they connect across stages, and where agent intervention changes outcomes rather than just accelerating tasks. This is what made it possible to design 15 agents that cover the full arc rather than 15 agents that each do one thing faster.
+
+The **training/fine-tuning datasets** and **developer toolkits** built alongside these graphs provide the technical scaffolding for AI-enabled CS solutions: structured content representations, entity models, intent taxonomies, and query-to-capability mappings that let skills reason about CS work the way a senior practitioner would.
+
+This suite is one application of that research — a **working reference implementation** and **customizable harness** for building and testing AI-enabled CS solutions and CS-tuned models. The domain knowledge itself is packaged for consumption in multiple forms: MCPs, APIs, Playbooks, and Developer Kits. The suite shows one way to use it. The methodologies aren't a selection from available options — they're the output of a deliberate program to build the domain knowledge layer that makes agent-enabled Customer Success actually work.
+
+### Dual-Track Architecture
+
+The suite organizes work across two parallel tracks because the customer relationship has two distinct progress dimensions that advance simultaneously. Conflating them produces the most common failure mode in CS practice: measuring activity at the account level while missing value delivery at the outcome level.
+
+**Track 1 — Customer Lifecycle** maps the relational journey. **Track 2 — Value Realization** maps the delivery journey. They are tightly coupled at Stage 3, where demonstrating value is what sustains the relationship. Keeping them as separate tracks means skills can be precise about which dimension they're operating on, and where they interlock.
+
+**Track 1 — Customer Lifecycle** maps the eight stages of the customer relationship from sales handoff through potential churn:
+
+| Stage | Name | Primary Plugin(s) |
+|-------|------|-------------------|
+| Stage 0 | Pre-Onboarding & Handoff | csm, rev-ops |
+| Stage 1 | Onboarding & Initial Setup | onboarding, csm |
+| Stage 2 | Adoption | csm |
+| Stage 3 | Value Realization | csm, cs-ops |
+| Stage 4 | Value Expansion & Growth | renewals, rev-ops, csm |
+| Stage 5 | Renewal | renewals, csm, rev-ops |
+| Stage 6 | Advocacy | csm |
+| Stage 7 | Churn / Non-Renewal | renewals |
+
+**Track 2 — Value Realization** maps the five stages of the value delivery journey: Discovery → Planning → Delivery → Measurement → Expansion. Both tracks advance in parallel; Stage 3 (Value Realization) is where they most tightly interlock.
+
+### Two-Layer Outcome/Value Model
+
+The suite uses a two-layer model to separate market-level value definitions from account-level value evidence. The distinction matters operationally: market outcomes define what the product *can* deliver; account value statements document what it *has* delivered for a specific customer. Conflating them produces outcome language in account materials that lacks evidence, or account evidence that doesn't connect back to the product's documented value chain.
+
+```
+Layer 1 — Market Outcomes (canonical, portfolio-scoped)
+  └── Produced by: rev-ops:outcome-statement-builder
+      Output: Outcome & Value Catalog (OCV)
+      Consumed by: rev-ops:outcome-to-value-tracking (portfolio scoring)
+
+Layer 2 — Account Value (instantiated, per-account)
+  └── Produced by: csm:value-statement
+      Source: OCV + account business goals + lifecycle stage
+      Lifecycle: evolves through Stages 1–5
+```
+
+**Layer 1 — Market Outcomes (canonical):** `rev-ops:outcome-statement-builder` produces the **Outcome & Value Catalog (OCV)**, a structured set of outcome statements tied to the customer value chain. This is a one-time (or periodic) artifact that codifies the outcomes the company's product can deliver. The OCV is consumed by `rev-ops:outcome-to-value-tracking` to score value evidence at the portfolio level.
+
+**Layer 2 — Account Value (instantiated):** `csm:value-statement` instantiates an account-specific value statement from the canonical OCV, tied to that customer's business goals, success criteria, and lifecycle stage. This is a living artifact that evolves through Stages 1–5.
+
+The OCV is produced once and referenced by many skills. Account value statements are produced per account and evolve through the customer journey.
 
 ---
 
 ## Setup
+
+> **Production-grade, not production-ready.** This suite is a reference implementation — built to production standards so the architecture, patterns, and domain knowledge are real, but not designed to drop into your team's workflow without adaptation. Customer Success is practiced differently across organizations. Lifecycle stage definitions, segmentation models, health scoring logic, toolstacks, and team structures vary enough that any honest implementation requires deliberate tailoring. What this suite answers is the harder question: what does a complete, domain-grounded, AI-native CS capability look like, and what does building one actually require? Use it as a working reference and starting point, not a finished product.
 
 ### First install (any plugin)
 
@@ -49,7 +159,7 @@ Subsequent plugin installs reuse the shared company profile and skip company-lev
 
 ### Integrations
 
-Each plugin works with whatever you have connected. Cold-start will detect what's available and report which integrations are live. Skills have fallbacks for every integration — no connector required to get value, but connected tools give significantly richer outputs.
+Each plugin works with whatever you have connected. Cold-start will detect what's available and report which integrations are live. Skills have fallbacks for every integration: no connector is required to get value, but connected tools give significantly richer outputs.
 
 **CSM** — CRM (Salesforce, HubSpot), CS Platform (Gainsight, Totango, ChurnZero, Vitally, Planhat), Call recording (Gong, Chorus, Clari, Krisp)
 
@@ -61,11 +171,28 @@ Each plugin works with whatever you have connected. Cold-start will detect what'
 
 **Rev-Ops** — CRM (Salesforce, HubSpot), Slack, Google Drive, CS Platform, Zapier
 
+**AUQ Resilience** — No MCP connectors required. Operates through Claude Code hooks only.
+
+#### MCP Dependency Matrix
+
+The table below shows which connectors are required vs. optional per plugin. Skills degrade gracefully without optional connectors, falling back to user-provided context. Required connectors are needed for the plugin's primary skills to function; cold-start will flag missing required connectors.
+
+| Plugin | Required | Optional |
+|--------|----------|----------|
+| csm | None (user-provided context is sufficient for core skills) | CRM, CS Platform, Call recording |
+| cs-ops | CS Platform or Data warehouse (for portfolio analytics) | BI, CRM |
+| renewals | CRM (for renewal date and ARR data) | CPQ, Contract storage |
+| onboarding | None (user-provided context is sufficient) | Project management, CRM |
+| rev-ops | CRM (for pipeline and forecast skills) | CS Platform, Slack, Google Drive, Zapier |
+| auq-resilience | None | None |
+
 ---
 
 ## Managed Agent Cookbooks
 
 The [`managed-agent-cookbooks/`](./managed-agent-cookbooks/) directory contains ten agents for teams running Claude as a background workflow engine, plus five rev-ops agents in [`rev-ops/managed-agent-cookbooks/`](./rev-ops/managed-agent-cookbooks/). Six CS suite agents are scheduled headless agents that run autonomously on a cron cadence; four are on-demand agents. All five rev-ops agents support both scheduled and on-demand modes.
+
+Each cookbook agent is a thin orchestration layer over the existing plugin skills. It does not define new capabilities. The scheduled agents call the same skills available interactively; what changes is invocation authority (the agent runs unattended) and output routing (Slack digest, Linear issue, or file write instead of chat response).
 
 ### Scheduled agents
 
@@ -91,7 +218,7 @@ The [`managed-agent-cookbooks/`](./managed-agent-cookbooks/) directory contains 
 
 | Agent | What it does |
 |-------|-------------|
-| [`gtm-pulse-runner`](./rev-ops/managed-agent-cookbooks/gtm-pulse-runner/) | Weekly GTM metrics pulse — pipeline, run-rate, velocity, churn signals; five Slack sections with HITL gate |
+| [`gtm-pulse-runner`](./rev-ops/managed-agent-cookbooks/gtm-pulse-runner/) | Weekly GTM metrics pulse: pipeline, run-rate, velocity, churn signals; five Slack sections with HITL gate |
 | [`capacity-monitor`](./rev-ops/managed-agent-cookbooks/capacity-monitor/) | CS capacity headroom vs. closed-won actuals; NRR-adjusted projections; silent-green Slack pattern |
 | [`churn-signal-scanner`](./rev-ops/managed-agent-cookbooks/churn-signal-scanner/) | Tier 1/2/3 churn signal scan; Tier-3 triggers Linear escalation with human confirmation |
 | [`deal-desk-watcher`](./rev-ops/managed-agent-cookbooks/deal-desk-watcher/) | SLA breach monitor across stage age, approval aging, close date drift, and single-threaded risk |
@@ -99,11 +226,23 @@ The [`managed-agent-cookbooks/`](./managed-agent-cookbooks/) directory contains 
 
 Agent registration files for the CS plugin agents live in `csm/agents/` and `renewals/agents/`; rev-ops agent cookbooks live in `rev-ops/managed-agent-cookbooks/`. See each cookbook's `README.md` for deployment instructions and `steering-examples.json` for prompting patterns. Full architecture documentation is in [`managed-agent-cookbooks/README.md`](./managed-agent-cookbooks/README.md).
 
+### Failure Modes
+
+Running cookbook agents unattended introduces failure scenarios that interactive skill use does not. The most common:
+
+**Connector unavailability** — A scheduled agent calls a CRM connector that returns a timeout or auth failure. Agents log the failure and produce a partial output with an explicit data gap notice rather than silently omitting affected accounts. Check `agent.yaml` MCP server configuration if connectors are consistently unavailable.
+
+**Stale configuration** — An agent reads a practice profile (`~/.claude/plugins/config/claude-for-customer-success/[plugin]/CLAUDE.md`) that was written at cold-start but not updated when the team's segmentation thresholds, escalation matrix, or renewal fields changed. Agents surface a configuration staleness warning when they detect a mismatch between profile values and live CRM data. Run `/[plugin]:customize` to refresh the relevant configuration section.
+
+**HITL gate timeout** — Agents with human-in-the-loop gates (e.g., `gtm-pulse-runner`) wait for an approval before posting final output. If no approval arrives within the configured timeout window, the agent aborts the run and logs the timeout. Set the `hitl_timeout_minutes` field in `agent.yaml` to match your team's response SLA.
+
+**Subagent failure** — Cookbook agents that use subagents (e.g., `health-watcher` spawns `health-reader`, `trend-analyzer`, and `alert-composer`) will produce degraded output if a subagent fails. The parent agent logs which subagent failed and what output is missing. Each subagent's `agent.yaml` includes a `fallback` field specifying behavior when it cannot complete its task.
+
 ---
 
 ## Shared Guardrails
 
-All five plugins enforce these constraints — they are not optional and cannot be overridden by plugin configuration:
+All six plugins enforce these constraints. They are not optional and cannot be overridden by plugin configuration:
 
 1. **Health scores are heuristics, not verdicts.** Never present a health score as a definitive churn prediction. Surface the signal; the CSM owns the judgment.
 2. **Expansion requires qualification.** Flag early-stage expansion signals as leads. Do not present expansion opportunity as confirmed pipeline without sales qualification.
@@ -117,9 +256,9 @@ All five plugins enforce these constraints — they are not optional and cannot 
 
 ## Architecture Extensions
 
-The 72 skills across these five plugins are built on the standard [Agent Skills](https://agentskills.io/) SKILL.md pattern — frontmatter metadata, trigger blocks, instruction body, and guardrails. That baseline is sufficient for a standalone skill. It isn't sufficient for a coordinated suite where 72 skills across 5 plugins need to produce consistent outputs, apply the same domain formulas, enforce the same behavioral constraints, and remain maintainable over time.
+The 81 skills across these six plugins are built on the standard [Agent Skills](https://agentskills.io/) SKILL.md pattern: frontmatter metadata, trigger blocks, instruction body, and guardrails with some extensions that our research have shown help skills greatly. That baseline is sufficient for a standalone skill. It isn't sufficient for a coordinated suite where 81 skills across 6 plugins need to produce consistent outputs, apply the same domain formulas, enforce the same behavioral constraints, and remain maintainable over time.
 
-A single-skill codebase gets away with embedding domain logic in the skill itself. A 72-skill suite that does that drifts — health score bands defined differently in the CSM health review skill vs. the CS Ops health model review skill, GRR formulas that don't match across renewals and ops, guardrails that exist in some skills but not others. The extensions below solve that problem.
+A single-skill codebase gets away with embedding domain logic in the skill itself. An 81-skill suite that does that drifts: health score bands defined differently in the CSM health review skill vs. the CS Ops health model review skill, GRR formulas that don't match across renewals and ops, guardrails that exist in some skills but not others. The extensions below solve that problem.
 
 ### Shared Domain Model
 
@@ -128,29 +267,61 @@ A single-skill codebase gets away with embedding domain logic in the skill itsel
 The single authoritative source for every domain constant the suite uses. Skills reference this document rather than defining their own versions of shared concepts.
 
 What it contains:
-- Health model score bands (0–100) and the 6-component model (product engagement, business outcomes, relationship strength, support health, adoption breadth, contract health) — with the 14-day staleness threshold and the interpretation rule that forbids presenting a health score as a churn prediction
+- Health model score bands (0–100) and the 6-component model (product engagement, business outcomes, relationship strength, support health, adoption breadth, contract health), with the 14-day staleness threshold and the interpretation rule that forbids presenting a health score as a churn prediction
 - Customer segmentation labels (Enterprise / Mid-Market / SMB) aligned to ARR thresholds
-- GRR and NRR formulas — exact arithmetic, not approximations
+- GRR and NRR formulas, exact arithmetic, not approximations
 - Renewal forecast pipeline stage weights and the 3-scenario modeling approach (conservative / base / upside)
 - Time-to-Value definitions, the pace multiplier formula, and the projected TtV calculation
-- Source attribution taxonomy — 8 labels (`[CRM ✓ live]`, `[CS Platform ✓ live]`, `[PM ✓ live]`, `[user provided]`, `[config]`, `[inferred]`, `[stale — N days]`, `[unknown]`) that every skill uses when attributing data in its outputs
+- Source attribution taxonomy: 8 labels (`[CRM ✓ live]`, `[CS Platform ✓ live]`, `[PM ✓ live]`, `[user provided]`, `[config]`, `[inferred]`, `[stale — N days]`, `[unknown]`) that every skill uses when attributing data in its outputs
 - The 7 shared guardrails (G1–G7) in their canonical form
 
-**Why this matters:** When a CSM asks for a health summary and separately asks for a portfolio health review, the two outputs use identical scoring definitions. When a renewals skill calculates NRR and a CS Ops skill audits NRR, they use the same formula. Domain consistency doesn't happen automatically — it requires a single source and explicit references to it.
+**Why this matters:** When a CSM asks for a health summary and separately asks for a portfolio health review, the two outputs use identical scoring definitions. When a renewals skill calculates NRR and a CS Ops skill audits NRR, they use the same formula. Domain consistency doesn't happen automatically. It requires a single source and explicit references to it.
+
+### RevOps Domain Model
+
+**File:** [`shared/revops-domain-model.md`](./shared/revops-domain-model.md)
+
+The authoritative source for rev-ops-specific operational definitions that fall outside the suite-wide constants in `cs-domain-model.md`. Where `cs-domain-model.md` covers domain concepts shared across all 81 skills, this document covers definitions, formulas, thresholds, and governance rules that the rev-ops plugin's 34 skills use. Skills reference it by section anchor — `[revops-domain-model.md §N]` — rather than embedding definitions in individual SKILL.md files.
+
+What it contains:
+- Confidence bands calibrated for rev-ops data (High / Moderate / Low), including the 14-day staleness rule for pipeline and capacity figures
+- Data authority hierarchy: HubSpot as the primary source of record, with Finance Sheets, CS Platform, and Slack/Linear as successively lower-authority fallbacks — skills use this to attribute data and resolve source conflicts
+- Variance classification taxonomy: 5 categories (volume, mix, price, timing, structural) with formulas and a pattern confidence gate that determines when a variance finding is surfaced vs. suppressed
+- CS capacity formulas using the UoG (units-of-growth) model, with a 3-scenario check (conservative / base / upside) and defined thresholds for headroom signals and hiring lead time recommendations
+- OCV (Outcome-Confirmed Value) catalog conventions: entry lifecycle states (Draft / Ratified / Deprecated), the G8 rule governing when OCV entries can be cited in outputs, and the L0–L3 rubric for evidence quality
+- Pipeline coverage signal thresholds: five bands from `<2× CRITICAL` through `>5× INSPECT`, with the interpretation rules skills apply when flagging coverage risk
+- Churn signal tiers: Tier 1 (at close), Tier 2 (30–90 days pre-renewal), Tier 3 (90–120 days pre-renewal) — the canonical timing windows for proactive churn intervention
+- Governance tiers and write protocol: discount approval tiers, deal desk stage definitions, and the Read/Write protocol controlling which outputs require human approval before action
+- Handoff quality scoring rubric: 5 dimensions at 20 points each, 100-point total, with 80 as the pass threshold — used by skills that generate or evaluate handoff packages
+- Output destination labels: DRAFT labels and the G1–G9 governance tags that skills attach to their outputs to signal confidence and required handling
+- Shared rev-ops guardrails G1–G9: non-overridable governance rules parallel to but distinct from the suite-wide G1–G7 in `cs-domain-model.md`
+
+**Why this matters:** The rev-ops plugin has 34 skills that all need to apply the same confidence bands, churn tier timing, pipeline coverage thresholds, and governance tiers. Without a single source, those definitions drift the same way suite-wide domain constants drift without `cs-domain-model.md` — a pipeline coverage skill and a forecasting skill end up using different thresholds for what counts as adequate coverage. One file, explicit `§N` references from every skill that needs it, no drift.
 
 ### Cross-Skill Registry
 
 **File:** [`shared/cross-skill-registry.md`](./shared/cross-skill-registry.md)
 
-A canonical routing table listing all 72 skills with their command format, available modes, and typical trigger conditions. Skills that reference other skills (e.g., a renewal prep skill that hands off to a negotiation skill) point here instead of hardcoding command strings.
+A canonical routing table listing all 81 skills with their command format, available modes, and typical trigger conditions. Skills that reference other skills (e.g., a renewal prep skill that hands off to a negotiation skill) point here instead of hardcoding command strings.
 
 **Why this matters:** Hardcoded command strings in SKILL.md files break when skill names change or plugins are reorganized. The registry is the single place to update routing; every skill that references it picks up the change automatically. It also gives contributors and operators a complete map of the suite at a glance.
+
+### Cross-Stage Composition Patterns
+
+The suite defines 11 named multi-skill invocation sequences that span stage boundaries. Examples:
+
+- **QBR Preparation Chain** — `csm.account-research` → `csm.health-score-review` → `csm.value-statement` → `csm.qbr-builder`
+- **Renewal Execution Chain** — `renewals.renewal-forecast` → `renewals.risk-assessment` → `renewals.negotiation-prep` → `renewals.executive-summary`
+- **At-Risk Escalation Chain** — `csm.risk-flag` → `csm.escalation-memo` → `csm.taro-play-runner`
+- **Expansion Intelligence Chain** — `renewals.expansion-signal` → `rev-ops.outcome-to-value-tracking` → `rev-ops.next-best-action-recommendation`
+
+Full composition pattern definitions live in [`docs/claude-for-cs-agent-capability-model.md`](./docs/claude-for-cs-agent-capability-model.md).
 
 ### Per-Plugin Config Schemas
 
 **Files:** `[plugin]/reference/config-schema.md` (one per plugin)
 
-Structured schemas defining every configuration field each plugin reads from its practice profile — field names, types, valid values, defaults, and required vs. optional status. Skills reference these schemas when reading configuration rather than making assumptions about what fields exist.
+Structured schemas defining every configuration field each plugin reads from its practice profile: field names, types, valid values, defaults, and required vs. optional status. Skills reference these schemas when reading configuration rather than making assumptions about what fields exist.
 
 **Why this matters:** Cold-start interviews write practice profiles that skills then read. Without a schema, skills guess at field names, handle missing fields inconsistently, and break silently when configuration is incomplete. The schema creates a contract between the interview that writes configuration and the skills that consume it.
 
@@ -160,7 +331,7 @@ Structured schemas defining every configuration field each plugin reads from its
 
 Per-skill token cost estimates covering prompt construction, tool call overhead, connector data volume, and output generation. Estimates are provided for typical (well-configured), minimal (no connectors), and heavy (large account, full connector stack) usage patterns.
 
-**Why this matters:** Token cost is architecture. A skill that pulls 15 CRM records, 30 days of usage data, and a contract PDF in a single pass can consume 40,000+ tokens. Without visibility into that, operators can't make informed decisions about which skills to run autonomously vs. interactively, or how to scope connector data fetches. Token economics belong in the repository alongside the skills themselves.
+**Why this matters:** Token cost is architecture. A skill that pulls 15 CRM records, 30 days of usage data, and a contract PDF in a single pass can consume 40,000+ tokens. Without visibility into that, operators can't decide which skills to run autonomously vs. interactively, or how to scope connector data fetches. Token economics belong in the repository alongside the skills themselves.
 
 ### Version Fields
 
@@ -170,7 +341,7 @@ Every SKILL.md frontmatter carries a `version:` field. Version bumps follow sema
 
 ### Reasoning Protocol Sections
 
-Every skill body includes a `## Reasoning Protocol` section — a structured 6-step pre-output checklist the skill runs before generating its response:
+Every skill body includes a `## Reasoning Protocol` section: a structured 6-step pre-output checklist the skill runs before generating its response:
 
 1. Confirm activation matches trigger conditions
 2. Check connector availability and set fallback path
@@ -179,15 +350,200 @@ Every skill body includes a `## Reasoning Protocol` section — a structured 6-s
 5. Assess output destination (internal CSM use, customer-facing, finance)
 6. Confirm mode selection (e.g., research vs. draft vs. update)
 
-Config skills (cold-start interviews and customize commands) run a simplified protocol with no guardrail checks — they don't produce account-level outputs.
+Config skills (cold-start interviews and customize commands) run a simplified protocol with no guardrail checks, since they don't produce account-level outputs.
 
-**Why this matters:** Guardrail application is the most common failure mode in production CS AI deployments. A skill that "knows" the guardrails in its documentation but doesn't have a structured point in its reasoning to apply them will miss them under pressure — when the question is complex, the data is stale, or the output is destined for finance. The Reasoning Protocol makes guardrail application explicit and auditable. When a skill produces an output that violates G3 (revenue commitment language), the question "did the Reasoning Protocol run step 4?" has a checkable answer.
+**Why this matters:** Guardrail application is the most common failure mode in production CS AI deployments. A skill that "knows" the guardrails in its documentation but doesn't have a structured point in its reasoning to apply them will miss them under pressure: when the question is complex, the data is stale, or the output is destined for finance. The Reasoning Protocol makes guardrail application explicit and auditable. When a skill produces an output that violates G3 (revenue commitment language), the question "did the Reasoning Protocol run step 4?" has a checkable answer.
 
 ### How the Extensions Interact
 
 The extensions form a stack. The domain model provides constants and guardrail definitions. The Reasoning Protocol enforces guardrails at output time. The cross-skill registry enables composition without coupling. Config schemas make cold-start configuration machine-readable. Token economics make cost visible before deployment decisions are made. Versioning makes change traceable.
 
-A skill that uses all six extensions: reads domain constants from `shared/cs-domain-model.md` rather than defining its own, applies guardrails through its Reasoning Protocol rather than hoping they're remembered, routes to peer skills through the registry rather than hardcoded commands, reads configuration against a known schema, runs within a documented token budget, and carries a version that can be pinned and audited.
+A skill that uses all six extensions reads domain constants from `shared/cs-domain-model.md` rather than defining its own, applies guardrails through its Reasoning Protocol rather than hoping they're remembered, routes to peer skills through the registry rather than hardcoded commands, reads configuration against a known schema, runs within a documented token budget, and carries a version that can be pinned and audited.
+
+---
+
+## Skill Design
+
+Every skill in this suite is a SKILL.md file: a self-contained specification that Claude reads at invocation time. Understanding the anatomy of a SKILL.md and how skills reference one another explains both how individual skills work and how the suite functions as a coordinated system.
+
+### SKILL.md Anatomy
+
+Each SKILL.md opens with a YAML frontmatter block, followed by a structured Markdown body.
+
+#### Frontmatter
+
+```yaml
+---
+name: risk-flag
+description: >
+  Structured risk memo for an at-risk account — signals present, severity
+  assessment, escalation routing from your configured matrix, and recommended
+  intervention.
+argument-hint: "[account name] [--brief | --escalation-memo]"
+version: "1.0.0"
+deployment_target: plugin
+---
+```
+
+**Field explanations:**
+
+| Field | Purpose |
+|-------|---------|
+| `name` | The skill's identifier. Matches the slash command segment after the colon (e.g., `name: risk-flag` → `/csm:risk-flag`). Must be unique within the plugin. |
+| `description` | What Claude reads to decide whether to invoke this skill. It must activate on the right inputs (true positives) and stay silent on everything else (true negatives). This is the primary trigger surface — precision here determines whether the right skill fires. |
+| `argument-hint` | Documents the optional arguments the skill accepts, shown in command palettes and documentation. Defines the mode flags available to the user (e.g., `--brief` for a condensed output, `--escalation-memo` to route directly to a memo format). |
+| `version` | Semantic version string. Patch for copy fixes, minor for behavior changes, major for breaking input/output changes. Lets operators verify which version of a skill is deployed and correlate behavior changes with code history. |
+| `deployment_target` | Controls which frontmatter rules apply. `plugin` means this skill ships in a Claude Code `.plugin` file; the plugin loader rejects a `security:` block in frontmatter at this target. `catalog` means MCP-delivery deployment; the catalog parser requires a `security:` block with all v5.3 sub-fields. All skills in this suite use `deployment_target: plugin`. |
+
+The `description` field is the most consequential. It's what Claude's skill routing reads when deciding whether to invoke a skill. A description that's too broad causes false positives (the wrong skill fires). A description that's too narrow causes false negatives (the right skill doesn't fire when it should).
+
+#### Body Sections
+
+The body follows a consistent section structure across all skills:
+
+| Section | Purpose |
+|---------|---------|
+| `## Use When` | Positive trigger conditions: the situations where this skill should fire. Written as a list of concrete scenarios, not vague capabilities. |
+| `## Do NOT Use For` | Negative trigger conditions and routing table. Situations that look similar but should route elsewhere. Often contains explicit pointers to the correct skill (see [Inter-Skill Referencing](#inter-skill-referencing)). |
+| `## Typical Activation` | Example invocations showing how a user would naturally phrase requests that should trigger this skill. Used during evaluation to test trigger precision. |
+| `## Pre-flight` | Checks Claude runs before generating output: connector availability detection, config validation, fallback path selection. |
+| `## Reasoning Protocol` | A structured checklist Claude applies before generating the final output. Enforces guardrail application, escalation path verification, output destination check, and mode selection. See the [Reasoning Protocol Sections](#reasoning-protocol-sections) note in Architecture Extensions. |
+| `## Mode` | Behavior variations based on the active mode flag. Each mode flag (e.g., `--brief`, `--deep`) produces a different output structure or depth. |
+| `## Data Gathering` | Which connectors to call, in what order, with what fallbacks. Defines what happens when a connector is unavailable vs. what happens when it's live. |
+| `## Output` | The output structure template: headers, required fields, conditional sections, formatting rules. Consuming skills and managed agents expect this structure. |
+| `## Guardrails` | Skill-specific behavioral constraints that layer on top of the shared G1–G7 guardrails. |
+| `## After the Skill` | Post-output guidance: what the user should do next, which skills to run next, and under what conditions. This is where chaining prompts live (see [Next-Step Chaining](#next-step-chaining)). |
+| `## Security & Permissions` | Trust boundary declarations: what external systems this skill can read from, write to, or call. Required for `deployment_target: plugin` skills; placed in the body (not frontmatter) since the plugin loader does not parse security blocks in frontmatter. |
+| `## Trust & Verification` | Config integrity checks: what configuration the skill requires to be present before it proceeds. Defines the halt condition when required config is missing. |
+
+Config skills (cold-start interviews and `customize` commands) use a simplified section structure. They have no Guardrails, After the Skill, or Trust & Verification sections, since they produce config rather than account-level outputs.
+
+---
+
+### Inter-Skill Referencing
+
+Skills in this suite reference each other through four distinct mechanisms. All of them use command strings drawn from the cross-skill registry (`shared/cross-skill-registry.md`) rather than hardcoded alternatives.
+
+#### 1. Routing in "Do NOT Use For" Blocks
+
+When a user invocation is close but wrong (right intent, wrong skill), the `## Do NOT Use For` block names the correct skill explicitly. This is the primary mechanism for routing misfires at invocation time.
+
+From `csm/skills/risk-flag/SKILL.md`:
+
+```markdown
+## Do NOT Use For
+- Escalation memos for leadership — use `/csm:escalation-memo`
+- Routine health reviews without active risk signals — use `/csm:health-score-review`
+```
+
+This pattern keeps the routing logic distributed across skills rather than centralized in a single dispatcher. Each skill owns its own exclusion boundaries and points outward to peers.
+
+#### 2. Next-Step Chaining
+
+After generating output, skills suggest the next skill in the workflow, with the exact invocation string and relevant flags. This guides the user through a multi-skill sequence without requiring them to know the full workflow upfront.
+
+From `csm/skills/risk-flag/SKILL.md`:
+
+```markdown
+## After the Skill
+If renewal is within 90 days, run `/csm:renewal-readiness [account]` to assess renewal exposure alongside the risk posture.
+
+If executive sponsor access is in question, run `/csm:stakeholder-map [account] --sponsor-risk` to map the relationship landscape.
+```
+
+The chaining is conditional. It fires based on what the current output revealed, not as a rote sequence. Claude can tailor which next step it suggests based on the actual risk profile surfaced.
+
+#### 3. Config Scope Redirect
+
+Some skills depend on configuration that lives in a different plugin's practice profile. Rather than duplicating configuration logic, those skills redirect to the owning plugin's `customize` command.
+
+From `onboarding/skills/handoff-doc/SKILL.md`:
+
+```markdown
+## Do NOT Use For
+- Changing handoff template structure or required fields — use `/cs-ops:customize`
+  to configure the handoff template. Then re-run this skill.
+```
+
+This enforces a single point of configuration ownership. CS Ops owns the handoff template schema; the Onboarding plugin consumes it. When a user tries to configure template structure through the Onboarding skill, the skill redirects to the owning plugin rather than attempting to write config it doesn't own.
+
+For section-level config changes:
+
+```markdown
+- Updating graduation criteria only — use `/onboarding:cold-start-interview --section handoff`
+```
+
+#### 4. Downstream Blocking Notation
+
+Some skills explicitly document which downstream skills are unavailable until required configuration exists. This surfaces dependency failures at the earliest possible point rather than when the downstream skill fires.
+
+From `onboarding/skills/handoff-doc/SKILL.md`:
+
+```markdown
+## Trust & Verification
+Missing graduation milestone configuration blocks `/onboarding:handoff-doc`. Run
+`/cs-ops:customize` to define graduation criteria before using this skill.
+```
+
+The user learns about the missing config when they try to use the skill that requires it, not when the config-dependent output turns out wrong. The Trust & Verification section is the canonical place to declare blocking conditions.
+
+---
+
+### How the Cross-Skill Registry Enables This
+
+All four referencing mechanisms use command strings drawn from `shared/cross-skill-registry.md`. The registry is a flat table of every skill across all six plugins: command format, available mode flags, and the lifecycle stage each skill belongs to.
+
+```
+/csm:risk-flag [account] [--brief | --escalation-memo]
+/csm:renewal-readiness [account] [--brief | --deep | --exec-summary]
+/csm:stakeholder-map [account] [--full | --sponsor-risk | --decision-maker]
+```
+
+When a skill author adds a next-step chaining prompt, they copy the command string from the registry. When a skill is renamed or a flag is added, the registry is updated first, and all skills that reference it pick up the change naturally at the next edit pass. No skill hardcodes an alternative command string.
+
+The registry also documents six cross-plugin workflow sequences: named multi-skill chains that cross plugin boundaries. Example:
+
+| Pattern | Sequence |
+|---------|---------|
+| At-Risk Triage | `csm:risk-flag` → `csm:escalation-memo` → `csm:taro-play-runner` |
+| Renewal Prep | `renewals:renewal-forecast` → `csm:renewal-readiness` → `renewals:negotiation-prep` |
+| Onboarding Handoff | `onboarding:milestone-tracker` → `onboarding:handoff-doc` → `csm:account-research` |
+
+These cross-plugin sequences are documented in the registry so operators understand the full multi-plugin workflow, not just individual skill capabilities.
+
+**The maintenance rule is strict:** `shared/cross-skill-registry.md` is the source of truth for all command strings. Individual SKILL.md files must not hardcode alternative command strings. This rule keeps the registry authoritative and prevents routing drift when skills evolve.
+
+#### Machine-Readable Capability Model
+
+For tooling, integrations, and operators who need structured per-skill metadata, [`docs/claude-for-cs-agent-capability-model.yaml`](./docs/claude-for-cs-agent-capability-model.yaml) is the authoritative machine-readable representation of all 81 skills. Each entry carries:
+
+| Field | What it captures |
+|-------|-----------------|
+| `id` | Canonical skill identifier, matches the `name:` frontmatter field |
+| `version` | Current deployed version, mirrors SKILL.md frontmatter |
+| `summary` | One-sentence capability description |
+| `intended_tasks` | Structured list of tasks this skill is built to handle |
+| `out_of_scope` | Explicit exclusions: the machine-readable equivalent of `## Do NOT Use For` |
+| `invocation_cues` | Natural-language patterns that should trigger this skill |
+| `anti_cues` | Patterns that look relevant but should not trigger this skill |
+| `constraints` | Behavioral constraints active during this skill's execution |
+| `tools_used` | Connectors and MCP tools the skill may call |
+| `related_skills` | Skills that compose with this one: the machine-readable form of next-step chaining |
+| `success_criteria` | Observable conditions that constitute a correct output |
+
+The YAML model and the SKILL.md files are parallel representations of the same skills: SKILL.md is what Claude reads at runtime; the YAML is what tooling reads at build time or integration time. When a SKILL.md is updated, the YAML model should be updated to match.
+
+---
+
+## Coverage Notes
+
+The suite's 81 skills break down as 47 lifecycle skills (Stages 0–6) and 34 cross-cutting ops skills. Coverage is not uniform across lifecycle stages (but will be expanded in subsequent releases and can augmented by solutions like our skill-enabled TARO playbooks that feature 850+ additional skills see the **taro-play-runner** skill):
+
+- **Stages 0–5** have full or near-full skill coverage with documented workflows and stage gate criteria.
+- **Stage 6 (Advocacy)** has minimal dedicated coverage: two skills, `csm.advocate-identification` and `csm.advocacy-ask`. Broader advocacy program design, community management, and reference program coordination are deliberately out of scope for v1.1.0. These activities require human relationship judgment that doesn't compress well into a skill interaction; the agent cookbook `advocacy-agent` handles the research and qualification work that does.
+- **Stage 7 (Churn / Non-Renewal)** has partial coverage. `renewals.churn-analysis` and the `churn-intelligence-agent` cookbook address post-decision analysis; proactive churn prevention is handled through Stage 5 skills and `rev-ops.early-churn-downgrade-signal-detection`. Win-back motion skills and automated exit interview synthesis are on the backlog for v1.2.0.
+
+The coverage gaps in Stages 6 and 7 are architectural decisions, not oversights. Our skill development backlog prioritizes win-back motions and expanded advocacy program support for the next minor version.
 
 ---
 
@@ -195,7 +551,7 @@ A skill that uses all six extensions: reads domain constants from `shared/cs-dom
 
 ```
 ~/.claude/plugins/config/claude-for-customer-success/
-├── company-profile.md          # Shared — all five plugins read this
+├── company-profile.md          # Shared — all six plugins read this
 ├── csm/CLAUDE.md               # CSM practice profile (written at cold-start)
 ├── cs-ops/CLAUDE.md            # CS Ops practice profile
 ├── renewals/CLAUDE.md          # Renewals practice profile
@@ -205,19 +561,54 @@ A skill that uses all six extensions: reads domain constants from `shared/cs-dom
 
 Plugin templates (this directory) ship with the plugin and are replaced on update. User data lives only in `~/.claude/plugins/config/`.
 
+### Developer Tooling
+
+The repository includes build and evaluation tooling for contributors and operators maintaining the suite:
+
+```
+scripts/
+├── build-plugins.sh            # Packages all six plugins into dist/*.plugin files
+├── validate-skills.sh          # Runs frontmatter validation across all SKILL.md files
+└── update-registry.sh          # Syncs cross-skill-registry.md from SKILL.md frontmatter
+
+[plugin]/skills/[skill-name]/
+└── evals/                      # Per-skill evaluation sets (gitignored — not shipped in plugin)
+    ├── true-positives.md       # Invocation cues that should trigger the skill
+    ├── true-negatives.md       # Inputs that should not trigger it
+    └── output-rubric.md        # Criteria for evaluating output quality
+```
+
+The `evals/` directories are present during development but excluded from built plugins via `.gitignore`. To run evaluations against a deployed plugin, pull the skill source from the repository rather than the installed plugin file.
+
 ---
 
-## Add-ons
+## Documentation
 
-### AUQ Resilience
+The [`docs/`](./docs/) directory contains extended reference documentation:
 
-**Package:** [`auq-resilience/`](./auq-resilience/)
+| Document | Contents |
+|----------|----------|
+| [`claude-for-cs-agent-capability-model.md`](./docs/claude-for-cs-agent-capability-model.md) | Complete 81-skill capability catalog organized by lifecycle stage; 11 composition patterns; tier distribution; coverage gap analysis |
+| [`claude-for-cs-agent-capability-model-lifecycle.md`](./docs/claude-for-cs-agent-capability-model-lifecycle.md) | Skills organized by lifecycle stage with Two-Layer Outcome/Value Model integration; coverage summary table |
+| [`claude-for-cs-integrated-journey-value-realization-guide.md`](./docs/claude-for-cs-integrated-journey-value-realization-guide.md) | Stage-by-stage workflow guide with Mermaid diagrams, value chain focus tables, gap risk tables, and stage gate criteria for all lifecycle stages |
+| [`claude-for-cs-agent-capability-model.yaml`](./docs/claude-for-cs-agent-capability-model.yaml) | Machine-readable capability registry for all 81 skills: structured YAML with per-skill `id`, `version`, `summary`, `intended_tasks`, `out_of_scope`, `invocation_cues`, `anti_cues`, `constraints`, `tools_used`, `related_skills`, and `success_criteria`; authoritative source for tooling and integrations |
 
-An optional infrastructure add-on that makes `ask_user_input_v0` resilient to render failures. The CS plugins use `ask_user_input_v0` extensively — when it works, the user gets an interactive multiple-choice widget; when it fails (unsupported client, missed render, tool error), Claude receives an empty response with no recoverable path.
+---
 
-The `auq-resilience` plugin installs two Claude Code hooks that detect failures and inject a plain-text multiple-choice fallback so Claude can always proceed. It does not change how AUQ works when it works — it only catches failures.
+## AUQ Resilience
 
-Installing the plugin is a one-step install. Wiring it into a plugin requires adding two entries to that plugin's `hooks/hooks.json`. All five CS plugins ship with empty hook slots ready to receive the wiring.
+**Package:** [`auq-resilience/`](./auq-resilience/) · **Distributed:** [`dist/auq-resilience-v1.0.0.plugin`](./dist/)
+
+The CS plugins use `ask_user_input_v0` (AUQ) extensively for cold-start interviews, skill mode selection, and interactive clarification. When AUQ works, the user gets an interactive multiple-choice widget. When it fails (unsupported client, missed render, tool error), Claude receives an empty response with no recoverable path. Without a fallback, the entire skill interaction stops.
+
+The `auq-resilience` plugin installs two Claude Code hooks:
+
+- **`PreToolUse` hook** — intercepts AUQ calls and injects prose fallback instructions alongside the widget render request
+- **`PostToolUse` hook** — detects empty or unparseable AUQ responses and injects a structured prose multiple-choice block so Claude can proceed
+
+The hooks implement a T1/T2/T3 protocol: T1 retries the widget once, T2 injects the prose fallback, T3 logs the failure and continues with a declared default. An AUQ render failure never produces a dead end. Claude always has a recoverable path.
+
+Installing the plugin is a one-step install. Wiring it into a plugin requires adding two entries to that plugin's `hooks/hooks.json`. All five CS plugins ship with empty hook slots ready to receive the wiring. The auq-resilience plugin does not change how AUQ works when it succeeds. It only catches failures.
 
 See [`auq-resilience/README.md`](./auq-resilience/README.md) for install steps and the full T1/T2/T3 protocol.
 
@@ -225,6 +616,6 @@ See [`auq-resilience/README.md`](./auq-resilience/README.md) for install steps a
 
 ## Version
 
-`claude-for-customer-success` v1.0.0 · Built for Anthropic Claude Code and Claude Cowork.
+`claude-for-customer-success` v1.1.0 · Built for Anthropic Claude Code and Claude Cowork.
 
 Compatible with Claude claude-sonnet-4-6 and claude-opus-4-6.

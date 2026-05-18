@@ -11,12 +11,32 @@ description: >
 argument-hint: "[--full | --quick | --redo | --check-integrations | --redo-company-profile | --section <section-name>]"
 version: "1.0.0"
 config_skill: true
+deployment_target: plugin
 ---
 
-# /renewals:cold-start-interview
+# /renewals:cold-start-interview [VALIDATED]
 
 Configure the Renewals plugin so every skill runs against your actual book
 of business — not generic defaults.
+
+---
+
+## Use when
+- No Renewals plugin configuration exists and any renewals skill is invoked
+- A CSM or renewals manager is setting up the plugin for the first time
+- Existing configuration needs updating (`--redo`, `--section <name>`, `--redo-company-profile`)
+- Integration connector status needs re-verification without changing configuration content (`--check-integrations`)
+
+## Do NOT use for
+- Analyzing a specific renewal account (use the appropriate operational skill)
+- Running a renewal risk assessment, forecast, churn analysis, or contract review
+- Any task where configuration is already complete and no update is needed
+- Quick in-session clarification of configuration values (ask in the skill's output instead)
+
+## Typical activation
+> `/renewals:cold-start-interview` — automatic trigger when configuration is missing or contains `[PLACEHOLDER]` markers
+> `/renewals:cold-start-interview --quick` — fast bootstrap for first-time setup (≈2 minutes)
+> `/renewals:cold-start-interview --redo` — re-run the full interview to update an existing configuration
 
 ---
 
@@ -341,6 +361,44 @@ Suggested next steps based on what was configured:
 ---
 
 > [review before sending]
+
+---
+
+## Security & Permissions
+
+```
+network:        none — no external API calls during interview; integration
+                checks use live MCP connector calls only (connector-initiated,
+                not outbound HTTP from this skill)
+read_scope:     ~/.claude/plugins/config/claude-for-customer-success/ only
+write_scope:    ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md
+                ~/.claude/plugins/config/claude-for-customer-success/company-profile.md
+subprocess:     none
+dynamic_code:   none — no eval, no exec, no runtime code execution
+```
+
+This skill reads and writes exclusively within the plugin config directory. No account data, contract content, or customer PII is written to configuration. Configuration values are practitioner-provided descriptions and thresholds, not customer records.
+
+---
+
+## Trust & Verification
+
+**Configuration write gating:**
+No configuration is written without explicit user confirmation. The proposed configuration is displayed in full readable format before any file write. "Yes" or "confirm" is required. This applies to all modes: full, quick, --redo, and --section.
+
+**Discount authority validation:**
+If the user claims unlimited discount authority, this skill surfaces a bounded-authority advisory before accepting the value. The advisory is non-skippable — it runs before writing, not after.
+
+**Revenue commitment language:**
+GRR/NRR targets and ARR figures are flagged for Finance/RevOps review before any renewal forecast outputs derived from them are distributed externally. This flag is embedded in the configuration write and propagates to downstream skills.
+
+**Integration verification distinction:**
+Integrations listed during the interview are marked "configured" not "verified" until a live connectivity test is run in the same session. `--check-integrations` mode is required to upgrade status to "verified." The distinction is preserved in the written configuration and in all downstream skill sourcing attribution.
+
+**Free-text field handling:**
+Churn signal descriptions, playbook locations, and methodology notes are stored verbatim as display data. They are not executed, evaluated, or used to derive file paths.
+
+---
 
 ## Guardrails
 

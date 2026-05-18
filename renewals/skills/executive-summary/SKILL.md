@@ -11,11 +11,31 @@ description: >
   or board/investor reporting packages.
 argument-hint: "[<account-name-or-ID>] [--brief | --full | --board]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
-# /renewals:executive-summary
+# /renewals:executive-summary [VALIDATED]
 
 Strategic account renewal summary calibrated for executive audiences.
+
+---
+
+## Use when
+- A strategic account renewal requires executive sponsorship and you need a brief formatted for CRO, CEO, or board consumption
+- You are preparing materials for a board or investor reporting package that includes renewal pipeline exposure
+- An escalated renewal is being handed to executive leadership and they need commercial status, relationship health, and a specific recommended action without raw signal data
+- You have completed `/renewals:risk-assessment` for an account and need to translate that risk tier into executive-ready language
+
+## Do NOT use for
+- CSM-level internal prep — use `/renewals:negotiation-prep` for call preparation and concession authority
+- Customer-facing renewal proposals — use `/renewals:negotiation-prep --export` for proposals the customer will see
+- Risk scoring without a specific account in hand — use `/renewals:risk-assessment` first
+- Accounts that do not meet your configured strategic account threshold (deal size or segment)
+
+## Typical activation
+> `/renewals:executive-summary Acme Corp` — full internal executive summary for a named strategic account
+> `/renewals:executive-summary Acme Corp --brief` — condensed brief: commercial status, risk tier, and recommended executive action only
+> `/renewals:executive-summary Acme Corp --board` — board-format version with anonymization if account identity is not authorized for external sharing
 
 ---
 
@@ -349,6 +369,35 @@ audiences. It does not include customer-specific relationship detail.
 >   competitive context unconfirmed / executive contacts need verification | none]
 > - **Before distributing:** Confirm the recipient is authorized for this account's
 >   ARR data. Confirm ARR figure reflects the current renewal scenario.
+
+---
+
+## Security & Permissions
+
+```
+network:        none — no external API calls, no web fetch
+read_scope:     ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md and
+                ~/.claude/plugins/config/claude-for-customer-success/company-profile.md only
+write_scope:    none — all summary output to conversation; no file writes
+subprocess:     none
+dynamic_code:   none — no eval, no exec, no runtime code execution
+```
+
+This skill operates exclusively in conversation. The `--brief`, `--full`, and `--board` flags control output format and filtering — they do not trigger file writes or external data transmission.
+
+---
+
+## Trust & Verification
+
+**Account data handling:** All account-level data (ARR figures, risk signals, relationship health indicators) is accepted as CSM input or imported from configured tools. All ARR figures are flagged `[review — not yet a revenue commitment]` in every output variant. This flag cannot be suppressed.
+
+**Board format authorization:** The `--board` flag does not bypass authorization requirements. Board output is gated on explicit CSM confirmation that account-level data is authorized for external distribution. If unconfirmed, the skill applies anonymized account labels.
+
+**Competitive intelligence sourcing:** Competitive context is included only when confirmed via call recording, CRM notes, or direct customer communication. General market inference is not included. Sources are cited inline.
+
+**Internal content suppression:** The `--brief` and `--full` output variants are marked internal. They contain risk tier, walk-away context, and relationship health data not intended for customer audiences. The `--export` path is handled by `/renewals:negotiation-prep`, not this skill.
+
+**Free-text field handling:** Account name and all CSM-supplied narrative fields are stored and displayed as provided. They are not executed, evaluated, or used to derive paths or IDs.
 
 ---
 

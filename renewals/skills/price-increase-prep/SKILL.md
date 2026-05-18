@@ -10,11 +10,33 @@ description: >
   a completed value narrative and confirmed approval routing.
 argument-hint: "[<account-name-or-ID> | --cohort] [--plan | --draft | --objections]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
-# /renewals:price-increase-prep
+# /renewals:price-increase-prep [VALIDATED]
 
 Plan, approve, and communicate a price increase — in the right order.
+
+---
+
+## Use when
+- You are preparing a price increase for a specific account 60–90 days before their renewal and need approval validation, rationale framing, and communication drafting
+- Finance or leadership has directed a broad price adjustment and you need to segment a cohort, route approvals, and sequence notifications
+- An account is approaching renewal with a contractual CPI or escalation clause and you need to confirm what applies and draft compliant notification
+- You need objection-handling frameworks before a renewal conversation where a price increase is on the table
+- You want to confirm whether a proposed increase is within your authority before any customer-facing communication is drafted
+
+## Do NOT use for
+- Risk assessment of accounts with active churn signals — run `/renewals:risk-assessment` first; this skill assumes the account is viable for an increase
+- Contract review to determine whether price protection clauses exist — use `/renewals:contract-review` before using this skill on enterprise or multi-year accounts
+- Post-churn analysis after an account has already churned in response to a price increase — use `/renewals:churn-rca`
+- Expansion pricing or upsell proposals not tied to a renewal — this skill is scoped to renewal-time price adjustment only
+- Renewals at flat pricing with no increase component — use `/renewals:executive-summary` or contact the account directly
+
+## Typical activation
+> `/renewals:price-increase-prep Acme Corp` — full price increase plan for a single account: approval routing, rationale framing, timing guidance
+> `/renewals:price-increase-prep Acme Corp --draft` — proceed directly to customer-facing communication after plan approval is confirmed
+> `/renewals:price-increase-prep --cohort` — multi-account rollout planning; provide account list with ARR, renewal dates, and proposed increase percentages
 
 ---
 
@@ -406,6 +428,32 @@ For multi-account price increase rollouts:
 >   at-risk account — recommend risk assessment before proceeding | none]
 > - **Before sending:** Confirm approval is in place and contract permits the
 >   increase — this check is non-negotiable
+
+---
+
+## Security & Permissions
+
+```
+network:        read-only connector access — CRM reads for account data only;
+                no external API writes, no web fetch
+read_scope:     ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md
+                and ~/.claude/plugins/config/claude-for-customer-success/company-profile.md;
+                CRM account records scoped to the named account only (read-only)
+write_scope:    none — all plan and draft output to conversation; no file writes
+subprocess:     none
+dynamic_code:   none — no eval, no exec, no runtime code execution
+```
+
+This skill reads configuration and CRM account data to validate approval thresholds and build price increase plans. All output — plans, draft communications, objection frameworks — is delivered to the conversation only. No data is written to disk. CRM reads are scoped to the specific account name provided and are read-only.
+
+## Trust & Verification
+
+- **Account data handling:** CRM-sourced ARR, renewal dates, and contract terms are used for plan generation and communication drafting only. Data is not persisted, cached, or written to any file.
+- **Revenue commitment integrity:** ARR figures in all plan outputs are targets, not closed-won commitments. The skill enforces the `[review — not yet a revenue commitment]` tag on any figures shared beyond the CSM. This tag must survive any edit to the plan output.
+- **Approval gate enforcement:** The `--draft` mode is blocked at the Reasoning Protocol level until approval routing is confirmed as complete or within authority. The skill will not produce customer-facing communication without this gate passing.
+- **Pre-send checklist integrity:** The `> ⚠️ Before sending this draft:` checklist is a non-negotiable review gate. It must not be removed, collapsed, or replaced with a shorter marker in any output variation.
+- **At-risk account guard:** The CLASSIFY step checks for churn signal vocabulary before proceeding with standard increase logic. Accounts with active risk signals are redirected to `/renewals:risk-assessment` before any increase plan is generated.
+- **Free-text field handling:** Account name, rationale input, and objection context provided by the user are used for display and plan generation only. They are not executed or used to derive file paths or system behavior.
 
 ---
 

@@ -8,9 +8,33 @@ description: >
   an escalation-ready summary separately.
 argument-hint: "[account name] [--brief | --escalation-memo]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /risk-flag
+
+[PROPOSED]
+
+## Use When
+- A churn signal has been detected and you need to determine escalation routing
+- Multiple signals are present and you need to assess aggregate risk before acting
+- Renewal is approaching and you need a structured risk assessment before the commercial conversation
+- An account has gone dark (no contact, usage drop, sponsor departure) and you need a framework for response
+
+## Do NOT Use For
+- Generating the full escalation memo — use /csm:escalation-memo once routing is confirmed
+- Health score review — use /csm:health-score-review for the full health narrative
+- Accounts with no risk signals present — no escalation routing needed
+- Executive-facing risk reporting — this skill is CSM-facing
+
+## Typical Activation
+"/csm:risk-flag Acme Corp"
+"Flag risk signals for [account]"
+"What's the escalation path for [account]?"
+"Two high signals on [customer] — what do I do?"
+"Assess churn risk for [account]"
+
+---
 
 Document the risk clearly, name the routing, and give the CSM a specific path
 forward — not just a flag.
@@ -331,3 +355,27 @@ or board reporting.
 - "Renewal within 90 days — run renewal readiness: `/csm:renewal-readiness [account]`"
 - "Need to track intervention progress? Update the account in `/csm:account-research` after each action."
 - "Want to map the stakeholder risk specifically? `/csm:stakeholder-map [account] --sponsor-risk`"
+
+---
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: outbound_allowlist (CRM, CS platform per configured integrations)
+- filesystem_write: false
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- Escalation routing must follow the configured escalation matrix — do not invent routing
+- Risk classifications are internal — must not appear in any customer-visible output
+- If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview
+- If churn signal thresholds are not configured, surface the gap explicitly rather than applying defaults

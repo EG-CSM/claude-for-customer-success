@@ -12,6 +12,7 @@ description: >
   an abbreviated current-status view for async stakeholder updates.
 argument-hint: "[<account-name-or-ID>] [--draft | --update | --summary]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /onboarding:onboarding-plan
@@ -55,6 +56,27 @@ missing config.
 
 ---
 
+## Trigger Precision
+
+**Use when:**
+- Generating a new onboarding plan for a customer account (`--draft`)
+- Revising an existing onboarding plan after scope, timeline, or milestone changes (`--update`)
+- Producing a customer-facing summary of the onboarding plan for sharing or review (`--summary`)
+
+**Do NOT use for:**
+- Milestone status tracking against an existing plan (use `/onboarding:milestone-tracker`)
+- Success criteria definition — criteria must be defined before or during plan generation, not after
+- Handoff document generation (use `/onboarding:handoff-doc`)
+
+**Typical activation:**
+- "Draft the onboarding plan for [Account]"
+- "The timeline changed — update the onboarding plan for [Account]"
+- "Give me a summary of the [Account] onboarding plan to share with the customer"
+- `/onboarding:onboarding-plan [account] --draft`
+- `/onboarding:onboarding-plan [account] --update`
+- `/onboarding:onboarding-plan [account] --summary`
+
+---
 
 ## Reasoning Protocol
 
@@ -395,6 +417,19 @@ Questions? [CSM name] · [contact]
 >   placeholder if criteria have been established.
 
 ---
+
+## Security & Permissions
+
+This skill operates read-only against configuration files and connected MCP data sources.
+No filesystem writes, no subprocess execution, no dynamic code execution.
+All data access is through explicitly connected MCP connectors; no outbound network calls are made directly.
+
+## Trust & Verification
+
+Customer-facing outputs (`--summary` mode) apply quiet mode — TtV targets, internal health assessments, and reviewer notes are suppressed.
+All CRM and PM data is timestamped and staleness-flagged per G7.
+TtV figures in Section 7 (internal planning view) are always tagged `[review — internal planning target]` and never appear in `--summary` output.
+CSM review is required before sharing any customer-facing plan summary.
 
 ## Guardrails
 

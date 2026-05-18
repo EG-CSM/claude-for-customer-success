@@ -1,6 +1,8 @@
 ---
 name: outcome-to-value-tracking
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Maps each customer to their L0–L3 rubric level on their referenced OCV entries at OCV-defined verification milestones (e.g., 90-day, 180-day). Portfolio view: % at each rubric level per OCV entry. Surfaces systemic L0 persistence (>40% of accounts stuck at L0 past 90-day milestone) as a delivery pattern signal. Triggers: 'outcome tracking', 'rubric level', 'L0 L1 L2 L3', 'value realization', 'are customers achieving outcomes', 'outcome portfolio health'."
 ---
 
@@ -9,9 +11,24 @@ description: "Maps each customer to their L0–L3 rubric level on their referenc
 Are customers achieving what they bought the product to do?
 L0–L3 rubric level tracking per account and per OCV entry.
 
-**Reference:** OCV catalog conventions → `reference/revops-domain-model.md §6`
-**Reference:** Confidence bands → `reference/revops-domain-model.md §2`
+**Reference:** OCV catalog conventions → `../../../shared/revops-domain-model.md §6`
+**Reference:** Confidence bands → `../../../shared/revops-domain-model.md §2`
 **Config reads:** `ocv_catalog_path`, `cs_platform_connected`
+
+---
+
+## Use when
+- Delivered customer outcomes need to be mapped to realized business value for reporting
+- CS value realization tracking requires outcome-to-value linkage for a cohort or account
+- QBR or EBR preparation needs structured outcome value evidence
+
+## Do NOT use for
+- Rubric level assessment at checkpoints (use deal-to-outcome-tracing)
+- OCV catalog entry building
+- Revenue forecast or ARR reporting
+
+## Typical activation
+"Outcome to value tracking", "value realization report", "what value has [account] realized", "track outcomes to business value", "value evidence for [account]"
 
 ---
 
@@ -90,6 +107,21 @@ Portfolio summary:
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential deal, customer, and revenue data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

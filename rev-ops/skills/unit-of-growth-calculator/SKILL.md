@@ -1,6 +1,8 @@
 ---
 name: unit-of-growth-calculator
 description: "Unit of Growth Calculator -- compute GTM headcount requirements, capacity imbalances, and efficiency diagnostics for B2B SaaS organizations using the AE-anchored or CSM-anchored pod model. Use during revenue planning, board preparation, CRO/CFO reviews, or CS capacity modeling to surface under/over-capacity signals across AE, SDR, CSM, and Support functions with specific remediation guidance. Synthesizes the SuccessCOACHING Unit of Growth research model with 2025 SaaS benchmarks."
+deployment_target: plugin
+status: PROPOSED
 ---
 
 # Unit of Growth Calculator
@@ -16,7 +18,7 @@ The model anchors on the AE as the unit of growth and derives SDR, CSM, and Supp
 from a small set of ratios and benchmarks. It also runs the reverse — starting from CS capacity
 to find the maximum ARR growth the post-sales org can absorb before breaking.
 
-**Use when:**
+## Use when
 - Preparing for board, CFO, or CRO headcount planning reviews
 - Modeling GTM pod requirements for a revenue target
 - Detecting whether CS can absorb the accounts Sales is closing (or will close)
@@ -25,19 +27,14 @@ to find the maximum ARR growth the post-sales org can absorb before breaking.
 - Computing closed-won-to-CS-capacity constraints
 - Running a pipeline coverage sanity check against win rate
 
-**Do NOT use for:**
+## Do NOT use for
 - Individual rep performance review (this is a structural capacity tool, not a rep coaching tool)
 - Pricing or packaging analysis
 - Customer health scoring or churn prediction on specific accounts
 - Detailed financial modeling with COGS, EBITDA, or equity dilution — route to a CFO model
 
-**Typical activation:**
-- "Model my GTM headcount for a $5M ARR target"
-- "Do I have enough CSMs to support my current AE team?"
-- "How much ARR can my current CS team support?"
-- "Is my pipeline coverage ratio healthy?"
-- "Run the unit of growth calculation for my company"
-- "Show me where my GTM org is over or under capacity"
+## Typical activation
+"Model my GTM headcount for a $5M ARR target", "Do I have enough CSMs to support my current AE team?", "How much ARR can my current CS team support?", "Is my pipeline coverage ratio healthy?", "Run the unit of growth calculation for my company", "Show me where my GTM org is over or under capacity"
 
 ---
 

@@ -10,12 +10,32 @@ description: >
   — this skill acts after the loss to extract structured intelligence.
 argument-hint: "[<account-name-or-ID>] [--deep | --quick | --portfolio-scan]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
-# /renewals:churn-analysis
+# /renewals:churn-analysis [VALIDATED]
 
 Root cause analysis of a closed churn or contraction. Extract what happened,
 why it happened, and whether it's about to happen again somewhere else.
+
+---
+
+## Use when
+- A renewal has been confirmed lost or contracted and you need to extract root cause while the context is fresh (within 30 days)
+- You have a closed churn event and want to reconstruct the signal timeline to assess whether the team had adequate time to act
+- You want to scan the active book for accounts sharing the same signal pattern as a recently churned account
+- You are running a batch retrospective across multiple losses (quarter-end or annual review)
+
+## Do NOT use for
+- Accounts that have not yet churned — use `/renewals:risk-assessment` for at-risk active accounts
+- Real-time churn prevention or mid-renewal save strategy — this skill analyzes past events, not active ones
+- Expansion or upsell signals in current accounts
+- Generating a risk tier or triggering an escalation from portfolio scan output alone — scan results require a full risk-assessment before any tier is assigned
+
+## Typical activation
+> `/renewals:churn-analysis Acme Corp` — full post-mortem on a recently closed loss
+> `/renewals:churn-analysis Acme Corp --quick` — abbreviated root cause and lesson, use when processing multiple losses
+> `/renewals:churn-analysis --portfolio-scan` — skip single-account analysis and scan the active book for matching signal patterns after root cause is already established
 
 ---
 
@@ -375,6 +395,42 @@ before renewal / Escalated [N] days before renewal [or not escalated]
 ---
 
 > [review before sending]
+
+---
+
+## Security & Permissions
+
+```
+network:        none — no direct HTTP calls; CRM data surfaces via MCP connector, not filesystem reads by this skill
+read_scope:     ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md and
+                ~/.claude/plugins/config/claude-for-customer-success/company-profile.md only
+write_scope:    none — all analysis output to conversation; no file writes
+subprocess:     none
+dynamic_code:   none — no eval, no exec, no runtime code execution
+```
+
+This skill reads two plugin config files at session start (Pre-flight) and produces all output directly in the conversation. It does not write to the filesystem, make network calls, or access any account data directly — CRM and account data are provided by the operator through the MCP connector or as manual input in the session.
+
+---
+
+## Trust & Verification
+
+**Account data handling:**
+All account data (ARR, health scores, signal timelines, CRM notes) is provided through operator-controlled MCP connectors or direct user input. This skill does not read account data from the filesystem and cannot access CRM systems independently of the session context.
+
+**Free-text field handling:**
+`churn_context`, `account_name`, and all manual inputs are treated as display data. They are not executed, evaluated, or used to derive file paths or system behavior.
+
+**Root cause confidence labeling:**
+All inferred root cause assignments carry explicit confidence signals (`[High Confidence]`, `[Moderate]`, `[Low Confidence]`). The Reviewer note surface forces explicit sourcing declarations before any output leaves the session.
+
+**Portfolio scan scope:**
+Portfolio scan output (`--portfolio-scan`) flags pattern matches for CSM review — it does not automatically trigger risk escalations, modify account records, or write any data. All flagged accounts require a full `/renewals:risk-assessment` before any tier is assigned.
+
+**Config file integrity:**
+Pre-flight reads config files at fixed paths. If either config file is absent or malformed, the skill surfaces the gap and asks for manual input rather than proceeding with defaults. Config content is used for display context only — it does not affect analysis logic or output structure.
+
+---
 
 ## Guardrails
 

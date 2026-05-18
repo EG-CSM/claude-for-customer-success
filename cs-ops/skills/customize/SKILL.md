@@ -10,13 +10,40 @@ description: >
   requiring a full re-interview. Distinct from /cs-ops:cold-start-interview
   which is the initial setup flow for a blank configuration.
 argument-hint: "[--section <section-name> | --show | --reset <section-name>]"
-version: "1.0.0"
+version: "1.1.0"
+deployment_target: plugin
 config_skill: true
 ---
 
 # /cs-ops:customize
 
 Update CS-Ops configuration without re-running the full cold-start interview.
+
+[PROPOSED]
+
+---
+
+## Use when
+
+- Onboarding to the plugin for the first time (filling placeholder sections)
+- After organizational changes — territory restructure, headcount shift, segment redefinition
+- An audit skill (`data-quality-check`, `health-model-review`, `segment-analyzer`,
+  `playbook-auditor`) has flagged a configuration mismatch and the root cause is in config
+- Confirming or reviewing current configuration state before running dependent skills
+
+## Do NOT use for
+
+- Initial blank-slate setup (use `/cs-ops:cold-start-interview`)
+- Running audits or analysis (use the relevant audit skill)
+- Reclassifying accounts after segment changes (use `/cs-ops:segment-analyzer --reclassification`)
+
+## Typical activation
+
+- `/cs-ops:customize --show` — review current configuration across all sections
+- `/cs-ops:customize --section segments` — update segment ARR definitions
+- `/cs-ops:customize --section escalation` — update severity tiers and owner assignments
+- `/cs-ops:customize --section team` — add, update, or remove a CSM from the roster
+- `/cs-ops:customize --reset <section-name>` — wipe a section back to placeholder state
 
 ---
 
@@ -33,20 +60,19 @@ path to a complete configuration than section-by-section update.
 
 ---
 
-
 ## Reasoning Protocol
 
 Before generating output, apply these primers:
 
 1. **CLASSIFY**: What type of configuration request is this?
-   - **Single-Section Update**: User knows which section to change and has values ready. Straightforward guided update with confirmation.
+   - **Single-Section Update**: User knows which section to change and has values ready. Guided update with confirmation.
    - **Multi-Section Cascade**: Structural change (territory restructure, headcount shift, segment redefinition) requiring coordinated updates across 2+ sections.
-   - **Audit-Triggered Remediation**: User arrives from an audit skill output that flagged a configuration mismatch — trace root cause before fixing.
-   - **Cold-Start Completion**: Configuration exists but has multiple placeholder sections. User wants to fill gaps without re-running full cold-start-interview.
+   - **Audit-Triggered Remediation**: User arrives from an audit skill output — trace root cause before fixing.
+   - **Cold-Start Completion**: Configuration exists but has multiple placeholder sections. User wants to fill gaps without re-running cold-start-interview.
    - **Configuration Review (--show)**: Read-only inspection of current state, health assessment, and completeness check.
 
 2. **CONSTRAINTS**: What limits the solution space?
-   - G1: Health tier thresholds must cover the full 0-100 range with no gaps or overlaps — validate arithmetic before confirming any health model write.
+   - G1: Health tier thresholds must cover the full 0–100 range with no gaps or overlaps — validate arithmetic before confirming any health model write.
    - G2: Segment changes do not automatically reclassify accounts — surface the migration impact before confirming the write.
    - G4: Escalation matrix changes must be checked against published SOPs — config and documentation out of sync is worse than no documentation.
    - G5: Playbook archival requires explicit CS lead approval confirmation before proceeding — governance is non-optional.
@@ -54,27 +80,33 @@ Before generating output, apply these primers:
 
 3. **EXPERT CHECK**: What would an experienced CS-Ops administrator verify first?
    - Does this change cascade to other sections? A segment change touches ratios, team assignments, health thresholds, and possibly playbook triggers — map the full cascade before the first write.
-   - Is the user fixing a symptom or a root cause? If they arrived from an audit output, trace the finding back to the specific config value that caused it before proposing a change.
+   - Is the user fixing a symptom or a root cause? If they arrived from an audit output, trace the finding back to the specific config value before proposing a change.
    - Has the configuration drifted from actual practice? If `--show` hasn't been run recently, current values may not reflect reality — ground the conversation in current state first.
 
 4. **ANTI-PATTERNS**: Common mistakes to avoid:
    - Writing a segment update without creating or updating the matching ratio entry and team assignment — creates cross-section orphans.
    - Filling placeholder sections with industry-average defaults instead of running the guided interview questions to get user-specific values.
    - Batching multiple changes into a single confirmation prompt — each proposed change gets its own show-and-confirm cycle.
-   - Updating one section of a multi-section cascade and declaring done without mapping downstream sections that reference the changed entity.
-   - Proposing a config fix for an audit finding without asking "what changed in your org that caused this?" — symptom fixes leave root causes in place.
+   - Updating one section of a multi-section cascade without mapping downstream sections.
+   - Proposing a config fix for an audit finding without asking "what changed in your org that caused this?"
    - Accepting a `--reset` without the two-gate confirmation sequence — resets are destructive and not easily reversible.
 
 **After execution**, verify:
 - Is the configuration internally consistent across all sections that reference the changed values?
-- Were all downstream impacts surfaced — which skills will behave differently and which published documents need updating?
+- Were all downstream impacts surfaced — which skills will behave differently, which documents need updating?
 - Did every write follow the show-diff / confirm / write / confirm-write sequence?
-- Confidence: [High] if change is isolated to one section with no cross-references / [Medium] if cascade was mapped and all affected sections updated / [Low] if cascade may have missed downstream references — state which and why.
+- Confidence: [High] if isolated single-section change / [Medium] if cascade mapped and all affected sections updated / [Low] if cascade may have missed downstream references.
+
+---
 
 ## Mode
 
 `--show`: Display current configuration — all sections, formatted for review.
 Surfaces any remaining `[PLACEHOLDER]` markers. No edits made.
+
+Read `reference/cs-ops-show-template.md` and populate it from the values in
+`~/.claude/plugins/config/claude-for-customer-success/cs-ops/CLAUDE.md`.
+Render as human-readable configuration — do not display raw CLAUDE.md markdown.
 
 `--section <section-name>`: Update one named configuration section.
 Valid section names:
@@ -100,260 +132,95 @@ If no flag is provided:
 
 ---
 
-## Display current configuration (`--show`)
-
----
-
-**CS-Ops Plugin Configuration**
-*`~/.claude/plugins/config/claude-for-customer-success/cs-ops/CLAUDE.md`*
-*Retrieved: [timestamp]*
-
----
-
-### Configuration health
-
-| Section | Status | Issues |
-|---------|--------|--------|
-| Segments | [✅ Configured / ⚠️ Partial / ❌ Placeholder] | [Issues if any] |
-| Ratios | [✅ / ⚠️ / ❌] | |
-| Health model | [✅ / ⚠️ / ❌] | |
-| Playbook | [✅ / ⚠️ / ❌] | |
-| Escalation matrix | [✅ / ⚠️ / ❌] | |
-| Data quality | [✅ / ⚠️ / ❌] | |
-| Reporting | [✅ / ⚠️ / ❌] | |
-| Team | [✅ / ⚠️ / ❌] | |
-
-**Overall configuration completeness:** [N/8 sections fully configured]
-
-[If any sections have ❌ Placeholder status:]
-> ⚠️ [N] sections still contain placeholder values. Skills that depend on
-> unconfigured sections will prompt for `/cs-ops:cold-start-interview` or
-> ask for session-level input. Run `/cs-ops:customize --section <name>` to
-> configure each section, or `/cs-ops:cold-start-interview` to complete all
-> at once.
-
----
-
-### Current configuration — full display
-
-[Display all configured values from `../../CLAUDE.md` in readable format,
-organized by section. Do not display raw CLAUDE.md markdown — render the
-values as human-readable configuration. Replace `[PLACEHOLDER]` markers with
-⚠️ PLACEHOLDER — not configured.]
-
-**Segments:**
-| Segment | ARR floor | ARR ceiling | Motion | Reclassification threshold |
-|---------|----------|------------|--------|--------------------------|
-| [Name] | $[floor] | $[ceiling] | [motion] | $[threshold] |
-
-**Target ratios:**
-| Segment | Motion | Target accounts/CSM |
-|---------|--------|-------------------|
-| [Name] | [motion] | [N] |
-
-**Health model:**
-| Tier | Score range | Action threshold |
-|------|------------|-----------------|
-| 🟢 Green | [range] | — |
-| 🟡 Yellow | [range] | CTA triggered |
-| 🔴 Red | [range] | Immediate CSM action |
-
-*Staleness threshold:* [N] days
-
-**Playbook:** [N plays configured — list names only in --show mode]
-*Full play details: use `/cs-ops:playbook-auditor --full`*
-
-**Escalation matrix:**
-| Tier | Definition | Response SLA | Owner |
-|------|-----------|-------------|-------|
-| S1 | [definition] | [SLA] | [owner] |
-| S2 | [definition] | [SLA] | [owner] |
-| S3 | [definition] | [SLA] | [owner] |
-
-**Data quality:**
-*Required fields:* [list] · *Staleness threshold:* [N] days · *Consistency rules:* [N configured]
-
-**Reporting:**
-*Primary KPI:* [GRR / NRR / Logo retention] · *Reporting cadence:* [Weekly / Monthly] ·
-*Dashboard default:* [--weekly / --monthly / --quarterly]
-
-**Team:** [N CSMs configured — use `/cs-ops:capacity-planner` for full roster view]
-
----
-
 ## Section update workflows
-
----
 
 ### Segments (`--section segments`)
 
-**Current configuration:**
+Display current segments table from config. Ask one question at a time:
 
-| Segment | ARR floor | ARR ceiling | Motion | Reclassification threshold |
-|---------|----------|------------|--------|--------------------------|
-| [Existing] | | | | |
+1. Add a new segment, modify an existing segment, or remove a segment?
 
-Ask one question at a time:
+For **add:** Name · ARR floor and ceiling · CS motion (High-touch / Hybrid / Tech-touch) · Reclassification trigger threshold · Target CSM-to-account ratio
 
-1. Do you want to **add** a new segment, **modify** an existing segment,
-   or **remove** a segment?
+For **modify:** Which segment? · Which field(s)? (ARR range / motion / reclassification threshold / target ratio) · New value(s)?
 
-For **add:**
-- Name of new segment?
-- ARR floor and ceiling? (e.g., $100K–$500K — enter "No floor" or "No ceiling" for open-ended)
-- CS motion for this segment? (High-touch / Hybrid / Tech-touch)
-- Reclassification trigger threshold? (ARR amount that moves an account into or out of this segment)
-- Target CSM-to-account ratio for this segment?
+For **remove:** Which segment? Warn: removing requires migrating all accounts currently in it. Confirm migration handled before removing config.
 
-For **modify:**
-- Which segment?
-- Which field(s)? (ARR range / motion / reclassification threshold / target ratio)
-- New value(s)?
+After update: show updated segments table, confirm before writing.
 
-For **remove:**
-- Which segment? Warn: removing a segment requires migrating all accounts currently in it.
-  Confirm this has been handled before removing the configuration.
-
-**After update:**
-
-Show the updated segments table. Confirm with user before writing to CLAUDE.md.
-
-> "I'll update the segments configuration with these changes. Shall I apply them?"
-
-On confirmation: write to `~/.claude/plugins/config/claude-for-customer-success/cs-ops/CLAUDE.md`.
-
-> ✅ Segments configuration updated. Note: existing accounts are not automatically
-> reclassified. Run `/cs-ops:segment-analyzer --reclassification` to identify
-> accounts that should move segments based on the new definitions.
+> ✅ Segments updated. Note: existing accounts are not automatically reclassified.
+> Run `/cs-ops:segment-analyzer --reclassification` to identify accounts that
+> should move based on the new definitions.
 
 ---
 
 ### Ratios (`--section ratios`)
 
-**Current configuration:**
+Display current ratios table from config.
 
-| Segment | Motion | Target accounts/CSM |
-|---------|--------|-------------------|
-| [Existing] | | |
-
-Questions:
-1. Which segment's ratio do you want to update?
-2. What is the new target accounts-per-CSM for [segment] [motion] CSMs?
-
-Context to request if needed: "What's driving the change? (Headcount change /
-industry benchmark update / capacity data showing consistent over/under-loading)"
-— this feeds the rationale field in the configuration change log.
+Questions: Which segment's ratio? · New target accounts-per-CSM? · What's driving the change? (feeds the rationale field in the configuration change log)
 
 After update:
-
-> ✅ Ratio updated: [Segment] target changed from [old] to [new] accounts per CSM.
-> Run `/cs-ops:capacity-planner --current` to see current load against the new targets.
+> ✅ Ratio updated: [Segment] changed from [old] to [new] accounts per CSM.
+> Run `/cs-ops:capacity-planner --current` to see load against the new targets.
 
 ---
 
 ### Health model (`--section health`)
 
-**Current configuration:**
+Display current health model (tier thresholds, staleness, component weights) from config.
 
-| Tier | Score range | Staleness threshold |
-|------|------------|-------------------|
-| 🟢 Green | [range] | [N days] |
-| 🟡 Yellow | [range] | [N days] |
-| 🔴 Red | [range] | [N days] |
+Questions: What to update? (Tier thresholds / Staleness threshold / Component weights)
 
-*Component weights (if configured):*
-[Component list with weights]
+For **tier thresholds:** New score range for each tier (Green / Yellow / Red). Must be contiguous and cover full 0–100 range.
 
-Questions:
-1. What do you want to update? (Tier thresholds / Staleness threshold / Component weights)
+For **staleness:** Days before health score is considered stale. Same threshold for all tiers or varies?
 
-For **tier thresholds:**
-- What score range should define each tier? (Green / Yellow / Red)
-- Note: thresholds must be contiguous and cover the full 0–100 range.
-
-For **staleness:**
-- How many days before a health score is considered stale?
-- Is this threshold the same for all tiers, or does it vary by tier?
-
-For **component weights:**
-- What components does your health model use? (e.g., product usage, NPS, support ticket volume, QBR completion)
-- What weight should each carry? (must sum to 100%)
+For **component weights:** Components (e.g., product usage, NPS, support ticket volume, QBR completion) · Weight for each (must sum to 100%).
 
 After update:
-
-> ✅ Health model configuration updated.
-> Note: threshold changes take effect immediately in future skill outputs.
-> Historical health data is not retroactively recalculated.
-> Run `/cs-ops:health-model-review` to assess whether the new thresholds
-> change the health distribution materially.
+> ✅ Health model updated. Threshold changes take effect immediately in future skill
+> outputs. Historical health data is not retroactively recalculated.
+> Run `/cs-ops:health-model-review` to assess whether new thresholds change the
+> health distribution materially.
 
 ---
 
 ### Playbook (`--section playbook`)
 
-**Current configuration:**
+Display current play list from config.
 
-| Play | Trigger | Owner | Motion scope | Last updated |
-|------|---------|-------|-------------|-------------|
-| [Existing] | | | | |
+Operations: Add play / Update play / Archive play
 
-Operations:
-1. What do you want to do? (Add play / Update play / Archive play)
+For **add play:** Name · Trigger condition (specific and measurable — include threshold and source) · Steps overview (brief) · Outcome definition (observable state at close) · CS motion scope · Owner
 
-For **add play:**
-- Play name?
-- Trigger condition (specific and measurable — include threshold and source):
-- Steps overview (brief — full TARO structure is in the play itself):
-- Outcome definition (observable state at play close):
-- CS motion scope (All / High-touch only / Tech-touch only):
-- Owner (CSM / CS Lead / Automated):
+For **update play:** Which play? · What's changing? · New value? · Reason for change? (becomes governance log entry rationale)
 
-For **update play:**
-- Which play?
-- What's changing? (Trigger / Steps / Outcome / Motion scope / Owner)
-- New value?
-- Reason for change? (This becomes the playbook governance log entry rationale)
-
-Governance note: Every play change creates a record. After writing to CLAUDE.md:
-
-> ✅ Play updated. A governance record has been created:
+Governance note: every play change creates a governance record. After writing:
+> ✅ Play updated. Governance record created:
 > **PCR-[YYYY-NNN]: [Play name] — [Change type]**
-> Rationale: [User-provided reason]
-> Effective: [today's date]
-> Review date: [90 days from today]
+> Rationale: [user-provided reason] · Effective: [today] · Review date: [90 days]
 >
 > Archive this record in your playbook governance log. Use
 > `/cs-ops:process-doc --playbook-governance` to generate the full governance
 > framework if you haven't already.
 
-For **archive play:**
-
-Confirm with two gates:
+For **archive play:** Two confirmation gates:
 1. "Archiving [play name] removes it from CSM visibility. Are you sure?"
 2. "Has this been approved by the CS lead?" (Require explicit yes before proceeding)
 
-After both confirmations: mark play as archived in config. Create governance record.
+After both confirmations: mark play archived in config, create governance record.
 
 ---
 
 ### Escalation matrix (`--section escalation`)
 
-**Current configuration:**
+Display current escalation matrix from config.
 
-| Tier | Definition | ARR threshold | Response SLA | Primary owner | Executive | Support |
-|------|-----------|-------------|-------------|--------------|-----------|---------|
-| S1 | | | | | | |
-| S2 | | | | | | |
-| S3 | | | | | | |
-
-Questions:
-1. Which tier do you want to update? (S1 / S2 / S3 / All)
-2. For each tier: Definition / ARR threshold / Response time SLA / Owner assignments
+Questions: Which tier to update? (S1 / S2 / S3 / All) · For each tier: Definition / ARR threshold / Response time SLA / Owner assignments
 
 After update:
-
 > ✅ Escalation matrix updated.
-> Note: the Escalation SOP document may reference the previous configuration.
 > If you have a published `/cs-ops:process-doc --escalation`, update it to
 > match the new matrix values.
 
@@ -361,31 +228,17 @@ After update:
 
 ### Data quality (`--section data-quality`)
 
-**Current configuration:**
+Display current data quality configuration from config.
 
-Required fields: [list]
-Staleness threshold: [N days]
-Consistency rules: [N configured]
+Operations: Required fields / Staleness threshold / Consistency rules
 
-Operations:
-1. What do you want to update? (Required fields / Staleness threshold / Consistency rules)
+For **required fields:** Adding or removing? · Field name and CRM object · Completeness target · Owner
 
-For **required fields:**
-- Adding or removing a required field?
-- Field name and CRM object?
-- Completeness target for this field?
-- Owner (who is responsible for keeping this field populated)?
+For **staleness:** Which field? · New threshold in days?
 
-For **staleness:**
-- Which field's threshold are you updating?
-- New threshold in days?
-
-For **consistency rules:**
-- Adding or removing a rule?
-- Rule description: Field A value should be consistent with Field B value per [logic].
+For **consistency rules:** Adding or removing? · Rule description: Field A should be consistent with Field B per [logic].
 
 After update:
-
 > ✅ Data quality configuration updated.
 > The next `/cs-ops:data-quality-check` audit will apply the new rules.
 > If you have a published Data Quality Standard (from `/cs-ops:process-doc --data-quality`),
@@ -395,53 +248,29 @@ After update:
 
 ### Reporting (`--section reporting`)
 
-**Current configuration:**
+Display current reporting configuration from config.
 
-Primary KPI: [GRR / NRR / Logo retention]
-Reporting cadence: [Weekly / Monthly]
-Dashboard default: [--weekly / --monthly / --quarterly]
-ARR threshold for high-touch reporting: $[amount]
-
-Questions:
-1. What's changing? (Primary KPI / Default dashboard cadence / ARR threshold)
-2. New value?
+Questions: What's changing? (Primary KPI / Default dashboard cadence / ARR threshold) · New value?
 
 After update:
-
 > ✅ Reporting configuration updated. Future `/cs-ops:metric-dashboard` runs will
-> use the new defaults. The `--weekly / --monthly / --quarterly` flags still
-> override the default for individual runs.
+> use the new defaults. Mode flags still override the default for individual runs.
 
 ---
 
 ### Team (`--section team`)
 
-**Current configuration:**
+Display current CSM roster table from config.
 
-| CSM | Motion | Segment assignment | ARR managed |
-|-----|--------|-------------------|------------|
-| [Existing] | | | |
+Operations: Add CSM / Update CSM / Remove CSM
 
-Operations:
-1. What do you want to update? (Add CSM / Update CSM / Remove CSM)
+For **add CSM:** Name · CS motion (High-touch / Hybrid / Tech-touch) · Segment(s) assigned · Start date
 
-For **add CSM:**
-- Name?
-- CS motion (High-touch / Hybrid / Tech-touch)?
-- Segment(s) assigned?
-- Start date?
+For **update CSM:** Which CSM? · What's changing? (Motion / Segment / Name correction)
 
-For **update CSM:**
-- Which CSM?
-- What's changing? (Motion / Segment / Name correction)
-
-For **remove CSM:**
-- Which CSM? Warning: removing a CSM from the configuration does not
-  reassign their accounts. Run `/cs-ops:capacity-planner --departure <name>`
-  before removing if accounts are still assigned.
+For **remove CSM:** Which CSM? Warning: removing a CSM does not reassign their accounts. Run `/cs-ops:capacity-planner --departure <name>` before removing if accounts are still assigned.
 
 After update:
-
 > ✅ Team configuration updated.
 > Run `/cs-ops:capacity-planner --current` to see updated capacity ratios.
 
@@ -449,15 +278,13 @@ After update:
 
 ### Section reset (`--reset <section-name>`)
 
-Resetting a section removes all configured values for that section and replaces
-them with `[PLACEHOLDER]` markers. Skills that read the reset section will
-prompt for `/cs-ops:cold-start-interview` or request session-level input.
+Resetting a section removes all configured values and replaces them with `[PLACEHOLDER]`
+markers. Skills that read the reset section will prompt for `/cs-ops:cold-start-interview`
+or request session-level input.
 
 **Confirmation required:**
-
 > "Resetting [section name] will remove all configured values for this section.
-> This cannot be undone from within the plugin — you will need to reconfigure
-> the section manually.
+> This cannot be undone from within the plugin — you will need to reconfigure manually.
 >
 > Type CONFIRM to proceed, or anything else to cancel."
 
@@ -477,15 +304,13 @@ Every configuration change follows this sequence:
    > [Show before/after values]
    > "Confirm? (yes / no)"
 
-2. **Require confirmation** before writing. Never write without explicit user
-   confirmation.
+2. **Require confirmation** before writing. Never write without explicit user confirmation.
 
 3. **Write the change** to `~/.claude/plugins/config/claude-for-customer-success/cs-ops/CLAUDE.md`.
 
-4. **Confirm the write** with the timestamp and section updated.
+4. **Confirm the write** with timestamp and section updated.
 
-5. **Surface downstream impacts** — which skills will behave differently and
-   whether any published process documents need updating.
+5. **Surface downstream impacts** — which skills will behave differently and whether any published process documents need updating.
 
 ---
 
@@ -503,8 +328,6 @@ Every configuration change follows this sequence:
 
 ---
 
-> [review before sending]
-
 ## Guardrails
 
 **Never write without explicit confirmation.** Configuration changes affect every
@@ -512,25 +335,22 @@ CS-Ops skill. Show the proposed change, get a yes, then write. No silent updates
 
 **Validate thresholds for internal consistency.** If health tier thresholds are
 updated, confirm they cover the full 0–100 range with no gaps or overlaps before
-writing. A gap in the range will cause health assignments to fail silently.
+writing. A gap will cause health assignments to fail silently.
 
 **Segment changes require account migration awareness.** Changing a segment
 definition does not automatically move accounts. Surface the reclassification
-impact — how many accounts would change segments — before confirming the write.
+impact before confirming the write.
 
 **Escalation matrix changes must match published SOPs.** If a published
 escalation SOP exists, flag that it needs updating. Configuration and documentation
-out of sync is worse than having no documentation.
+out of sync is worse than no documentation.
 
 **Playbook archival is not a deletion.** Archived plays remain in the governance
-log. They can be reinstated. The distinction matters — do not use "delete" language
-when archiving plays.
+log. They can be reinstated. Do not use "delete" language when archiving plays.
 
-**Configuration drift is a real risk.** The CLAUDE.md configuration is the
-single source of truth for all CS-Ops skills. If it diverges from actual practice
-(CSMs added without config update, ratios changed verbally but not written),
-skills will produce analysis based on stale assumptions. Encourage quarterly
-`/cs-ops:customize --show` reviews.
+**Configuration drift is a real risk.** The CLAUDE.md configuration is the single
+source of truth for all CS-Ops skills. Encourage quarterly `/cs-ops:customize --show`
+reviews to catch drift before it affects skill outputs.
 
 ---
 

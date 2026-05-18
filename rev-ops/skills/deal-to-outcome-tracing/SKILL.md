@@ -1,6 +1,8 @@
 ---
 name: deal-to-outcome-tracing
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Links every closed/won opportunity to its downstream CS trajectory using the OCV Outcome Catalog. At deal close: checks catalog completeness (OCV entry, trigger match, measurement source). At 30/60/90/180-day checkpoints: assesses L0–L3 rubric level per OCV entry. When OCV catalog is absent: falls back to structural risk signals with [Confidence: Low]. Triggers: 'outcome tracing', 'what did we promise [account]', 'deal-to-outcome', 'track outcomes for [account]', 'which rubric level is [account] at'."
 ---
 
@@ -9,9 +11,25 @@ description: "Links every closed/won opportunity to its downstream CS trajectory
 The longitudinal link between what Sales sold and what CS delivers.
 Replaces free-form deal notes with structured OCV catalog references.
 
-**Reference:** OCV catalog conventions → `reference/revops-domain-model.md §6`
-**Reference:** Confidence bands → `reference/revops-domain-model.md §2`
+**Reference:** OCV catalog conventions → `../../../shared/revops-domain-model.md §6`
+**Reference:** Confidence bands → `../../../shared/revops-domain-model.md §2`
 **Config reads:** `ocv_catalog_path`, `ocv_catalog_version`, `cs_platform_connected`
+
+---
+
+## Use when
+- Closed/won deal needs longitudinal tracing from sale to CS outcome delivery
+- OCV catalog completeness needs verification at deal close
+- 30/60/90/180-day rubric level assessment required for a specific account or cohort
+- User asks what was promised to an account and how delivery is tracking
+
+## Do NOT use for
+- Pre-close deal structure review (use revenue-leakage-scanning)
+- Churn signal detection without outcome context (use early-churn-downgrade-signal-detection)
+- OCV catalog entry creation
+
+## Typical activation
+"Outcome tracing for [account]", "what did we promise [account]", "deal-to-outcome", "track outcomes", "which rubric level is [account] at", "30-day checkpoint for [account]"
 
 ---
 
@@ -116,6 +134,21 @@ L0 pattern signal: [Account attributes common to L0 accounts]
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential customer, deal, and operational data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

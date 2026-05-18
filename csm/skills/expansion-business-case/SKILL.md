@@ -19,6 +19,10 @@ metadata:
   spec_version: "5.3"
 ---
 
+# /csm:expansion-business-case
+
+[PROPOSED]
+
 ## Overview
 
 Generate evidence-based expansion business cases or Sales qualification packages
@@ -72,6 +76,7 @@ but activates relevant constraint warnings.
 |-----------|------|----------|-------------|
 | `mode` | `string` | Yes | Output mode: `csm-led` or `csql` |
 | `account_name` | `string` | Yes | Customer account name (used in document output via `display_account`) |
+| `csm_name` | `string` | Yes | CSM name for document attribution (used in CSQL package header via `safe_csm_name`) |
 | `expansion_product` | `string` | Yes | Product, tier, or seat expansion being proposed |
 | `outcome_evidence` | `string` | Yes | Documented business outcomes the customer has already achieved |
 | `expansion_signals` | `string \| list` | Yes | Usage patterns, requests, or signals indicating expansion readiness |
@@ -146,6 +151,7 @@ def xml_structural_escape(value: str) -> str:
 
 display_account = xml_structural_escape(account_name)  # document output only
 safe_account = re.sub(r'[^\w\-]', '_', display_account)  # filesystem ops only
+safe_csm_name = xml_structural_escape(csm_name)  # document output only
 ```
 
 **Step 4 — expansion_signals normalization**
@@ -223,7 +229,7 @@ def scan_for_injection(value: str) -> bool:
 # Scan all escaped inputs
 inputs_to_scan = [
     safe_outcome_evidence, safe_expansion_product, safe_signals,
-    safe_timeline or '', safe_expansion_amount or '',
+    safe_csm_name, safe_timeline or '', safe_expansion_amount or '',
 ] + list(safe_csql.values())
 
 for val in inputs_to_scan:
@@ -644,6 +650,19 @@ the `is_meddic_populated()` predicate (not treated as sentinels).
 
 ---
 
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `reference/csql-package-template.md` | Template for structuring CSQL package data inputs |
+| `reference/expansion-proposal-template.md` | Document template for the generated expansion proposal |
+| `reference/ocv-synthesis-prompt.md` | Prompt pattern for synthesizing OCV outcome evidence |
+| `reference/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
 ## Worked Examples
 
 ### Example 1: csm-led Expansion Proposal (E-1 near-miss, AP-1 clean)
@@ -746,5 +765,5 @@ csql_context:
 - OQ-1: Should `outcome_evidence` support list input type?
 - OQ-2: Minimum MEDDIC completeness threshold for CSQL block (currently warn-only)
 - OQ-3: Output language localization
-- OQ-4: Upstream skill output schema compatibility validation
+- OQ-4 UPDATED: Contract re-validated against `rev-ops:csql-tracking` v1.0.0 on 2026-05-18. Authoritative report: `design/DVT-1-inter-skill-contract-validation-report.md` (plugin root). Status: CONDITIONAL PASS. G-1 (BLOCKING) — `csm_name` had no source parameter; resolved in this version (added as required string parameter, escaped to `safe_csm_name` in CLASSIFY Step 3, added to PRE-FLIGHT scan, populates `[CSM Name]` in csql-package-template.md). G-2 (MINOR) — `ae_owner` sentinel mismatch; resolved in `reference/csql-package-template.md`. Post-MVP: add `## Downstream Contract` section.
 

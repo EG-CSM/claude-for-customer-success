@@ -11,6 +11,7 @@ description: >
   blocker for the account history.
 argument-hint: "[<account-name-or-ID>] [--diagnose | --escalate | --log]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /onboarding:blocker-review
@@ -44,6 +45,25 @@ Proceed with a generic escalation path description if the user confirms.
 
 ---
 
+## Trigger Precision
+
+**Use when:**
+- Diagnosing an active blocker preventing a customer from reaching their next milestone on time
+- Producing a formatted escalation brief for a specific escalation contact (AE, manager, exec sponsor, implementation engineer, partner, support)
+- Logging a resolved blocker to the account history for pattern recognition
+
+**Do NOT use for:**
+- General onboarding status checks (use `/onboarding:milestone-tracker`)
+- Proactive risk flagging before a blocker is confirmed (use `/onboarding:milestone-tracker --flag`)
+- Reviewing overall onboarding health across a portfolio
+
+**Typical activation:**
+- "We have a blocker on [Account] — the integration isn't working"
+- "I need to escalate this to the AE — generate me a brief"
+- "That blocker is resolved — log it"
+- `/onboarding:blocker-review [account] --diagnose`
+- `/onboarding:blocker-review [account] --escalate`
+- `/onboarding:blocker-review [account] --log`
 
 ## Reasoning Protocol
 
@@ -326,6 +346,19 @@ root cause analysis, and recommended actions. Escalate mode: escalation brief.
 Log mode: CRM-ready note. See mode-specific sections for field-level structure.
 
 > [review before sending]
+
+## Security & Permissions
+
+This skill operates read-only against configuration files and connected MCP data sources.
+No filesystem writes, no subprocess execution, no dynamic code execution.
+All data access is through explicitly connected MCP connectors; no outbound network calls are made directly.
+
+## Trust & Verification
+
+All output is labeled with data source and timestamp per reviewer note format.
+Escalation briefs contain account ARR and contract context — confirm receiving party is authorized before sharing.
+Blocker severity ratings are calculated from milestone math, not CSM emotional framing — skill presents the calculation transparently.
+CSM judgment is required for escalation decisions and action plan execution — skill presents options, never directives.
 
 ## Guardrails
 

@@ -9,12 +9,42 @@ description: >
   the health model; health-model-review audits the model itself.
 argument-hint: "[--full | --completeness | --staleness | --consistency | --field <field-name>]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /cs-ops:data-quality-check
 
 Data quality problems don't announce themselves — they surface as incorrect
 dashboards, missed renewals, and capacity plans built on fictional account counts.
+
+[PROPOSED]
+
+---
+
+## Use when
+
+- Running a scheduled data quality audit (weekly, monthly, or quarterly)
+- A health model review or segment analysis returns suspect results and you
+  need to trace the problem to data gaps
+- Onboarding a new CRM integration and establishing a baseline completeness score
+- Leadership asks "how clean is our data?" before a board or investor update
+- A specific field (e.g., renewal date, ARR, CSM owner) is suspected to be
+  incomplete or stale across the book
+
+## Do NOT use for
+
+- Account-level data corrections (fix directly in the CRM or CS platform)
+- Health score recalibration (use `/cs-ops:health-model-review`)
+- Configuring which fields are required (use `/cs-ops:customize --section data-quality`)
+- Generating a data quality SOP document (use `/cs-ops:process-doc --data-quality`)
+
+## Typical activation
+
+- `/cs-ops:data-quality-check` — full audit across all configured required fields (default)
+- `/cs-ops:data-quality-check --completeness` — coverage rates only, no staleness or consistency
+- `/cs-ops:data-quality-check --staleness` — stale-data view only
+- `/cs-ops:data-quality-check --consistency` — cross-field consistency checks only
+- `/cs-ops:data-quality-check --field <field-name>` — deep audit of one named field
 
 ---
 
@@ -369,7 +399,8 @@ Ranked by impact (ARR affected × severity):
 
 ## Output
 
-Data quality audit report — format driven by `--quick` (default) or `--full` flag.
+Data quality audit report — format driven by the mode flag
+(`--full`, `--completeness`, `--staleness`, `--consistency`, or `--field <field-name>`).
 Produces a structured markdown report with: coverage summary table, field-level
 completeness scores, data gap inventory, and prioritised remediation actions.
 See **Full data quality audit** section for field-level detail.

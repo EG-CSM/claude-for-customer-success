@@ -1,6 +1,8 @@
 ---
 name: cold-start-interview
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Rev-ops plugin setup. Reads existing company-profile.md if present, then collects only rev-ops-specific configuration: planning parameters, headcount, discount thresholds, lead definitions, OCV catalog path, and connector status. Writes ~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md. Run once at install; re-run after major planning cycle changes."
 ---
 
@@ -15,6 +17,21 @@ that all rev-ops skills read at runtime.
 - Segment, motion, or touch model changes
 - Headcount changes by >2 FTEs in any function
 - OCV catalog is ratified or replaced
+
+---
+
+## Use when
+- New installation of the rev-ops agent requires practice profile setup
+- Practice profile is missing or incomplete and skills are degrading to fallback mode
+- RevOps configuration needs to be captured or updated for the first time
+
+## Do NOT use for
+- Updating individual skill configurations after cold start is complete
+- Running operational skills (this skill produces the config that other skills read)
+- Reporting or analysis tasks
+
+## Typical activation
+"Cold start", "set up the rev-ops agent", "configure the practice profile", "first-time setup", "profile is missing", "run cold start interview"
 
 ---
 
@@ -98,6 +115,60 @@ Ask in this order. One group at a time. Do not batch unrelated questions.
 - "What is your standard payment terms (net-N days)? [Default: 30]"
 - "How many days before renewal do you initiate the renewal conversation? [Default: 90]"
 
+**Group C2 — CS operating model maturity** (required — gates revenue function clusters)
+
+This group determines whether the CS org is operating as a revenue center or a
+delivery/retention function. The answer gates four capability clusters that are only
+applicable if CS owns pipeline and carries quota.
+
+Ask these questions as a single decision point:
+
+- "Does your CS organization currently carry a revenue quota? [Yes / No / Planned for next cycle]"
+- "Does CS own and forecast an expansion pipeline independently? [Yes / No]"
+- "Does CS own renewal revenue (GRR accountability) with a named CS leader carrying that number? [Yes / No]"
+
+**Scoring logic (write `cs_operating_model` to practice profile):**
+
+```
+If all three Yes (or Yes/Planned mix for #1):
+  cs_operating_model: revenue_center
+  → Enable all CS revenue function clusters
+
+If Yes on renewal ownership only (GRR accountability present, no expansion quota):
+  cs_operating_model: retention_center
+  → Enable: CS renewal book, GRR monitoring, churn model
+  → Disable: CS expansion deal desk, CS expansion forecasting, quota modeling, comp simulation
+
+If No on all three:
+  cs_operating_model: delivery_function
+  → Enable: handoff quality, OCV delivery, churn monitoring
+  → Disable: all CS revenue function clusters (they will show as [Not applicable — delivery model])
+
+If Planned on quota/pipeline:
+  cs_operating_model: revenue_center_transition
+  → Enable all clusters but label them [Transition mode — configure when quota is live]
+  → Prompt: "I'll configure the revenue function clusters in placeholder mode. Run
+     cold-start-interview again once quota is assigned and pipeline ownership is live."
+```
+
+**Follow-up questions if `cs_operating_model = revenue_center` or `revenue_center_transition`:**
+
+- "What is the CS expansion quota for the current fiscal year? (Total expansion ARR target)"
+- "What is the maximum expansion discount a CS manager can approve without escalation?
+   [Default: same as Sales standard threshold — enter to use default or specify separately]"
+- "What is the maximum expansion discount a CS leader can approve?
+   [Default: same as Sales elevated threshold — enter to use default or specify separately]"
+- "Does your CS org use quota-based compensation (OTE model)? [Yes / No]"
+  → If Yes: "What is the CS variable payout split (expansion vs. renewal vs. other)?
+     (e.g., 60% expansion / 40% renewal)" [Used by cs-quota-sensitivity skill]
+
+**Follow-up questions if `cs_operating_model = retention_center`:**
+
+- "What is your GRR target for this fiscal year? (e.g., 88% → enter 0.88)"
+- (Expansion discount thresholds: skip — not applicable)
+
+---
+
 **Group D — Lead definitions** (required)
 
 - "How do you define an MQL?"
@@ -137,7 +208,10 @@ Flag any required fields that are still missing.
 
 ## Step 5 — Capability Readiness Summary
 
-After writing, produce a readiness table:
+After writing, produce a readiness table. The table content depends on
+`cs_operating_model` from Group C2.
+
+**Base readiness table (all operating models):**
 
 ```
 REV-OPS PLUGIN READINESS
@@ -147,9 +221,43 @@ SA2 Pipeline Health            ✓ Full    HubSpot connected
 SA3 Planning Engine            ✓ Full    UoG baseline present
 SA4 CRM Data Quality           ✓ Full    HubSpot connected
 SA5 Revenue Continuity         ⚡ Partial OCV catalog not configured
-SA6 Deal Desk                  ✓ Full    Thresholds configured
+SA6 Deal Desk (new-logo)       ✓ Full    Thresholds configured
 ARIA Orchestrator              ✓ Full    All agents ready
+```
 
+**Append CS revenue function cluster rows based on cs_operating_model:**
+
+```
+IF cs_operating_model = revenue_center:
+  CS Expansion Pipeline        ✓ Full    Quota configured, expansion thresholds set
+  CS Renewal Book              ✓ Full    GRR target configured
+  CS Forecast & Attainment     ✓ Full    Expansion pipeline active
+  CS Deal Desk (expansion)     ✓ Full    CS expansion thresholds configured
+  CS Quota Modeling            ✓ Full    [if cs_variable_comp = Yes]
+                                ⚡ N/A   [if cs_variable_comp = No]
+
+IF cs_operating_model = revenue_center_transition:
+  CS Expansion Pipeline        ⚡ Transition  Quota not yet live — configure when active
+  CS Renewal Book              ✓ Full         GRR target configured
+  CS Forecast & Attainment     ⚡ Transition  Pipeline ownership pending
+  CS Deal Desk (expansion)     ⚡ Transition  Thresholds in placeholder mode
+  CS Quota Modeling            ⚡ Transition  [label: configure when quota is assigned]
+
+IF cs_operating_model = retention_center:
+  CS Renewal Book              ✓ Full    GRR target configured
+  CS Expansion Pipeline        — N/A     CS does not own expansion pipeline
+  CS Forecast & Attainment     — N/A     No CS expansion quota
+  CS Deal Desk (expansion)     — N/A     Not applicable — delivery model
+  CS Quota Modeling            — N/A     Not applicable — delivery model
+
+IF cs_operating_model = delivery_function:
+  CS Revenue Clusters          — Not applicable  CS operates as delivery function
+  [All four clusters suppressed from capability table]
+```
+
+**Append degraded skill list (all models):**
+
+```
 Skills running in degraded mode:
   outcome-to-value-tracking    [Confidence: Low] — OCV catalog absent
   deal-to-outcome-tracing      [Confidence: Low] — OCV catalog absent
@@ -157,6 +265,21 @@ Skills running in degraded mode:
 
 To improve: run /csm:cold-start-interview --generate-outcome-catalog to build your OCV catalog.
 The path will be registered in company-profile.md and read automatically by rev-ops skills.
+─────────────────────────────────────────────────────────────
+```
+
+**If cs_operating_model = delivery_function or retention_center, append:**
+
+```
+Note: Four capability clusters are not active for your current CS operating model:
+  • CS Expansion Pipeline & Forecasting
+  • CS Deal Desk (expansion motion)
+  • CS Planning & Incentive Design
+  • CS Quota / Comp Simulation
+
+These clusters activate when your CS org carries expansion quota and owns
+expansion pipeline. Re-run cold-start-interview to enable them when your
+operating model evolves.
 ─────────────────────────────────────────────────────────────
 ```
 
@@ -173,3 +296,10 @@ do not apply to interview outputs.
 - Writes: `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md`
 - No CRM or connector calls during setup
 - No customer or account data processed
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.

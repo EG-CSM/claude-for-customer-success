@@ -10,10 +10,33 @@ description: >
   of specific sections without a full re-run.
 argument-hint: "[--full | --section <section-name> | --reset]"
 version: "1.0.0"
+deployment_target: plugin
 config_skill: true
 ---
 
 # /csm:customize
+
+[PROPOSED]
+
+## Use When
+- First install: running full configuration of the CSM plugin (`--full` or no argument)
+- Updating a specific config section without re-running the full interview (`--section <name>`)
+- CS practice has changed: new segments, motion change, escalation routing update, new CS platform
+- Resetting all configuration to start fresh (`--reset`)
+
+## Do NOT Use For
+- Running the full guided interview for the first time — prefer `/csm:cold-start-interview` for a cleaner first-run experience
+- Answering CS strategy questions — answer directly
+- Configuring other plugins (cs-ops, renewals, onboarding)
+
+## Typical Activation
+"/csm:customize"
+"/csm:customize --section escalation-matrix"
+"/csm:customize --section health-model"
+"/csm:customize --reset"
+"Update my churn signal definitions"
+
+---
 
 Configure the CSM plugin to match your company's CS practice — so every other
 skill runs against your actual model, not a generic template.
@@ -365,3 +388,24 @@ customized independently, alert the user to review for consistency.
 - "Build account context before your next call: `/csm:account-research [account]`"
 - "Run a portfolio triage to see where your book stands: `/csm:health-score-review --triage`"
 - "Want to configure the other CS plugins? Run `/cs-ops:customize`, `/renewals:customize`, or `/onboarding:customize`"
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: none
+- filesystem_write: config files only (explicitly listed paths)
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- All config writes require explicit user confirmation before executing
+- No values are invented — gaps use [PLACEHOLDER] markers
+- Config files govern downstream skill behavior; treat writes as high-trust operations

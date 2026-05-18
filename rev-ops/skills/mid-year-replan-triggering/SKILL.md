@@ -1,6 +1,8 @@
 ---
 name: mid-year-replan-triggering
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Monitors plan-vs-actual drift against the UoG baseline. Fires a replan recommendation when actuals diverge >15% from P50 plan, CS headroom crosses 10%, AE attainment runs >20pp below plan for 2+ months, or a material territory event occurs. Produces a replan recommendation memo with supporting data. Triggers: 'replan', 'plan vs actual drift', 'mid-year adjustment', 'are we off plan', 'should we replan'."
 ---
 
@@ -9,8 +11,23 @@ description: "Monitors plan-vs-actual drift against the UoG baseline. Fires a re
 Monitors four drift signals against the annual plan baseline. Produces a replan
 recommendation memo when a trigger fires — not a replan itself.
 
-**Reference:** UoG formulas → `reference/revops-domain-model.md §5`
+**Reference:** UoG formulas → `../../../shared/revops-domain-model.md §5`
 **Config reads:** `uog_baseline_path`, `target_growth_pct`, `current_csm_count`
+
+---
+
+## Use when
+- Actuals have deviated materially from annual plan and replanning criteria need evaluation
+- Mid-year variance triggers need to be assessed against configured thresholds
+- Leadership needs structured recommendation on whether to initiate a replan
+
+## Do NOT use for
+- Annual planning execution (use annual-planning-workflow)
+- Forecast variance analysis in isolation (use forecast-variance-analysis)
+- Scenario modeling for a replan (use scenario-modeling after trigger fires)
+
+## Typical activation
+"Should we replan?", "mid-year replan", "replan trigger assessment", "are we off plan enough to replan", "evaluate replan criteria"
 
 ---
 
@@ -79,6 +96,21 @@ To initiate replan: /rev-ops:annual-planning-workflow --phase [1 or relevant pha
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential deal, customer, and revenue data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

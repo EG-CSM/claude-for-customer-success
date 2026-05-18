@@ -1,6 +1,8 @@
 ---
 name: deal-desk-workflow-management
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Manages the complete deal desk approval routing workflow: submit → review → route → decide → log. Assembles context brief (discount rationale, competitive context, Tier 1 churn risk signal) before routing to approver. Enforces SLA (24h standard, 4h final 2 weeks of quarter). SLA breach escalates to #revops-ops. Triggers: 'deal desk', 'approval workflow', 'route for approval', 'deal approval status', 'process a deal desk request'."
 ---
 
@@ -9,9 +11,25 @@ description: "Manages the complete deal desk approval routing workflow: submit �
 The approval routing workflow — not the approval itself. Deal Desk assembles
 context, routes to the right person, and tracks to resolution.
 
-**Reference:** Governance tiers → `reference/revops-domain-model.md §9`
+**Reference:** Governance tiers → `../../../shared/revops-domain-model.md §9`
 **Config reads:** `discount_standard_threshold_pct`, `discount_elevated_threshold_pct`,
 `linear_connected`, `slack_connected`
+
+---
+
+## Use when
+- Deal requires formal approval routing through the deal desk
+- Discount level crosses standard or elevated threshold requiring approver assignment
+- User needs to check status of an active deal desk submission
+- Deal desk submission requires context brief assembly before routing
+
+## Do NOT use for
+- Approving deals (this skill routes only — never approves)
+- Discount threshold calculation in isolation (use discount-threshold-monitoring)
+- Non-standard terms detection without approval routing context (use non-standard-terms-detection)
+
+## Typical activation
+"Submit to deal desk", "route for approval", "deal desk for [account]", "deal approval status", "process a deal desk request"
 
 ---
 
@@ -86,6 +104,21 @@ If SLA breached: Post to #revops-ops with deal link and approver name
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential deal, customer, and revenue data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

@@ -12,6 +12,7 @@ description: >
   book and recommend proactive interventions.
 argument-hint: "[<account-name-or-ID>] [--account | --portfolio | --patterns]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /onboarding:ttv-analysis
@@ -45,6 +46,27 @@ Proceed using milestone day targets as the reference if confirmed.
 
 ---
 
+## Trigger Precision
+
+**Use when:**
+- Assessing TtV pace and trajectory for a single account mid-onboarding (`--account`)
+- Generating a comparative TtV view ranked by performance across all active accounts (`--portfolio`)
+- Identifying systemic delay patterns across your onboarding book for process improvement (`--patterns`)
+
+**Do NOT use for:**
+- Milestone status checks without TtV benchmarking (use `/onboarding:milestone-tracker`)
+- Customer-facing progress reporting — TtV is an internal planning metric only; redirect to milestone-date language
+- Handoff readiness assessment (use `/onboarding:handoff-doc --readiness`)
+
+**Typical activation:**
+- "Is [Account] on track for TtV?"
+- "Show me the portfolio TtV performance"
+- "What patterns are causing delays across my book?"
+- `/onboarding:ttv-analysis [account] --account`
+- `/onboarding:ttv-analysis --portfolio`
+- `/onboarding:ttv-analysis --patterns`
+
+---
 
 ## Reasoning Protocol
 
@@ -318,6 +340,19 @@ Time-to-Value analysis output — format driven by flag (`--account`, `--portfol
 factors and acceleration recommendations. Portfolio mode: ranked table. Patterns
 mode: cohort analysis with systemic findings. See mode-specific sections for
 field-level structure.
+
+## Security & Permissions
+
+This skill operates read-only against configuration files and connected MCP data sources.
+No filesystem writes, no subprocess execution, no dynamic code execution.
+All data access is through explicitly connected MCP connectors; no outbound network calls are made directly.
+
+## Trust & Verification
+
+All TtV figures, projections, and comparisons are tagged `[review — internal planning target]` without exception — this tag is not removed for any output mode.
+Portfolio outputs containing segment performance and account-level TtV comparisons require confidentiality check before sharing beyond the CSM (per G5).
+Pace projections require at least M1 completion — zero-milestone projections are target-based estimates, explicitly labeled.
+Acceleration recommendations are CSM-owned options, not directives — skill presents choices, CSM determines appropriateness.
 
 ## Guardrails
 

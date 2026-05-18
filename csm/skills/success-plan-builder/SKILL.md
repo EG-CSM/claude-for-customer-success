@@ -8,9 +8,33 @@ description: >
   internal tracker.
 argument-hint: "[account name] [--new | --reset | --review]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /success-plan-builder
+
+[PROPOSED]
+
+## Use When
+- Starting a new customer engagement and need to establish a formal success plan
+- An existing success plan needs to be updated after a QBR, health review, or goal change
+- Renewal is approaching and the success plan needs to reflect value delivered and next-period goals
+- Executive sponsor has changed and the plan needs to be refreshed for the new stakeholder
+
+## Do NOT Use For
+- The structured success plan canvas format — use /csm:success-plan-canvas for OCV-aligned canvas output
+- Progress tracking against an existing canvas — use /csm:success-plan-progress-review
+- QBR deck construction — use /csm:qbr-builder
+- Value statements for renewal — use /csm:value-statement
+
+## Typical Activation
+"/csm:success-plan-builder Acme Corp"
+"/csm:success-plan-builder Acme Corp --update"
+"/csm:success-plan-builder Acme Corp --review"
+"Build a success plan for [account]"
+"Update the success plan for [customer]"
+
+---
 
 Build a success plan that the customer will actually sign off on — account-specific
 success criteria, measurable milestones, joint ownership, and a cadence that
@@ -327,3 +351,26 @@ profile must be traceable in the success criteria. If it's absent, flag it.
 - "Want to set a milestone review reminder? Run `/csm:renewal-readiness [account]`
   when you reach M5."
 - "Ready to build the QBR when M4 or M5 are complete? `/csm:qbr-builder [account]`"
+
+---
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: outbound_allowlist (CRM, CS platform, document storage per configured integrations)
+- filesystem_write: outbound to document storage only (per configured integration)
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- Internal signals (health scores, expansion flags, ARR) must not appear in customer-facing plan output
+- Success criteria must be validated against the customer's stated goals — do not invent metrics
+- If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview

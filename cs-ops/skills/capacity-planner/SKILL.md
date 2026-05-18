@@ -9,11 +9,40 @@ description: >
   a capacity assessment with specific redistribution or hiring recommendations.
 argument-hint: "[--current | --headcount | --redistribution | --departure <csm-name>]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /cs-ops:capacity-planner
 
 Know whether CSMs have too much on their plate — and what to do about it.
+
+[PROPOSED]
+
+---
+
+## Use when
+
+- Quarterly planning requires current CSM load vs. target ratio analysis
+- Building a headcount request and need data to justify the hire
+- A CSM is departing and you need to assess coverage impact and redistribution options
+- Red-tier concentration in a segment suggests a coverage problem rather than a
+  product or relationship issue
+- A segment analysis has flagged a coverage gap and you need the capacity follow-up
+
+## Do NOT use for
+
+- Segment-level health analysis (use `/cs-ops:segment-analyzer`)
+- Updating target CSM-to-account ratios in config (use `/cs-ops:customize --section ratios`)
+- Updating the CSM team roster (use `/cs-ops:customize --section team`)
+- Individual account ownership reassignment (handle directly in CRM)
+
+## Typical activation
+
+- `/cs-ops:capacity-planner` — current capacity snapshot across all segments (default)
+- `/cs-ops:capacity-planner --current` — same as default; explicit current-state view
+- `/cs-ops:capacity-planner --headcount` — headcount requirement analysis with hire justification
+- `/cs-ops:capacity-planner --redistribution` — account redistribution options given current team
+- `/cs-ops:capacity-planner --departure <csm-name>` — coverage impact of a named CSM departure
 
 ---
 

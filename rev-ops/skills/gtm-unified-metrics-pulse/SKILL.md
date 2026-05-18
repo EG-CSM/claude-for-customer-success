@@ -1,7 +1,9 @@
 ---
 name: gtm-unified-metrics-pulse
 version: 1.0.0
-description: "Weekly cross-functional metrics report covering five sections: pipeline/forecast/closed-won (all teams), handoff quality (RevOps/CS ops), CS capacity status (leadership), early churn flags with account names (#cs-leadership only), outcome realization summary (aggregate to all, account-level to #cs-leadership). All Slack posts require Write-tier confirmation. Triggers: 'weekly pulse', 'GTM metrics', 'alignment pulse', 'cross-functional metrics', 'run the weekly pulse'."
+deployment_target: plugin
+status: PROPOSED
+description: "Weekly cross-functional metrics report covering five sections: revenue system pipeline (new logo + expansion + renewal pipelines across Sales and CS), handoff quality (RevOps/CS ops), CS capacity status (leadership), early churn flags with account names (#cs-leadership only), outcome realization summary (aggregate to all, account-level to #cs-leadership). All Slack posts require Write-tier confirmation. Triggers: 'weekly pulse', 'GTM metrics', 'alignment pulse', 'cross-functional metrics', 'run the weekly pulse'."
 ---
 
 # GTM Unified Metrics Pulse
@@ -9,9 +11,24 @@ description: "Weekly cross-functional metrics report covering five sections: pip
 Five-section weekly signal for the full revenue lifecycle.
 The one report that replaces "which number is right?" in the leadership meeting.
 
-**Reference:** Output destination labels → `reference/revops-domain-model.md §11`
-**Reference:** Governance tiers → `reference/revops-domain-model.md §9`
+**Reference:** Output destination labels → `../../../shared/revops-domain-model.md §11`
+**Reference:** Governance tiers → `../../../shared/revops-domain-model.md §9`
 **Config reads:** `slack_connected`, `linear_connected`, `cs_platform_connected`
+
+---
+
+## Use when
+- Leadership needs a single-view metrics pulse across the full revenue system — Sales new logo pipeline, CS expansion pipeline, and CS renewal pipeline
+- Weekly or monthly GTM metrics brief required across functions
+- Board or exec review needs unified GTM health snapshot including CS-owned ARR
+
+## Do NOT use for
+- Deep-dive analysis on a specific metric (use the domain-specific skill)
+- Revenue brief for a single function (use revenue-brief-generation)
+- Pipeline analysis in isolation (use pipeline-coverage-analysis)
+
+## Typical activation
+"GTM metrics pulse", "unified metrics brief", "GTM health check", "cross-functional metrics report", "weekly GTM pulse"
 
 ---
 
@@ -29,16 +46,33 @@ The one report that replaces "which number is right?" in the leadership meeting.
 
 ## Five Sections
 
-### Section 1 — Pipeline → Forecast → Closed/Won
+### Section 1 — Revenue System Pipeline → Forecast → Closed/Won
 ```
-Source: HubSpot [CRM ✓ live — as of YYYY-MM-DD]
+Source: HubSpot + CS platform [CRM ✓ live — as of YYYY-MM-DD]
+
+  NEW LOGO (Sales-owned)
   Pipeline total: $XXXk  (WoW: +$XXXk ↑ / −$XXXk ↓)
   Forecast (P50): $XXXk  (WoW: [delta])
   Closed/won MTD: $XXXk  (vs. $XXXk plan — XX% attainment)
 
-Why it changed: [One line if WoW delta >threshold]
+  EXPANSION (CS-owned)
+  Expansion pipeline: $XXXk  (WoW: +$XXXk ↑ / −$XXXk ↓)
+  Expansion forecast (P50): $XXXk  (WoW: [delta])
+  Expansion closed MTD: $XXXk  (vs. $XXXk plan — XX% attainment)
+
+  RENEWAL (CS-owned)
+  Renewal book at risk (next 90 days): $XXXk
+  Renewal forecast GRR: XX%  (vs. XX% plan)
+  Renewals closed MTD: $XXXk  (XX% of due book)
+
+Why it changed: [One line per vector if WoW delta >threshold]
 [G1: Forecast is a model. Not a revenue commitment.]
 ```
+
+**Application context:** Section 1 covers the full revenue system.
+Vector 1 (New logo) is Sales-owned. Vectors 2–3 (Expansion and Renewal)
+are CS-owned — CS leaders are accountable for these numbers the same way
+Sales is accountable for new logo attainment.
 
 ### Section 2 — Handoff Quality
 ```
@@ -108,6 +142,21 @@ Always declare what's missing. Never produce a section from unavailable data
 without labeling it.
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential customer, deal, and operational data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

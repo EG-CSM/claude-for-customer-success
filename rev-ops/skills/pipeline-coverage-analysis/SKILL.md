@@ -1,6 +1,8 @@
 ---
 name: pipeline-coverage-analysis
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Calculates pipeline coverage ratio by segment, rep, and quarter. Flags when coverage falls below the threshold derived from win rate (not a universal 3x). Produces an exposure ranking and week-over-week trend. Use when assessing pipeline health before a forecast call, board review, or quarter-close. Triggers: 'pipeline coverage', 'coverage ratio', 'are we covered for Q[N]', 'pipeline risk by segment'."
 ---
 
@@ -10,9 +12,24 @@ Calculates pipeline coverage ratio and surfaces exposure risk before it becomes
 a missed quarter. Coverage threshold is always derived from win rate — never a
 universal 3x rule.
 
-**Reference:** Coverage thresholds → `reference/revops-domain-model.md §7`
+**Reference:** Coverage thresholds → `../../../shared/revops-domain-model.md §7`
 **Config reads:** `win_rate` (user-provided or practice profile), `current_arr`,
 `target_growth_pct`, `nrr_current`
+
+---
+
+## Use when
+- User needs pipeline coverage ratio analysis against quota or target
+- Forecast call preparation requires coverage gap identification by rep, segment, or team
+- Coverage adequacy assessment needed before end of quarter
+
+## Do NOT use for
+- Individual deal health scoring (use deal-health-scoring)
+- Pipeline velocity or stage conversion analysis (use pipeline-velocity-tracking)
+- Full forecast number generation (use forecast-variance-analysis)
+
+## Typical activation
+"Pipeline coverage analysis", "do we have enough pipeline?", "coverage ratio for Q[N]", "pipeline vs quota for [rep/team]", "coverage check"
 
 ---
 
@@ -94,6 +111,21 @@ Week-over-week: [+$X / −$X / unavailable]
 
 [DRAFT — RevOps internal] [Confidence: High]
 ```
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential deal and pipeline data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

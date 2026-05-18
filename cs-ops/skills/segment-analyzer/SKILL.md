@@ -9,12 +9,40 @@ description: >
   health-model-review: this skill analyzes by segment, not by health component.
 argument-hint: "[--full | --segment <name> | --reclassification | --at-risk]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /cs-ops:segment-analyzer
 
 Understand the book by segment — who's in each tier, how coverage looks,
 and where motion-to-segment fit is breaking down.
+
+[PROPOSED]
+
+---
+
+## Use when
+
+- Running quarterly planning and need a cross-segment ARR and health view
+- Building a headcount request that requires segment-level coverage data
+- Leadership asks "how is [segment] performing?" and you need a structured answer
+- Reclassification candidates need to be identified after an ARR threshold change
+- A health model review has surfaced a segment-level anomaly worth investigating
+- Weekly triage requires an at-risk account view segmented by ARR exposure
+
+## Do NOT use for
+
+- Portfolio-wide health model calibration (use `/cs-ops:health-model-review`)
+- Individual account health reviews (use `/csm:health-score-review`)
+- CSM capacity load analysis (use `/cs-ops:capacity-planner`)
+- Updating segment definitions in config (use `/cs-ops:customize --section segments`)
+
+## Typical activation
+
+- `/cs-ops:segment-analyzer` — full cross-segment analysis (default)
+- `/cs-ops:segment-analyzer --segment <name>` — deep dive on one segment
+- `/cs-ops:segment-analyzer --reclassification` — accounts that have crossed ARR thresholds
+- `/cs-ops:segment-analyzer --at-risk` — Red and Yellow accounts by segment for triage
 
 ---
 
@@ -268,7 +296,8 @@ Accounts that have crossed a configured ARR threshold and should move segments:
 
 ## Output
 
-Segment analysis report — format driven by `--quick` (default) or `--full` flag.
+Segment analysis report — format driven by the mode flag
+(`--full`, `--segment <name>`, `--reclassification`, or `--at-risk`).
 Produces a structured markdown report with: segment health summary, ICP alignment
 scores, misfit account inventory, and recommended segment or coverage adjustments.
 See **Full segment analysis** section for field-level detail.

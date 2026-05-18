@@ -1,6 +1,8 @@
 ---
 name: closed-won-to-cs-capacity-modeling
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Converts rolling sales forecast into CS resource demand using UoG formulas. Runs three-scenario capacity check (P10/P50/P90 from scenario-modeling). Compares projected CSM demand to current headcount and UoG annual plan baseline. Surfaces CS capacity gaps with a hiring lead time flag. Updates when SA1 forecast moves >10%. Triggers: 'CS capacity', 'can CS absorb', 'CSM headcount needed', 'CS ceiling', 'will CS be able to handle new logos'."
 ---
 
@@ -9,9 +11,24 @@ description: "Converts rolling sales forecast into CS resource demand using UoG 
 Translates what Sales is about to close into what CS needs to handle.
 The skill that prevents hiring CSMs one quarter after you needed them.
 
-**Reference:** UoG formulas (CS capacity) → `reference/revops-domain-model.md §5`
+**Reference:** UoG formulas (CS capacity) → `../../../shared/revops-domain-model.md §5`
 **Config reads:** `current_csm_count`, `arr_per_csm`, `avg_deal_acv`,
 `csm_avg_ramp_days`, `uog_baseline_path`, `open_csm_requisitions`
+
+---
+
+## Use when
+- CS team capacity needs to be assessed against incoming closed-won volume
+- Onboarding capacity planning requires modeling against pipeline close projections
+- CS hiring or resource decisions need to be tied to revenue intake rate
+
+## Do NOT use for
+- Individual CS assignment decisions (use handoff workflow)
+- CS performance assessment
+- Pipeline coverage analysis from a Sales perspective (use pipeline-coverage-analysis)
+
+## Typical activation
+"CS capacity model", "can CS absorb this pipeline", "capacity planning for CS", "closed-won to onboarding capacity", "do we have enough CS capacity"
 
 ---
 
@@ -86,6 +103,21 @@ Hiring lead time:
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential deal, customer, and revenue data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

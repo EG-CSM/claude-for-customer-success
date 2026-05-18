@@ -1,6 +1,8 @@
 ---
 name: outcome-statement-builder
 description: "Outcome Statement Builder -- transform raw product or service capabilities into structured, verifiable outcome statements using the Seven-Stage Value Chain, then assign tangible business metrics and generate a multi-level achievement rubric. Use during Outcome Catalog development to convert capability inputs into catalog-ready outcome entries with approval checkpoints and rubric-based evaluation criteria. Produces a local Outcome & Value Registry in machine-readable Markdown and a presentation-ready HTML review deck for cross-functional ratification with Sales, Marketing, RevOps, and CS."
+deployment_target: plugin
+status: PROPOSED
 ---
 
 # Outcome Statement Builder
@@ -14,24 +16,21 @@ a machine-readable Markdown registry and a presentation-ready HTML review deck.
 
 Operates in two sequential phases with an explicit approval gate between them.
 
-**Use when:**
+## Use when
 - You have product or service capabilities to translate into customer outcome language
 - You need outcome statements that can pass catalog entry standards (measurable, role-specific, trigger-conditioned)
 - You want to assign business metrics and achievement levels to an approved outcome set
 - You are building or populating a local Outcome & Value Registry
 - You need a cross-functional review artifact for Sales, Marketing, RevOps, or CS ratification sessions
 
-**Do NOT use for:**
+## Do NOT use for
 - Editing or updating existing catalog entries (use outcome-catalog-entry-builder)
 - Generating a full catalog from research data (use provisional-outcome-catalog-generator)
 - Competitive analysis or benchmarking
 - Capabilities that are not yet delivered — this skill works with what exists, not roadmap items
 
-**Typical activation:**
-- "Help me turn these capabilities into outcomes"
-- "Transform my capability list into outcome statements"
-- "Build outcomes from these features and generate the registry"
-- "I need to create outcome statements, rubrics, and a review deck"
+## Typical activation
+"Help me turn these capabilities into outcomes", "Transform my capability list into outcome statements", "Build outcomes from these features and generate the registry", "I need to create outcome statements, rubrics, and a review deck"
 
 ---
 

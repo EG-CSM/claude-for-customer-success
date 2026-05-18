@@ -1,6 +1,8 @@
 ---
 name: quota-sensitivity-analysis
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Builds quota models from UoG-confirmed AE headcount and revenue target. Models structural achievability at five attainment levels (50/65/75/85/100%). Flags when hitting plan requires attainment above the 75th percentile of historical actuals. Used inside annual-planning-workflow Phase 4 or standalone. Triggers: 'quota model', 'is quota achievable', 'quota sensitivity', 'quota attainment model', 'what does quota need to be'."
 ---
 
@@ -9,8 +11,21 @@ description: "Builds quota models from UoG-confirmed AE headcount and revenue ta
 Quota achievability modeling from UoG inputs. Flags structurally challenging
 quotas — not as a rejection, but as a risk disclosure for leadership.
 
-**Reference:** UoG formulas → `reference/revops-domain-model.md §5`
-**Reference:** Confidence bands → `reference/revops-domain-model.md §2`
+## Use when
+- User needs to understand how quota attainment changes under different input assumptions
+- Sensitivity testing of quota model before annual plan is finalized
+- Rep or segment quota review requires range analysis rather than point estimate
+
+## Do NOT use for
+- Full annual planning orchestration (use annual-planning-workflow)
+- Territory redesign (use territory-optimization)
+- Comp plan modeling (use comp-simulation)
+
+## Typical activation
+"How sensitive is quota to win rate?", "quota sensitivity analysis", "what happens to attainment if ACV drops 10%", "sensitivity test the plan"
+
+**Reference:** UoG formulas → `../../../shared/revops-domain-model.md §5`
+**Reference:** Confidence bands → `../../../shared/revops-domain-model.md §2`
 **Config reads:** `ae_quota`, `ae_attainment_planning_rate`, `current_ae_count`
 
 ---
@@ -80,6 +95,21 @@ Structural achievability: [Achievable / Structurally Challenging]
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential revenue planning and compensation data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

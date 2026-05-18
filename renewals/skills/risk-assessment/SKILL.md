@@ -10,12 +10,34 @@ description: >
   CS Platform when connectors are available.
 argument-hint: "[<account-name-or-ID>] [--deep | --quick | --triage]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
-# /renewals:risk-assessment
+# /renewals:risk-assessment [VALIDATED]
 
 Structured risk assessment for a renewal account — signals, tier, escalation path,
 and recommended play.
+
+---
+
+## Use when
+- You are at the 90-, 60-, or 30-day outreach window for a renewal account and need a structured signal read before engaging
+- A churn signal has been detected (login drop, NPS decline, executive sponsor departure, non-renewal notice) and the account needs immediate triage
+- You need to prioritize accounts before a pipeline review and want a preliminary risk tier for each
+- An account has been flagged by a health score alert and you need to decompose the score into actionable domain-level signals
+- You are preparing an escalation and need a structured risk brief for your Head of CS or AE partner
+
+## Do NOT use for
+- Ongoing health monitoring without a specific renewal or churn trigger — use your CS Platform health dashboards for continuous monitoring
+- Post-churn analysis after a cancellation has closed — use `/renewals:churn-rca` for root cause analysis
+- Expansion opportunity identification — use `/renewals:expansion-signal`
+- Generating an executive-ready renewal brief — run this skill first, then use `/renewals:executive-summary` to translate the tier output
+- Batch pipeline forecasting without per-account triage — use `/renewals:renewal-forecast` for portfolio-level views
+
+## Typical activation
+> `/renewals:risk-assessment Acme Corp` — full signal aggregation across all five domains for a named account
+> `/renewals:risk-assessment Acme Corp --quick` — rapid three-domain pass for a time-pressured single account read
+> `/renewals:risk-assessment --triage` — multi-account triage mode; provide a list of account names or ARR figures for ranked preliminary tier assignment
 
 ---
 
@@ -336,6 +358,42 @@ show all for Critical/High]
 > - **Flagged for your judgment:** [N items marked `[review]` inline | none]
 > - **Before escalating:** Confirm the signals are current — [specific items to verify before
 >   presenting this assessment to your escalation owner]
+
+---
+
+## Security & Permissions
+
+```
+network:        none — no external API calls, no web fetch
+read_scope:     ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md and
+                ~/.claude/plugins/config/claude-for-customer-success/company-profile.md only;
+                live connector reads (CRM, CS Platform, Gong) are read-only and scoped to
+                the named account record only
+write_scope:    none — all assessment output to conversation; no file writes
+subprocess:     none
+dynamic_code:   none — no eval, no exec, no runtime code execution
+```
+
+This skill operates in read-only mode. Config files are read at session start for churn signal definitions and escalation matrix. Connector reads (where available) are scoped to the named account record and are never written back. All assessment output is produced as conversation content only.
+
+---
+
+## Trust & Verification
+
+**Signal data handling:**
+CRM and CS Platform data is accepted as structured input through connectors or as CSM-provided context. Signal values are used for risk tier aggregation and display only — they are not executed, evaluated as code, or used to derive file paths. Free-text fields (`notes`, `additional_context`) are stored as display data.
+
+**Health score integrity:**
+Health scores are treated as one input signal among five domain signals. The skill never derives the risk tier from a health score alone. Composite score decomposition is required before any tier assignment — a health score below threshold triggers investigation, not automatic Critical tier.
+
+**Discount authority enforcement:**
+Save offer percentages are validated against the configured discount authority ceiling from the operator config before surfacing to the user. Any proposed discount exceeding the ceiling is flagged `[review]` and requires explicit approval from the configured escalation owner before presentation to the customer.
+
+**Auto-escalate trigger integrity:**
+Configured auto-escalate triggers (non-renewal notice, executive escalation from customer, NPS below threshold) produce a Critical tier assignment that cannot be overridden by aggregated signals. These triggers are read from the operator config and applied as non-negotiable gates — the skill does not accept user input that would suppress a Critical tier resulting from a confirmed auto-escalate trigger.
+
+**Account data confidentiality:**
+Account ARR, health data, and stakeholder information produced in this assessment are flagged as confidential in the output. The skill prompts confirmation of the recipient before any assessment is shared. This confirmation cannot be suppressed.
 
 ---
 

@@ -1,6 +1,8 @@
 ---
 name: deal-classification
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Independently scores each open opportunity as Commit / Best Case / Pipeline using CRM activity data — without relying on rep self-reporting. Surfaces delta vs. rep's stated forecast category when classification disagrees by more than one tier. Triggers: 'deal classification', 'classify the pipeline', 'commit vs best case', 'independent forecast', 'override rep call'."
 ---
 
@@ -9,8 +11,32 @@ description: "Independently scores each open opportunity as Commit / Best Case /
 Classifies open opportunities using CRM activity signals, not rep self-reporting.
 Disagrees with rep calls only when evidence is clear — flags the delta, doesn't override.
 
-**Reference:** Confidence bands → `reference/revops-domain-model.md §2`
+**Reference:** Confidence bands → `../../../shared/revops-domain-model.md §2`
 **Config reads:** `primary_segment`, `avg_sales_cycle_days`
+
+---
+
+## Use when
+- Deal needs to be classified by type (New ARR, Expansion, Renewal, Reactivation) for ARR reporting accuracy and pipeline routing
+- ARR classification is disputed or ambiguous for a specific opportunity
+- Closed-won deal classification needs verification before CS handoff
+
+## Do NOT use for
+- Deal health or risk scoring (use deal-health-scoring)
+- Revenue recognition decisions (classification is analytical input only)
+- Bulk ARR reporting (classification feeds reporting but does not produce it)
+
+## Typical activation
+"Classify this deal", "what type of ARR is [deal]", "is this new or expansion", "deal classification for [account]", "verify ARR classification"
+
+## Classification routing
+Deal type determines pipeline ownership and tracking destination:
+- **New ARR / Reactivation** → Sales-owned pipeline; tracks to Sales new-logo forecast
+- **Expansion** → CS-owned pipeline; tracks to CS expansion pipeline and CS deal desk for commercial terms; routes to `pipeline-coverage-analysis` for CS expansion attainment
+- **Renewal** → CS-owned pipeline; tracks to CS renewal book of business and GRR monitoring
+
+Classification is the routing mechanism. An Expansion or Renewal classification
+means CS leadership and CS ops own the downstream tracking — not Sales.
 
 ---
 
@@ -66,6 +92,21 @@ Adjusted pipeline summary (model-based):
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential deal and pipeline data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

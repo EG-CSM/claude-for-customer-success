@@ -1,6 +1,8 @@
 ---
 name: revenue-brief-generation
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Produces weekly or monthly executive revenue narrative by coordinating outputs from all rev-ops agents. Five sections: forecast + pipeline, pipeline health, CS capacity status, NRR trajectory, top 3 risks with recommended owner and action. One decision required per brief. Delivered as [DRAFT] for RevOps lead review before distribution. Triggers: 'revenue brief', 'weekly summary', 'executive summary', 'what happened this week', 'run the revenue brief'."
 ---
 
@@ -10,8 +12,23 @@ Executive narrative that synthesizes the full revenue picture into one
 coherent story — not a dashboard dump.
 
 **Reference:** All domain model sections, output destination labels →
-`reference/revops-domain-model.md §11`
+`../../../shared/revops-domain-model.md §11`
 **Config reads:** All practice profile fields
+
+---
+
+## Use when
+- Leadership or board review requires a structured revenue performance brief
+- Weekly or monthly revenue status needs synthesis across pipeline, forecast, and actuals
+- RevOps needs to package revenue narrative for a specific audience
+
+## Do NOT use for
+- Raw pipeline analysis (use pipeline-coverage-analysis)
+- Detailed forecast variance decomposition (use forecast-variance-analysis)
+- Deal-level detail (this is a brief, not a deal review)
+
+## Typical activation
+"Revenue brief", "generate revenue summary", "revenue status for [period]", "brief for leadership", "weekly revenue brief"
 
 ---
 
@@ -80,6 +97,21 @@ do not block the brief.
 
 Delivered as `[DRAFT — for RevOps lead review before distribution]`
 Output destination label required on final version before distribution.
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential deal, customer, and revenue data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

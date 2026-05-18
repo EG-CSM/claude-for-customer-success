@@ -8,9 +8,32 @@ description: >
   call recording tools.
 argument-hint: "[account name or CRM ID] [--brief | --deep | --stakeholders]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /account-research
+
+[PROPOSED]
+
+## Use When
+- Building context before any customer-facing call: kickoff, QBR, health check, renewal, check-in
+- Running portfolio triage to assess multiple accounts quickly
+- An account has been flagged at risk and you need current signal state before acting
+- No account context exists in the current session and a call or action is imminent
+
+## Do NOT Use For
+- Replacing call-prep — account-research provides context; call-prep produces the brief
+- Real-time CRM updates or logging (use CRM directly or post-call logging workflows)
+- Competitive research on accounts (this pulls CS signals, not market intelligence)
+
+## Typical Activation
+"/csm:account-research Acme Corp"
+"/csm:account-research Acme Corp --deep"
+"Pull account context for [customer]"
+"What's the current state of [account]?"
+"Build me a brief on [customer] before my call"
+
+---
 
 Produce a one-page account brief calibrated to your CS motion, health model,
 and escalation matrix from the configured practice profile.
@@ -336,3 +359,27 @@ Offer contextual next steps based on account state:
 
 Offer one suggestion — the most relevant one given the account's current state.
 Don't list all five.
+
+---
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: outbound_allowlist (CRM, CS platform, call recording tool, document storage per configured integrations)
+- filesystem_write: false
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- All data is sourced from configured integrations per the CSM practice profile
+- Staleness is flagged explicitly — data older than configured thresholds is labeled [STALE]
+- Internal signals (health scores, expansion tags, escalation status) must not be included in any customer-visible output
+- If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview

@@ -10,9 +10,33 @@ description: >
   the full QBR structure.
 argument-hint: "[account name] [--internal | --customer | --exec-brief | --ae-handoff]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /value-statement
+
+[PROPOSED]
+
+## Use When
+- Drafting value messaging for a QBR, renewal, or business review
+- Building a value narrative for a customer-facing success summary
+- Preparing renewal positioning that leads with value delivered
+- Generating internal expansion signal documentation (expansion mode — never customer-facing)
+
+## Do NOT Use For
+- Renewal commercial prep (pricing, negotiation) — use /csm:renewal-readiness
+- Full QBR deck construction — use /csm:qbr-builder
+- Success plan updates — use /csm:success-plan-builder
+- Expansion business case for AE/AM — use /csm:expansion-business-case
+
+## Typical Activation
+"/csm:value-statement Acme Corp"
+"/csm:value-statement Acme Corp --renewal"
+"/csm:value-statement Acme Corp --qbr"
+"Draft a value statement for [account]"
+"Write the value narrative for [customer]'s renewal"
+
+---
 
 Articulate the value this account has received — in their terms, with evidence,
 calibrated to the audience.
@@ -406,3 +430,27 @@ frame. Propose establishing criteria as a next action.
 - "Expansion signals confirmed — build the AE handoff: use `--ae-handoff` mode"
 - "Preparing for a renewal conversation — run: `/csm:renewal-readiness [account]`"
 - "Executive brief for exec check-in — add call prep: `/csm:call-prep [account]`"
+
+---
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: outbound_allowlist (CRM, CS platform, document storage per configured integrations)
+- filesystem_write: false
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- Expansion signals and internal upsell flags must never appear in customer-facing output
+- Value metrics must reference the configured primary value metric — do not invent success criteria
+- Revenue language (ARR, contract value, expansion potential) is internal-only unless explicitly included in a customer-facing deliverable by the CSM
+- If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview

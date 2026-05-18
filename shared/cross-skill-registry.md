@@ -4,7 +4,7 @@ Canonical reference for all skills across all plugins. Use this registry to dete
 which skill and command to invoke for a given task. Do not hardcode skill command
 strings in individual SKILL.md files — reference this document instead.
 
-Last updated: 2026-05-15
+Last updated: 2026-05-18
 
 ---
 
@@ -25,6 +25,8 @@ skill. It is not an exhaustive trigger list — see individual SKILL.md for full
 
 | Skill | Command | Modes | Typical trigger condition |
 |-------|---------|-------|--------------------------|
+| expansion-business-case | `/csm:expansion-business-case` | `mode=csql` | Generating a CSQL expansion business case package for a specific account; producing the CSQL handoff doc for Rev-Ops |
+| expansion-onboarding | `/csm:expansion-onboarding` | `operation=create` · `operation=update` · `operation=close` | Creating an expansion onboarding plan after a CSQL is won; updating milestone progress; confirming adoption and closing the plan |
 | account-research | `/csm:account-research` | `--brief` · `--deep` · `--stakeholders` | Need a fast account profile before a call or QBR; want stakeholder org chart pulled from CRM |
 | call-prep | `/csm:call-prep` | `kickoff` · `qbr` · `health` · `renewal` · `check-in` · `custom` | Preparing for any scheduled customer call; need agenda, context, and talking points by call type |
 | cold-start-interview | `/csm:cold-start-interview` | `--redo` · `--check-integrations` | First-run plugin setup; rerunning config after integrations change |
@@ -177,6 +179,7 @@ Common multi-skill workflows that cross plugin boundaries:
 | Onboarding close → CSM handoff | `/onboarding:handoff-doc`, `/onboarding:ttv-analysis`, `/csm:success-plan-builder` | Handoff doc → TtV final → success plan creation |
 | Portfolio health ops review | `/csm:health-score-review --portfolio`, `/cs-ops:health-model-review`, `/cs-ops:metric-dashboard` | Portfolio triage → model calibration → metrics snapshot |
 | Capacity change event | `/cs-ops:capacity-planner --departure`, `/cs-ops:capacity-planner --redistribution` | Departure flag → redistribution plan |
+| Expansion CSQL → onboarding plan | `/csm:expansion-business-case`, `/rev-ops:csql-tracking`, `/csm:expansion-onboarding operation=create` | Build business case → log CSQL win in Rev-Ops → create expansion onboarding plan |
 
 ---
 

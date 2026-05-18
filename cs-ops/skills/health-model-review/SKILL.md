@@ -9,12 +9,43 @@ description: >
   /csm:health-score-review for individual accounts).
 argument-hint: "[--distribution | --calibration | --component-audit | --full]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /cs-ops:health-model-review
 
 Audit the health model at the portfolio level — does it actually predict
 churn, or does it just classify accounts?
+
+[PROPOSED]
+
+---
+
+## Use when
+
+- Running a quarterly health model calibration review
+- Churn patterns are diverging from health classifications — accounts churning
+  from Green or renewing from Red
+- The portfolio's Red-tier percentage has shifted materially and you need to
+  determine whether it reflects real deterioration or threshold miscalibration
+- A component (e.g., usage, NPS, support load) is suspected to have data
+  coverage gaps that are distorting scores
+- Recommending health model threshold changes requires a supporting analysis
+
+## Do NOT use for
+
+- Individual account health reviews (use `/csm:health-score-review`)
+- Updating health model thresholds in config (use `/cs-ops:customize --section health`)
+- Pulling the current portfolio health snapshot for a weekly report
+  (use `/cs-ops:metric-dashboard --weekly` for lightweight distribution view)
+- Triage of at-risk accounts (use `/cs-ops:segment-analyzer --at-risk`)
+
+## Typical activation
+
+- `/cs-ops:health-model-review` — full audit (default)
+- `/cs-ops:health-model-review --distribution` — portfolio health snapshot only
+- `/cs-ops:health-model-review --calibration` — predictive accuracy check against churn outcomes
+- `/cs-ops:health-model-review --component-audit` — component scoring and data coverage review
 
 ---
 
@@ -279,7 +310,8 @@ If no changes are warranted:
 
 ## Output
 
-Health model audit report — format driven by `--quick` (default) or `--full` flag.
+Health model audit report — format driven by the mode flag
+(`--full`, `--distribution`, `--calibration`, or `--component-audit`).
 Produces a structured markdown report with: scoring signal inventory, weight
 justifications, threshold analysis, benchmark comparison, and recommended changes.
 See **Full health model audit** section for field-level detail.

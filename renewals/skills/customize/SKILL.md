@@ -12,15 +12,34 @@ description: >
 argument-hint: "[--section <section-name>] [--show | --edit | --validate]"
 version: "1.0.0"
 config_skill: true
+deployment_target: plugin
 ---
 
-# /renewals:customize
+# /renewals:customize [VALIDATED]
 
 Update specific sections of your renewals practice profile without re-running the
 full interview.
 
 ---
 
+## Use when
+- A specific configuration field has changed and the rest of the profile is accurate (discount authority updated, new AE partner, revised GRR/NRR targets, escalation contact change)
+- A single section needs a targeted rebuild without touching other sections
+- You want to audit the full profile for missing fields, `[PLACEHOLDER]` markers, or internal consistency issues (`--validate` mode)
+- Cold-start left incomplete sections and you are filling them in post-setup
+
+## Do NOT use for
+- First-time configuration or complete profile rebuilds — use `/renewals:cold-start-interview`
+- Updates spanning 3 or more sections simultaneously — cold-start has lower error surface for bulk configuration
+- Any operational renewals task (risk assessment, contract review, forecast) — this skill edits config only
+- Verifying integration connectivity — use `/renewals:cold-start-interview --check-integrations`
+
+## Typical activation
+> `/renewals:customize --section discount-authority` — update a single config section directly
+> `/renewals:customize --validate` — audit the full profile for missing fields and consistency issues before a renewal motion
+> `/renewals:customize` — prompted section selection when no section argument is provided
+
+---
 
 ## Reasoning Protocol
 
@@ -345,6 +364,43 @@ NRR projections with new targets" / "No further action required"]
 ---
 
 > [review before sending]
+
+---
+
+## Security & Permissions
+
+```
+network:        none — no external API calls or web fetch
+read_scope:     ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md
+                ~/.claude/plugins/config/claude-for-customer-success/company-profile.md
+write_scope:    ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md
+                ~/.claude/plugins/config/claude-for-customer-success/company-profile.md
+subprocess:     none
+dynamic_code:   none — no eval, no exec, no runtime code execution
+```
+
+This skill reads and writes exclusively within the plugin config directory. No account data, contract content, or customer PII is written to configuration. All written values are practitioner-provided descriptions, thresholds, and contact information — not customer records.
+
+---
+
+## Trust & Verification
+
+**Read before write:**
+Current field values are displayed before any new input is collected. Silent overwrites are prohibited. This applies in all modes: `--edit` (default), `--section`, and post-cold-start completion flows.
+
+**Confirm before write:**
+A diff-style summary of all changes is presented and explicit "yes" confirmation is required before any file write. "No" discards changes without writing. "Edit" returns to field collection. Auto-write is never permitted — this confirmation step is non-skippable.
+
+**Section isolation:**
+Writing to one section of a config file must not alter any other section. If the file write cannot guarantee section isolation, the operation is aborted and the user is alerted before any write occurs.
+
+**No speculative field values:**
+This skill never infers, suggests, or pre-populates field values without user confirmation. Config fields drive financial decisions — an incorrect value entered silently is worse than a missing one.
+
+**Downstream impact transparency:**
+After every successful write, skills affected by the changed field are surfaced so the user knows which operational skills to re-run before the next renewal motion.
+
+---
 
 ## Guardrails
 

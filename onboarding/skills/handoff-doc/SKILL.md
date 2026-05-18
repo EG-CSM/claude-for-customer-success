@@ -10,6 +10,7 @@ description: >
   --summary to produce an abbreviated handoff brief for a verbal or async handoff.
 argument-hint: "[<account-name-or-ID>] [--draft | --readiness | --summary]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /onboarding:handoff-doc
@@ -45,6 +46,27 @@ Proceed with generic graduation criteria if confirmed.
 
 ---
 
+## Trigger Precision
+
+**Use when:**
+- Running a pre-handoff graduation check to confirm the account is ready to transfer (`--readiness`)
+- Generating the full onboarding graduation handoff document for the receiving team (`--draft`)
+- Producing an abbreviated handoff brief for a verbal or async handoff (`--summary`)
+
+**Do NOT use for:**
+- Ongoing milestone tracking during onboarding (use `/onboarding:milestone-tracker`)
+- Blocker resolution before the account is ready to graduate (use `/onboarding:blocker-review`)
+- Success criteria definition — graduation criteria must be configured before handoff is valid
+
+**Typical activation:**
+- "Run the graduation readiness check for [Account]"
+- "Generate the handoff document for [Account]"
+- "I need a quick handoff brief for [Account] for tomorrow's call"
+- `/onboarding:handoff-doc [account] --readiness`
+- `/onboarding:handoff-doc [account] --draft`
+- `/onboarding:handoff-doc [account] --summary`
+
+---
 
 ## Reasoning Protocol
 
@@ -350,6 +372,19 @@ graduation checklist with go/no-go recommendation. Summary mode: concise async
 handoff note. See mode-specific sections for field-level structure.
 
 > [review before sending]
+
+## Security & Permissions
+
+This skill operates read-only against configuration files and connected MCP data sources.
+No filesystem writes, no subprocess execution, no dynamic code execution.
+All data access is through explicitly connected MCP connectors; no outbound network calls are made directly.
+
+## Trust & Verification
+
+Handoff documents contain ARR, contract terms, and health context — confirm receiving team is authorized before sharing (per G5).
+All CRM and PM data is timestamped and staleness-flagged per G7 (CRM >7 days, PM >3 days).
+Expansion signals in handoff documents are observations only — never converted to pipeline commitment.
+Graduation criteria are driven by configured values, not assumed by the skill — placeholder criteria produce a warning before proceeding.
 
 ## Guardrails
 

@@ -8,9 +8,33 @@ description: >
   full context.
 argument-hint: "[account name] [call type: kickoff | qbr | health | renewal | check-in | custom]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /call-prep
+
+[PROPOSED]
+
+## Use When
+- 24-48 hours before any customer call: kickoff, QBR, health check, renewal, escalation, check-in
+- Account has active risk signals and you need a structured brief before engaging
+- Executive sponsor is attending and preparation needs to be higher-fidelity than usual
+- Renewal is within 90 days and you need value alignment framing before the commercial conversation
+
+## Do NOT Use For
+- Post-call logging or follow-up drafting — use post-call workflow instead
+- Renewal commercial prep (pricing, negotiation) — use /csm:renewal-readiness
+- Account deep-dive research without a call scheduled — use /csm:account-research
+- Routine check-ins with nothing substantive to discuss — recommend async instead
+
+## Typical Activation
+"/csm:call-prep Acme Corp qbr"
+"/csm:call-prep Acme Corp renewal"
+"/csm:call-prep Acme Corp kickoff"
+"Prep me for my call with [customer] tomorrow"
+"Build a brief for my health check with [account]"
+
+---
 
 Produce a focused pre-call brief: what to cover, who's attending, what to listen
 for, and what to leave the call having accomplished.
@@ -318,3 +342,27 @@ agenda + talking points only."
 
 Post-call: "Want to log action items and send the follow-up? Paste the call notes
 and I'll draft the email and CRM update."
+
+---
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: outbound_allowlist (CRM, CS platform, call recording tool, document storage per configured integrations)
+- filesystem_write: false
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- Internal health scores, expansion tags, and stakeholder assessments must not appear in any customer-visible output
+- If account-research context exists in the session, use it — do not re-pull from connectors
+- If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview
+- Reviewer note must always be present — flag data freshness and any items requiring CSM judgment

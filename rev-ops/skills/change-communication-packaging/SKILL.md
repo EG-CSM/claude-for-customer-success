@@ -1,6 +1,8 @@
 ---
 name: change-communication-packaging
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Produces a three-part communication package for sensitive planning changes: (1) data-backed rationale memo for reps, (2) FAQ with top 5 anticipated objections and data responses, (3) rollout sequence with audience, channel, and order. Triggered automatically by annual-planning-workflow for territory, quota, or comp changes. Requires RevOps lead review before any distribution. Triggers: 'communicate changes', 'territory announcement', 'quota rationale', 'comp change communication', 'help me tell reps about [change]'."
 ---
 
@@ -10,8 +12,21 @@ The best data in the world fails if reps don't trust it.
 Every planning change that affects rep behavior needs a communication package
 before it leaves RevOps.
 
-**Reference:** Output destination labels → `reference/revops-domain-model.md §11`
-**Reference:** Governance tiers → `reference/revops-domain-model.md §9`
+## Use when
+- RevOps change (quota, territory, comp, process) needs communication packaging for affected stakeholders
+- Change announcement requires audience-specific framing (reps vs managers vs leadership)
+- Post-decision communication plan needed before rollout
+
+## Do NOT use for
+- Designing the change itself (use the relevant planning skill)
+- Escalation communications mid-incident (use different escalation path)
+- Customer-facing communications
+
+## Typical activation
+"Package the territory changes for communication", "draft the comp plan announcement", "change communication for [change type]", "how do we communicate [change] to the field"
+
+**Reference:** Output destination labels → `../../../shared/revops-domain-model.md §11`
+**Reference:** Governance tiers → `../../../shared/revops-domain-model.md §9`
 **Config reads:** `primary_segment`, `current_ae_count`
 
 ---
@@ -94,6 +109,21 @@ CHANGE COMMUNICATION PACKAGE — [Change type] — [DRAFT]
 [G4: Territory changes confirmed dual-approved before this package was generated]
 [G3: Comp changes confirmed HR + Finance dual-reviewed before this package was generated]
 ```
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential revenue planning and compensation data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

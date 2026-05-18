@@ -7,9 +7,34 @@ description: >
   Applies your configured health model components and thresholds.
 argument-hint: "[account name | --portfolio] [--triage | --deep]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /health-score-review
+
+[PROPOSED]
+
+## Use When
+- Reviewing the health state of a specific account before a call or intervention
+- Running portfolio triage to identify which accounts need attention this week
+- A health signal has triggered (usage drop, NPS decline, support spike, champion departure)
+- Preparing for QBR or renewal and need a structured health narrative
+- Escalation routing requires a confirmed health classification before proceeding
+
+## Do NOT Use For
+- Real-time health score calculation — this skill interprets signals, it does not compute scores
+- Replacing call-prep — use /csm:call-prep after health review for the full pre-call brief
+- Generating the escalation memo — use /csm:escalation-memo once risk is confirmed
+- Portfolio reporting for leadership — this skill is CSM-facing, not exec-facing
+
+## Typical Activation
+"/csm:health-score-review Acme Corp"
+"/csm:health-score-review --triage"
+"What's the health status of [account]?"
+"Run a portfolio triage"
+"Flag any at-risk accounts in my book"
+
+---
 
 Review account health using your configured health model — signal by signal,
 not just a color verdict.
@@ -314,3 +339,27 @@ classifications are confidential.
 - Approaching renewal + Yellow/Red: "Run renewal readiness: `/csm:renewal-readiness [account]`"
 - Executive sponsor signal: "Check stakeholder map: `/csm:stakeholder-map [account] --sponsor-risk`"
 - Portfolio triage complete: "Want deep reviews on the top 3 Red accounts? Name them and I'll run `/csm:health-score-review --deep` on each."
+
+---
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: outbound_allowlist (CS platform, CRM, call recording tool per configured integrations)
+- filesystem_write: false
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- Health classifications (Green/Yellow/Red/Critical/Unknown) must align with configured health model thresholds
+- Health scores and risk classifications are internal — must not appear in any customer-visible output
+- If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview
+- Reviewer note must flag data freshness and any signals that require CSM judgment before acting

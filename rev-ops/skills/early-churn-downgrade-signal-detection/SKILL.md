@@ -1,6 +1,8 @@
 ---
 name: early-churn-downgrade-signal-detection
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Three-tier churn signal model starting at deal close (not renewal). Tier 1 fires at close using configurable rule-mode thresholds (or cohort-mode correlations when 6+ months of data available). Tier 2 fires 30–90 days post-onboarding on behavioral signals. Tier 3 fires 90–120 days pre-renewal on late-stage risk. Every flag includes escalation path and owner. Triggers: 'churn signals', 'early churn', 'downgrade risk', 'at-risk accounts', 'churn detection', 'which accounts are at risk of churning'."
 ---
 
@@ -9,10 +11,25 @@ description: "Three-tier churn signal model starting at deal close (not renewal)
 Moves churn detection upstream from renewal conversation to deal close.
 The earlier the signal, the more runway to act.
 
-**Reference:** Churn signal tiers → `reference/revops-domain-model.md §8`
-**Reference:** Confidence bands → `reference/revops-domain-model.md §2`
+**Reference:** Churn signal tiers → `../../../shared/revops-domain-model.md §8`
+**Reference:** Confidence bands → `../../../shared/revops-domain-model.md §2`
 **Config reads:** `tier1_mode`, `discount_elevated_threshold_pct`,
 `avg_sales_cycle_days`, `renewal_conversation_window_days`, `cs_platform_connected`
+
+---
+
+## Use when
+- Account shows structural signals suggesting churn or downgrade risk
+- Tier 1 accounts need proactive churn signal monitoring
+- Deal desk context brief requires churn signal assessment for a specific account
+
+## Do NOT use for
+- Deal health scoring on pre-close pipeline (use deal-health-scoring)
+- Outcome rubric level assessment (use deal-to-outcome-tracing)
+- Revenue brief generation (this is a signal, not a brief)
+
+## Typical activation
+"Churn signal for [account]", "early churn detection", "downgrade risk", "Tier 1 churn signals", "flag at-risk accounts"
 
 ---
 
@@ -106,6 +123,21 @@ Top 5 highest-ACV accounts by risk tier:
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential deal, customer, and revenue data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

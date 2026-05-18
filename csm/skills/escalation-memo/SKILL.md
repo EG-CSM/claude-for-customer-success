@@ -10,12 +10,35 @@ description: >
   memo has been accepted and escalation needs to be formally opened and tracked.
 argument-hint: "[account name] [--open | --update | --close] [--type technical|complaint|executive|internal]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /escalation-memo
 
+[PROPOSED]
+
 Open, manage, and close formal escalations with the right stakeholders, the right
 framing, and a clear resolution path — built from your configured escalation matrix.
+
+## Use When
+- An account has been confirmed at risk and escalation routing requires a documented memo
+- An active escalation needs a status update for leadership or the customer
+- An escalation is being closed and a resolution summary is required
+- Churn signals have crossed the configured threshold for automatic escalation
+
+## Do NOT Use For
+- Risk assessment before escalation is confirmed — use /csm:risk-flag first
+- Health score review — use /csm:health-score-review
+- Renewal commercial prep — use /csm:renewal-readiness
+- Routine account updates that don't meet escalation threshold
+
+## Typical Activation
+"/csm:escalation-memo Acme Corp open"
+"/csm:escalation-memo Acme Corp update"
+"/csm:escalation-memo Acme Corp close"
+"Draft an escalation memo for [account]"
+"Write up the escalation for [customer]"
+"Close out the escalation for [account]"
 
 ---
 
@@ -428,3 +451,27 @@ or finance.
 - "Escalation resolved — should this inform the next QBR? `/csm:qbr-builder [account]`"
 - "Pattern of escalations — route to CS Ops for systemic review: `/cs-ops:playbook-auditor`"
 - "Renewal approaching during an open escalation — run: `/csm:renewal-readiness [account]`"
+
+---
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: outbound_allowlist (CRM, CS platform, document storage per configured integrations)
+- filesystem_write: false
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- Internal memo and customer-facing summary are distinct outputs — internal content must never appear in the customer version
+- Escalation routing must follow the configured escalation matrix
+- Health classifications, internal risk scores, and stakeholder assessments are internal-only
+- If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview

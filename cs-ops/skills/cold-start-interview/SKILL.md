@@ -10,6 +10,7 @@ description: >
   the CSM skill set (account-level execution).
 argument-hint: "[--full | --section <section-name>]"
 version: "1.0.0"
+deployment_target: plugin
 config_skill: true
 ---
 
@@ -18,8 +19,33 @@ config_skill: true
 Configure the CS-Ops plugin so portfolio analytics, health audits, and
 capacity planning run against your actual data model — not generic defaults.
 
+[PROPOSED]
+
 ---
 
+## Use when
+
+- Installing the CS-Ops plugin for the first time — no config file exists
+- Any cs-ops skill stops and routes here because config is missing or has
+  pervasive `[PLACEHOLDER]` markers
+- A major organizational change (re-segmentation, new CS platform, full
+  team restructure) makes the existing config no longer valid
+- You want to reconfigure a specific section without running the full interview
+  (use `--section <section-name>` to scope)
+
+## Do NOT use for
+
+- Targeted single-section config updates when config already exists and is
+  mostly complete (use `/cs-ops:customize --section <section-name>`)
+- Reviewing current configuration state (use `/cs-ops:customize --show`)
+- Running analytics, audits, or reports — this skill only produces config
+
+## Typical activation
+
+- `/cs-ops:cold-start-interview` — full seven-section interview (default, triggered automatically on first install)
+- `/cs-ops:cold-start-interview --section <section-name>` — reconfigure one named section only
+
+---
 
 ## Reasoning Protocol
 

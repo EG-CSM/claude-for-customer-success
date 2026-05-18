@@ -13,6 +13,7 @@ description: >
   only, or the default --prep to generate both.
 argument-hint: "[<account-name-or-ID>] [--prep | --agenda | --checklist]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /onboarding:kickoff-prep
@@ -47,6 +48,27 @@ despite missing config.
 
 ---
 
+## Trigger Precision
+
+**Use when:**
+- Preparing for an upcoming kickoff call — generating the internal checklist and customer-facing agenda together (`--prep`)
+- Generating only the customer-facing agenda for sharing directly (`--agenda`)
+- Generating only the internal preparation checklist for the CSM (`--checklist`)
+
+**Do NOT use for:**
+- Post-kickoff milestone tracking (use `/onboarding:milestone-tracker`)
+- Onboarding plan generation — the kickoff prep and onboarding plan are separate artifacts
+- Blocker review or risk assessment — this skill is pre-onboarding preparation only
+
+**Typical activation:**
+- "Prep me for my kickoff with [Account] on [date]"
+- "Generate the kickoff agenda for [Account]"
+- "Give me the internal checklist for the [Account] kickoff"
+- `/onboarding:kickoff-prep [account] --prep`
+- `/onboarding:kickoff-prep [account] --agenda`
+- `/onboarding:kickoff-prep [account] --checklist`
+
+---
 
 ## Reasoning Protocol
 
@@ -303,6 +325,21 @@ Questions before we meet? Reach [CSM name] at [contact].
 > - **Before sending agenda:** Remove this reviewer note block. Confirm [Company Brand
 >   Name] appears correctly in the header. Confirm the M1 target date is accurate
 >   before the customer sees it.
+
+---
+
+## Security & Permissions
+
+This skill operates read-only against configuration files and connected MCP data sources.
+No filesystem writes, no subprocess execution, no dynamic code execution.
+All data access is through explicitly connected MCP connectors; no outbound network calls are made directly.
+
+## Trust & Verification
+
+Customer-facing outputs (`--agenda` mode) apply quiet mode — internal labels, risk flags, and CSM preparation notes are suppressed.
+All CRM data is timestamped and staleness-flagged per G7 (CRM >7 days).
+Kickoff agendas shared with customers contain no internal TtV targets, health scores, or escalation context.
+CSM review is required before sharing any customer-facing agenda output.
 
 ---
 

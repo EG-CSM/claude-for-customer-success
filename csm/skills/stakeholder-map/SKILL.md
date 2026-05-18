@@ -7,12 +7,35 @@ description: >
   thin. Produces both an internal analysis and a clean contact reference.
 argument-hint: "[account name] [--map | --gap-analysis | --sponsor-risk]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /stakeholder-map
 
+[PROPOSED]
+
 Surface who matters in this account, how healthy those relationships are,
 and where engagement gaps create risk — calibrated to your CS motion.
+
+## Use When
+- Starting a new account relationship and need to map the buying and influencing stakeholders
+- An executive sponsor has departed or changed and the map needs updating
+- Preparing for a QBR or renewal and need to verify stakeholder coverage
+- Champion has gone dark and you need to identify alternative relationships
+
+## Do NOT Use For
+- Full account context (use /csm:account-research)
+- Call preparation (use /csm:call-prep)
+- Escalation routing (use /csm:escalation-memo)
+- Competitive intelligence on customer stakeholders
+
+## Typical Activation
+"/csm:stakeholder-map Acme Corp"
+"/csm:stakeholder-map Acme Corp --update"
+"/csm:stakeholder-map Acme Corp --gaps"
+"Map the stakeholders at [account]"
+"Who are the key contacts at [customer]?"
+"Update the stakeholder map for [account]"
 
 ---
 
@@ -291,3 +314,26 @@ Do not share with the customer or include in customer-facing deliverables.
 - "Sponsor risk is high — want a risk memo? `/csm:risk-flag [account]`"
 - "Building a QBR? Add stakeholder context to it: `/csm:qbr-builder [account]`"
 - "Prepping for a call with the exec sponsor? `/csm:call-prep [account]`"
+
+---
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: outbound_allowlist (CRM, CS platform per configured integrations)
+- filesystem_write: false
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- Stakeholder relationship assessments are internal — must not appear in any customer-visible output
+- Influence and sentiment scores are CSM-facing only
+- If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview

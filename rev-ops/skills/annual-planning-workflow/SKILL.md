@@ -1,6 +1,8 @@
 ---
 name: annual-planning-workflow
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Orchestrates the seven-phase annual (or mid-year) planning cycle: forecast scenarios → UoG three-scenario capacity modeling → territory optimization → quota sensitivity → comp simulation → baseline save → change communication. Each phase gates on human approval before the next begins. Invokes unit-of-growth-calculator for capacity modeling. Triggers: 'annual planning', 'planning cycle', 'run the plan', 'territory quota comp', 'mid-year replan'."
 ---
 
@@ -9,8 +11,22 @@ description: "Orchestrates the seven-phase annual (or mid-year) planning cycle: 
 Seven-phase gated planning cycle. Each phase produces a human-approved artifact
 before the next begins. Phases can be run individually with `--phase N`.
 
+## Use when
+- User initiates annual planning cycle, quota setting, or territory design process
+- Annual planning workflow orchestration is needed across multiple RevOps domains
+- GTM planning for a new fiscal year requires coordinated output across quota, territory, and comp
+
+## Do NOT use for
+- Individual quota calculations (use quota-sensitivity-analysis)
+- Territory optimization in isolation (use territory-optimization)
+- Comp modeling without full planning context (use comp-simulation)
+- Mid-year replanning triggered by miss (use mid-year-replan-triggering)
+
+## Typical activation
+"Run annual planning", "start the planning cycle", "annual plan for [year]", "set quotas for next year", "kick off territory design"
+
 **Invokes:** `unit-of-growth-calculator` v1.1.0 for capacity modeling (Phase 2)
-**Reference:** UoG formulas → `reference/revops-domain-model.md §5`
+**Reference:** UoG formulas → `../../../shared/revops-domain-model.md §5`
 **Config reads:** All planning parameters from practice profile
 
 ---
@@ -135,6 +151,21 @@ Phase 7  Change Communication        [ ] / [✓] / [⏸]
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential revenue planning and compensation data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

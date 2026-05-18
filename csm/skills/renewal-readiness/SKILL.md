@@ -10,9 +10,32 @@ description: >
   accounts in distress.
 argument-hint: "[account name] [--brief | --timeline | --customer-summary]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /renewal-readiness
+
+[PROPOSED]
+
+## Use When
+- Renewal is within 90 days and you need a structured readiness assessment
+- Preparing for the renewal conversation and need to surface known objections and risks
+- Executive sponsor engagement needs to be confirmed before the renewal window closes
+- Value delivered needs to be documented before the commercial conversation begins
+
+## Do NOT Use For
+- Pricing, discount, or negotiation prep — that is AE/AM scope
+- Accounts outside the 90-day renewal window — use /csm:health-score-review for general health
+- Expansion positioning — use /csm:expansion-business-case
+- Post-renewal success planning — use /csm:success-plan-builder
+
+## Typical Activation
+"/csm:renewal-readiness Acme Corp"
+"Prep for [account]'s renewal"
+"Renewal is in 60 days for [customer] — what do I need?"
+"Run renewal readiness for [account]"
+
+---
 
 Know where you stand before the renewal conversation starts — health, relationship,
 value story, and commercial risk, all in one place.
@@ -405,3 +428,27 @@ before the renewal call — do not introduce both topics in one customer convers
 - "Account is Red — run risk memo before renewal motion: `/csm:risk-flag [account]`"
 - "Renewal conversation starting — prep the call: `/csm:call-prep [account] renewal`"
 - "Ready for the QBR before renewal — build it: `/csm:qbr-builder [account]`"
+
+---
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: outbound_allowlist (CRM, CS platform, document storage per configured integrations)
+- filesystem_write: false
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- Pricing, discount, and negotiation content is strictly out of scope — redirect to AE/AM if raised
+- ARR and contract value are internal references only — not included in customer-facing output
+- Expansion signals are internal — do not surface in renewal prep materials shared with the customer
+- If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview

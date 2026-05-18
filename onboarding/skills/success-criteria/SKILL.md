@@ -11,6 +11,7 @@ description: >
   internal notes.
 argument-hint: "[<account-name-or-ID>] [--define | --refine | --review | --export]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /onboarding:success-criteria
@@ -51,6 +52,30 @@ Proceed with outcome-based format as default.
 
 ---
 
+## Trigger Precision
+
+**Use when:**
+- Defining 3–5 success criteria for a new account at or before kickoff (`--define`)
+- Refining existing success criteria after a kickoff call reveals different priorities (`--refine`)
+- Reviewing success criteria achievement status at a milestone review or QBR (`--review`)
+- Producing a customer-facing success criteria summary for sharing or sign-off (`--export`)
+
+**Do NOT use for:**
+- Tracking milestone completion — success criteria and milestones are distinct (use `/onboarding:milestone-tracker`)
+- Generating the full onboarding plan (use `/onboarding:onboarding-plan`)
+- Handoff graduation readiness checks (use `/onboarding:handoff-doc --readiness`)
+
+**Typical activation:**
+- "Define success criteria for [Account]"
+- "We need to refine the success criteria after the kickoff call"
+- "Review success criteria achievement for [Account]'s QBR"
+- "Export the success criteria for [Account] to share with the customer"
+- `/onboarding:success-criteria [account] --define`
+- `/onboarding:success-criteria [account] --refine`
+- `/onboarding:success-criteria [account] --review`
+- `/onboarding:success-criteria [account] --export`
+
+---
 
 ## Reasoning Protocol
 
@@ -375,6 +400,19 @@ Questions? [CSM name] · [contact]
 >   Replace `[Pending customer confirmation]` markers before the export.
 
 ---
+
+## Security & Permissions
+
+This skill operates read-only against configuration files and connected MCP data sources.
+No filesystem writes, no subprocess execution, no dynamic code execution.
+All data access is through explicitly connected MCP connectors; no outbound network calls are made directly.
+
+## Trust & Verification
+
+Customer-facing outputs (`--export` mode) apply quiet mode — internal confidence signals, reviewer notes, and CSM assessment flags are suppressed.
+Success criteria achievement status is based on customer-confirmed evidence only — CSM assumption is explicitly flagged as unverified.
+The 3–5 criteria ceiling is enforced — skill will not define more than 5 criteria regardless of input.
+CSM review is required before sharing any exported success criteria with the customer.
 
 ## Guardrails
 

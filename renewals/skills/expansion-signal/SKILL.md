@@ -10,12 +10,34 @@ description: >
   economic buyer conversation before entering NRR pipeline.
 argument-hint: "[<account-name-or-ID>] [--deep | --quick | --catalog]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
-# /renewals:expansion-signal
+# /renewals:expansion-signal [VALIDATED]
 
 Surface and qualify expansion signals in a renewal account. Every signal found
 here is a lead until proven otherwise.
+
+---
+
+## Use when
+- You are researching an account for expansion opportunities before a renewal or QBR
+- You need to identify and qualify seat growth, usage expansion, product tier upsell, or cross-sell signals in a specific account
+- An adoption milestone has occurred and you want to evaluate whether it unlocks an expansion conversation
+- You need to map each expansion signal to a qualification tier and a recommended TARO play before engaging the account or routing to the AE
+- You want to confirm whether an account is at Pipeline-ready or Qualified tier before involving an AE in a commercial conversation
+
+## Do NOT use for
+- Accounts with active churn risk signals — run `/renewals:risk-assessment` first; expansion pursuit on at-risk accounts damages trust and is counterproductive
+- GRR or renewal-rate forecasting — expansion ARR is never included in GRR calculations
+- Moving an expansion opportunity into NRR pipeline without a qualifying economic buyer conversation — this skill identifies and qualifies signals; formal pipeline entry requires AE involvement
+- Post-churn expansion analysis — use `/renewals:churn-rca`
+- Quick renewal status checks without an expansion research goal — use `/renewals:executive-summary`
+
+## Typical activation
+> `/renewals:expansion-signal Acme Corp` — full expansion signal audit across all six signal types with qualification tier and TARO play recommendations
+> `/renewals:expansion-signal Acme Corp --quick` — targeted pass for highest-probability signal before a renewal call
+> `/renewals:expansion-signal --catalog` — list all detectable signal types for your configured pricing model
 
 ---
 
@@ -289,6 +311,36 @@ and what the immediate next step is.]*
 ---
 
 > [review before sending]
+
+---
+
+## Security & Permissions
+
+```
+network:        read-only connector access — CRM and CS Platform reads; no external
+                API writes, no web fetch
+read_scope:     ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md
+                and ~/.claude/plugins/config/claude-for-customer-success/company-profile.md;
+                CRM account records and CS Platform usage data scoped to the named
+                account only (read-only)
+write_scope:    none — all signal reports and recommendations output to conversation;
+                no file writes
+subprocess:     none
+dynamic_code:   none — no eval, no exec, no runtime code execution
+```
+
+This skill reads configuration and account data from CRM and CS Platform connectors to identify and qualify expansion signals. All output — signal reports, TARO play recommendations, AE handoff guidance — is delivered to the conversation only. No data is written to disk. Connector reads are scoped to the specific account name provided and are read-only.
+
+## Trust & Verification
+
+- **Signal qualification integrity:** Every expansion signal is tagged `[early signal — not yet qualified]` until an economic buyer conversation has occurred and the expansion has entered formal pipeline. This tag is enforced at the Reasoning Protocol and output format levels and cannot be removed by configuration or user instruction.
+- **ARR estimate labeling:** All pre-proposal ARR potential estimates carry `[Low Confidence]` tags. The skill will not present expansion ARR estimates as committed pipeline or include them in GRR calculations.
+- **Account data handling:** CRM and CS Platform data is used for signal identification and qualification only. Data is not persisted, cached, or written to any file.
+- **Churn-first guard:** The CLASSIFY step and Guardrails both require that active churn risk signals are surfaced before expansion signals. Accounts flagged as at-risk are redirected to `/renewals:risk-assessment` before expansion pursuit continues.
+- **AE routing gate:** Signals that reach Qualified tier require AE partner routing per configuration. The skill does not initiate commercial conversations directly.
+- **Free-text field handling:** Account name, call notes, and context provided by the user are used for display and analysis only. They are not executed or used to derive file paths or system behavior.
+
+---
 
 ## Guardrails
 

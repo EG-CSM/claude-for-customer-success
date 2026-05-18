@@ -12,11 +12,32 @@ description: >
   where contract terms may constrain the commercial motion.
 argument-hint: "[<account-name-or-ID>] [--extract | --flag | --summary]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
-# /renewals:contract-review
+# /renewals:contract-review [VALIDATED]
 
 Extract the contract terms that govern this renewal before the negotiation starts.
+
+---
+
+## Use when
+- You are preparing for a renewal, price increase, or negotiation conversation and need to know what contract constraints apply before the commercial motion begins
+- An account has amendments, order forms, or SOWs beyond the base MSA and you need a consolidated view of which terms govern
+- A price protection clause, MFN provision, or rate lock may exist and must be confirmed before any pricing action
+- An auto-renewal notice window or quote obligation deadline may be approaching and you need to surface it before it is missed
+- The prior contract review is more than 12 months old and the executed agreement should be re-verified before renewal
+
+## Do NOT use for
+- Legal interpretation of contract clauses — this skill produces a commercial risk register; ambiguous or red-flagged clauses route to Legal before any CSM action
+- Drafting customer-facing contract language or counter-proposals — use `/renewals:negotiation-prep` after contract-review is complete
+- Accounts where no executed contract is available — flag outputs `[Low Confidence]` and obtain the document before any commercial decision
+- Price increase analysis — always run contract-review first to surface any price cap, then proceed to `/renewals:price-increase-prep`
+
+## Typical activation
+> `/renewals:contract-review Meridian Health` — full extraction of all renewal-relevant terms for a named account
+> `/renewals:contract-review Meridian Health --flag` — targeted pass: deviations from standard terms and Legal-routing clauses only
+> `/renewals:contract-review Meridian Health --summary` — two-page executive summary of key dates, price constraints, and top 3 risks for a pre-call quick reference
 
 ---
 
@@ -429,6 +450,43 @@ After extraction, assess whether the renewal can proceed without Legal review.
 ---
 
 > [review before sending]
+
+---
+
+## Security & Permissions
+
+```
+network:        none — no direct HTTP calls; contract management connector (DocuSign/Ironclad/
+                Conga/Salesforce CPQ) operates via MCP, not filesystem reads by this skill
+read_scope:     ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md and
+                ~/.claude/plugins/config/claude-for-customer-success/company-profile.md only
+write_scope:    none — all output to conversation; no file writes
+subprocess:     none
+dynamic_code:   none — no eval, no exec, no runtime code execution
+```
+
+This skill reads two plugin config files at session start (Pre-flight) and produces all output directly in the conversation. Contract documents are provided by the operator via an attached file or contract management MCP connector — this skill does not read contracts from the filesystem independently. It does not write any files, make direct network calls, or persist data between sessions.
+
+---
+
+## Trust & Verification
+
+**Contract source handling:**
+Contract documents and extracted terms are provided through operator-controlled MCP connectors or direct file attachment. This skill does not access contract management systems independently of the session context. Source provenance (contract system vs. uploaded document vs. notes) is declared explicitly in the Reviewer note and governs the confidence signal applied to all extracted terms.
+
+**Legal boundary enforcement:**
+This skill produces a commercial risk register — clause extraction and risk flagging, not legal interpretation. All outputs carry an explicit disclaimer that they do not constitute legal advice. Red-flag clauses are routed to Legal via the configured escalation matrix; the skill does not provide legal conclusions to the CSM or to the customer.
+
+**Free-text field handling:**
+`account_name`, contract text, and all manual inputs are treated as display data. They are not executed, evaluated, or used to derive file paths or system behavior.
+
+**Confidence signal discipline:**
+All term extractions carry explicit confidence signals tied to source quality. `[Low Confidence]` is applied to any extraction from notes, verbal accounts, or unverified documents. The skill will not suppress confidence signals to produce cleaner-looking output.
+
+**Confidentiality boundary:**
+Contract terms, ARR, and risk flags are internal-only. The Reviewer note requires a confidentiality confirmation before any output leaves the CSM's view. This skill never formats output for direct customer sharing.
+
+---
 
 ## Guardrails
 

@@ -10,6 +10,7 @@ description: >
   and internal consistency issues before running onboarding skills.
 argument-hint: "[--view | --update <section> | --reset <section> | --validate]"
 version: "1.0.0"
+deployment_target: plugin
 config_skill: true
 ---
 
@@ -19,6 +20,27 @@ Onboarding profile configuration management.
 
 ---
 
+## Trigger Precision
+
+**Use when:**
+- Viewing current onboarding configuration (`--view`)
+- Updating a specific configuration section after methodology, team, integration, or escalation matrix changes (`--update <section>`)
+- Resetting a configuration section back to placeholder state (`--reset <section>`)
+- Validating configuration completeness before running onboarding operations (`--validate`)
+
+**Do NOT use for:**
+- Initial configuration setup from scratch (use `/onboarding:cold-start-interview --full`)
+- Running onboarding operations — this skill only reads and writes configuration
+
+**Typical activation:**
+- "Show me my current onboarding config"
+- "Update my escalation matrix"
+- "Validate my config before I run the onboarding plan"
+- `/onboarding:customize --view`
+- `/onboarding:customize --update escalation`
+- `/onboarding:customize --validate`
+
+---
 
 ## Reasoning Protocol
 
@@ -56,7 +78,6 @@ Before generating output, apply these primers:
 - For writes: was before/after shown and confirmation obtained before writing?
 - For updates: were cross-section consistency checks run before confirming?
 - Confidence: [High] for read operations and structural validation / [Medium] for advice on appropriate values (company-specific) / [Low] for content suggestions (only the CSM knows their org).
-
 
 ## Config file location
 
@@ -106,103 +127,7 @@ PASS/WARN/FAIL status per section and a prioritized fix list.
 Read `~/.claude/plugins/config/claude-for-customer-success/onboarding/CLAUDE.md`
 and present each section's current values with a completeness indicator.
 
-Output format:
-
-```
-Onboarding Profile — Current Configuration
-Last modified: [file modification date if detectable | unknown]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION: Milestone Framework                                     [✓ Complete]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  M1 Kickoff:        Day [X] — [completion criteria summary]
-  M2 Tech setup:     Day [X] — [completion criteria summary]
-  M3 First use:      Day [X] — [completion criteria summary]
-  M4 First value:    Day [X] — [completion criteria summary]
-  M5 Handoff ready:  Day [X] — [completion criteria summary]
-
-  At-risk signals configured: [Yes — [N] signals | No — using generic defaults]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION: TtV Targets [review — internal planning target]         [✓ Complete]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  Enterprise:   [X] days
-  Mid-Market:   [X] days
-  SMB:          [X] days
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION: Onboarding Models                                       [✓ Complete]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  Default model:     [model name]
-  Available models:  [list of models in use]
-  Model assignments: [how accounts are assigned to models, e.g., by segment]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION: Success Criteria                                        [✓ Complete]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  Criteria format:        [outcome-based | metric-based | milestone-based]
-  Review cadence:         [e.g., at M2, M4, and M5]
-  Minimum criteria count: [N]
-  Maximum criteria count: [N]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION: Escalation Matrix                                       [⚠ Partial]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  1–3 days overdue:  CSM self-resolve
-  4–7 days overdue:  [AE name — PLACEHOLDER]
-  8+ days overdue:   [Manager name — PLACEHOLDER]
-  Executive sponsor: [white-glove model only — PLACEHOLDER]
-  Partner contact:   [partner-led model only — not configured]
-
-  ⚠ 2 escalation contacts are [PLACEHOLDER]. Run --update escalation.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION: Graduation Criteria                                     [✗ Missing]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  ✗ Graduation criteria are [PLACEHOLDER]. Run --update graduation or
-    /onboarding:cold-start-interview --section handoff to configure.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION: CS Methodology                                          [✓ Complete]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  Methodology:      [TARO | SuccessCOACHING | Custom]
-  Play references:  [N plays referenced in onboarding workflow]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION: Integrations                                            [✓ Complete]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  CRM connector:    [Salesforce | HubSpot | None]
-  PM connector:     [Asana | Linear | Jira | Monday | None]
-  Document storage: [Notion | Google Drive | Confluence | None]
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Summary
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  Sections complete:   [N] / 8
-  Sections partial:    [N] — have placeholder values or missing fields
-  Sections missing:    [N] — required for core skills to function
-
-  Sections requiring attention:
-  - [section] — [specific issue]
-
-  Run --validate for a full consistency check, or --update <section>
-  to fix a specific section.
-```
-
-**Completeness indicators:**
-- `[✓ Complete]` — no `[PLACEHOLDER]` values; required fields present
-- `[⚠ Partial]` — some fields configured; some still `[PLACEHOLDER]`
-- `[✗ Missing]` — entire section is `[PLACEHOLDER]` or absent
-- `[— Optional]` — not required for core skills; shown when not configured
+Output format: render each section with a header bar, current values, and a completeness indicator — `[✓ Complete]`, `[⚠ Partial]`, `[✗ Missing]`, or `[— Optional]`. End with a summary count (sections complete / partial / missing) and a prioritized attention list. See `references/skill-impact-map.md` for the full output template and section-by-section field reference.
 
 ---
 
@@ -430,32 +355,11 @@ checks:
 
 For each section, scan for any `[PLACEHOLDER]` markers. Each occurrence is a FAIL.
 
-### Required field presence
+### Required field presence and consistency checks
 
-| Section | Required fields |
-|---------|----------------|
-| milestones | Day target and completion criteria for M1–M5; at-risk signals for each |
-| ttv-targets | At least one segment target (Enterprise, Mid-Market, or SMB) |
-| onboarding-models | At least one model defined; default model set |
-| success-criteria | Criteria format; review cadence |
-| escalation | At least the self-resolve threshold and first escalation contact |
-| graduation | At least 5 graduation criteria |
-| methodology | Primary methodology named |
-| integrations | All three connector fields present (even if set to None) |
+See `references/skill-impact-map.md` for the complete required fields per section, internal consistency rules, and downstream skill impact map — which skills read each configuration section and what behavior changes when values are updated.
 
-Missing required fields = FAIL.
-
-### Internal consistency checks
-
-- M1 < M2 < M3 < M4 < M5 day targets (strict ascending order)
-- TtV targets ≥ M4 day target for each segment
-- Graduation criteria reference completion of M5 at minimum
-- If white-glove model is listed, escalation section includes executive sponsor path
-- If partner-led model is listed, escalation section includes partner contact path
-- If any connector is set to a named tool (not None), check that the tool name
-  is one of the recognized connectors (flag typos or unrecognized names)
-
-Inconsistency = WARN (skill will still run but may produce unexpected results).
+Missing required fields = FAIL. Consistency violations = WARN (skill will still run but may produce unexpected results).
 
 ### Output format
 
@@ -540,6 +444,19 @@ Before writing any change to the config file:
 4. **No writes without confirmation**: Every update mode shows a before/after
    and asks for confirmation before writing. `--view` and `--validate` are
    always read-only.
+
+## Security & Permissions
+
+This skill reads and writes configuration files at `~/.claude/plugins/config/claude-for-customer-success/`.
+No other filesystem paths are written. No subprocess execution, no dynamic code execution.
+All data access is through explicitly connected MCP connectors; no outbound network calls are made directly.
+
+## Trust & Verification
+
+Configuration changes made by this skill take effect immediately across all onboarding skills that read config on invocation.
+The `--validate` mode performs read-only checks and never modifies configuration.
+The `--reset` mode restores placeholder values — CSM must confirm before reset is applied.
+CSM review is required before treating any config change as final.
 
 ---
 

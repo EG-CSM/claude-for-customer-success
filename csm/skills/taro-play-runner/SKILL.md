@@ -10,9 +10,33 @@ description: >
   plan) — not a generic playbook excerpt.
 argument-hint: "[account name] [--situation <description> | --play <play-name>]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /taro-play-runner
+
+[PROPOSED]
+
+## Use When
+- A CS situation maps to a known play (at-risk intervention, executive re-engagement, expansion motion, onboarding recovery)
+- You need a structured, repeatable action sequence for a common CSM scenario
+- A play has been triggered by a health signal and you need the full TARO execution sequence
+- Portfolio triage has identified accounts that match play trigger conditions
+
+## Do NOT Use For
+- One-off customer situations without a matching play — answer directly or use the relevant skill
+- Play authoring or library management — this skill executes plays, it does not create them
+- Escalation memo drafting — use /csm:escalation-memo
+- Accounts that do not match any configured play trigger condition
+
+## Typical Activation
+"/csm:taro-play-runner at-risk-intervention Acme Corp"
+"/csm:taro-play-runner executive-reengagement [account]"
+"Run the at-risk play for [customer]"
+"What play applies to [account]?"
+"Execute the onboarding recovery play for [customer]"
+
+---
 
 Run the right play for this account's situation — not a template, a
 contextualized execution plan.
@@ -305,3 +329,27 @@ closes without success criteria met, the next step is explicit — not "monitor 
 - "Executive re-engagement play — check sponsor status: `/csm:stakeholder-map [account] --sponsor-risk`"
 - "Expansion signal confirmed — want to prepare the handoff to AE? `/csm:value-statement [account]`"
 - "Play complete — update the health review: `/csm:health-score-review [account]`"
+
+---
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: outbound_allowlist (CRM, CS platform per configured integrations)
+- filesystem_write: false
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- Play execution follows the TARO sequence — Trigger, Action, Resource, Outcome
+- Internal play notes (health signals, escalation context) must not appear in customer-facing play outputs
+- If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview
+- If no matching play exists for the situation, surface this explicitly rather than constructing an ad-hoc play

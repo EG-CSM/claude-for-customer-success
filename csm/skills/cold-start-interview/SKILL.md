@@ -8,10 +8,32 @@ description: >
   --check-integrations.
 argument-hint: "[--redo | --check-integrations | --generate-outcome-catalog]"
 version: "1.0.0"
+deployment_target: plugin
 config_skill: true
 ---
 
 # /cold-start-interview
+
+[PROPOSED]
+
+## Use When
+- Running the CSM plugin for the first time on a new installation
+- The CSm practice has changed materially (new segments, motion change, new CS platform)
+- Config files are missing or contain `[PLACEHOLDER]` markers that block other skills
+- The user explicitly invokes `/csm:cold-start-interview` or `/csm:customize --full`
+
+## Do NOT Use For
+- Updating a single config section — use `/csm:customize --section <name>` instead
+- Answering ad-hoc CS strategy questions — answer directly without running the interview
+- Reconfiguring other plugins (cs-ops, renewals, onboarding) — each has its own customize skill
+
+## Typical Activation
+"Set up the CSM plugin for my company"
+"Run the cold start interview"
+"/csm:cold-start-interview"
+"Configure the plugin from scratch"
+
+---
 
 1. Check `~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md`. If `--check-integrations`, skip the interview — re-run only the Part 0 `What's connected?` probe and rewrite the `## Available integrations` table at that config path. When probing: only report ✓ if an MCP tool call actually succeeded. Configured-but-untested connectors are marked ⚪ with a one-line how-to for confirming. Never report ✓ based on `.mcp.json` declarations alone.
 2. Check the shared company profile at `~/.claude/plugins/config/claude-for-customer-success/company-profile.md`. If it exists, read it and skip company-level questions. If it doesn't exist, write it after the interview.
@@ -393,3 +415,24 @@ Show the capability tour. Make it concrete — these are the actual things this 
 > - Run `/csm:cold-start-interview --redo <section>` to re-interview one part, or edit the config file directly.
 >
 > Ten minutes of setup gets you a working profile. A month of use gets you one that reads like you wrote it yourself.
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: none
+- filesystem_write: config files only (explicitly listed paths)
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- All config writes require explicit user confirmation before executing
+- No values are invented — gaps use [PLACEHOLDER] markers
+- Config files govern downstream skill behavior; treat writes as high-trust operations

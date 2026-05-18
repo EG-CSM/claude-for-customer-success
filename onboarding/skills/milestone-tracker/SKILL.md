@@ -10,6 +10,7 @@ description: >
   accounts with at-risk or overdue milestones and recommended actions.
 argument-hint: "[<account-name-or-ID>] [--status | --portfolio | --flag]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /onboarding:milestone-tracker
@@ -42,6 +43,25 @@ Proceed with generic defaults if confirmed.
 
 ---
 
+## Trigger Precision
+
+**Use when:**
+- Checking the current milestone status and pace for one or more onboarding accounts (`--status`)
+- Generating a portfolio heat map of milestone health across all active accounts (`--portfolio`)
+- Triaging at-risk accounts and producing prioritized intervention actions (`--flag`)
+
+**Do NOT use for:**
+- Diagnosing a specific active blocker (use `/onboarding:blocker-review --diagnose`)
+- Time-to-value analysis with segment-normalized benchmarking (use `/onboarding:ttv-analysis`)
+- Generating the onboarding plan or updating milestone targets (use `/onboarding:onboarding-plan`)
+
+**Typical activation:**
+- "Where are we on milestones for [Account]?"
+- "Show me the portfolio heat map for all active accounts"
+- "Which accounts are at risk this week?"
+- `/onboarding:milestone-tracker [account] --status`
+- `/onboarding:milestone-tracker --portfolio`
+- `/onboarding:milestone-tracker --flag`
 
 ## Reasoning Protocol
 
@@ -279,6 +299,19 @@ Milestone tracking output — format driven by flag (`--status`, `--portfolio`,
 `--flag`). Status mode: per-account milestone table with RAG status and next action.
 Portfolio mode: cross-account summary table. Flag mode: at-risk milestone alert.
 See mode-specific sections for field-level structure.
+
+## Security & Permissions
+
+This skill operates read-only against configuration files and connected MCP data sources.
+No filesystem writes, no subprocess execution, no dynamic code execution.
+All data access is through explicitly connected MCP connectors; no outbound network calls are made directly.
+
+## Trust & Verification
+
+All milestone data is timestamped and staleness-flagged per G7 (PM connector >3 days, CRM >7 days).
+At-risk flags are calculated from milestone math and configured at-risk signals — not from CSM narrative.
+Portfolio outputs containing account-level health data require confidentiality check before sharing beyond the CSM.
+CSM judgment is required for intervention actions — skill presents options, never directives.
 
 ## Guardrails
 

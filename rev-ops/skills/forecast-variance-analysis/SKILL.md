@@ -1,6 +1,8 @@
 ---
 name: forecast-variance-analysis
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Compares submitted forecast to actual closed/won outcomes. Classifies variance by root cause: rep-level, deal-size band, stage-entry, seasonal, or product/segment. Surfaces systemic patterns — not one-off explanations. Minimum: 3 deals or 2 consecutive quarters before a pattern is surfaced. Triggers: 'why did we miss', 'forecast variance', 'call accuracy', 'forecast accuracy by rep', 'what caused the miss'."
 ---
 
@@ -10,8 +12,23 @@ Traces the gap between what was called and what closed to its root cause.
 Patterns require ≥3 deals or ≥2 consecutive quarters before surfacing.
 One-off variance is noted but not classified as a pattern.
 
-**Reference:** Variance classification taxonomy → `reference/revops-domain-model.md §4`
+**Reference:** Variance classification taxonomy → `../../../shared/revops-domain-model.md §4`
 **Config reads:** `current_arr`, `primary_segment`, `crm_system`
+
+---
+
+## Use when
+- Actual results deviate from forecast and root cause analysis is needed
+- Post-quarter variance review requires structured decomposition
+- Forecast accuracy trending needs to be assessed across periods
+
+## Do NOT use for
+- Forward-looking scenario modeling (use scenario-modeling)
+- Pipeline coverage adequacy (use pipeline-coverage-analysis)
+- Individual deal health (use deal-health-scoring)
+
+## Typical activation
+"Forecast variance analysis", "why did we miss forecast", "actuals vs forecast for Q[N]", "variance decomposition", "forecast accuracy review"
 
 ---
 
@@ -99,6 +116,21 @@ One-off variances (not classified as patterns):
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential deal and pipeline data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

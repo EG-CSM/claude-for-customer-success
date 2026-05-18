@@ -10,11 +10,33 @@ description: >
   customer segment, or --account to add one account's renewal to the pipeline view.
 argument-hint: "[--full | --cohort 90|60|30 | --segment <name> | --account <name>]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
-# /renewals:renewal-forecast
+# /renewals:renewal-forecast [VALIDATED]
 
 Build a weighted renewal forecast calibrated to your book of business and targets.
+
+---
+
+## Use when
+- You need to build a weighted renewal forecast for your book of business with scenario modeling and GRR/NRR projections
+- You are preparing a renewal pipeline review for leadership, Finance, or RevOps and need a defensible likely/best/worst breakdown
+- You need to assess the 30/60/90-day cohort and surface at-risk accounts requiring escalation before the decision window closes
+- You want to add a single account to the pipeline view or check its contribution to GRR
+- You are running a segment-level forecast to compare a specific customer segment against book targets
+
+## Do NOT use for
+- Individual account risk assessment — use `/renewals:risk-assessment` for per-account signal analysis and escalation routing
+- Expansion signal identification or NRR pipeline qualification — use `/renewals:expansion-signal`; unqualified expansion is never included in this forecast
+- Executive-level account summaries for stakeholder meetings — use `/renewals:executive-summary`
+- Price increase planning for accounts in the pipeline — use `/renewals:price-increase-prep`
+- Churn root cause analysis after a lost renewal — use `/renewals:churn-rca`
+
+## Typical activation
+> `/renewals:renewal-forecast` — full book-of-business forecast with pipeline stages, cohort breakdown, scenario modeling, and GRR/NRR projection
+> `/renewals:renewal-forecast --cohort 30` — focused view of renewals within the 30-day decision window with escalation requirements
+> `/renewals:renewal-forecast --account Acme Corp` — add a single account to the pipeline view and check its GRR contribution
 
 ---
 
@@ -328,6 +350,33 @@ Structure the complete forecast as:
 > - **Before sharing:** Validate with Finance/RevOps before distributing to leadership
 >   or including in board materials — this forecast contains language that could
 >   be read as a revenue commitment `[review — could be read as a revenue commitment]`
+
+---
+
+## Security & Permissions
+
+```
+network:        read-only connector access — CRM reads for renewal pipeline data only;
+                no external API writes, no web fetch
+read_scope:     ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md
+                and ~/.claude/plugins/config/claude-for-customer-success/company-profile.md;
+                CRM renewal opportunities, won/lost records scoped to the configured
+                book of business (read-only)
+write_scope:    none — all forecast output delivered to conversation; no file writes
+subprocess:     none
+dynamic_code:   none — no eval, no exec, no runtime code execution
+```
+
+This skill reads configuration and CRM pipeline data to build renewal forecasts. All output — pipeline summaries, scenario models, GRR/NRR projections — is delivered to the conversation only. No data is written to disk. Every forecast output is flagged for Finance/RevOps review before distribution.
+
+## Trust & Verification
+
+- **Revenue commitment integrity:** Every scenario total, GRR projection, and NRR figure carries the `[review — could be read as a revenue commitment]` tag. This tag is enforced in the Reasoning Protocol, scenario modeling section, and output format. It cannot be removed by configuration or user instruction.
+- **GRR/NRR boundary:** Expansion ARR is never included in GRR calculations. Expansion enters NRR only when tagged as qualified pipeline (economic buyer conversation occurred + formal pipeline stage). Unqualified expansion signals are tagged `[early signal — not yet qualified]` and excluded from all GRR figures.
+- **Pipeline weight integrity:** Default forecast weights (Open 70% / Verbal commitment 90% / At risk 25% / Won 100% / Lost 0%) are not modified by user instruction without explicit acknowledgment. If configured methodology specifies different weights, those take precedence — state which weights are applied.
+- **Data freshness enforcement:** Every data source is timestamped. CRM data older than 7 days triggers a staleness flag. Manual input triggers a no-timestamp warning. No forecast output is presented without source freshness disclosure.
+- **No fabricated ARR:** Unknown ARR is excluded from totals and marked `[ARR unknown — excluded from totals]`. The skill never estimates or interpolates ARR figures not provided by the user or a live tool call.
+- **Free-text field handling:** Account names, notes, and pipeline context provided by the user are used for display and analysis only. They are not executed or used to derive file paths or system behavior.
 
 ---
 

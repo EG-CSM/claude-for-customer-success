@@ -1,6 +1,8 @@
 ---
 name: stage-integrity-audit
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Detects CRM hygiene issues that distort forecasts: stage-skipping (multi-stage jumps in one update), backward movement, and stale stage (stuck >2x historical avg). Produces audit report for human review before any CRM edits. Never updates CRM autonomously. Triggers: 'stage integrity', 'stage skipping', 'backward movement', 'CRM stage hygiene', 'stale stage'."
 ---
 
@@ -9,8 +11,23 @@ description: "Detects CRM hygiene issues that distort forecasts: stage-skipping 
 Detects the three stage anomaly patterns that most distort pipeline forecasts.
 All findings are proposals for human review — no autonomous CRM edits.
 
-**Reference:** Governance tiers (Write Protocol) → `reference/revops-domain-model.md §9`
+**Reference:** Governance tiers (Write Protocol) → `../../../shared/revops-domain-model.md §9`
 **Config reads:** `crm_system`, `avg_sales_cycle_days`
+
+---
+
+## Use when
+- CRM stage data needs validation against defined stage entry/exit criteria
+- Deals appear to be in wrong stages based on activity signals
+- Pipeline hygiene audit requires stage-level integrity check
+
+## Do NOT use for
+- Pipeline velocity or conversion analysis (use pipeline-velocity-tracking)
+- Full CRM hygiene sweep (use crm-hygiene-audit)
+- Deal health scoring (use deal-health-scoring)
+
+## Typical activation
+"Stage integrity audit", "are deals in the right stages", "stage hygiene check", "audit stage progression for [rep/team/period]"
 
 ---
 
@@ -70,6 +87,21 @@ Recommended actions (require human confirmation before CRM edits):
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential deal and pipeline data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

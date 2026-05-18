@@ -1,6 +1,8 @@
 ---
 name: cross-system-reconciliation
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Traces conflicting numbers from different sources (CRM vs. Finance Sheets vs. CS platform) to their root cause. Applies data authority hierarchy: HubSpot > Finance Sheets > CS platform > Slack/Linear. Produces a reconciliation memo with source attribution and recommended resolution. Never silently resolves conflicts. Triggers: 'which number is right', 'reconcile', 'conflicting numbers', 'CRM vs Sheets', 'our ARR numbers don't match', 'why is the pipeline number different'."
 ---
 
@@ -10,8 +12,23 @@ When two systems report different numbers, the answer is almost always:
 different definitions, different timing, or different source authority.
 
 **Reference:** Data authority hierarchy and source attribution labels →
-`reference/revops-domain-model.md §3`
+`../../../shared/revops-domain-model.md §3`
 **Config reads:** `crm_system`, `google_drive_connected`
+
+---
+
+## Use when
+- Data discrepancies across CRM, CS platform, and billing/finance systems need reconciliation
+- ARR recognized in one system does not match another and root cause is needed
+- Pre-board or pre-audit data reconciliation is required
+
+## Do NOT use for
+- Single-system CRM hygiene (use crm-hygiene-audit)
+- Forecast variance analysis (use forecast-variance-analysis)
+- Revenue recognition decisions (analytical input only — G1 applies)
+
+## Typical activation
+"Cross-system reconciliation", "data doesn't match between [system A] and [system B]", "reconcile ARR across systems", "why is CRM different from finance", "system reconciliation report"
 
 ---
 
@@ -82,6 +99,21 @@ Recommended action:
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential customer, deal, and operational data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

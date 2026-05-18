@@ -1,6 +1,8 @@
 ---
 name: duplicate-detection
 version: 1.0.0
+deployment_target: plugin
+status: PROPOSED
 description: "Identifies duplicate accounts, contacts, and opportunities in HubSpot. Produces merge candidates with confidence scores (High/Medium/Low). Never merges autonomously — all merges require Write-tier human confirmation. Triggers: 'duplicates', 'merge candidates', 'duplicate accounts', 'duplicate contacts', 'clean up CRM duplicates'."
 ---
 
@@ -9,8 +11,23 @@ description: "Identifies duplicate accounts, contacts, and opportunities in HubS
 Merge candidates with confidence scores. High-confidence duplicates batch-
 presented for bulk approval. No autonomous merges — ever.
 
-**Reference:** Governance tiers → `reference/revops-domain-model.md §9`
+**Reference:** Governance tiers → `../../../shared/revops-domain-model.md §9`
 **Config reads:** `crm_system`
+
+---
+
+## Use when
+- CRM contacts, companies, or deals need duplicate scanning before a data import or merge
+- Duplicate records are suspected to be inflating pipeline or distorting metrics
+- Data hygiene sprint includes deduplication as a required step
+
+## Do NOT use for
+- Full CRM hygiene audit (use crm-hygiene-audit)
+- Field completion monitoring (use field-completion-monitoring)
+- Merging records autonomously (outputs are proposals — G9 applies)
+
+## Typical activation
+"Find duplicates", "duplicate detection", "deduplicate the CRM", "flag duplicate contacts/companies", "duplicate scan before import"
 
 ---
 
@@ -73,6 +90,21 @@ LOW confidence ([N] pairs):
 ```
 
 ---
+
+## Security & Permissions
+
+**Network access:** None direct — all external data access is mediated by host-provided MCP connector tools (HubSpot, CS platform, Slack, Linear). This skill makes no direct outbound HTTP calls.
+**Filesystem scope:** None — this skill does not read or write local files. All data is provided at runtime via parameters or MCP connector responses.
+**Subprocess execution:** None.
+**Dynamic code execution:** None — pseudocode in this skill represents the logic contract and is not executed at runtime.
+**Data sensitivity:** Inputs may contain confidential customer, deal, and operational data. Handle with RevOps-level confidentiality.
+
+## Trust & Verification
+
+**Input trust model:** All user-provided parameters are treated as untrusted at intake. Numeric inputs are validated for plausible range before use in calculations. String inputs are not evaluated as code.
+**Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
+**Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
+**Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
 
 ## Guardrails
 

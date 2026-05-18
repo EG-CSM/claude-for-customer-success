@@ -8,11 +8,41 @@ description: >
   Calibrated to the configured primary performance indicator and reporting period.
 argument-hint: "[--weekly | --monthly | --quarterly | --board | --csm-performance]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /cs-ops:metric-dashboard
 
 Portfolio metrics in one place — formatted for the audience that will receive it.
+
+[PROPOSED]
+
+---
+
+## Use when
+
+- Generating a weekly CS metrics snapshot for leadership or team standup
+- Building the monthly CS performance summary for the executive team
+- Preparing the quarterly CS section of a board or investor presentation
+- A stakeholder asks for a structured view of GRR, NRR, churn, or TTFV
+- CSM performance needs to be summarized for calibration or review cycles
+
+## Do NOT use for
+
+- Deep health model analysis (use `/cs-ops:health-model-review`)
+- Segment-level deep dives (use `/cs-ops:segment-analyzer`)
+- Capacity and coverage analysis (use `/cs-ops:capacity-planner`)
+- Configuring which metrics are tracked (use `/cs-ops:customize --section reporting`)
+- At-risk triage (use `/cs-ops:segment-analyzer --at-risk`)
+
+## Typical activation
+
+- `/cs-ops:metric-dashboard` — weekly snapshot at configured defaults (default)
+- `/cs-ops:metric-dashboard --weekly` — weekly leadership view
+- `/cs-ops:metric-dashboard --monthly` — monthly executive summary
+- `/cs-ops:metric-dashboard --quarterly` — quarterly CS review package
+- `/cs-ops:metric-dashboard --board` — board/investor-formatted metrics section
+- `/cs-ops:metric-dashboard --csm-performance` — CSM performance summary view
 
 ---
 

@@ -7,9 +7,32 @@ description: >
   Produces an internal working document and a customer-facing deliverable separately.
 argument-hint: "[account name] [--draft | --review | --exec-brief]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /qbr-builder
+
+[PROPOSED]
+
+## Use When
+- Preparing a Quarterly Business Review or Executive Business Review for a customer
+- Building the internal prep brief before a QBR call
+- QBR cadence has triggered and you need a structured output for the executive audience
+- Renewal is approaching and the QBR doubles as the value review before the commercial conversation
+
+## Do NOT Use For
+- Routine check-in prep — use /csm:call-prep
+- Success plan construction — use /csm:success-plan-builder
+- Value statements without the full QBR structure — use /csm:value-statement
+- Expansion business case — use /csm:expansion-business-case
+
+## Typical Activation
+"/csm:qbr-builder Acme Corp"
+"Build the QBR for [account]"
+"Prep for [customer]'s quarterly review"
+"Create an EBR for [account]"
+
+---
 
 Produce a QBR that demonstrates value realized, aligns on next-period priorities,
 and gives the customer a clear forward view — calibrated to your success criteria
@@ -341,3 +364,26 @@ Post-QBR actions to offer:
 - "Want to run a stakeholder map before the QBR? `/csm:stakeholder-map [account]`"
 - "QBR showed risk signals — want a risk memo? `/csm:risk-flag [account]`"
 - "Renewal is approaching — want a renewal readiness check? `/csm:renewal-readiness [account]`"
+
+---
+
+## Reference Files
+
+The following reference files govern this skill's detailed behavior. They are loaded on-demand when the relevant behavior is being applied — they are not front-loaded into every response.
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
+
+---
+
+## Security & Permissions
+- network_access: outbound_allowlist (CRM, CS platform, call recording tool, document storage per configured integrations)
+- filesystem_write: outbound to document storage only (per configured integration)
+- subprocess_execution: false
+- dynamic_code_execution: false
+
+## Trust & Verification
+- The internal prep brief and customer-facing EBR deck are distinct outputs — internal health scores, expansion signals, and stakeholder assessments must not appear in the customer deck
+- Value metrics must reference configured success criteria — do not invent outcomes
+- If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview

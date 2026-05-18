@@ -9,11 +9,45 @@ description: >
   evaluates whether the right plays exist and whether they are working.
 argument-hint: "[--full | --coverage | --adoption | --dead-plays | --play <play-name>]"
 version: "1.0.0"
+deployment_target: plugin
 ---
 
 # /cs-ops:playbook-auditor
 
 Is the playbook complete, specific, and actually being used?
+
+[PROPOSED]
+
+---
+
+## Use when
+
+- Running a quarterly playbook review to assess whether plays are still fit
+  for purpose given portfolio changes
+- A health model or segment analysis reveals a scenario (e.g., high Red-tier
+  churn in Enterprise) with no configured play
+- CSM adoption of plays is low and you need to identify whether the cause is
+  play design, trigger clarity, or awareness
+- Plays have accumulated over time and you suspect some are dead (never triggered,
+  never closed with a defined outcome)
+- Leadership asks "do we have a play for [situation]?" and you need a systematic
+  coverage answer
+
+## Do NOT use for
+
+- Individual play execution or CSM coaching on play steps (use `/csm:play-runner`)
+- Creating or updating plays in config (use `/cs-ops:customize --section playbook`)
+- Generating the playbook governance framework document
+  (use `/cs-ops:process-doc --playbook-governance`)
+- Health model audits (use `/cs-ops:health-model-review`)
+
+## Typical activation
+
+- `/cs-ops:playbook-auditor` — full audit (default)
+- `/cs-ops:playbook-auditor --coverage` — scenario coverage matrix only
+- `/cs-ops:playbook-auditor --adoption` — CSM usage rates and adoption gaps
+- `/cs-ops:playbook-auditor --dead-plays` — plays with no activations or no closed outcomes
+- `/cs-ops:playbook-auditor --play <play-name>` — deep audit of one named play
 
 ---
 
@@ -428,7 +462,8 @@ individual CSM awareness."]
 
 ## Output
 
-Playbook audit report — format driven by `--standard` (default) or `--full` flag.
+Playbook audit report — format driven by the mode flag
+(`--full`, `--coverage`, `--adoption`, `--dead-plays`, or `--play <play-name>`).
 Produces a structured markdown report with: scenario coverage matrix, play
 effectiveness ratings, gap inventory, and prioritised improvement recommendations.
 See **Full playbook audit** section for field-level detail.
