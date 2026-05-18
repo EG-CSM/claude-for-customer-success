@@ -1,8 +1,8 @@
 # CS Capability Model — claude-for-customer-success
 # Source: ~/claude-cowork/projects/agent-building/claude-for-customer-success
-# Generated: 2026-05-16
+# Generated: 2026-05-18
 # Status: VALIDATED
-# Total skills: 74 (cs-ops: 9, csm: 13, onboarding: 9, renewals: 10, rev-ops: 33)
+# Total skills: 81 (cs-ops: 9, csm: 17, onboarding: 9, renewals: 12, rev-ops: 34)
 
 skills:
 
@@ -1160,6 +1160,223 @@ skills:
     known_failure_modes:
       - Without usage data, value statements are qualitative only
 
+  - id: csm.success-plan-canvas
+    name: success-plan-canvas
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Builds a structured success plan canvas — a one-page view of account goals,
+      success metrics, key milestones, and mutual commitments. Supports initial
+      canvas creation at onboarding and refresh at major lifecycle transitions.
+    intended_tasks:
+      - Initial success plan canvas for new accounts
+      - Success plan refresh at renewal or expansion milestone
+      - Mutual success commitment documentation
+    out_of_scope:
+      - Progress review against an existing plan (use csm.success-plan-progress-review)
+      - Full QBR construction (use csm.qbr-builder)
+    invocation_cues:
+      - "success plan"
+      - "build a success plan"
+      - "mutual success plan"
+      - "success criteria canvas"
+      - "onboarding success plan"
+    anti_cues:
+      - Reviewing progress against an existing plan (use csm.success-plan-progress-review)
+    priority: standard
+    argument_hint: "[<account-name>] [--type initial | refresh]"
+    required_context:
+      - csm CLAUDE.md
+      - Account goals and success criteria
+    consumes_files:
+      - csm/CLAUDE.md
+    produces_artifacts:
+      - Success plan canvas (structured markdown)
+    tools_used:
+      - CS Platform connector (optional)
+      - CRM connector (optional)
+    related_skills:
+      - csm.success-plan-progress-review
+      - onboarding.success-criteria
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md
+      connector_behavior: falls back to user-provided account goals
+    constraints:
+      - Canvas requires CSM review before sharing with customer
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Structured canvas with goals, metrics, milestones, and mutual commitments completed
+    known_failure_modes:
+      - Vague account goals produce generic canvases without specific outcome metrics
+
+  - id: csm.success-plan-progress-review
+    name: success-plan-progress-review
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Reviews progress against an existing success plan — generates a milestone
+      scorecard, OCV outcome ratings, and a QBR pre-work note. Designed as the
+      downstream consumer of csm.success-plan-canvas in the success plan chain.
+    intended_tasks:
+      - Milestone scorecard against success plan commitments
+      - OCV outcome rating update
+      - QBR pre-work note generation
+      - Progress narrative for customer-facing review
+    out_of_scope:
+      - Building a new success plan (use csm.success-plan-canvas)
+      - Full QBR construction (use csm.qbr-builder)
+    invocation_cues:
+      - "success plan review"
+      - "progress against success plan"
+      - "scorecard"
+      - "how are we tracking"
+      - "QBR pre-work"
+    anti_cues:
+      - Creating a new success plan (use csm.success-plan-canvas)
+      - Full QBR document construction (use csm.qbr-builder)
+    priority: standard
+    argument_hint: "[<account-name>] [--scorecard | --qbr-prework]"
+    required_context:
+      - csm CLAUDE.md
+      - Existing success plan canvas
+      - Current milestone and outcome data
+    consumes_files:
+      - csm/CLAUDE.md
+      - Success plan canvas artifact
+    produces_artifacts:
+      - Progress review with milestone scorecard
+      - QBR pre-work note
+    tools_used:
+      - CS Platform connector (optional)
+      - CRM connector (optional)
+    related_skills:
+      - csm.success-plan-canvas
+      - csm.qbr-builder
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md; requires existing success plan canvas
+      connector_behavior: falls back to user-provided outcome data
+    constraints:
+      - Requires an existing success plan canvas as input
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Milestone scorecard with OCV ratings and progress narrative produced
+    known_failure_modes:
+      - Without an existing canvas, review scope is undefined
+
+  - id: csm.expansion-business-case
+    name: expansion-business-case
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Builds an expansion business case in two modes: csm-led (internal proposal
+      for CSM-driven expansion) or csql (CSQL Qualification Package for Sales
+      handoff). Draws on value delivery history, outcome catalog alignment, and
+      account growth signals.
+    intended_tasks:
+      - CSM-led expansion proposal for internal use
+      - CSQL Qualification Package for Sales handoff
+      - Expansion ROI framing from delivered outcomes
+    out_of_scope:
+      - CSQL pipeline tracking after handoff (use rev-ops.csql-tracking)
+      - Expansion onboarding execution (use csm.expansion-onboarding)
+    invocation_cues:
+      - "expansion business case"
+      - "upsell proposal"
+      - "CSQL"
+      - "expansion opportunity"
+      - "build a case for expansion"
+    anti_cues:
+      - Tracking CSQL pipeline status (use rev-ops.csql-tracking)
+      - Executing expansion onboarding (use csm.expansion-onboarding)
+    priority: standard
+    argument_hint: "[<account-name>] [--mode csm-led | csql]"
+    required_context:
+      - csm CLAUDE.md
+      - Account value delivery history
+      - Outcome catalog entries (if configured)
+    consumes_files:
+      - csm/CLAUDE.md
+      - Outcome catalog (if configured)
+    produces_artifacts:
+      - Expansion proposal (csm-led mode)
+      - CSQL Qualification Package (csql mode)
+    tools_used:
+      - CRM connector (optional)
+      - CS Platform connector (optional)
+    related_skills:
+      - csm.value-statement
+      - csm.account-research
+      - rev-ops.csql-tracking
+      - csm.expansion-onboarding
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md
+      connector_behavior: falls back to user-provided outcome data
+    constraints:
+      - CSQL package requires Sales alignment before formal submission
+    risk_level: medium
+    approval_needed: false
+    success_criteria:
+      - Business case with value evidence, expansion rationale, and next-step recommendation produced
+    known_failure_modes:
+      - Thin outcome data produces qualitative cases without quantified ROI
+
+  - id: csm.expansion-onboarding
+    name: expansion-onboarding
+    version: "1.0.0"
+    category: csm
+    owner: csm
+    summary: >
+      Builds an expansion onboarding plan for won CSQLs — bridges CSQL close to CSM
+      adoption execution. Produces a structured plan covering new user onboarding scope,
+      milestone calendar, and stakeholder alignment for the expansion cohort.
+    intended_tasks:
+      - Expansion onboarding plan for a won CSQL
+      - New user onboarding scope for expanded seats or products
+      - Milestone calendar for expansion cohort
+    out_of_scope:
+      - CSQL tracking before close (use rev-ops.csql-tracking)
+      - Initial onboarding for new accounts (use onboarding domain skills)
+    invocation_cues:
+      - "expansion onboarding"
+      - "onboard expansion"
+      - "CSQL won"
+      - "new users onboarding"
+      - "expansion cohort plan"
+    anti_cues:
+      - CSQL still in qualification (use rev-ops.csql-tracking)
+      - New account onboarding (use onboarding.success-criteria or onboarding.kickoff-agenda)
+    priority: standard
+    argument_hint: "[<account-name>] [--csql-id <id>]"
+    required_context:
+      - csm CLAUDE.md
+      - Won CSQL details (scope, users, products)
+    consumes_files:
+      - csm/CLAUDE.md
+    produces_artifacts:
+      - Expansion onboarding plan (structured markdown)
+    tools_used:
+      - CS Platform connector (optional)
+      - CRM connector (optional)
+    related_skills:
+      - rev-ops.csql-tracking
+      - csm.expansion-business-case
+    execution_profile:
+      pre_flight: reads csm CLAUDE.md; requires won CSQL context
+      connector_behavior: falls back to user-provided CSQL details
+    constraints:
+      - Requires confirmed CSQL close before generating expansion onboarding plan
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Expansion onboarding plan with scope, milestone calendar, and stakeholder alignment produced
+    known_failure_modes:
+      - Without CSQL close details, plan scope is undefined
+
 # ─────────────────────────────────────────────────────────────────────────────
 # DOMAIN: onboarding  (9 skills)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1669,38 +1886,38 @@ skills:
 
   # ── RENEWALS DOMAIN ──────────────────────────────────────────────────────────
 
-  - id: renewals.churn-analysis
-    name: churn-analysis
-    version: "1.0"
+  - id: renewals.churn-rca
+    name: churn-rca
+    version: "1.0.0"
     category: renewals
     owner: renewals-manager
-
     summary: >
-      Root-cause analysis of closed churn or contraction events. Identifies
-      why an account churned, which signals were present and missed, and what
-      process or product changes would reduce recurrence.
+      Root-cause analysis of full cancellation (churn) events. Identifies why an
+      account churned, which signals were present and missed, and what process or
+      product changes would reduce recurrence. Scoped to full cancellations only —
+      contract contractions route to renewals.downgrade-analysis.
     intended_tasks:
-      - Post-churn retrospective for a single account
+      - Post-churn retrospective for a single churned account
       - Portfolio-level churn pattern scan across multiple lost accounts
       - Quick signal audit to identify earliest missed warning
     out_of_scope:
-      - Active at-risk accounts (use risk-assessment)
+      - Active at-risk accounts (use renewals.risk-assessment)
+      - Contract contractions or downgrades (use renewals.downgrade-analysis)
       - Expansion or renewal forecasting
       - Win-loss analysis for new logos (sales domain)
-
     invocation_cues:
       - "why did [account] churn"
-      - "analyze our churn"
+      - "churn RCA"
       - "post-mortem on lost account"
       - "what signals did we miss"
       - "churn retrospective"
       - "--portfolio-scan"
     anti_cues:
-      - Account is still active — route to risk-assessment
-      - Request is about renewal probability — route to renewal-forecast
+      - Account is still active — route to renewals.risk-assessment
+      - Account contracted but did not cancel — route to renewals.downgrade-analysis
+      - Request is about renewal probability — route to renewals.renewal-forecast
     priority: high
     argument_hint: "[<account-name-or-ID>] [--deep | --quick | --portfolio-scan]"
-
     required_context:
       - Domain CLAUDE.md (reads at startup; routes to cold-start-interview if missing)
       - Account name or ID, or list for portfolio scan
@@ -1713,25 +1930,23 @@ skills:
       - Churn root-cause report (structured markdown)
       - Signal timeline (earliest-to-latest warning indicators)
       - Process gap recommendations
-
     tools_used:
       - CRM connector (Salesforce/HubSpot — optional; falls back to manual input)
     related_skills:
-      - renewals.risk-assessment (pre-churn analog)
-      - renewals.renewal-forecast (portfolio context)
-      - renewals.cold-start-interview (domain config pre-flight)
+      - renewals.risk-assessment
+      - renewals.downgrade-analysis
+      - renewals.renewal-forecast
+      - renewals.cold-start-interview
     execution_profile:
       steps: 4-7
       token_estimate: 800-1400
       latency: moderate
-
     constraints:
       - Account content is confidential — no cross-account data sharing in outputs
       - CRM data older than 7 days triggers freshness warning
       - Portfolio scan limited to accounts explicitly provided; no CRM bulk export without authorization
     risk_level: high
     approval_needed: false
-
     success_criteria:
       - Root cause classified to at least one of five signal domains
       - Earliest detectable signal identified with approximate date
@@ -1952,6 +2167,78 @@ skills:
       - Field name not recognized → list valid field names and reprompt
       - --validate finds GRR/NRR inversion → block edit until resolved; explain impact
       - company-profile.md conflict with domain CLAUDE.md → surface both values and ask which wins
+
+  - id: renewals.downgrade-analysis
+    name: downgrade-analysis
+    version: "1.0.0"
+    category: renewals
+    owner: renewals-manager
+    summary: >
+      Contract contraction analysis for accounts requesting seat reduction or scope
+      reduction. Diagnoses contraction drivers, quantifies ARR impact, and produces
+      counter-proposal inputs for the negotiation-prep workflow. Scoped to contract
+      contractions only — full cancellations route to renewals.churn-rca.
+    intended_tasks:
+      - Analyze a customer request to reduce seats, tiers, or product scope
+      - Quantify ARR impact of proposed contraction
+      - Generate counter-proposal framing for negotiation
+      - Identify whether contraction reflects temporary budget pressure or structural disengagement
+    out_of_scope:
+      - Full cancellations (use renewals.churn-rca)
+      - Active at-risk accounts not yet requesting contraction (use renewals.risk-assessment)
+      - Renewal forecasting (use renewals.renewal-forecast)
+      - Expansion or upsell opportunities
+    invocation_cues:
+      - "customer wants to reduce seats"
+      - "they're asking to downgrade"
+      - "contraction request"
+      - "scope reduction"
+      - "downgrade analysis"
+      - "they want to cut the contract"
+    anti_cues:
+      - Account wants to cancel entirely — route to renewals.churn-rca
+      - No contraction request yet — route to renewals.risk-assessment
+      - Request is about renewal probability — route to renewals.renewal-forecast
+    priority: high
+    argument_hint: "[<account-name-or-ID>] [--seats | --scope | --tier]"
+    required_context:
+      - Domain CLAUDE.md (reads at startup; routes to cold-start-interview if missing)
+      - Account name or ID
+      - Current contract: ARR, seat count, tier, renewal date
+      - Requested contraction: seats to reduce or scope to remove
+      - CRM data or manual input: engagement history, usage data, support history
+    consumes_files:
+      - renewals/CLAUDE.md
+      - company-profile.md
+    produces_artifacts:
+      - Contraction analysis report (structured markdown)
+      - ARR impact summary (current vs. proposed)
+      - Counter-proposal inputs for renewals.negotiation-prep
+    tools_used:
+      - CRM connector (Salesforce/HubSpot — optional; falls back to manual input)
+    related_skills:
+      - renewals.churn-rca
+      - renewals.risk-assessment
+      - renewals.negotiation-prep
+      - renewals.renewal-forecast
+    execution_profile:
+      steps: 3-5
+      token_estimate: 600-1100
+      latency: moderate
+    constraints:
+      - Account content is confidential — no cross-account data sharing in outputs
+      - CRM data older than 7 days triggers freshness warning
+      - ARR figures flagged as not-yet-a-revenue-commitment until signed amendment
+    risk_level: medium
+    approval_needed: false
+    success_criteria:
+      - Contraction drivers classified (budget, value gap, usage reduction, or structural disengagement)
+      - ARR impact quantified for proposed vs. alternative contraction scenarios
+      - Counter-proposal inputs produced for negotiation-prep handoff
+    known_failure_modes:
+      - Insufficient usage data → flag gap and request before analysis
+      - Contraction request conflated with cancellation intent → clarify scope before proceeding
+      - No current contract data provided → prompt for ARR, seat count, and renewal date
 
   - id: renewals.executive-summary
     name: executive-summary
@@ -2377,7 +2664,7 @@ skills:
       - Multi-account triage for pipeline review prep
       - Quick 3-domain risk check for time-sensitive situations
     out_of_scope:
-      - Post-churn retrospective (use churn-analysis)
+      - Post-churn retrospective (use renewals.churn-rca)
       - Expansion opportunity identification (use expansion-signal)
       - Forecast construction (use renewal-forecast)
 
@@ -2390,7 +2677,7 @@ skills:
       - "--quick"
       - "--triage"
     anti_cues:
-      - Account has already churned — route to churn-analysis
+      - Account has already churned — route to renewals.churn-rca
       - User wants expansion signals — route to expansion-signal
     priority: critical
     argument_hint: "[<account-name-or-ID>] [--deep | --quick | --triage]"
@@ -2411,7 +2698,7 @@ skills:
     tools_used:
       - CRM connector (optional; falls back to manual input)
     related_skills:
-      - renewals.churn-analysis (post-churn analog)
+      - renewals.churn-rca (post-churn analog)
       - renewals.expansion-signal (expansion only after risk resolved)
       - renewals.renewal-forecast (tier imported into forecast)
       - renewals.negotiation-prep (risk context required)
@@ -2444,7 +2731,7 @@ skills:
 
 
 # ============================================================
-# DOMAIN: rev-ops (33 skills)
+# DOMAIN: rev-ops (34 skills)
 # ============================================================
 
   - id: rev-ops.annual-planning-workflow
@@ -2719,6 +3006,78 @@ skills:
       - User provides ambiguous values → ask clarifying question before writing
       - Partial completion → save partial draft, flag remaining gaps, do not write incomplete profile
 
+  - id: rev-ops.comp-simulation
+    name: comp-simulation
+    version: "1.0.0"
+    domain: rev-ops
+    category: revenue-modeling
+    owner: rev-ops
+    summary: >
+      Models CSM and AE compensation plan outcomes against real or projected
+      portfolio and pipeline data. Calculates attainment, payout, and acceleration
+      tier projections under current and proposed plan structures. Outputs require
+      HR and Finance dual review before distribution to reps (G3).
+    intended_tasks:
+      - Project individual rep payout under current quota and commission structure
+      - Compare payout outcomes across two or more comp plan variants
+      - Model impact of quota changes, accelerator threshold shifts, or kicker additions
+      - Identify plan design anomalies (cliff risk, attainment bunching, unintended upside)
+    out_of_scope:
+      - Comp plan design decisions (advisory modeling only — HR and Finance own plan design)
+      - Payroll processing or authoritative payout calculation
+      - New logo / AE quota setting (contacts rev-ops for pipeline segmentation first)
+    invocation_cues:
+      - "model comp outcomes"
+      - "comp simulation"
+      - "what would reps earn under this plan"
+      - "compare comp plan variants"
+      - "attainment projection"
+      - "accelerator modeling"
+    anti_cues:
+      - Request is for actual payroll processing — not in scope
+      - Request is to design a new comp plan from scratch — route to HR/Finance
+    priority: medium
+    argument_hint: "[<rep-name-or-segment>] [--plan-a | --plan-b] [--attainment <pct>]"
+    required_context:
+      - Domain CLAUDE.md (reads at startup; routes to cold-start-interview if missing)
+      - Current comp plan structure: quota, base rate, tiers, accelerators, kickers
+      - Portfolio or pipeline data: ARR, renewal rates, expansion pipeline
+      - Rep name(s) or segment scope (or "all CSMs" / "all AEs")
+    consumes_files:
+      - rev-ops/CLAUDE.md
+      - company-profile.md
+    produces_artifacts:
+      - Comp simulation report (structured markdown)
+      - Attainment and payout table by rep or segment
+      - Plan variant comparison (if multiple plans modeled)
+    tools_used:
+      - CRM connector (pipeline and ARR data — optional; falls back to manual input)
+    related_skills:
+      - rev-ops.forecast-variance-analysis
+      - rev-ops.growth-model-vs-actuals-tracking
+      - rev-ops.deal-classification
+    execution_profile:
+      complexity: T2
+      typical_turns: 4-7
+      tool_calls_per_run: 2-5
+
+    constraints:
+      - G3: comp outputs require HR + Finance dual review before rep distribution
+      - G6: all data reads must surface data-as-of timestamp
+      - G1: outputs labeled as modeling scenarios, not authoritative payout figures
+    risk_level: high
+    approval_needed: true
+
+    success_criteria:
+      - Attainment and payout calculated for all specified reps or segments
+      - Plan variant comparison table produced (if multiple plans in scope)
+      - G3 review requirement flagged on every output
+      - data-as-of timestamp present on all data reads
+    known_failure_modes:
+      - Comp plan structure not provided → prompt for quota, rate, and tier definitions before modeling
+      - Pipeline data missing or stale → flag gap and request refresh; flag data-as-of timestamp
+      - Output distributed without HR/Finance review → G3 violation; block and redirect
+
   - id: rev-ops.crm-hygiene-audit
     name: crm-hygiene-audit
     version: "1.0.0"
@@ -2858,6 +3217,80 @@ skills:
     known_failure_modes:
       - Connector to one system unavailable → partial reconciliation; label what was skipped
       - Authority hierarchy not configured → request configuration before proceeding
+
+  - id: rev-ops.csql-tracking
+    name: csql-tracking
+    version: "1.0.0"
+    domain: rev-ops
+    category: pipeline-management
+    owner: rev-ops
+    summary: >
+      Tracks CS-Qualified Lead (CSQL) progression from identification through
+      closed expansion. Records CSQL source (expansion business case, health
+      score signal, or CSM nomination), pipeline stage, ARR value, and close
+      outcome. Feeds expansion pipeline reporting and closes the loop between
+      csm.expansion-business-case and csm.expansion-onboarding.
+    intended_tasks:
+      - Log a new CSQL with source, ARR estimate, and owning CSM
+      - Update CSQL stage as it progresses through the expansion pipeline
+      - Report CSQL pipeline health: volume, velocity, and conversion rate
+      - Close out a CSQL as won (triggers expansion-onboarding handoff) or lost (triggers RCA)
+    out_of_scope:
+      - New logo pipeline tracking (sales domain)
+      - Renewal forecasting (use renewals.renewal-forecast)
+      - Full comp or quota modeling (use rev-ops.comp-simulation)
+    invocation_cues:
+      - "log a CSQL"
+      - "track expansion lead"
+      - "CSQL pipeline"
+      - "update expansion opportunity"
+      - "expansion pipeline report"
+      - "close out CSQL"
+    anti_cues:
+      - New logo opportunity — not in scope; route to sales pipeline
+      - Renewal probability question — route to renewals.renewal-forecast
+    priority: high
+    argument_hint: "[<account-name>] [--stage <stage>] [--arr <value>] [--won | --lost]"
+    required_context:
+      - Domain CLAUDE.md (reads at startup; routes to cold-start-interview if missing)
+      - Account name or ID
+      - CSQL source: expansion-business-case, health-score-signal, or CSM-nomination
+      - Estimated expansion ARR
+      - Current pipeline stage
+    consumes_files:
+      - rev-ops/CLAUDE.md
+      - company-profile.md
+    produces_artifacts:
+      - CSQL log entry (structured markdown or CRM field update proposal)
+      - CSQL pipeline health report (volume, velocity, conversion — on report request)
+      - Expansion-onboarding handoff brief (on --won close)
+    tools_used:
+      - CRM connector (Salesforce/HubSpot — optional; falls back to manual log)
+    related_skills:
+      - csm.expansion-business-case
+      - csm.expansion-onboarding
+      - rev-ops.forecast-variance-analysis
+      - renewals.renewal-forecast
+    execution_profile:
+      complexity: T1
+      typical_turns: 2-4
+      tool_calls_per_run: 1-3
+
+    constraints:
+      - G6: all pipeline data reads surface data-as-of timestamp
+      - G9: CRM log entries are proposals until user confirms; no autonomous CRM writes
+    risk_level: low
+    approval_needed: false
+
+    success_criteria:
+      - CSQL logged with source, ARR, stage, and owning CSM
+      - Pipeline stage updated to current state on update requests
+      - Expansion-onboarding handoff brief produced on --won close
+      - data-as-of timestamp present on all CRM reads
+    known_failure_modes:
+      - CSQL source not specified → prompt before logging (source is required for pipeline attribution)
+      - CRM connector unavailable → produce manual log entry; flag for rep to enter in CRM
+      - --won close without confirmed CSQL → block and request CSQL ID before triggering handoff
 
   - id: rev-ops.data-decay-tracking
     name: data-decay-tracking

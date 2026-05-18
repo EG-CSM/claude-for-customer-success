@@ -1,11 +1,11 @@
 # CS Agent Capability Model — By Customer Lifecycle Stage
 
-> **Status:** [VALIDATED]  
-> **Source catalog:** `cs-capability-model.yaml` (74 skills, VALIDATED 2026-05-16)  
+> **Status:** [DRAFT — updated 2026-05-18 to reflect 81-skill suite]  
+> **Source catalog:** `cs-capability-model.yaml` (81 skills, VALIDATED 2026-05-16; +7 new skills 2026-05-18)  
 > **Lifecycle framework:** Seven-Stage Customer Lifecycle (Stages 0–6)  
 > **Domain coverage:** cs-ops · csm · onboarding · renewals · rev-ops  
 
-This document organizes all 74 skills in the `claude-for-customer-success` agent system by the customer lifecycle stage where they deliver primary value. For full schema detail (inputs, outputs, integration, guardrails, evaluation signals), see `cs-capability-model.yaml`.
+This document organizes all 81 skills in the `claude-for-customer-success` agent system by the customer lifecycle stage where they deliver primary value. For full schema detail (inputs, outputs, integration, guardrails, evaluation signals), see `cs-capability-model.yaml`.
 
 **Reading format per skill entry:**
 ```
@@ -108,6 +108,9 @@ The market-level outcome and value statement library must be built before custom
 - `onboarding.handoff-doc` — Generate the graduation handoff document transitioning the account to post-onboarding CS, including the committed outcome and value baseline
   Tasks: summarize onboarding outcomes vs. criteria · document open items and owner assignments · package for CSM intake
 
+- `csm.expansion-onboarding` — Execute the onboarding workflow for a newly-closed expansion — additional seats, tier upgrade, or new product module — triggered by a won CSQL from rev-ops.csql-tracking
+  Tasks: generate expansion onboarding plan with milestones · align stakeholders to new scope and success criteria · produce expansion handoff brief for ongoing CSM ownership
+
 ---
 
 ## Stage 2 — Adoption
@@ -115,6 +118,9 @@ The market-level outcome and value statement library must be built before custom
 
 - `csm.success-plan-builder` — Build or refresh a structured success plan aligned to customer outcomes, anchoring to the Layer 2 outcome statements established at Stage 0–1
   Tasks: map customer goals to catalog outcome statements · define leading indicators per goal · draft success plan for customer review
+
+- `csm.success-plan-canvas` — Generate a one-page visual success plan canvas summarizing the account's committed outcomes, key milestones, health signals, and CSM action priorities; designed for customer-facing alignment conversations
+  Tasks: pull committed success criteria and current health signals · map milestones to outcome categories · produce shareable canvas for customer review
 
 - `csm.taro-play-runner` — Execute a TARO-structured CS play (Trigger → Action → Resource → Outcome)
   Tasks: identify trigger condition · select appropriate play · generate action steps with resources
@@ -142,6 +148,9 @@ The market-level outcome and value statement library must be built before custom
 - `csm.qbr-builder` — Build a Quarterly Business Review deck with outcome data, risks, and next-period plan; value statement provides the realized-value narrative for each QBR
   Tasks: aggregate usage and outcome data for the period · frame results against committed success criteria · draft QBR narrative with recommendations
 
+- `csm.success-plan-progress-review` — Review progress against a customer's active success plan, surfacing milestone completions, lagging indicators, and recommended adjustments before the next CSM touchpoint or QBR
+  Tasks: pull current milestone status vs. success plan targets · flag lagging or at-risk indicators · generate progress summary with recommended CSM actions
+
 - `csm.risk-flag` — Identify and document a risk signal for an account with recommended response
   Tasks: characterize the risk type and severity · document evidence · draft risk memo with escalation recommendation
 
@@ -161,6 +170,12 @@ The market-level outcome and value statement library must be built before custom
 
 - `renewals.expansion-signal` — Identify expansion signals in an account and surface them to the CSM or AE
   Tasks: analyze usage patterns for expansion indicators · cross-reference with product capability gaps · generate expansion brief for sales handoff
+
+- `csm.expansion-business-case` — Build a structured expansion business case for an account where usage signals or CSM judgment indicate expansion readiness; produces the CSQL that feeds rev-ops.csql-tracking
+  Tasks: qualify expansion opportunity against adoption and outcome signals · quantify expected value for customer and seller · generate CSQL brief for rev-ops handoff
+
+- `rev-ops.csql-tracking` — Track CS-Qualified Leads (CSQLs) from identification through closed expansion, recording source, pipeline stage, ARR value, and close outcome; bridges csm.expansion-business-case and csm.expansion-onboarding
+  Tasks: log new CSQL with source, ARR estimate, and owning CSM · update CSQL stage as opportunity progresses · close out CSQL as won (triggers expansion-onboarding) or lost (triggers RCA)
 
 - `rev-ops.outcome-to-value-tracking` — Track whether promised outcomes are being realized and surface deviations from the committed baseline
   Tasks: pull committed outcomes from success plan · compare to current performance data · flag at-risk outcomes with root cause
@@ -200,8 +215,11 @@ The market-level outcome and value statement library must be built before custom
 - `renewals.executive-summary` — Generate an executive-ready account summary for renewal or QBR conversations, synthesizing the customer-level value statement with health and outcomes data
   Tasks: synthesize health, outcomes, and engagement data · frame summary for executive audience · include strategic recommendations
 
-- `renewals.churn-analysis` — Analyze a churned account to identify root causes and systemic failure patterns
+- `renewals.churn-rca` — Analyze a fully-churned account (full cancellation) to identify root causes and systemic failure patterns; scoped to complete cancellations only — contract contractions route to renewals.downgrade-analysis
   Tasks: reconstruct account timeline from signals · classify churn cause category · generate learnings brief for CS and product
+
+- `renewals.downgrade-analysis` — Analyze a contract contraction request (seat reduction, scope reduction, tier downgrade) to diagnose drivers, quantify ARR impact, and produce counter-proposal inputs; scoped to contractions only — full cancellations route to renewals.churn-rca
+  Tasks: analyze contraction drivers across budget, value gap, and usage dimensions · quantify ARR impact of proposed vs. alternative scenarios · generate counter-proposal inputs for renewals.negotiation-prep
 
 - `csm.renewal-readiness` — Assess whether a CSM's account portfolio is positioned for successful renewals
   Tasks: score renewal readiness per account · flag accounts needing immediate intervention · generate portfolio renewal health summary
@@ -263,6 +281,9 @@ The market-level outcome and value statement library must be built before custom
 - `rev-ops.quota-sensitivity-analysis` — Analyze quota sensitivity to changes in ramp, attrition, and performance distribution
   Tasks: model quota attainment under variable rep productivity assumptions · identify breakeven capacity requirements · generate sensitivity report
 
+- `rev-ops.comp-simulation` — Model CSM and AE compensation plan outcomes against real or projected portfolio and pipeline data; calculates attainment, payout, and acceleration tier projections under current and proposed plan structures; outputs require HR + Finance dual review before rep distribution (G3)
+  Tasks: project individual rep payout under current quota and commission structure · compare payout outcomes across comp plan variants · identify plan design anomalies including cliff risk, attainment bunching, and unintended upside
+
 - `rev-ops.mid-year-replan-triggering` — Identify the conditions that should trigger a mid-year revenue plan revision
   Tasks: compare YTD actuals to plan thresholds · assess pipeline coverage against H2 targets · generate replan trigger recommendation with evidence
 
@@ -322,14 +343,14 @@ The market-level outcome and value statement library must be built before custom
 |-----------------|---------------|---------|
 | Pre-catalog (L1 build) | 1 | rev-ops |
 | Stage 0 Pre-Onboard | 10 config + 1 ops + L2 tailoring | all domains · rev-ops |
-| Stage 1 Onboard | 7 | onboarding |
-| Stage 2 Adoption | 6 | csm |
-| Stage 3 Nurture | 6 | csm · cs-ops |
-| Stage 4 Growth | 6 | renewals · rev-ops · csm |
-| Stage 5 Retention | 9 | renewals · csm · rev-ops |
+| Stage 1 Onboard | 8 | onboarding · csm |
+| Stage 2 Adoption | 7 | csm |
+| Stage 3 Nurture | 7 | csm · cs-ops |
+| Stage 4 Growth | 8 | renewals · rev-ops · csm |
+| Stage 5 Retention | 10 | renewals · csm · rev-ops |
 | Stage 6 Advocacy | 2 | csm · rev-ops |
-| Cross-Cutting Ops | 27 | cs-ops · rev-ops |
-| **Total** | **74** | **5 domains** |
+| Cross-Cutting Ops | 28 | cs-ops · rev-ops |
+| **Total** | **81** | **5 domains** |
 
 > **Two-layer outcome/value model:** `rev-ops.outcome-statement-builder` operates at both Layer 1 (catalog build, pre-sales) and Layer 2 (customer tailoring, Stage 0). `csm.value-statement` operates at Layer 2 across Stages 2–6, consuming Layer 1 as structural input. The core outcome or value claim never changes between layers — only the surface language adapts to the customer's context.
 
@@ -337,4 +358,4 @@ The market-level outcome and value statement library must be built before custom
 
 ---
 
-*Cross-reference: `cs-capability-model.yaml` — full schema with inputs, outputs, integration points, guardrails, and evaluation signals for all 74 skills.*
+*Cross-reference: `cs-capability-model.yaml` — full schema with inputs, outputs, integration points, guardrails, and evaluation signals for all 81 skills.*
