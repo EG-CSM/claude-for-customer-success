@@ -614,6 +614,104 @@ See [`auq-resilience/README.md`](./auq-resilience/README.md) for install steps a
 
 ---
 
+## Contributing
+
+Contributions are welcome. The workflow below keeps skill sources consistent across all plugin bundles.
+
+**Before you start:**
+- Read the [Code of Conduct](./CODE_OF_CONDUCT.md). This repo is a professional tool for Customer Success teams handling confidential customer data and revenue-sensitive account intelligence. All contributors — whether submitting a new skill, fixing a bug, or improving documentation — are expected to follow that standard.
+
+**Skill edits:**
+- **Always edit skills in `vertical-plugins/`**, not in `agent-plugins/<slug>/skills/`. The agent-plugin skill directories are generated copies. Edits made there directly will be overwritten.
+- After editing, run `python3 scripts/sync-agent-skills.py` to propagate changes into all agent bundles that depend on that skill.
+- Run `python3 scripts/check.py` before committing. The check script lints every manifest, verifies all `system.file` / `skills.path` / `callable_agents.manifest` references resolve, and fails if any agent-plugin skill copy has drifted from its vertical-plugin source.
+
+**Pull requests:**
+1. Fork the repository and create a feature branch from `main`.
+2. Make your changes following the skill-edit workflow above.
+3. Ensure `check.py` passes with no errors.
+4. Open a pull request with a clear description of what changed, which plugin(s) are affected, and any testing you performed.
+5. For new skills, include the trigger conditions, example invocations, and the connector dependencies the skill requires.
+
+**Scope guidance:**
+- Bug fixes and documentation improvements: open a PR directly.
+- New skills or significant architecture changes: open a GitHub Issue first to discuss scope and fit before investing in implementation.
+- Changes to managed agent cookbooks or MCP configurations: flag in the PR description — these require additional review given their behavioral and security surface area.
+
+---
+
+## Bugs and Issues
+
+Report bugs and unexpected behavior via [GitHub Issues](https://github.com/t0ddc3by/claude-for-customer-success/issues).
+
+When filing a bug, include:
+
+| Field | What to provide |
+|-------|-----------------|
+| **Plugin** | Which plugin (csm, renewals, cs-ops, rev-ops, onboarding, auq-resilience) |
+| **Skill slug** | The skill name as it appears in the plugin (e.g., `renewal-risk-briefing`) |
+| **Command** | The slash command used, if applicable (e.g., `/csm:qbr-prep`) |
+| **Claude model** | Model version (e.g., `claude-sonnet-4-6`) |
+| **Connectors** | Which MCP connectors were active (Salesforce, HubSpot, Gainsight, etc.) |
+| **Expected behavior** | What you expected the skill to do |
+| **Actual behavior** | What it actually did — include the full Claude response if relevant |
+| **Reproduction steps** | Minimal steps to reproduce |
+
+**What counts as a bug:** skill behavior that diverges from the documented trigger conditions or output specification; `check.py` failures on unmodified files; manifest resolution errors; hook intercept failures in the auq-resilience plugin.
+
+**What is not a bug:** Claude producing different outputs on repeated invocations with the same prompt (model inference is non-deterministic); skill outputs that are reasonable but not what you hoped for; connector failures caused by third-party API changes or rate limits.
+
+---
+
+## Support
+
+**For bugs and unexpected skill behavior:** [GitHub Issues](https://github.com/t0ddc3by/claude-for-customer-success/issues) — use the bug report template above.
+
+**For questions about how to use the plugins, install connectors, or wire up the auq-resilience hooks:** [GitHub Discussions](https://github.com/t0ddc3by/claude-for-customer-success/discussions).
+
+**For questions about SuccessCOACHING methodologies** (TARO, Customer Lifecycle, Value Chain, Two-Layer Outcome/Value Model) and how the skills operationalize them: reach the SuccessCOACHING team at [successhacker.co](https://successhacker.co).
+
+**For enterprise deployment, custom skill development, or managed agent configuration assistance:** contact SuccessCOACHING directly via [successhacker.co](https://successhacker.co).
+
+Response time for GitHub Issues and Discussions is best-effort. This is an open-source reference implementation, not a supported commercial product.
+
+---
+
+## Security
+
+**Do not open a public GitHub Issue to report a security vulnerability.**
+
+If you discover a vulnerability in this repository — including prompt injection risks in skill content, insecure MCP configuration patterns, hook intercept bypasses, or credential exposure in managed agent cookbooks — report it privately:
+
+**Email:** security@successhacker.co  
+**Subject line:** `[Security] claude-for-customer-success — <brief description>`
+
+Include:
+- A description of the vulnerability and its potential impact
+- The file(s) and line(s) involved
+- Steps to reproduce or a proof-of-concept if applicable
+
+We will acknowledge receipt within 5 business days and work with you on a coordinated disclosure timeline.
+
+**Scope note.** Most security-relevant behavior in this suite is governed by Claude's model-level safety systems, Anthropic's usage policies, and the access permissions you configure on your MCP connectors. The skills and plugins in this repo do not execute code or make API calls directly — they are prompts and configuration files. The primary security surface is data access: what connectors you authorize, what data those connectors can reach, and who has access to the Claude session that invokes the skills. Review the [Disclaimer](#disclaimer) for data handling guidance.
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for a version-by-version record of changes.
+
+Per-plugin release notes are in each plugin's `CHANGELOG.md`:
+
+- [`csm/CHANGELOG.md`](./csm/CHANGELOG.md)
+- [`renewals/CHANGELOG.md`](./renewals/CHANGELOG.md)
+- [`cs-ops/CHANGELOG.md`](./cs-ops/CHANGELOG.md)
+- [`rev-ops/CHANGELOG.md`](./rev-ops/CHANGELOG.md)
+- [`onboarding/CHANGELOG.md`](./onboarding/CHANGELOG.md)
+- [`auq-resilience/CHANGELOG.md`](./auq-resilience/CHANGELOG.md)
+
+---
+
 ## Version
 
 `claude-for-customer-success` v1.1.0 · Built for Anthropic Claude Code and Claude Cowork.
