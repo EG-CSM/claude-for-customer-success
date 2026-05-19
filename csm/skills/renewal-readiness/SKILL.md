@@ -66,28 +66,30 @@ Critical configuration to apply:
 
 > Load `references/reasoning-blueprint.md` for full taxonomy, heuristics, failure modes, and expert judgment patterns.
 
-**CLASSIFY** — Determine renewal type before generating output:
+Before generating output, apply these primers:
+
+1. **CLASSIFY** — Determine renewal type before generating output:
 - **Type A** — Green account, routine renewal: health solid, stakeholders engaged, success criteria met
 - **Type B** — Yellow account, gap closure needed: one or more dimensions require action within the renewal window
 - **Type C** — Red account, intervention before renewal: stabilize first, then commercial motion
 - **Type D** — High-ARR escalation renewal: ARR exceeds configured threshold, executive involvement required
 - **Type E** — Non-standard contract: multi-year, auto-renewal, or month-to-month with different mechanics
 
-**CONSTRAINTS** — Apply before generating:
+2. **CONSTRAINTS** — Apply before generating:
 - **G1** — Renewal readiness is distinct from risk; Green accounts still get a full brief
 - **G2** — Expansion signals require economic buyer qualification; route to AE, never combine with renewal conversation
 - **G4** — No commercial commitments in customer-facing summary; ARR, pricing, and contract terms stay internal
 - **G5** — Single-threaded relationships are flagged in every brief regardless of health status
 - **G7** — Executive sponsor decay: 60+ days since contact = decaying; 90+ days = re-engagement required
 
-**EXPERT CHECK** — What a veteran CSM verifies first:
+3. **EXPERT CHECK** — What a veteran CSM verifies first:
 - Is there a value story, and is it strong enough to lead the renewal conversation?
 - Is the executive sponsor genuinely engaged or just listed in the CRM?
 - Has internal CSM + AE alignment happened, or is the renewal motion starting without it?
 - Does the timeline allow enough runway to close identified gaps before the commercial window?
 - If prior renewal was late or contentious, what structurally changed since then?
 
-**ANTI-PATTERNS** — Common mistakes to avoid:
+4. **ANTI-PATTERNS** — Common mistakes to avoid:
 - Skipping the brief for Green accounts ("they'll renew anyway")
 - Opening renewal conversation with contract or pricing before value is established
 - Treating all Yellow gaps equally instead of triaging by renewal impact and time-to-close
@@ -95,12 +97,12 @@ Critical configuration to apply:
 - Escalating to executives without a context-rich briefing tied to customer priorities
 - Assuming auto-renewal means no readiness work is needed
 
-**Post-execution verification:**
-1. Does the output match the classified renewal type and selected mode?
-2. Scan for failure modes specific to this classification type (see blueprint)
-3. Are all `[review]` flags placed where human judgment is required?
-4. Confidence assessment: which data came from live integrations vs. conversation context vs. inference?
-5. Is the action plan sequenced correctly — value before contract, stabilization before commercial motion, internal alignment before external?
+**After execution**, verify:
+- Does the output match the classified renewal type and selected mode?
+- Scan for failure modes specific to this classification type (see blueprint)
+- Are all `[review]` flags placed where human judgment is required?
+- Is the action plan sequenced correctly — value before contract, stabilization before commercial motion, internal alignment before external?
+- Confidence: [High] if CRM and CS Platform live with full component data / [Medium] if partially connected or some data from CSM context / [Low] if user-provided context only — state which.
 
 ## Mode
 

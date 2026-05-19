@@ -1,7 +1,7 @@
 # Customer Success Agent Capability Model
 
 **Status:** [VALIDATED]  
-**Date:** 2026-05-15  
+**Date:** 2026-05-18  
 **System:** `claude-for-customer-success`  
 **Scope:** 8-stage customer lifecycle — agent capability per stage and task category
 
@@ -55,6 +55,7 @@ All skills execute against a practice profile (CLAUDE.md + company-profile.md) p
 | Stakeholder engagement | `csm:stakeholder-map` | T2 | `csm:call-prep` | Relationship map with engagement recommendations |
 | Measure time-to-value | `onboarding:ttv-analysis` | T2 | `csm:value-statement` | TTV analysis with benchmark comparison and trajectory |
 | Build success plan | `csm:success-plan-builder` | T2 | `onboarding:success-criteria`, `csm:value-statement` | Comprehensive success plan with goal framework |
+| Build success plan canvas (initial) | `csm:success-plan-canvas [type=initial]` | T1 | `onboarding:success-criteria` | Success plan canvas artifact — structured one-page view of goals, metrics, and commitments for new accounts |
 
 **Branch capability:**  
 - Stalled onboarding → `csm:risk-flag` → acceleration protocol
@@ -63,7 +64,8 @@ All skills execute against a practice profile (CLAUDE.md + company-profile.md) p
 **Composition pattern:**  
 `success-criteria` → `onboarding-plan` → `milestone-tracker` (ongoing loop)  
 `ttv-analysis` → `value-statement` (value measurement chain)  
-`risk-flag` → `risk-assessment` → `escalation-memo` (at-risk branch)
+`risk-flag` → `risk-assessment` → `escalation-memo` (at-risk branch)  
+`success-plan-canvas [type=initial]` → `success-plan-progress-review` (success plan chain, initiates at Stage 1)
 
 ---
 
@@ -80,6 +82,7 @@ All skills execute against a practice profile (CLAUDE.md + company-profile.md) p
 | Quantify realized value | `csm:value-statement` | T2 | `rev-ops:outcome-to-value-tracking` | Value statement with quantified outcomes; outcome-to-value tracking scores evidence quality against OCV catalog |
 | Flag at-risk signals | `csm:risk-flag` | T1 | `renewals:risk-assessment` | Risk summary with severity classification and recommended actions |
 | Escalate unresolved risks | `csm:escalation-memo` | T1 | `renewals:risk-assessment` | Escalation memo for leadership with context and recommended resolution |
+| Review success plan progress | `csm:success-plan-progress-review` | T1 | `csm:success-plan-canvas` | Progress review artifact with milestone scorecard and OCV outcome ratings; generates QBR pre-work note |
 
 **Branch capability:**  
 - Low adoption → `risk-flag` → `risk-assessment` → intervention play via `taro-play-runner`
@@ -90,7 +93,8 @@ All skills execute against a practice profile (CLAUDE.md + company-profile.md) p
 `health-score-review` → `risk-flag` (monitoring loop)  
 `taro-play-runner` → `milestone-tracker` (play execution → tracking)  
 `value-statement` + `outcome-to-value-tracking` (value evidence chain)  
-`gtm-unified-metrics-pulse` → `growth-model-vs-actuals-tracking` (portfolio intelligence loop)
+`gtm-unified-metrics-pulse` → `growth-model-vs-actuals-tracking` (portfolio intelligence loop)  
+`success-plan-canvas` → `success-plan-progress-review` (success plan review loop; progress-review → qbr-builder for QBR pre-work)
 
 ---
 
@@ -106,6 +110,8 @@ All skills execute against a practice profile (CLAUDE.md + company-profile.md) p
 | Executive engagement | `renewals:executive-summary` | T1 | `csm:stakeholder-map` | Executive-ready summary of account health and strategic value |
 | Value reinforcement | `csm:value-statement` | T2 | `rev-ops:outcome-to-value-tracking` | Updated value statement with latest outcome evidence scored against OCV catalog |
 | Proactive health monitoring | `csm:health-score-review` | T1 | `cs-ops:health-model-review` | Health score with trend analysis and proactive risk flags |
+| Refresh success plan canvas (pre-renewal) | `csm:success-plan-canvas [type=renewal-refresh]` | T1 | `rev-ops:outcome-to-value-tracking` | Pre-renewal canvas with OCV gap analysis — identifies outcome delivery gaps before renewal conversation |
+| Progress review for QBR | `csm:success-plan-progress-review` | T1 | `csm:success-plan-canvas` | Progress review artifact with milestone scorecard; generates QBR pre-work note for `csm:qbr-builder` |
 
 **Branch capability:**  
 - Declining relationship → `csm:escalation-memo` → executive intervention protocol
@@ -114,7 +120,8 @@ All skills execute against a practice profile (CLAUDE.md + company-profile.md) p
 **Composition pattern:**  
 `health-score-review` → `risk-flag` → `escalation-memo` (proactive at-risk chain)  
 `account-research` → `stakeholder-map` → `qbr-builder` (QBR preparation chain)  
-`value-statement` + `outcome-to-value-tracking` → `qbr-builder` (value reinforcement chain)
+`value-statement` + `outcome-to-value-tracking` → `qbr-builder` (value reinforcement chain)  
+`success-plan-canvas [type=renewal-refresh]` → `success-plan-progress-review` → `qbr-builder` (renewal-prep success plan chain)
 
 ---
 
@@ -127,19 +134,20 @@ All skills execute against a practice profile (CLAUDE.md + company-profile.md) p
 | Identify expansion signals | `renewals:expansion-signal` | T1 | `csm:account-research` | Expansion signal report with opportunity prioritization |
 | Trace deal-to-outcome alignment | `rev-ops:deal-to-outcome-tracing` | T1 | `rev-ops:outcome-to-value-tracking` | Outcome delivery map; shows where committed outcomes are being met and where expansion makes sense |
 | Detect early churn/downgrade risk | `rev-ops:early-churn-downgrade-signal-detection` | T1 | `csm:risk-flag` | Early-warning signal for accounts signaling churn or contraction before formal at-risk classification |
-| Build expansion business case | `renewals:negotiation-prep` ⚠️ | T2 | `renewals:price-increase-prep`, `csm:value-statement` | Negotiation context doc; upsell-specific business case requires adaptation |
+| Build expansion business case | `csm:expansion-business-case` | T2 | `csm:value-statement`, `csm:account-research` | Expansion proposal (csm-led mode) or CSQL Qualification Package for Sales handoff (csql mode) |
+| Track CSQL pipeline | `rev-ops:csql-tracking` | T1 | `csm:expansion-business-case` | CSQL lifecycle management (create / update / close / query); downstream consumer of expansion-business-case [mode=csql] |
 | Support expansion selling | `csm:stakeholder-map` + `sales:call-prep` ⚠️ | T2 | `sales:pipeline-review` | Stakeholder alignment and sales call preparation; no native expansion-close skill |
-| Define expansion success criteria | `onboarding:success-criteria` ⚠️ | T1 | — | Success criteria adapted for expansion scope; onboarding context assumes greenfield |
-| Execute expansion onboarding | `onboarding:onboarding-plan` ⚠️ | T2 | `cs-enablement-toolkit:learning-journey-architect` | General onboarding plan; expansion-specific contextual adaptation needed |
+| Execute expansion onboarding | `csm:expansion-onboarding` | T2 | `rev-ops:csql-tracking` | Expansion onboarding plan for won CSQL — bridges CSQL close to CSM adoption execution |
 | Handle expansion declined | `csm:taro-play-runner` ⚠️ | T1 | `csm:risk-flag` | Play execution for declined expansion; no dedicated expansion-declined play |
 
-⚠️ = Partially covered — skills apply with adaptation; see gap report for details
+⚠️ = Partially covered — skills apply with adaptation
 
 **Composition pattern:**  
-`expansion-signal` → `account-research` → `deal-to-outcome-tracing` → `negotiation-prep` (expansion identification + evidence chain)  
+`expansion-signal` → `account-research` → `deal-to-outcome-tracing` → `csm:expansion-business-case` (expansion identification + business case chain)  
+`expansion-business-case [mode=csql]` → `rev-ops:csql-tracking` (CSQL pipeline chain)  
+`csql-tracking` → `csm:expansion-onboarding` (won CSQL → onboarding handoff)  
 `early-churn-downgrade-signal-detection` → `risk-flag` → `risk-assessment` (early warning chain)  
-`stakeholder-map` → `sales:call-prep` (expansion selling bridge)  
-`success-criteria` → `onboarding-plan` → `milestone-tracker` (expansion onboarding chain, reused)
+`stakeholder-map` → `sales:call-prep` (expansion selling bridge)
 
 ---
 
@@ -157,6 +165,7 @@ All skills execute against a practice profile (CLAUDE.md + company-profile.md) p
 | Model revenue and capacity impact | `rev-ops:forecast-variance-analysis` + `rev-ops:closed-won-to-cs-capacity-modeling` | T2 | `rev-ops:growth-model-vs-actuals-tracking` | Renewal outcome modeled against portfolio forecast; CS capacity impact of won/lost renewal quantified |
 | Prepare renewal proposal | `renewals:negotiation-prep` | T2 | `renewals:price-increase-prep` | Negotiation strategy with terms, pricing options, and fallback positions |
 | Handle price increase | `renewals:price-increase-prep` | T1 | `renewals:negotiation-prep` | Price increase communication strategy with justification framing |
+| Analyze contraction/downgrade request | `renewals:downgrade-analysis` | T2 | `renewals:risk-assessment`, `renewals:negotiation-prep` | Contract contraction analysis with counter-proposal inputs; scoped to seat reduction and scope reduction (not full cancellation) |
 | Develop save strategy | `renewals:churn-analysis` | T2 | `renewals:risk-assessment` | Churn driver analysis with save viability assessment |
 | Execute save playbook | `csm:escalation-memo` | T1 | `renewals:churn-analysis` | Executive escalation with save options and owner assignments |
 
@@ -164,6 +173,7 @@ All skills execute against a practice profile (CLAUDE.md + company-profile.md) p
 `renewal-readiness` → `contract-review` → `risk-assessment` → `renewal-forecast` (renewal intelligence chain)  
 `value-statement` + `outcome-to-value-tracking` → `executive-summary` → `negotiation-prep` (business case chain)  
 `forecast-variance-analysis` + `closed-won-to-cs-capacity-modeling` → `growth-model-vs-actuals-tracking` (revenue continuity chain)  
+`downgrade-analysis` → `negotiation-prep` (contraction counter-proposal chain)  
 `churn-analysis` → `risk-assessment` → `escalation-memo` (save play chain)
 
 ---
@@ -191,9 +201,9 @@ All skills execute against a practice profile (CLAUDE.md + company-profile.md) p
 | Task Category | Primary Skill | Tier | Supporting Skills | Output |
 |---------------|---------------|------|-------------------|--------|
 | Professional offboarding | *(none)* | — | — | ❌ No coverage |
-| Exit interview | `renewals:churn-analysis` ⚠️ | T2 | — | Post-mortem analytics; live interview facilitation not guided |
-| Internal post-mortem | `renewals:churn-analysis` + `cs-ops:playbook-auditor` ⚠️ | T2 | — | Churn analytics + playbook gap analysis; meeting facilitation not guided |
-| Extract learnings | `cs-ops:playbook-auditor` ⚠️ | T1 | `renewals:churn-analysis` | Playbook gap identification; learning synthesis implicit not explicit |
+| Exit post-mortem (full cancellation) | `renewals:churn-rca` | T2 | `cs-ops:playbook-auditor` | Root cause analysis for full cancellations — structured analysis of churn drivers with corrective action recommendations; portfolio escalation at ≥25% churn rate |
+| Systemic churn pattern analysis | `renewals:churn-rca [operation=cohort]` | T2 | `cs-ops:playbook-auditor` | Cohort-level churn pattern analysis; surfaces systemic failure modes across accounts for portfolio-level escalation |
+| Extract learnings | `cs-ops:playbook-auditor` | T1 | `renewals:churn-rca` | Playbook gap identification from churn signal patterns |
 | Share learnings / update playbooks | `cs-ops:process-doc` ⚠️ | T1 | `cs-ops:playbook-auditor`, `operations:runbook` | Process documentation and playbook updates; distribution workflow not guided |
 | Maintain win-back relationship | *(none)* | — | — | ❌ No coverage |
 
@@ -232,8 +242,8 @@ These are the multi-skill invocation sequences that drive the highest-value outc
 *Core onboarding execution. Milestone-tracker and blocker-review cycle until TTV milestone is achieved, then gates to ttv-analysis.*
 
 ### Pattern 8 — Expansion Identification Chain
-`renewals:expansion-signal` → `csm:account-research` → `rev-ops:deal-to-outcome-tracing` → `csm:stakeholder-map`  
-*Identifies expansion opportunity, traces outcome delivery alignment as business case foundation, maps stakeholders for expansion conversation. Bridges to negotiation-prep for proposal.*
+`renewals:expansion-signal` → `csm:account-research` → `rev-ops:deal-to-outcome-tracing` → `csm:expansion-business-case`  
+*Identifies expansion opportunity, traces outcome delivery alignment as business case foundation, builds customer-facing proposal or CSQL Qualification Package depending on mode. csql mode output consumed by `rev-ops:csql-tracking`.*
 
 ### Pattern 9 — Revenue Continuity Chain (Rev-Ops)
 `rev-ops:forecast-variance-analysis` → `rev-ops:closed-won-to-cs-capacity-modeling` → `rev-ops:growth-model-vs-actuals-tracking`  
@@ -247,6 +257,14 @@ These are the multi-skill invocation sequences that drive the highest-value outc
 `rev-ops:early-churn-downgrade-signal-detection` → `csm:risk-flag` → `renewals:risk-assessment`  
 *Pre-emptive risk surfacing at Stage 4: early signals trigger risk classification before formal at-risk designation, enabling earlier intervention.*
 
+### Pattern 12 — Success Plan Chain
+`csm:success-plan-canvas` → `csm:success-plan-progress-review`  
+*Drives ongoing success plan governance across the lifecycle. Canvas initializes at Stage 1 (type=initial), refreshes pre-renewal at Stage 3 (type=renewal-refresh), and refreshes pre-expansion at Stage 4 (type=expansion). Progress-review reads the upstream canvas and produces milestone scorecard, OCV outcome ratings, and QBR pre-work note. Optionally chains to `csm:qbr-builder`.*
+
+### Pattern 13 — CSQL Pipeline Chain
+`csm:expansion-business-case [mode=csql]` → `rev-ops:csql-tracking` → `csm:expansion-onboarding`  
+*Full CSQL lifecycle: expansion-business-case in csql mode produces a CSQL Qualification Package consumed by csql-tracking for pipeline management; on CSQL close-won, expansion-onboarding executes the onboarding plan for the expanded scope.*
+
 ---
 
 ## Tier Distribution
@@ -257,7 +275,7 @@ These are the multi-skill invocation sequences that drive the highest-value outc
 | T2 | ~22 | Structured analysis, multi-input synthesis, recommended context loading |
 | T3 | ~5 | Multi-skill orchestration, cross-plugin composition, strategic output |
 
-Rev-ops adds 33 skills across portfolio intelligence, forecasting, pipeline health, CRM data quality, revenue operations, and planning functions; the majority are T1–T2. T3 scenarios span: full renewal execution (readiness → risk → forecast → business case → negotiation), at-risk escalation through to executive intervention, multi-stage expansion management, and annual planning orchestration.
+Rev-ops adds 34 skills across portfolio intelligence, forecasting, pipeline health, CRM data quality, revenue operations, compensation modeling, and planning functions; the majority are T1–T2. T3 scenarios span: full renewal execution (readiness → risk → forecast → business case → negotiation), at-risk escalation through to executive intervention, multi-stage expansion management, CSQL pipeline governance, and annual planning orchestration. The `rev-ops:comp-simulation` skill adds compensation plan modeling — stress-testing OTE, accelerators, and quota thresholds at multiple attainment levels (50/65/75/85/100%); outputs require G3 governance (HR + Finance dual review) before rep distribution.
 
 ---
 

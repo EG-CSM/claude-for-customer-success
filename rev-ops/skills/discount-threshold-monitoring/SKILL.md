@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Flags deals where discount exceeds the approved threshold for that segment. Routes approval to the correct authority based on discount depth using thresholds from practice profile. Tracks discount frequency by rep and segment. Never approves deals autonomously. Triggers: 'discount approval', 'discount threshold', 'discount frequency by rep', 'is this discount approved', 'flag a discount'."
 ---
 
+[PROPOSED]
+
 # Discount Threshold Monitoring
 
 Threshold-based routing — not subjective review. The approval tier is determined
@@ -16,6 +18,20 @@ by the discount depth against practice profile thresholds.
 `discount_executive_threshold_pct`, `linear_connected`,
 `cs_expansion_discount_standard_threshold_pct` (optional — defaults to Sales threshold if absent),
 `cs_expansion_discount_elevated_threshold_pct` (optional — defaults to Sales elevated threshold if absent)
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `discount_standard_threshold_pct`, `discount_elevated_threshold_pct`,
+`discount_executive_threshold_pct`, `linear_connected`,
+`cs_expansion_discount_standard_threshold_pct`, `cs_expansion_discount_elevated_threshold_pct`
 
 ---
 
@@ -43,12 +59,45 @@ Discount pattern monitoring tracks both Sales reps and CSMs on the same trailing
 
 ## Reasoning Protocol
 
-1. Confirm activation — user flagging a discount or requesting discount review
-2. Read discount thresholds from practice profile
-3. Determine approval tier from discount depth
-4. Apply G1 — discount approval does not constitute revenue commitment
-5. Create Linear issue for above-threshold deals (Write-tier — confirm before creating)
-6. Never approve deals autonomously
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of discount monitoring request is this?
+   - Single deal threshold check (one opportunity — tier determination + required approver)
+   - Discount pattern monitoring (rep or CSM trailing-90-day frequency report)
+   - Approval routing (above-threshold deal — Linear issue creation + SLA assignment)
+   - CS expansion deal check (CS-specific threshold chain vs. Sales thresholds)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user flagging a discount or requesting discount review
+   2. Read configured thresholds from practice profile — never estimate thresholds
+   3. Determine deal type (Sales new-logo vs. CS expansion) before applying threshold chain
+   4. Apply G1 — discount approval does not constitute revenue commitment
+   5. Apply G6 — data-as-of on all HubSpot reads
+   6. Create Linear issue for above-threshold deals only — Write-tier, confirm before creating
+   7. Never approve deals autonomously
+
+3. **EXPERT CHECK**: What would a veteran RevOps analyst verify first?
+   - Are configured thresholds from the practice profile, not estimated? Hardcoded
+     thresholds drift from policy — always read from config before routing.
+   - Is the deal type correctly identified before applying thresholds? CS expansion deals
+     may have separate cs_expansion_* thresholds — misapplying Sales thresholds to CS
+     deals routes to the wrong approver chain.
+   - Is the SLA window correct for time of quarter? Standard SLA is 24h; final 2 weeks
+     of quarter is 4h — a wrong SLA assignment at quarter-end misses the close window.
+   - Is the discount frequency report scoped to trailing 90 days? Wider windows
+     dilute pattern signals; narrower windows miss rep behavior trends.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Using estimated or hardcoded thresholds instead of configured practice profile values (G1 violation)
+   - Applying Sales new-logo threshold chain to CS expansion deals when cs_expansion_* config exists
+   - Creating a Linear issue without Write-tier confirmation (G9 violation)
+   - Surfacing HubSpot reads without data-as-of timestamp (G6 violation)
+
+**After execution**, verify:
+- G1 qualifier present: discount approval does not lock revenue or constitute a commitment
+- G6 data-as-of label applied to all HubSpot reads
+- Deal type (Sales vs. CS expansion) declared; correct threshold chain applied
+- Confidence: High when HubSpot is connected and practice profile thresholds are configured; Moderate when thresholds are defaulted from Sales config due to absent CS-specific config
 
 ---
 
@@ -76,7 +125,7 @@ SLA:
 
 ---
 
-## Output Format
+## Output
 
 ```
 DISCOUNT FLAG — [Account Name]
@@ -91,6 +140,12 @@ Linear issue: [created #N / confirm to create]
 Rep discount frequency (trailing 90 days):
   [Rep name]: [N] discounts, avg XX%, [N] above threshold
 ```
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

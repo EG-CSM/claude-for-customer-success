@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Detects CRM hygiene issues that distort forecasts: stage-skipping (multi-stage jumps in one update), backward movement, and stale stage (stuck >2x historical avg). Produces audit report for human review before any CRM edits. Never updates CRM autonomously. Triggers: 'stage integrity', 'stage skipping', 'backward movement', 'CRM stage hygiene', 'stale stage'."
 ---
 
+[PROPOSED]
+
 # Stage Integrity Audit
 
 Detects the three stage anomaly patterns that most distort pipeline forecasts.

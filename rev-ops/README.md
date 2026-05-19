@@ -48,7 +48,7 @@ RevOps leaders, CROs, and CS operations teams who own:
 | Command | What it does |
 |---------|-------------|
 | `/rev-ops:annual-planning-workflow` | Seven-phase gated planning cycle. Invokes `unit-of-growth-calculator` for three-scenario capacity modeling. |
-| `/rev-ops:territory-optimization` | Territory fairness analysis. All proposals [DRAFT] until dual-confirmed. |
+
 | `/rev-ops:quota-sensitivity-analysis` | Quota achievability at five attainment levels. Flags structurally challenging quotas. |
 | `/rev-ops:mid-year-replan-triggering` | Monitors four drift signals. Recommends replan when threshold crossed. |
 

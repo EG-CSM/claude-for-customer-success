@@ -128,7 +128,7 @@ grouped by Skill Area for navigation; all commands follow the `/rev-ops:<skill-n
 | annual-planning-workflow | `/rev-ops:annual-planning-workflow` | — | Initiating the seven-phase annual or mid-year planning cycle (gated, phase-by-phase) |
 | unit-of-growth-calculator | `/rev-ops:unit-of-growth-calculator` | — | Computing GTM headcount requirements and capacity diagnostics using the UoG pod model |
 | quota-sensitivity-analysis | `/rev-ops:quota-sensitivity-analysis` | — | Modeling quota achievability at multiple attainment levels; standalone or inside annual planning |
-| territory-optimization | `/rev-ops:territory-optimization` | — | Evaluating territory fairness across reps; proposing recarves when imbalance exceeds threshold |
+
 | closed-won-to-cs-capacity-modeling | `/rev-ops:closed-won-to-cs-capacity-modeling` | — | Converting sales forecast into CS resource demand; flagging CS capacity ceiling against headcount |
 | growth-model-vs-actuals-tracking | `/rev-ops:growth-model-vs-actuals-tracking` | — | Monitoring NRR, GRR, and CAC against UoG plan baseline; routing to replan when drift exceeds threshold |
 | mid-year-replan-triggering | `/rev-ops:mid-year-replan-triggering` | — | Monitoring plan-vs-actual drift; producing a replan recommendation memo when thresholds are crossed |

@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Produces a three-part communication package for sensitive planning changes: (1) data-backed rationale memo for reps, (2) FAQ with top 5 anticipated objections and data responses, (3) rollout sequence with audience, channel, and order. Triggered automatically by annual-planning-workflow for territory, quota, or comp changes. Requires RevOps lead review before any distribution. Triggers: 'communicate changes', 'territory announcement', 'quota rationale', 'comp change communication', 'help me tell reps about [change]'."
 ---
 
+[PROPOSED]
+
 # Change Communication Packaging
 
 The best data in the world fails if reps don't trust it.
@@ -31,14 +33,53 @@ before it leaves RevOps.
 
 ---
 
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `primary_segment`, `current_ae_count`
+
+---
+
 ## Reasoning Protocol
 
-1. Confirm activation — user packaging a change for rep communication
-2. Identify change type: territory / quota / comp / other
-3. Apply G4 for territory: confirm dual-confirmation is complete before packaging
-4. Apply G3 for comp: confirm HR + Finance dual review is complete before packaging
-5. Deliver as [DRAFT] — RevOps lead must approve before any communication is sent
-6. Output destination: [Rep-facing] label on all content
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of change communication request is this?
+   - Territory change announcement
+   - Quota change announcement
+   - Comp plan change announcement
+   - Other RevOps process change
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user packaging a change for rep communication
+   2. Identify change type: territory / quota / comp / other
+   3. Apply G4 for territory: confirm dual-confirmation is complete before packaging
+   4. Apply G3 for comp: confirm HR + Finance dual review is complete before packaging
+   5. Deliver as [DRAFT] — RevOps lead must approve before any communication is sent
+   6. Output destination: [Rep-facing] label on all content
+
+3. **EXPERT CHECK**: What would a veteran RevOps communicator verify first?
+   - Is the governance gate cleared before packaging? (G4 for territory, G3 for comp)
+   - Does the rationale memo use specific data, not vague reassurances?
+   - Are the FAQ objections written as reps would actually say them — bluntly?
+   - Does the rollout sequence put managers before reps — always?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Packaging a change before governance approval is confirmed (G4/G3 violation)
+   - Writing the rationale memo for leadership instead of reps
+   - FAQ answers that use reassurance language instead of data
+   - Sending rep communications before manager communications
+
+**After execution**, verify:
+- All output is labeled [DRAFT] — no distribution before RevOps lead review
+- [Rep-facing] label applied to all rep-facing content
+- G4/G3 confirmation notes present for territory and comp changes respectively
+- Confidence: High when data inputs are specific; Moderate when change details are estimated
 
 ---
 
@@ -109,6 +150,12 @@ CHANGE COMMUNICATION PACKAGE — [Change type] — [DRAFT]
 [G4: Territory changes confirmed dual-approved before this package was generated]
 [G3: Comp changes confirmed HR + Finance dual-reviewed before this package was generated]
 ```
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

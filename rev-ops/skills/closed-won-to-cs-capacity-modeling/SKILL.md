@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Converts rolling sales forecast into CS resource demand using UoG formulas. Runs three-scenario capacity check (P10/P50/P90 from scenario-modeling). Compares projected CSM demand to current headcount and UoG annual plan baseline. Surfaces CS capacity gaps with a hiring lead time flag. Updates when SA1 forecast moves >10%. Triggers: 'CS capacity', 'can CS absorb', 'CSM headcount needed', 'CS ceiling', 'will CS be able to handle new logos'."
 ---
 
+[PROPOSED]
+
 # Closed-Won to CS Capacity Modeling
 
 Translates what Sales is about to close into what CS needs to handle.
@@ -32,14 +34,53 @@ The skill that prevents hiring CSMs one quarter after you needed them.
 
 ---
 
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `current_csm_count`, `arr_per_csm`, `avg_deal_acv`, `csm_avg_ramp_days`, `uog_baseline_path`, `open_csm_requisitions`
+
+---
+
 ## Reasoning Protocol
 
-1. Confirm activation — user asking about CS capacity, CSM headcount, or CS ability to absorb growth
-2. Read current CSM count and ARR per CSM from practice profile
-3. Read P10/P50/P90 forecast from `scenario-modeling` output or ask for current pipeline
-4. Read UoG baseline from `uog_baseline_path` for plan comparison
-5. Apply G2 — capacity outputs are structural inputs, not hiring mandates
-6. Confirm output destination — CS leadership vs. RevOps internal
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of CS capacity request is this?
+   - Current-state headroom check (no forecast context)
+   - Three-scenario demand modeling (P10/P50/P90)
+   - Plan comparison (vs. UoG annual baseline)
+   - Hiring lead time assessment
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user asking about CS capacity, CSM headcount, or CS ability to absorb growth
+   2. Read current CSM count and ARR per CSM from practice profile
+   3. Read P10/P50/P90 forecast from `scenario-modeling` output or ask for current pipeline
+   4. Read UoG baseline from `uog_baseline_path` for plan comparison
+   5. Apply G2 — capacity outputs are structural inputs, not hiring mandates
+   6. Confirm output destination — CS leadership vs. RevOps internal
+
+3. **EXPERT CHECK**: What would a veteran RevOps analyst verify first?
+   - Is the UoG baseline present? If absent, declare and run in current-state mode only.
+   - Is the ARR-per-CSM target current? Stale targets produce misleading headroom signals.
+   - Is hiring lead time factored in? A gap identified today may already be too late for the quarter.
+   - Is the CS constraint signal checked before any AE growth discussion? CS ceiling can invalidate an AE plan.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Presenting capacity outputs as hiring mandates (G2 violation)
+   - Running plan comparison without checking whether the baseline path is configured
+   - Omitting the hiring lead time flag when CS_Gap > 0
+   - Ignoring the CS headroom signal when advising on AE headcount growth
+
+**After execution**, verify:
+- G2 structural input qualifier present on all capacity outputs
+- Data-as-of label applied per G6
+- Hiring lead time flag included when CS_Gap > 0
+- Confidence: High when baseline is present and all config fields are populated; Moderate when baseline is absent or any field is estimated
 
 ---
 
@@ -74,7 +115,7 @@ If CS_Gap > 0:
 
 ---
 
-## Output Format
+## Output
 
 ```
 CS CAPACITY MODELING — [Quarter/Period]
@@ -103,6 +144,12 @@ Hiring lead time:
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Calculates pipeline coverage ratio by segment, rep, and quarter. Flags when coverage falls below the threshold derived from win rate (not a universal 3x). Produces an exposure ranking and week-over-week trend. Use when assessing pipeline health before a forecast call, board review, or quarter-close. Triggers: 'pipeline coverage', 'coverage ratio', 'are we covered for Q[N]', 'pipeline risk by segment'."
 ---
 
+[PROPOSED]
+
 # Pipeline Coverage Analysis
 
 Calculates pipeline coverage ratio and surfaces exposure risk before it becomes
@@ -15,6 +17,18 @@ universal 3x rule.
 **Reference:** Coverage thresholds → `../../../shared/revops-domain-model.md §7`
 **Config reads:** `win_rate` (user-provided or practice profile), `current_arr`,
 `target_growth_pct`, `nrr_current`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `win_rate`, `current_arr`, `target_growth_pct`, `nrr_current`
 
 ---
 
@@ -35,12 +49,46 @@ universal 3x rule.
 
 ## Reasoning Protocol
 
-1. Confirm activation — user is asking about coverage, pipeline sufficiency, or quarter risk
-2. Check HubSpot connector — if unavailable, declare and shift to user-provided inputs
-3. Read practice profile for segment, target growth, NRR, win rate if not provided
-4. Apply G6 — surface data-as-of timestamp on all pipeline figures
-5. Apply G1 — coverage output destined for leadership or board requires forecast language qualification
-6. Confirm output destination before delivering — internal RevOps vs. leadership vs. finance
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of pipeline coverage request is this?
+   - Full team coverage summary (all segments — coverage ratio, signal, exposure ranking)
+   - Single-segment or rep coverage check (one scope — ratio + gap calculation)
+   - Pre-forecast coverage review (quarter close prep — CRITICAL/AT-RISK flags + trend)
+   - Coverage gap projection (forward-looking — weeks to gap close at current add rate)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user asking about coverage, pipeline sufficiency, or quarter risk
+   2. Check HubSpot connector for pipeline data; declare fallback if unavailable
+   3. Read practice profile for win rate, target growth, segment definition
+   4. Apply G6 — data-as-of timestamp required on all pipeline figures
+   5. Apply G1 — coverage output for leadership or board requires forecast language qualification
+   6. Apply G5 — coverage ratio is a structural signal; Sales leadership owns the response
+   7. Confirm output destination before delivering — internal RevOps vs. leadership vs. finance
+
+3. **EXPERT CHECK**: What would a veteran RevOps pipeline analyst verify first?
+   - Is the win rate source declared? A 3x universal rule applied without win rate data is
+     analytically invalid — the required coverage multiple must be derived from actual win rate
+     or explicitly flagged as an assumed default.
+   - Is the pipeline pull scoped to the correct quarter close date? Pulling all open pipeline
+     without date filtering overstates coverage for the current quarter close.
+   - Is G5 qualification present if the output includes rep-level coverage? Coverage ratios
+     by rep are structural signals — the coaching response belongs to Sales management, not RevOps.
+   - Is the INSPECT signal explained? Coverage above 5x can indicate pipeline inflation
+     or sandbagging — surfacing it without explanation misleads the forecast call.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Applying a universal 3x coverage threshold without deriving from win rate (invalidates the analysis)
+   - Surfacing HubSpot pipeline data without data-as-of timestamp (G6 violation)
+   - Presenting rep-level coverage as a performance directive rather than structural signal (G5 violation)
+   - Applying G1 forecast qualification only to total coverage but not to segment-level projections
+
+**After execution**, verify:
+- G1 qualification present if coverage output is destined for leadership or board
+- G5 qualifier present on any rep-level coverage surfaced in output
+- G6 data-as-of label applied to all pipeline figures from HubSpot
+- Coverage threshold derivation declared — win rate source named and labeled
+- Confidence: High when HubSpot is connected and data is current; Moderate when data is stale, win rate is assumed, or connector is unavailable
 
 ---
 
@@ -88,7 +136,7 @@ If not available, note: "Prior week data unavailable — trend not calculated."
 
 ---
 
-## Output Format
+## Output
 
 ```
 PIPELINE COVERAGE ANALYSIS
@@ -111,6 +159,12 @@ Week-over-week: [+$X / −$X / unavailable]
 
 [DRAFT — RevOps internal] [Confidence: High]
 ```
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

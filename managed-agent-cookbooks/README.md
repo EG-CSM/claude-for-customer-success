@@ -1,8 +1,10 @@
 # Managed Agent Cookbooks — Claude for Customer Success
 
-Ten agents for teams running Claude as a background workflow engine. Six headless scheduled
+Eleven agents for teams running Claude as a background workflow engine. Six headless scheduled
 agents orchestrate a fleet of subagents for recurring CS tasks automatically. Four on-demand
 managed agents run multi-stage pipelines when triggered by a CSM for account-specific work.
+One event-driven agent triggers automatically when a CSQL reaches `won` status and produces
+an onboarding plan before the first CSM touchpoint.
 
 ---
 
@@ -20,6 +22,7 @@ managed agents run multi-stage pipelines when triggered by a CSM for account-spe
 | [`expansion-builder-agent`](./expansion-builder/) | csm | On-demand | Four-section Expansion Report: whitespace inventory, business case (evidence-labeled), AE handoff package, CSM next actions |
 | [`advocacy-agent`](./advocacy/) | csm | On-demand | Advocacy Package: burnout-protected advocate qualification, ask script or story structure, cs-platform task creation |
 | [`churn-intelligence-agent`](./churn-intelligence/) | renewals | On-demand | Churn Intelligence Report (8 sections) written to cs-platform: signal timeline, churn drivers, exit interview guide, postmortem, learnings, win-back assessment |
+| [`expansion-onboarding-agent`](./expansion-onboarding-agent/) | onboarding | Event-driven (CSQL → won) | Onboarding plan and CSM notification — triggered automatically when a CSQL reaches `won` status; plan delivered to Slack before first CSM touchpoint |
 
 ---
 
@@ -138,6 +141,7 @@ Managed Agent (orchestrator)
 | expansion-builder-agent | 3 subagents + orchestrator health gate (Whitespace Analyzer → [gate] → Business Case Builder → Expansion Handoff Coordinator) | No |
 | advocacy-agent | 3 (Advocate Qualifier → reference-matcher or story-builder [conditional route] → cs-platform task creation) | No |
 | churn-intelligence-agent | 4 (exit-interviewer ‖ postmortem-facilitator → learning-extractor → winback-profiler [conditional]) | Yes — Step 2 |
+| expansion-onboarding-agent | 3 (CSQL Won Scanner → Onboarding Plan Creator → Notification Composer) | No |
 
 **Enrichment exception (renewal-scanner):** The renewal-scanner orchestrator performs
 connector calls directly in Step 3 — pulling health score, usage, and support data — before
@@ -212,6 +216,7 @@ dispatch marker; embed in brief; verify marker on line 1 before treating output 
 | expansion-builder-agent | ✓ | — (task created by subagent) | ✓ | — | ✓ |
 | advocacy-agent | ✓ | — (task created by subagent) | ✓ | — | ✓ |
 | churn-intelligence-agent | ✓ | ✓ (Churn Intelligence Report + optional Stage 0 handoff to cs-platform) | ✓ | — | ✓ |
+| expansion-onboarding-agent | ✓ | ✓ (onboarding plan) | ✓ | ✓ | ✓ |
 
 The qbr-prep-agent does not post to Slack by default — QBR prep packages are saved to
 a file path and reviewed by the CSM before any sharing.
@@ -247,6 +252,7 @@ the CS Skill Security Baseline before being granted these wildcards.
 | expansion-builder-agent | cs-platform, CRM | product-analytics (health gate prompts manual confirm if absent) |
 | advocacy-agent | cs-platform, CRM | — |
 | churn-intelligence-agent | cs-platform, CRM | product-analytics (90-day usage trend) |
+| expansion-onboarding-agent | CSQL source (CRM), cs-platform | Slack (notification delivery) |
 
 All agents degrade gracefully when optional connectors are unavailable — they note the
 gap in the output rather than halting. Required connector unavailability halts the run
@@ -280,14 +286,14 @@ All agents read from a two-file config stack:
 ├── company-profile.md          # Shared — all agents read this (product, segments, methodology)
 ├── csm/CLAUDE.md               # Read by: health-watcher, churn-signal-digest, qbr-prep-agent, renewal-scanner
 ├── cs-ops/CLAUDE.md            # Read by: portfolio-segment-digest (segment definitions, capacity model, cadence)
-└── onboarding/CLAUDE.md        # Read by: onboarding-milestone-tracker (NOT csm/CLAUDE.md)
+└── onboarding/CLAUDE.md        # Read by: onboarding-milestone-tracker, expansion-onboarding-agent (NOT csm/CLAUDE.md)
 ```
 
 The renewal-scanner reads `../csm/CLAUDE.md` (not a dedicated `../renewals/CLAUDE.md`) because
 the renewal pipeline configuration is part of the CSM practice profile. The portfolio-segment-digest
 reads `../cs-ops/CLAUDE.md` (not csm/CLAUDE.md) because segment definitions, capacity targets, and
-reporting cadences are configured there. The onboarding milestone tracker reads from
-`../onboarding/CLAUDE.md` — it is the only CSM-adjacent agent that does not read csm/CLAUDE.md.
+reporting cadences are configured there. The onboarding milestone tracker and the expansion-onboarding-agent both read from
+`../onboarding/CLAUDE.md` — they are the only CSM-adjacent agents that do not read csm/CLAUDE.md.
 The churn-intelligence-agent reads `../renewals/CLAUDE.md` — this file must exist and be populated
 before deploying the churn-intelligence-agent. It is the only agent in the renewals plugin that has
 its own dedicated config file separate from csm/CLAUDE.md. Run `/renewals:cold-start-interview` to
@@ -332,6 +338,11 @@ the relevant agent on a cron schedule.
 
 All agents can also be triggered manually. Each agent's README includes a
 `steering-examples.json` with the complete prompting pattern library for that agent.
+
+The expansion-onboarding-agent is event-driven and has no cron schedule. It fires when the
+orchestrator detects a CSQL record transitioning to `won` status. Trigger it by polling or
+via a CRM webhook — see the [cookbook](./expansion-onboarding-agent/cookbook.md) for the
+recommended polling interval and event detection pattern.
 
 The four on-demand agents (adoption-motion, expansion-builder, advocacy, churn-intelligence)
 are CSM-triggered only and have no recommended cron schedule. Trigger them directly in chat:
@@ -396,3 +407,4 @@ specification, and per-agent prompting patterns, see each agent's README:
 - [Expansion Builder Agent](./expansion-builder/README.md) — whitespace analysis, adoption health gate, business case construction, and AE handoff
 - [Advocacy Agent](./advocacy/README.md) — advocate qualification with burnout protection gates and advocacy package generation
 - [Churn Intelligence Agent](./churn-intelligence/README.md) — exit interview guide, blameless postmortem, playbook learnings, and win-back assessment
+- [Expansion Onboarding Agent](./expansion-onboarding-agent/cookbook.md) — event-driven onboarding plan generation triggered on CSQL `won`; two-layer idempotency, dry-run mode, and Slack notification via Notification Composer

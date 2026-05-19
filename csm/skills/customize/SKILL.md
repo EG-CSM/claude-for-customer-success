@@ -43,6 +43,17 @@ skill runs against your actual model, not a generic template.
 
 ---
 
+## Pre-flight
+
+Check for existing config files at:
+- `~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md`
+- `~/.claude/plugins/config/claude-for-customer-success/company-profile.md`
+
+For `--full` or no argument: proceed regardless of whether files exist — this skill creates or overwrites them.
+For `--section <name>`: load existing config file content before displaying current values alongside each question.
+For `--reset`: display a destructive-clear warning and require explicit confirmation before proceeding.
+
+---
 
 ## Reasoning Protocol
 
@@ -60,6 +71,7 @@ Before generating output, apply these primers:
    - `company-profile.md` is shared across four plugins — edits have cross-plugin blast radius
    - User must review and explicitly confirm before any file write
    - Placeholders are acceptable; invented values are not
+   - G4: Do not recommend escalation without a named escalation path — the escalation matrix must have named, contactable owners before skills can route escalations
 
 3. **EXPERT CHECK**: What would a veteran CSM verify first?
    - Does the mode (`--full`, `--section`, `--reset`) match the actual scope of change?

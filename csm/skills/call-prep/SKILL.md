@@ -75,6 +75,9 @@ Before generating output, apply these primers:
    - Is the attendee list confirmed or assumed? Unconfirmed attendees cap the brief's value
    - What was the outcome of the last call? Open action items carry forward — never drop them silently
    - Is there an active escalation or competitive signal that changes the entire call framing?
+   - G4: Do not recommend escalation without a named escalation path configured in the escalation matrix
+   - G5: Internal data (health scores, ARR, expansion signals) must never appear in customer-facing output
+   - G7: Flag any data older than 30 days with source date and staleness indicator
 
 3. **EXPERT CHECK**: What would a veteran CSM verify first?
    - Are the success criteria being referenced still the criteria the customer cares about, or have priorities shifted since they were set?

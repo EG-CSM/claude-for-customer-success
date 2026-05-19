@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Scores each open opportunity on five dimensions (activity recency, stakeholder coverage, stage-age ratio, competitive signal, rep forecast accuracy history). Composite 0–100 score. Deals below 50 flagged for next-best-action. Triggers: 'deal health', 'health score', 'which deals are at risk', 'pipeline health', 'risky deals this quarter'."
 ---
 
+[PROPOSED]
+
 # Deal Health Scoring
 
 Five-dimension health score per open opportunity. Below 50 triggers
@@ -14,6 +16,18 @@ automatic handoff to `next-best-action-recommendation`.
 **Reference:** Health score dimensions and confidence bands →
 `../../../shared/revops-domain-model.md §2`
 **Config reads:** `avg_sales_cycle_days`, `primary_segment`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `avg_sales_cycle_days`, `primary_segment`
 
 ---
 
@@ -41,12 +55,45 @@ At-risk expansion deals below 50 route to `next-best-action-recommendation` for 
 
 ## Reasoning Protocol
 
-1. Confirm activation — user wants deal health view or at-risk identification
-2. Check HubSpot connector — activity history required; declare fallback if absent
-3. Apply G5 — health score is analytical input; rep and manager own the response
-4. Apply G6 — surface data-as-of on all activity reads
-5. For any score triggering a risk flag, confirm escalation path exists (G7)
-6. Confirm output destination
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of deal health request is this?
+   - Single deal score (one opportunity, full five-dimension breakdown)
+   - Portfolio scan (rep, segment, or all open pipeline — composite + distribution)
+   - At-risk identification (deals below threshold — flag + escalation path)
+   - CS expansion pipeline health (CSM-owned deals — same model, CS stakeholder roles)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user wants deal health view or at-risk identification
+   2. Check HubSpot connector — activity history required; declare fallback if absent
+   3. Apply G5 — health score is analytical input; rep and manager own the response
+   4. Apply G6 — surface data-as-of on all activity reads
+   5. For any score triggering a risk flag, confirm escalation path exists (G7)
+   6. Confirm output destination and scope (single deal, rep, segment, all pipeline)
+
+3. **EXPERT CHECK**: What would a veteran RevOps analyst verify first?
+   - Is activity data fresh enough to score? Stale HubSpot activity produces misleading
+     health signals — declare data age before presenting scores.
+   - Are stakeholder roles correctly mapped to pipeline type? CS expansion deals use
+     CS-defined roles (CS sponsor, economic buyer, CS champion) — not Sales AE roles.
+   - Is the G7 escalation path named for every at-risk deal? "Flag to manager" without
+     naming the manager is not an actionable escalation path.
+   - Is a portfolio scan scoped before pulling data? Full pipeline scans on large CRMs
+     may return partial data — declare scope and any data limits upfront.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Presenting health score as a directive or override (G5 violation — analytical input only)
+   - Surfacing scores without data-as-of timestamp (G6 violation)
+   - Flagging at-risk deals without an escalation path (G7 violation)
+   - Applying Sales stakeholder role definitions to CS expansion deals — different roles,
+     same scoring model
+
+**After execution**, verify:
+- G5 qualifier present on all outputs: health scores are analytical inputs
+- G6 data-as-of label applied to all HubSpot activity reads
+- G7 escalation path named for every at-risk deal (score < 50)
+- Confidence: High when HubSpot is connected and activity data is current; Moderate when
+  data is stale or connector is unavailable
 
 ---
 
@@ -62,7 +109,7 @@ At-risk expansion deals below 50 route to `next-best-action-recommendation` for 
 
 ---
 
-## Output Format
+## Output
 
 ```
 DEAL HEALTH SCORES — [Scope]
@@ -87,6 +134,12 @@ Portfolio health distribution:
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

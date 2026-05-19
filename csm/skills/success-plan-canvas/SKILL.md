@@ -209,7 +209,64 @@ See `reference/success-plan-canvas-schema.md` for complete field definitions and
 
 ---
 
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/csm:cold-start-interview`.
+
+Note from config:
+- CS motion — shapes how directive vs. collaborative the canvas framing is
+- Health model — determines context for lifecycle stage assessment
+- Integrations — determines which data sources are available for OCV snapshot
+
+---
+
 ## Reasoning Protocol
+
+> Blueprint: `reference/reasoning-blueprint.md` (on-demand only)
+
+Before generating output, apply these primers:
+
+1. **CLASSIFY** — Determine operation and validate inputs before proceeding:
+   - Is `operation` present and one of `generate` or `refresh`? If absent or invalid → AskUserQuestion before proceeding.
+   - Is `account_name` non-empty? If not → reject immediately with a clear error before any output.
+   - For `generate`: is `plan_type` one of `initial`, `expansion`, or `renewal-refresh`? If not → return `Invalid plan_type` error.
+   - For `refresh`: does a canvas file exist for this account? If not → return `No success plan canvas found` error before attempting any update.
+   - CLASSIFY is complete when: operation confirmed, `account_name` validated, operation-specific preconditions pass.
+
+2. **CONSTRAINTS** — Apply before generating any output (blocking before non-blocking):
+   - **C-1 BLOCKING**: `account_name` must be non-empty — reject all operations if absent.
+   - **C-2 BLOCKING (generate)**: `plan_type` must be one of `initial`, `expansion`, `renewal-refresh` — return `Invalid plan_type` error immediately; do not attempt to infer or default.
+   - **C-3 BLOCKING (refresh)**: canvas file must exist for the target account before applying any mutable updates — return `No success plan canvas found` before attempting any field write.
+   - **C-4 BLOCKING (refresh)**: if the refresh payload includes any immutable field (`plan_id`, `created_at`, `created_by`, `plan_type`, `account_name`) → return immutable field error for that specific field; do not apply partial updates.
+   - **C-5 Non-blocking**: `safe_account` derivation (lowercase → replace non-alphanumeric with `-` → collapse hyphens → trim to 30 chars) must be applied before any file path construction — never use raw `account_name` in a path.
+   - G5: Internal data (health scores, ARR, expansion signals) must never appear in customer-facing output
+   - G7: Flag any data older than 30 days with source date and staleness indicator
+
+3. **EXPERT CHECK** — What a veteran CSM verifies before generating or refreshing a success plan canvas:
+   - Does the `plan_type` match the account's current lifecycle stage? An `initial` canvas for an account in active renewal review, or a `renewal-refresh` canvas for a brand-new onboarding, signals a misconfiguration — flag it.
+   - For `initial` plans: are all 7 required CCSM-104 components present (Goals, Onboarding Milestones, Responsibilities, Success Metrics, Timelines, Risks and Assumptions, Communication Strategy)? An initial canvas missing structural sections is incomplete before it's shared.
+   - For `renewal-refresh` with `ocv_snapshot`: does the OCV data contain enough outcome detail to drive meaningful gap analysis? An empty or single-outcome snapshot produces a shallow renewal canvas — flag the data gap.
+   - For `refresh` with `notes` append: are prior notes preserved? Append-only discipline on notes is critical — replacing prior notes destroys the account narrative history.
+   - Is the `key_objectives` content customer-sourced? Objectives written by the CSM without customer language anchor produce plans that get ignored at QBR.
+
+4. **ANTI-PATTERNS** — Mistakes to catch before generating output:
+   - **AP-1 Missing key_objectives on initial generate**: producing an initial plan without `key_objectives` — creates a canvas with no outcome anchor; the plan cannot be meaningfully reviewed.
+   - **AP-2 renewal-refresh without ocv_snapshot**: generating a renewal-refresh canvas without OCV data — skips gap analysis entirely, which is the primary value of the renewal-refresh plan type.
+   - **AP-3 Refresh targeting immutable fields**: attempting to update `plan_type`, `account_name`, `plan_id`, `created_at`, or `created_by` — these define plan identity; changing them corrupts the record.
+   - **AP-4 Wrong plan_type for lifecycle stage**: generating an `initial` canvas for an account in renewal, or `expansion` for a net-new account — the section structure will be wrong and the CSM context misaligned.
+   - **AP-5 Notes replacement instead of append**: overwriting prior notes content on a refresh — destroys the longitudinal account narrative; notes are always append-only.
+
+**After execution**, verify:
+- Does the output match the classified operation (`generate` or `refresh`) and apply the correct plan-type section structure?
+- For `generate`: are all plan-type-specific sections present (e.g., all 8 sections for `initial`, all 9 for `expansion`, all 8 for `renewal-refresh`)?
+- For `renewal-refresh` with `ocv_snapshot`: is the OCV Gap Analysis section populated and are outcomes correctly split between gap and delivered tables?
+- For `refresh`: are all immutable field constraints (C-4) confirmed clear? Are prior notes preserved if `notes` was in the payload?
+- Is the `safe_account` derivation applied correctly before the file path is constructed?
+- Confidence: [High] if `ocv_snapshot` provided with full outcome data and plan_type matches confirmed account lifecycle stage / [Medium] if plan_type or account stage is CSM-provided without system confirmation / [Low] if operating without OCV data on a renewal-refresh or without key_objectives on an initial — state which.
 
 ### When operation = `generate`
 
@@ -296,6 +353,7 @@ The following reference files govern this skill's detailed behavior. They are lo
 | `reference/success-plan-canvas-schema.md` | Canonical canvas record format, complete YAML frontmatter field list with types and validation rules, section structure per plan type, auto-ID generation rules, immutable field list and enforcement behavior |
 | `reference/plan-type-guide.md` | CCSM-104 7-component framework definition, per-plan-type section templates with placeholder content guidance, OCV integration rules by plan type, expansion canvas distinction rules (header branding and framing language), renewal-refresh OCV gap detection logic, component presence rules (required vs optional per plan type) |
 | `reference/ocv-integration-contract.md` | OCV snapshot input format spec, valid status values, field mappings (`outcome_name`, `status`, `owner`), rendering format for OCV outcomes in canvas sections per plan type, gap detection logic for renewal-refresh, advisory-only contract (skill NEVER writes to OCV files) |
+| `reference/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ---
 

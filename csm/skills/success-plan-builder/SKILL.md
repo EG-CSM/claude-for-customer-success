@@ -76,6 +76,8 @@ Before generating output, apply these primers:
    - Customer-facing plan must contain zero internal health scores, expansion signals, or escalation routing.
    - Engagement cadence must match configured CS motion (high-touch / tech-touch / hybrid).
    - Renewal language requires reviewer validation before sharing with leadership or finance.
+   - G5: Internal data (health scores, ARR, expansion signals) must never appear in customer-facing output
+   - G7: Flag any data older than 30 days with source date and staleness indicator
 
 3. **EXPERT CHECK**: What would a veteran CSM verify first?
    - Are the success criteria stated in the customer's own language, or has the CSM translated them into product-speak?

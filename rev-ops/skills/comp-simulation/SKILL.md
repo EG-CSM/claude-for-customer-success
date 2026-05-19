@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Models comp plan payout scenarios before plan is finalized. Stress-tests OTE, accelerators, and threshold structures against attainment distributions (50/65/75/85/100%). Surfaces cost-to-company and unintended payout behaviors. G3 applies — all outputs require HR + Finance dual review before rep distribution. Triggers: 'comp simulation', 'model comp payouts', 'comp plan cost', 'stress test comp plan', 'what does the plan cost at 80/100/120%'."
 ---
 
+[PROPOSED]
+
 # Comp Simulation
 
 Comp plan payout modeling. Surfaces cost-to-company at multiple attainment levels
@@ -31,14 +33,52 @@ G3 applies: all comp outputs require HR + Finance dual review before rep distrib
 
 ---
 
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `ae_quota`, `ae_attainment_planning_rate`, `current_ae_count`, OTE inputs from practice profile
+
+---
+
 ## Reasoning Protocol
 
-1. Confirm activation — user modeling comp plan payouts or stress-testing comp structure
-2. Read OTE, quota, and accelerator inputs from practice profile or user-provided parameters
-3. Apply G3 — all outputs labeled with HR + Finance dual-review requirement before any rep distribution
-4. Model at all five attainment levels; flag any cliff effects, kink points, or unintended payout concentrations
-5. Surface cost-to-company at each level alongside per-rep payout
-6. Confirm this is being run inside `annual-planning-workflow` (Phase 5) or standalone
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of comp simulation request is this?
+   - Full plan payout modeling (all attainment levels)
+   - Stress-test of specific structure (threshold, accelerator, cliff)
+   - Cost-to-company analysis at a single scenario
+   - Comparison of two or more plan structures
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user modeling comp plan payouts or stress-testing comp structure
+   2. Read OTE, quota, and accelerator inputs from practice profile or user-provided parameters
+   3. Apply G3 — all outputs labeled with HR + Finance dual-review requirement before any rep distribution
+   4. Model at all five attainment levels; flag any cliff effects, kink points, or unintended payout concentrations
+   5. Surface cost-to-company at each level alongside per-rep payout
+   6. Confirm this is being run inside `annual-planning-workflow` (Phase 5) or standalone
+
+3. **EXPERT CHECK**: What would a veteran RevOps comp designer verify first?
+   - Are OTE inputs current and confirmed by HR — not estimated from memory?
+   - Is the threshold structure explicit? A missing threshold means variable pays at any attainment.
+   - Does the accelerator math produce an unintended cliff at 100% crossing?
+   - Is the AE count confirmed — not a headcount plan assumption?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Presenting comp simulation output as a finalized plan (G3 violation)
+   - Omitting threshold cliff flags when the payout jump exceeds 25%
+   - Running cost-to-company without confirming current headcount
+   - Distributing outputs before HR + Finance dual review
+
+**After execution**, verify:
+- G3 label present on all outputs: "Requires HR + Finance dual review before rep distribution."
+- Unintended behavior flags section populated (or "NONE DETECTED" explicitly stated)
+- Confidence: High when OTE and quota are confirmed from practice profile; Moderate when any input is estimated
 
 ---
 
@@ -72,7 +112,7 @@ Unintended behavior flags:
 
 ---
 
-## Output Format
+## Output
 
 ```
 COMP SIMULATION [DRAFT]
@@ -103,6 +143,12 @@ Unintended behavior flags:
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

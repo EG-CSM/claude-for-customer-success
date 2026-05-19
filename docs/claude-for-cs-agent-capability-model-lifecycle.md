@@ -1,11 +1,11 @@
 # CS Agent Capability Model — By Customer Lifecycle Stage
 
-> **Status:** [DRAFT — updated 2026-05-18 to reflect 81-skill suite]  
-> **Source catalog:** `cs-capability-model.yaml` (81 skills, VALIDATED 2026-05-16; +7 new skills 2026-05-18)  
+> **Status:** [DRAFT — updated 2026-05-18 to reflect 80-skill suite]  
+> **Source catalog:** `cs-capability-model.yaml` (80 skills, VALIDATED 2026-05-16; +7 new skills 2026-05-18; rev-ops.territory-optimization deprecated)  
 > **Lifecycle framework:** Seven-Stage Customer Lifecycle (Stages 0–6)  
 > **Domain coverage:** cs-ops · csm · onboarding · renewals · rev-ops  
 
-This document organizes all 81 skills in the `claude-for-customer-success` agent system by the customer lifecycle stage where they deliver primary value. For full schema detail (inputs, outputs, integration, guardrails, evaluation signals), see `cs-capability-model.yaml`.
+This document organizes all 80 skills in the `claude-for-customer-success` agent system by the customer lifecycle stage where they deliver primary value. For full schema detail (inputs, outputs, integration, guardrails, evaluation signals), see `cs-capability-model.yaml`.
 
 **Reading format per skill entry:**
 ```
@@ -321,10 +321,7 @@ The market-level outcome and value statement library must be built before custom
 - `rev-ops.stage-integrity-audit` — Audit deal stage assignments for criteria compliance and progression integrity
   Tasks: check stage entry criteria met for all open opportunities · flag premature or stalled stage assignments · generate stage integrity report
 
-### Revenue Operations — Territory & Capacity
-- `rev-ops.territory-optimization` — Analyze and recommend territory design adjustments to improve coverage and equity
-  Tasks: model current territory coverage by rep against TAM · surface coverage gaps and overloads · generate optimization recommendations
-
+### Revenue Operations — Capacity
 - `rev-ops.unit-of-growth-calculator` — Calculate the unit economics of growth including CAC, LTV, and payback period
   Tasks: pull CAC and LTV inputs from finance and rev ops data · calculate unit economics by segment and cohort · generate growth unit report
 
@@ -349,8 +346,8 @@ The market-level outcome and value statement library must be built before custom
 | Stage 4 Growth | 8 | renewals · rev-ops · csm |
 | Stage 5 Retention | 10 | renewals · csm · rev-ops |
 | Stage 6 Advocacy | 2 | csm · rev-ops |
-| Cross-Cutting Ops | 28 | cs-ops · rev-ops |
-| **Total** | **81** | **5 domains** |
+| Cross-Cutting Ops | 27 | cs-ops · rev-ops |
+| **Total** | **80** | **5 domains** |
 
 > **Two-layer outcome/value model:** `rev-ops.outcome-statement-builder` operates at both Layer 1 (catalog build, pre-sales) and Layer 2 (customer tailoring, Stage 0). `csm.value-statement` operates at Layer 2 across Stages 2–6, consuming Layer 1 as structural input. The core outcome or value claim never changes between layers — only the surface language adapts to the customer's context.
 

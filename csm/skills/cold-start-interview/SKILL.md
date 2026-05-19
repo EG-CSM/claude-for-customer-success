@@ -44,6 +44,17 @@ config_skill: true
 
 # Cold-Start Interview: Customer Success Manager
 
+## Pre-flight
+
+Check for existing config files at:
+- `~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md`
+- `~/.claude/plugins/config/claude-for-customer-success/company-profile.md`
+
+For `--full` or no argument: proceed regardless of whether files exist — this skill creates or overwrites them.
+For `--section <name>`: load existing config file content before displaying current values alongside each question.
+For `--reset`: display a destructive-clear warning and require explicit confirmation before proceeding.
+
+---
 
 ## Reasoning Protocol
 

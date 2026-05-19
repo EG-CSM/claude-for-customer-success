@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Manages the complete deal desk approval routing workflow: submit → review → route → decide → log. Assembles context brief (discount rationale, competitive context, Tier 1 churn risk signal) before routing to approver. Enforces SLA (24h standard, 4h final 2 weeks of quarter). SLA breach escalates to #revops-ops. Triggers: 'deal desk', 'approval workflow', 'route for approval', 'deal approval status', 'process a deal desk request'."
 ---
 
+[PROPOSED]
+
 # Deal Desk Workflow Management
 
 The approval routing workflow — not the approval itself. Deal Desk assembles
@@ -13,6 +15,19 @@ context, routes to the right person, and tracks to resolution.
 
 **Reference:** Governance tiers → `../../../shared/revops-domain-model.md §9`
 **Config reads:** `discount_standard_threshold_pct`, `discount_elevated_threshold_pct`,
+`linear_connected`, `slack_connected`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `discount_standard_threshold_pct`, `discount_elevated_threshold_pct`,
 `linear_connected`, `slack_connected`
 
 ---
@@ -35,13 +50,46 @@ context, routes to the right person, and tracks to resolution.
 
 ## Reasoning Protocol
 
-1. Confirm activation — user submitting a deal for desk review or checking status
-2. Read deal fields from HubSpot
-3. Run sub-skills: discount-threshold-monitoring, non-standard-terms-detection,
-   revenue-leakage-scanning to assemble context brief
-4. Route to correct approval authority
-5. Apply G1 — desk review does not constitute deal approval or revenue commitment
-6. Track SLA — flag breach to #revops-ops
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of deal desk request is this?
+   - New submission (threshold crossed or manual request — assemble context brief + route)
+   - Status check (active submission — report current stage, SLA remaining, approver)
+   - Re-route (approver unavailable or SLA approaching — identify backup authority)
+   - Outcome log (decision received — record in CRM and update discount frequency report)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user submitting a deal for desk review or checking status
+   2. Read deal fields from HubSpot — deal link, ACV, discount %, close date, rep required
+   3. Run sub-skills: discount-threshold-monitoring, non-standard-terms-detection,
+      revenue-leakage-scanning to assemble context brief
+   4. Route to correct approval authority per discount tier from practice profile
+   5. Apply G1 — desk review does not constitute deal approval or revenue commitment
+   6. Track SLA — flag breach to #revops-ops; 24h standard / 4h final 2 weeks of quarter
+
+3. **EXPERT CHECK**: What would a veteran RevOps deal desk analyst verify first?
+   - Is the discount tier confirmed from the practice profile thresholds — not estimated?
+     Routing to the wrong approver tier wastes SLA time and creates audit gaps.
+   - Is the context brief complete before routing? An incomplete brief (missing competitive
+     context or churn signal) sends the approver back to the rep — extending SLA.
+   - Is the SLA deadline calculated from submission timestamp, not discovery timestamp?
+     Quarter-end 4h window starts from when the desk submission is logged.
+   - Are any non-standard terms or leakage flags from sub-skills surfaced before routing?
+     Approvers need the full picture in the brief — not post-routing addenda.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Approving a deal through the brief (G1 violation — desk review ≠ revenue commitment)
+   - Routing without running all three sub-skills — incomplete context brief reaches approver
+   - Logging a CRM update without Write-tier confirmation (G9 violation)
+   - Missing the quarter-end SLA window by using wrong timestamp as SLA start
+   - Omitting comp flag when deal structure has comp implications (G3 violation)
+
+**After execution**, verify:
+- G1 qualifier present: context brief does not constitute approval or revenue commitment
+- G9 Write-tier confirmation gate applied to all CRM and Linear writes
+- SLA deadline calculated from submission timestamp; quarter-end window identified if applicable
+- Confidence: High when HubSpot is connected and all sub-skills return data; Moderate when
+  any sub-skill is unavailable or deal fields are partially populated
 
 ---
 
@@ -104,6 +152,12 @@ If SLA breached: Post to #revops-ops with deal link and approver name
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

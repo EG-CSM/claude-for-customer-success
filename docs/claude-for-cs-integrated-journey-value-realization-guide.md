@@ -1314,13 +1314,12 @@ These ten skills maintain the integrity of the deal and account data that all CS
 
 **Value Chain Relevance:** These skills feed Stage 0 data quality and the Layer 1 outcome catalog accuracy. `rev-ops.deal-classification` at deal close is the input to Stage 0 CS configuration. `rev-ops.stage-integrity-audit` failures indicate that the value chain is being tracked against inaccurate deal data.
 
-### RevOps — Territory, Capacity & Strategy
+### RevOps — Capacity & Strategy
 
-These four skills operate at the organizational design level — territory allocation, CS capacity modeling at scale, and change communication.
+These three skills operate at the organizational design level — CS capacity modeling at scale and change communication.
 
 | Skill ID | Function | Run Cadence |
 |---|---|---|
-| `rev-ops.territory-optimization` | Analyzes territory balance across revenue potential, account count, and CSM capacity | Quarterly or at territory change |
 | `rev-ops.unit-of-growth-calculator` | Models the cost and capacity implications of a single unit of growth (new logo, expansion, renewal) | At plan cycle or growth model change |
 | `rev-ops.closed-won-to-cs-capacity-modeling` | Maps new deal velocity to CS capacity; surfaces hiring signal | Weekly (during high-growth periods) |
 | `rev-ops.change-communication-packaging` | Packages process, territory, or system changes into structured CSM communication | On significant operational change |
@@ -1370,8 +1369,7 @@ flowchart LR
         DQ10[deal-desk-workflow-management]
     end
 
-    subgraph TERRITORY ["RevOps: Territory & Strategy (3 skills)"]
-        TC1[territory-optimization]
+    subgraph TERRITORY ["RevOps: Capacity & Strategy (3 skills)"]
         TC2[unit-of-growth-calculator]
         TC3[closed-won-to-cs-capacity-modeling]
         TC4[change-communication-packaging]
@@ -1466,7 +1464,7 @@ Validate: CSMs can run a full Stage 1 workflow (kickoff → success plan → sta
 | 21 | RevOps | `rev-ops.expansion-signal` + `rev-ops.next-best-action-recommendation` | Expansion pipeline feeds live |
 | 22 | RevOps | `rev-ops.revenue-leakage-scanning` + `rev-ops.churn-analysis` | Revenue integrity motion live |
 | 23 | RevOps | `rev-ops.deal-to-outcome-tracing` + `rev-ops.outcome-to-value-tracking` | Value chain traceability live |
-| 24 | RevOps | `rev-ops.territory-planning` + `rev-ops.capacity-planning` | Strategic planning augmented |
+| 24 | RevOps | `rev-ops.unit-of-growth-calculator` + `rev-ops.closed-won-to-cs-capacity-modeling` | Strategic capacity planning augmented |
 | 25 | All | `rev-ops.playbook-auditor` | First ecosystem audit run |
 
 ---
@@ -1550,8 +1548,8 @@ The plugin does not replace CS platform health scoring — it interprets and con
 | `rev-ops.outcome-to-value-tracking` output | Feed into QBR data layer |
 | `rev-ops.revenue-leakage-scanning` findings | Triage list for RevOps weekly review |
 | `rev-ops.deal-to-outcome-tracing` output | Populate sales-to-CS handoff scorecard |
-| `rev-ops.territory-planning` output | Input to headcount and quota planning models |
-| `rev-ops.capacity-planning` output | Feed into resource allocation models |
+| `rev-ops.closed-won-to-cs-capacity-modeling` output | Input to headcount and quota planning models |
+| `rev-ops.unit-of-growth-calculator` output | Feed into resource allocation and growth model |
 
 ---
 

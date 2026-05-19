@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Identifies duplicate accounts, contacts, and opportunities in HubSpot. Produces merge candidates with confidence scores (High/Medium/Low). Never merges autonomously — all merges require Write-tier human confirmation. Triggers: 'duplicates', 'merge candidates', 'duplicate accounts', 'duplicate contacts', 'clean up CRM duplicates'."
 ---
 
+[PROPOSED]
+
 # Duplicate Detection
 
 Merge candidates with confidence scores. High-confidence duplicates batch-
@@ -13,6 +15,18 @@ presented for bulk approval. No autonomous merges — ever.
 
 **Reference:** Governance tiers → `../../../shared/revops-domain-model.md §9`
 **Config reads:** `crm_system`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `crm_system`
 
 ---
 
@@ -33,11 +47,45 @@ presented for bulk approval. No autonomous merges — ever.
 
 ## Reasoning Protocol
 
-1. Confirm activation — user requesting duplicate detection or merge candidates
-2. Check HubSpot — read access to accounts, contacts, opportunities required
-3. Apply G6 — data-as-of on all reads
-4. Apply governance Write-tier — merges require human confirmation
-5. Confirm object scope: accounts / contacts / opportunities / all
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of duplicate detection request is this?
+   - Single object scan (accounts, contacts, or opportunities — merge candidates for one object type)
+   - Multi-object sweep (full CRM across all three object types)
+   - Pre-import deduplication (scan before data load — flag conflicts before they enter CRM)
+   - Merge candidate review (user reviewing previously surfaced candidates — confirm or dismiss)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user requesting duplicate detection or merge candidates
+   2. Check HubSpot connector — read access to accounts, contacts, opportunities required; declare fallback if absent
+   3. Confirm object scope before pulling data: accounts / contacts / opportunities / all
+   4. Apply G6 — data-as-of on all HubSpot reads
+   5. Apply G9 — no autonomous merges; all merge actions require explicit Write-tier human confirmation
+   6. Present High-confidence candidates in batch approval format; Medium and Low require individual review
+
+3. **EXPERT CHECK**: What would a veteran RevOps data hygiene analyst verify first?
+   - Is the matching signal quality sufficient for the confidence tier assigned? A single
+     name-similarity match without corroborating signals should never reach High confidence —
+     over-confident scoring causes legitimate record merges.
+   - Is data freshness confirmed before scoring? Stale connector reads may miss recent
+     record updates that resolve apparent duplicates — declare data age before presenting candidates.
+   - Are High-confidence candidates reviewed for merge risk before batch approval? Even
+     High-confidence pairs can carry legitimate differences (e.g., separate subsidiaries with
+     similar names) — surface any anomalies before queuing for bulk merge.
+   - Is the object scope confirmed before running? A full multi-object sweep on a large CRM
+     may return partial data — scope the scan and declare any data limits upfront.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Merging records autonomously without Write-tier human confirmation (G9 violation)
+   - Surfacing HubSpot reads without data-as-of timestamp (G6 violation)
+   - Assigning High confidence based on a single matching signal without corroboration
+   - Running a multi-object sweep without declaring scope and data volume limits
+
+**After execution**, verify:
+- G6 data-as-of label applied to all HubSpot reads
+- G9 Write-tier qualifier present: all merges require explicit human confirmation before execution
+- Confidence tier (High/Medium/Low) correctly assigned per matching signal count and quality
+- Confidence: High when HubSpot is connected and data is current; Moderate when data is stale or connector is unavailable
 
 ---
 
@@ -66,7 +114,7 @@ presented for bulk approval. No autonomous merges — ever.
 
 ---
 
-## Output Format
+## Output
 
 ```
 DUPLICATE DETECTION — [Object type] — [Date]
@@ -90,6 +138,12 @@ LOW confidence ([N] pairs):
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

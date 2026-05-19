@@ -560,38 +560,65 @@ Before delivering output, verify:
 
 ---
 
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/csm:cold-start-interview`.
+
+Note from config:
+- CS motion — shapes whether to recommend CSM-led or CSQL pathway
+- Health model — determines C-1 health score threshold
+- Escalation matrix — required if surfacing escalation routing from expansion signals
+- Integrations — determines which data sources are available for expansion signals
+
+---
+
 ## Reasoning Protocol
 
-**Reference:** `reference/reasoning-blueprint.md` (on-demand only)
+> Blueprint: `reference/reasoning-blueprint.md` (on-demand only)
 
-### CLASSIFY
+Before generating output, apply these primers:
 
-When entering CLASSIFY, resolve in order:
-1. Is `mode` present and valid (`csm-led` or `csql`)? If absent → AskUserQuestion before proceeding.
-2. For `csql` mode: are minimum required fields (`economic_buyer`, `identified_pain`, `champion`) present in `csql_context`? If not → C-3 blocking error.
-3. Are mutual exclusivity flags initialized to `False`?
+1. **CLASSIFY** — Determine mode and validate inputs before proceeding:
+   - Is `mode` present and valid (`csm-led` or `csql`)? If absent → AskUserQuestion before proceeding.
+   - For `csql` mode: are minimum required fields (`economic_buyer`, `identified_pain`, `champion`) present in `csql_context`? If not → C-3 blocking error.
+   - Are mutual exclusivity flags initialized to `False`?
+   - CLASSIFY is complete when: mode confirmed, state initialized, minimum input check passes.
 
-CLASSIFY is complete when: mode confirmed, state initialized, minimum input check passes.
+2. **CONSTRAINTS** — Apply constraint evaluation order (blocking before non-blocking):
+   - C-3 CSQL minimum inputs — BLOCKING
+   - C-4 mutual exclusivity — BLOCKING
+   - C-1 health score — non-blocking, warn header
+   - C-2 utilization — non-blocking, flag header
+   - C-5 economic buyer — non-blocking, placeholder + note
+   - G1: Do not classify accounts as likely to churn or assign churn probability — present component signals only
+   - G4: Do not recommend escalation without a named escalation path configured in the escalation matrix
+   - G5: Internal data (health scores, ARR, expansion signals) must never appear in customer-facing output
+   - G7: Flag any data older than 30 days with source date and staleness indicator
 
-### CONSTRAINTS
+3. **EXPERT CHECK** — What a veteran CSM verifies before building the business case:
+   - Is the outcome evidence customer-sourced (their words, their metrics) or CSM-constructed? Customer-sourced evidence converts; CSM-constructed does not.
+   - Are MEDDIC/MEDDPICC fields populated sufficiently for the mode? `csql` mode requires economic_buyer, identified_pain, and champion at minimum — gaps here block the CSQL section entirely.
+   - Does health-expansion coherence hold? Yellow/Red health with an expansion push signals misaligned timing — verify health threshold before proceeding (C-1 constraint).
+   - Is the economic buyer identified and differentiated from the champion? Single-threaded deals (champion only) fail at procurement — name the EB gap if present (C-5 constraint).
+   - Is the expansion tied to a specific business outcome the customer has already acknowledged, or is it feature-capability framing? Feature framing triggers AP-1; outcome framing advances the deal.
 
-Constraint evaluation order (blocking before non-blocking):
-1. C-3 CSQL minimum inputs — BLOCKING
-2. C-4 mutual exclusivity — BLOCKING
-3. C-1 health score — non-blocking, warn header
-4. C-2 utilization — non-blocking, flag header
-5. C-5 economic buyer — non-blocking, placeholder + note
+4. **ANTI-PATTERNS** — Run all, annotate all, none block output:
+   - AP-1 Feature-led framing (most common failure) — value propositions built around product capabilities rather than customer outcomes
+   - AP-2 Premature CSQL — advancing to sales-qualified expansion before champion has confirmed internal alignment
+   - AP-3 Health-expansion mismatch — expansion motion on Yellow/Red accounts without explicit health stabilization plan
+   - AP-4 Single-threaded deal — business case routed only through champion without economic buyer visibility
+   - AP-5 No economic buyer (csm-led only) — expansion proposal without identified EB; internal deal dies at budget approval
 
-### ANTI-PATTERNS
-
-Priority order (run all, annotate all, none block output):
-1. AP-1 Feature-led framing (most common failure)
-2. AP-2 Premature CSQL
-3. AP-3 Health-expansion mismatch
-4. AP-4 Single-threaded deal
-5. AP-5 No economic buyer (csm-led only)
-
-Anti-pattern detection must complete before POST-EXECUTION template population.
+**After execution**, verify:
+- Does the output match the classified mode (`csm-led` or `csql`) and apply the correct template structure?
+- Are all blocking constraints (C-3, C-4) resolved or explicitly surfaced as errors before output?
+- Is every value proposition framed as customer outcome, not product feature? Scan for AP-1.
+- Are all `[review]` flags placed where human judgment is required before sharing externally?
+- Confidence: [High] if CRM live with full MEDDIC fields and CS Platform health data / [Medium] if partially connected or some fields from CSM context / [Low] if user-provided context only — state which.
 
 ---
 

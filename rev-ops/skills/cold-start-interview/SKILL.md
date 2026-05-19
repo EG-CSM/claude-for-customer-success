@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Rev-ops plugin setup. Reads existing company-profile.md if present, then collects only rev-ops-specific configuration: planning parameters, headcount, discount thresholds, lead definitions, OCV catalog path, and connector status. Writes ~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md. Run once at install; re-run after major planning cycle changes."
 ---
 
+[PROPOSED]
+
 # Cold-Start Interview
 
 Configures the rev-ops plugin by reading any existing C4CS company profile and
@@ -35,13 +37,52 @@ that all rev-ops skills read at runtime.
 
 ---
 
-## Reasoning Protocol (simplified — config skill, no guardrail checks)
+## Pre-flight
 
-1. Check for existing company profile at `~/.claude/plugins/config/claude-for-customer-success/company-profile.md`
-2. Check for existing rev-ops practice profile — if present, offer update vs. full re-run
-3. Collect required fields in priority order; skip inherited fields
-4. Validate completeness against `reference/config-schema.md`
-5. Write practice profile; confirm written successfully
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: This skill writes the practice profile; no config values are required at intake.
+
+---
+
+## Reasoning Protocol
+
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of cold-start request is this?
+   - New installation (no existing profiles — full interview required)
+   - Update mode (existing practice profile present — ask which fields to change)
+   - Full re-run (existing profile, user wants fresh setup)
+   - Partial update (specific fields only — collect only the changed fields)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Check for existing company profile at `~/.claude/plugins/config/claude-for-customer-success/company-profile.md`
+   2. Check for existing rev-ops practice profile — if present, offer update vs. full re-run
+   3. Collect required fields in priority order; skip inherited fields
+   4. Validate completeness against `reference/config-schema.md`
+   5. Write practice profile; confirm written successfully
+
+3. **EXPERT CHECK**: What would a veteran RevOps admin verify first?
+   - Is company-profile.md present? If absent, direct user to C4CS plugin cold-start first — do not re-collect company-level fields here.
+   - Is connector detection run before questions? Connector status affects which capability clusters show as Full vs. Partial in the readiness table.
+   - Is cs_operating_model captured in Group C2? This gates four capability clusters — missing it produces a misleading readiness table.
+   - Is the OCV catalog path confirmed or marked [PENDING]? Outcome-linked skills degrade without it.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Re-asking company-level questions that are already in company-profile.md
+   - Skipping connector detection — readiness table will misreport Full capability for disconnected tools
+   - Writing the practice profile before all required field groups are complete
+   - Omitting cs_operating_model scoring — the capability table depends on this field
+
+**After execution**, verify:
+- Practice profile written to `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md`
+- Readiness table reflects actual connector status and cs_operating_model value
+- Degraded skills listed with specific improvement path
+- Confidence: High when all required groups are answered and connectors confirmed; Moderate when any field group is estimated or connector status is uncertain
 
 ---
 
@@ -285,10 +326,32 @@ operating model evolves.
 
 ---
 
+## Output
+
+```
+REV-OPS PLUGIN READINESS — [date written]
+─────────────────────────────────────────────────────────────
+[Connector status table]
+[SA1–SA6 + ARIA readiness rows]
+[CS revenue cluster rows based on cs_operating_model]
+[Degraded skills list with improvement paths]
+─────────────────────────────────────────────────────────────
+Practice profile written: ~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md
+[DRAFT — review before using skills]
+```
+
+---
+
 ## Guardrails
 
 This is a configuration skill. No account data is produced. Guardrails G1–G8
 do not apply to interview outputs.
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

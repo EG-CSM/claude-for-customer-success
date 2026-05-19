@@ -63,6 +63,8 @@ Critical configuration to apply:
 
 > Full reasoning blueprint: `references/reasoning-blueprint.md`
 
+Before generating output, apply these primers:
+
 1. **CLASSIFY** — What type of escalation is this?
    - **Technical (P1/P2)**: Unresolved support ticket, SLA breach or approaching breach, product bug with customer impact, engineering involvement required. Route via Support → Engineering path.
    - **Customer Complaint**: Formal dissatisfaction — NPS detractor follow-up unresolved, written complaint, executive frustration, public-facing concern. Emotion is high; separate perception from verified facts.
@@ -91,10 +93,11 @@ Critical configuration to apply:
    - Merging internal diagnostic tone with customer-facing communication
    - Passive voice in customer drafts to hide internal accountability ("there was a miscommunication" vs. "we missed the handoff")
 
-5. **Post-execution verification**:
-   - **Intent satisfaction**: Does the output match the requested mode (--open/--update/--close) and escalation type?
-   - **Failure mode scan**: Check output against common failure modes for the classified type (see blueprint). Flag any match.
-   - **Confidence assessment**: Are data sources live or stale? Is root cause confirmed or preliminary? Label accordingly.
+**After execution**, verify:
+- Does the output match the requested mode (--open/--update/--close) and escalation type?
+- Check output against common failure modes for the classified type (see blueprint). Flag any match.
+- Is the internal/customer language firewall intact? No internal identifiers in customer draft.
+- Confidence: [High] if live integrations confirmed escalation owner, SLA, and account data / [Medium] if partially connected or some data from CSM context / [Low] if user-provided context only — state which.
 
 ## Mode
 

@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Three-tier churn signal model starting at deal close (not renewal). Tier 1 fires at close using configurable rule-mode thresholds (or cohort-mode correlations when 6+ months of data available). Tier 2 fires 30–90 days post-onboarding on behavioral signals. Tier 3 fires 90–120 days pre-renewal on late-stage risk. Every flag includes escalation path and owner. Triggers: 'churn signals', 'early churn', 'downgrade risk', 'at-risk accounts', 'churn detection', 'which accounts are at risk of churning'."
 ---
 
+[PROPOSED]
+
 # Early Churn / Downgrade Signal Detection
 
 Moves churn detection upstream from renewal conversation to deal close.
@@ -14,6 +16,19 @@ The earlier the signal, the more runway to act.
 **Reference:** Churn signal tiers → `../../../shared/revops-domain-model.md §8`
 **Reference:** Confidence bands → `../../../shared/revops-domain-model.md §2`
 **Config reads:** `tier1_mode`, `discount_elevated_threshold_pct`,
+`avg_sales_cycle_days`, `renewal_conversation_window_days`, `cs_platform_connected`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `tier1_mode`, `discount_elevated_threshold_pct`,
 `avg_sales_cycle_days`, `renewal_conversation_window_days`, `cs_platform_connected`
 
 ---
@@ -35,13 +50,45 @@ The earlier the signal, the more runway to act.
 
 ## Reasoning Protocol
 
-1. Confirm activation — user asking about churn risk, at-risk accounts, or downgrade signals
-2. Determine scope: single account or portfolio scan
-3. Check CS platform for health score, usage, renewal date
-4. Declare tier1_mode: rule or cohort [Practice profile]
-5. Apply G7 — every Tier 2 and Tier 3 flag includes escalation path and named owner
-6. Apply G5 — signals are analytical inputs; CS and CS manager own the response
-7. Apply G6 — data-as-of on all reads
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of churn signal request is this?
+   - Single account assessment (one account — tier evaluation + active signals + recommended action)
+   - Portfolio scan (segment or full book — distribution by tier + top ACV accounts at risk)
+   - Tier 1 at deal close (structural signals at close — rule mode or cohort mode per practice profile)
+   - Tier 2 behavioral (30–90 days post-onboarding — usage, OCV, champion, EBR signals)
+   - Tier 3 pre-renewal (90–120 days out — health trend, renewal conversation, support volume)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user asking about churn risk, at-risk accounts, or downgrade signals
+   2. Determine scope: single account or portfolio scan
+   3. Check CS platform connector — health score, usage, renewal date required; declare fallback if absent
+   4. Declare tier1_mode: rule or cohort [Practice profile] — required on every Tier 1 output
+   5. Apply G7 — every Tier 2 and Tier 3 flag must include escalation path and named owner
+   6. Apply G5 — signals are analytical inputs; CS and CS manager own the response
+   7. Apply G6 — data-as-of on all reads
+
+3. **EXPERT CHECK**: What would a veteran CS operations analyst verify first?
+   - Is tier1_mode declared before presenting any Tier 1 output? Rule mode and cohort mode produce
+     different signal sets — presenting without declaring the mode obscures the basis for the flag.
+   - Is the CS platform data fresh enough to score Tier 2 and Tier 3? Stale health scores and
+     usage data produce misleading signals — declare data age before surfacing any tier flag.
+   - Does every Tier 2 and Tier 3 flag carry a named escalation owner? "Escalate to CS team"
+     is not an actionable path — the owner must be a named role or person, not a team alias.
+   - Is the scope confirmed before a portfolio scan? Large books may return partial data from
+     the CS platform — scope the scan and declare any data limits upfront.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Presenting churn signals as directives rather than analytical inputs (G5 violation)
+   - Surfacing CS platform reads without data-as-of timestamp (G6 violation)
+   - Omitting escalation path or owner on any Tier 2 or Tier 3 flag (G7 violation)
+   - Running a Tier 1 assessment without declaring tier1_mode (rule vs. cohort)
+
+**After execution**, verify:
+- G5 qualifier present: signals are analytical inputs; CS owns the response
+- G6 data-as-of label applied to all CS platform and CRM reads
+- G7 escalation path with named owner present on every Tier 2 and Tier 3 flag
+- Confidence: High when CS platform is connected and data is current; Moderate when data is stale or connector is unavailable
 
 ---
 
@@ -123,6 +170,12 @@ Top 5 highest-ACV accounts by risk tier:
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

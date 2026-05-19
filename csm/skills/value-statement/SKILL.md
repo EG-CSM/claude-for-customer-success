@@ -78,6 +78,9 @@ Before generating output, apply these primers:
    - Revenue implications (ARR trajectory, renewal probability) require reviewer validation before distribution
    - Customer-facing output uses the customer's business language, not product terminology
    - Success criteria gaps must be acknowledged explicitly — never construct post-hoc success framing silently
+   - G1: Do not classify accounts as likely to churn or assign churn probability — present component signals only
+   - G5: Internal data (health scores, ARR, expansion signals) must never appear in customer-facing output
+   - G7: Flag any data older than 30 days with source date and staleness indicator
 
 3. **EXPERT CHECK**: What would a veteran CSM verify first?
    - Are the success criteria sourced from an agreed document (success plan, kickoff, prior QBR), or are they inferred? If inferred, flag before proceeding.

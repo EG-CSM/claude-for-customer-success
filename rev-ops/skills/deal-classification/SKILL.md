@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Independently scores each open opportunity as Commit / Best Case / Pipeline using CRM activity data — without relying on rep self-reporting. Surfaces delta vs. rep's stated forecast category when classification disagrees by more than one tier. Triggers: 'deal classification', 'classify the pipeline', 'commit vs best case', 'independent forecast', 'override rep call'."
 ---
 
+[PROPOSED]
+
 # Deal Classification
 
 Classifies open opportunities using CRM activity signals, not rep self-reporting.
@@ -13,6 +15,18 @@ Disagrees with rep calls only when evidence is clear — flags the delta, doesn'
 
 **Reference:** Confidence bands → `../../../shared/revops-domain-model.md §2`
 **Config reads:** `primary_segment`, `avg_sales_cycle_days`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `primary_segment`, `avg_sales_cycle_days`
 
 ---
 
@@ -42,11 +56,38 @@ means CS leadership and CS ops own the downstream tracking — not Sales.
 
 ## Reasoning Protocol
 
-1. Confirm activation — user wants independent deal scoring or call validation
-2. Check HubSpot for activity data — required for classification; declare fallback if absent
-3. Apply G5 — classification is analytical input; rep and manager own the judgment
-4. Apply G6 — surface data-as-of on all activity reads
-5. Do not present classification as override — present as independent signal
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of deal classification request is this?
+   - Single deal scoring (one opportunity, independent signal)
+   - Portfolio classification sweep (rep / segment / all open pipeline)
+   - Call validation (rep's stated category vs. model signal)
+   - Closed-won verification before CS handoff
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user wants independent deal scoring or call validation
+   2. Check HubSpot for activity data — required for classification; declare fallback if absent
+   3. Apply G5 — classification is analytical input; rep and manager own the judgment
+   4. Apply G6 — surface data-as-of on all activity reads
+   5. Do not present classification as override — present as independent signal
+
+3. **EXPERT CHECK**: What would a veteran RevOps analyst verify first?
+   - Is HubSpot activity data fresh enough to score? Stale data produces misleading signals — declare data age before presenting classification.
+   - Is the scoring model applied consistently across all deals in a sweep? Rep-specific exceptions undermine portfolio-level credibility.
+   - Is the delta between rep call and model call surfaced clearly without editorializing? The analyst's job is to flag — rep and manager own the resolution.
+   - Is the classification being used in a forecast context? If so, G1 forecast language qualification is required before the output leaves RevOps.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Presenting model classification as a forecast override (G5 violation)
+   - Surfacing classification output without data-as-of timestamp (G6 violation)
+   - Running a portfolio sweep without declaring scope (segment, rep, date range)
+   - Omitting the G1 forecast qualification when classification feeds a leadership or board view
+
+**After execution**, verify:
+- G5 analytical input qualifier present on all outputs
+- G6 data-as-of label applied to all HubSpot reads
+- Delta column populated when rep call and model call diverge
+- Confidence: High when HubSpot is connected and activity data is current; Moderate when data is stale or connector is unavailable
 
 ---
 
@@ -67,7 +108,7 @@ means CS leadership and CS ops own the downstream tracking — not Sales.
 
 ---
 
-## Output Format
+## Output
 
 ```
 DEAL CLASSIFICATION — [Rep / Segment / All]
@@ -92,6 +133,12 @@ Adjusted pipeline summary (model-based):
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

@@ -62,21 +62,23 @@ Critical configuration to load:
 
 > Blueprint: `references/reasoning-blueprint.md`
 
-**CLASSIFY** — Determine input type before proceeding:
+Before generating output, apply these primers:
+
+1. **CLASSIFY** — Determine input type before proceeding:
 - **A: Single Account — Data-Rich** — CS Platform connected, component scores and trends available
 - **B: Single Account — Data-Sparse** — partial signals, user-provided data, missing components
 - **C: Portfolio Triage** — multiple accounts, ranked prioritization needed
 - **D: Alert-Triggered** — reactive review fired by health alert, usage drop, or escalation event
 - **E: Pre-Renewal** — renewal within 90 days, proactive review with stakeholder visibility
 
-**CONSTRAINTS** — Apply before generating any output:
+2. **CONSTRAINTS** — Apply before generating any output:
 - **G1:** Health scores are heuristics — never frame output as churn prediction or likelihood. Show components and evidence; classification is the CSM's judgment.
 - **G2:** No churn signal marked "Present" without direct evidence. Absence of data = "Unknown," never "No."
 - **G4:** No escalation recommendation without a named escalation path from config (person, channel, SLA). Flag missing path before proceeding.
 - **G5:** Portfolio triage contains ARR and health classifications — run destination check before any output distributed beyond the CSM.
 - **G7:** Flag any health data older than 30 days with source date and staleness indicator. Stale NPS (>6 months) treated as Unknown.
 
-**EXPERT CHECK** — What a veteran CSM would verify first:
+3. **EXPERT CHECK** — What a veteran CSM would verify first:
 - Which single component is driving the overall score? (Score-anchoring trap: composite hides the signal)
 - Is there a usage drop >20% in 30 days? (H1 — usage drops precede churn by 60-90 days)
 - Has the executive sponsor changed? (H4 — sponsor departure overrides component scores)
@@ -84,7 +86,7 @@ Critical configuration to load:
 - For renewals <90 days: apply renewal proximity amplifier (H6 — Yellow becomes Red-tier urgency)
 - For portfolio: is ranking compound (health x ARR x renewal proximity), not health-only?
 
-**ANTI-PATTERNS** — Mistakes to avoid:
+4. **ANTI-PATTERNS** — Mistakes to avoid:
 - Reporting composite score without component decomposition
 - Classifying Red/Yellow/Green without naming which components are missing or stale
 - Flat portfolio ranking by health score alone (ignores ARR and renewal proximity)
@@ -92,10 +94,11 @@ Critical configuration to load:
 - Treating days-since-contact as standalone metric (H3 — weight by current health tier)
 - Producing generic interventions ("monitor closely") instead of specific who/what/when actions
 
-**Post-execution verification:**
-1. **Intent satisfaction** — Does the output answer the actual request (single review, triage, deep dive)? Is mode selection appropriate?
-2. **Failure mode scan** — Check against classification-specific failure modes in blueprint. For Type B: are all gaps named? For Type C: is ranking compound? For Type E: was optimism bias checked?
-3. **Confidence assessment** — How many components have live data? Flag partial-data classifications. Any component >30 days old flagged in reviewer note?
+**After execution**, verify:
+- Does the output answer the actual request (single review, triage, deep dive)? Is mode selection appropriate?
+- Check against classification-specific failure modes in blueprint. For Type B: are all gaps named? For Type C: is ranking compound? For Type E: was optimism bias checked?
+- How many components have live data? Flag partial-data classifications. Any component >30 days old flagged in reviewer note?
+- Confidence: [High] if CS Platform live with all configured components / [Medium] if partial integrations or some stale data / [Low] if user-provided context only — state which.
 
 ## Mode
 

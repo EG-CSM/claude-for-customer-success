@@ -72,6 +72,10 @@ Before generating output, apply these primers:
    - Confidentiality: stakeholder maps are internal documents — never include in customer-facing deliverables
    - Escalation matrix must be configured before routing sponsor risk actions — flag if missing
    - Detractor designation requires direct evidence (stated opposition, negative NPS) — inference from silence or title is prohibited
+   - G1: Do not classify accounts as likely to churn or assign churn probability — present component signals only
+   - G4: Do not recommend escalation without a named escalation path configured in the escalation matrix
+   - G5: Internal data (health scores, ARR, expansion signals) must never appear in customer-facing output
+   - G7: Flag any data older than 30 days with source date and staleness indicator
 
 3. **EXPERT CHECK**: What would a veteran CSM verify first?
    - Is this account single-threaded? (Only one active contact across all roles = immediate risk regardless of other signals)

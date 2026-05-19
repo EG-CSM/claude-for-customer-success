@@ -2,7 +2,7 @@
 # Source: ~/claude-cowork/projects/agent-building/claude-for-customer-success
 # Generated: 2026-05-18
 # Status: VALIDATED
-# Total skills: 81 (cs-ops: 9, csm: 17, onboarding: 9, renewals: 12, rev-ops: 34)
+# Total skills: 80 (cs-ops: 9, csm: 17, onboarding: 9, renewals: 12, rev-ops: 33)
 
 skills:
 
@@ -1381,510 +1381,510 @@ skills:
 # DOMAIN: onboarding  (9 skills)
 # ─────────────────────────────────────────────────────────────────────────────
 
-- id: onboarding.blocker-review
-  name: blocker-review
-  version: "1.0.0"
-  category: onboarding
-  owner: onboarding
-  summary: >
-    Diagnose and resolve onboarding blockers — anything preventing a customer
-    from reaching their next milestone on time. Classifies blockers by type and
-    severity, routes to the correct resolution path per the escalation matrix,
-    and produces an action plan with named owners and deadlines.
-  intended_tasks:
-    - Guided diagnostic for a current blocker (--diagnose, default)
-    - Formatted escalation brief for a named escalation contact (--escalate)
-    - Logging a resolved blocker to account history (--log)
-  out_of_scope:
-    - Autonomously contacting escalation contacts
-    - Modifying PM connector tasks directly
-  invocation_cues:
-    - "blocker"
-    - "stuck"
-    - "milestone delayed"
-    - "escalate"
-    - "not progressing"
-  anti_cues:
-    - General milestone status (use milestone-tracker)
-    - Handoff readiness check (use handoff-doc --readiness)
-  priority: standard
-  argument_hint: "[<account-name-or-ID>] [--diagnose | --escalate | --log]"
-  required_context:
-    - onboarding CLAUDE.md (escalation matrix, thresholds, escalation contacts)
-  consumes_files:
-    - onboarding/CLAUDE.md
-  produces_artifacts:
-    - Blocker diagnostic with classification and severity
-    - Escalation brief (--escalate)
-    - Resolved blocker log entry (--log)
-  tools_used:
-    - CRM connector (optional)
-    - PM connector (optional)
-  related_skills:
-    - onboarding.milestone-tracker
-    - onboarding.handoff-doc
-  execution_profile:
-    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing or placeholder-filled
-    connector_behavior: falls back to CSM input if CRM/PM unavailable
-  constraints:
-    - Escalation contacts sourced from profile only; no autonomous outreach
-    - Severity classification uses profile escalation thresholds
-  risk_level: low
-  approval_needed: false
-  success_criteria:
-    - Blocker classified by type and severity
-    - Resolution path identified with named owner and deadline
-    - Escalation brief produced when --escalate is used
-  known_failure_modes:
-    - Profile escalation matrix missing — classification falls back to generic tiers
-    - PM connector unavailable — milestone context requires manual input
+  - id: onboarding.blocker-review
+    name: blocker-review
+    version: "1.0.0"
+    category: onboarding
+    owner: onboarding
+    summary: >
+      Diagnose and resolve onboarding blockers — anything preventing a customer
+      from reaching their next milestone on time. Classifies blockers by type and
+      severity, routes to the correct resolution path per the escalation matrix,
+      and produces an action plan with named owners and deadlines.
+    intended_tasks:
+      - Guided diagnostic for a current blocker (--diagnose, default)
+      - Formatted escalation brief for a named escalation contact (--escalate)
+      - Logging a resolved blocker to account history (--log)
+    out_of_scope:
+      - Autonomously contacting escalation contacts
+      - Modifying PM connector tasks directly
+    invocation_cues:
+      - "blocker"
+      - "stuck"
+      - "milestone delayed"
+      - "escalate"
+      - "not progressing"
+    anti_cues:
+      - General milestone status (use milestone-tracker)
+      - Handoff readiness check (use handoff-doc --readiness)
+    priority: standard
+    argument_hint: "[<account-name-or-ID>] [--diagnose | --escalate | --log]"
+    required_context:
+      - onboarding CLAUDE.md (escalation matrix, thresholds, escalation contacts)
+    consumes_files:
+      - onboarding/CLAUDE.md
+    produces_artifacts:
+      - Blocker diagnostic with classification and severity
+      - Escalation brief (--escalate)
+      - Resolved blocker log entry (--log)
+    tools_used:
+      - CRM connector (optional)
+      - PM connector (optional)
+    related_skills:
+      - onboarding.milestone-tracker
+      - onboarding.handoff-doc
+    execution_profile:
+      pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing or placeholder-filled
+      connector_behavior: falls back to CSM input if CRM/PM unavailable
+    constraints:
+      - Escalation contacts sourced from profile only; no autonomous outreach
+      - Severity classification uses profile escalation thresholds
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Blocker classified by type and severity
+      - Resolution path identified with named owner and deadline
+      - Escalation brief produced when --escalate is used
+    known_failure_modes:
+      - Profile escalation matrix missing — classification falls back to generic tiers
+      - PM connector unavailable — milestone context requires manual input
 
-- id: onboarding.cold-start-interview
-  name: cold-start-interview
-  version: "1.0.0"
-  category: onboarding
-  owner: onboarding
-  config_skill: true
-  summary: >
-    First-time setup for the onboarding practice profile. Collects role, onboarding
-    model, segment configuration, TtV targets, milestone definitions, success criteria
-    model, kickoff and handoff format, escalation matrix, integrations, and CS
-    methodology preferences. Writes to onboarding CLAUDE.md so all other onboarding
-    skills have required context. Run once at setup; use customize for updates.
-  intended_tasks:
-    - Full onboarding profile setup (--full)
-    - Abbreviated 15-minute setup writing minimum required fields (--quick)
-    - Full profile redo (--redo)
-    - Integration check only (--check-integrations)
-    - Company profile section only (--redo-company-profile)
-    - Specific section update (--section <name>)
-  out_of_scope:
-    - CSM-level account data (use csm.cold-start-interview)
-    - Rev-ops metric configuration (use rev-ops.cold-start-interview)
-  invocation_cues:
-    - "set up onboarding"
-    - "configure onboarding"
-    - "onboarding profile"
-    - "onboarding cold start"
-  anti_cues:
-    - Profile already configured and needs a targeted update (use customize)
-  priority: high
-  argument_hint: "[--full | --quick | --redo | --check-integrations | --redo-company-profile | --section <name>]"
-  required_context:
-    - None (generates the profile)
-  consumes_files: []
-  produces_artifacts:
-    - onboarding/CLAUDE.md (complete practice profile)
-  tools_used:
-    - CRM connector (optional — auto-populate company profile)
-  related_skills:
-    - onboarding.customize
-  execution_profile:
-    pre_flight: no pre-flight — this IS the setup skill
-    connector_behavior: CRM pre-fill offered; falls back to manual entry
-  constraints:
-    - Only writes to onboarding/CLAUDE.md — no other system writes
-  risk_level: low
-  approval_needed: false
-  success_criteria:
-    - onboarding CLAUDE.md written with all required sections populated
-    - No placeholder values remaining in required fields
-  known_failure_modes:
-    - User skips required fields — downstream skills fallback to generic defaults
-    - Profile written with stale CRM data — validate with --check-integrations
+  - id: onboarding.cold-start-interview
+    name: cold-start-interview
+    version: "1.0.0"
+    category: onboarding
+    owner: onboarding
+    config_skill: true
+    summary: >
+      First-time setup for the onboarding practice profile. Collects role, onboarding
+      model, segment configuration, TtV targets, milestone definitions, success criteria
+      model, kickoff and handoff format, escalation matrix, integrations, and CS
+      methodology preferences. Writes to onboarding CLAUDE.md so all other onboarding
+      skills have required context. Run once at setup; use customize for updates.
+    intended_tasks:
+      - Full onboarding profile setup (--full)
+      - Abbreviated 15-minute setup writing minimum required fields (--quick)
+      - Full profile redo (--redo)
+      - Integration check only (--check-integrations)
+      - Company profile section only (--redo-company-profile)
+      - Specific section update (--section <name>)
+    out_of_scope:
+      - CSM-level account data (use csm.cold-start-interview)
+      - Rev-ops metric configuration (use rev-ops.cold-start-interview)
+    invocation_cues:
+      - "set up onboarding"
+      - "configure onboarding"
+      - "onboarding profile"
+      - "onboarding cold start"
+    anti_cues:
+      - Profile already configured and needs a targeted update (use customize)
+    priority: high
+    argument_hint: "[--full | --quick | --redo | --check-integrations | --redo-company-profile | --section <name>]"
+    required_context:
+      - None (generates the profile)
+    consumes_files: []
+    produces_artifacts:
+      - onboarding/CLAUDE.md (complete practice profile)
+    tools_used:
+      - CRM connector (optional — auto-populate company profile)
+    related_skills:
+      - onboarding.customize
+    execution_profile:
+      pre_flight: no pre-flight — this IS the setup skill
+      connector_behavior: CRM pre-fill offered; falls back to manual entry
+    constraints:
+      - Only writes to onboarding/CLAUDE.md — no other system writes
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - onboarding CLAUDE.md written with all required sections populated
+      - No placeholder values remaining in required fields
+    known_failure_modes:
+      - User skips required fields — downstream skills fallback to generic defaults
+      - Profile written with stale CRM data — validate with --check-integrations
 
-- id: onboarding.customize
-  name: customize
-  version: "1.0.0"
-  category: onboarding
-  owner: onboarding
-  config_skill: true
-  summary: >
-    View and update the onboarding plugin configuration — milestone targets, TtV
-    benchmarks, success criteria format, escalation contacts, graduation criteria,
-    and CS methodology references. Validates configuration for missing fields and
-    placeholder values before running other onboarding skills.
-  intended_tasks:
-    - Display current configuration with section-by-section status (--view, default)
-    - Update specific settings by section name (--update <section>)
-    - Restore a section to template defaults (--reset <section>)
-    - Validate configuration for completeness and consistency (--validate)
-  out_of_scope:
-    - Full profile rebuild (use cold-start-interview --redo)
-  invocation_cues:
-    - "update onboarding config"
-    - "change milestone targets"
-    - "onboarding settings"
-    - "view onboarding profile"
-    - "validate onboarding config"
-  anti_cues:
-    - Profile does not yet exist (use cold-start-interview)
-  priority: standard
-  argument_hint: "[--view | --update <section> | --reset <section> | --validate]"
-  required_context:
-    - onboarding CLAUDE.md (must exist)
-  consumes_files:
-    - onboarding/CLAUDE.md
-  produces_artifacts:
-    - Updated onboarding/CLAUDE.md
-    - Validation report (--validate)
-  tools_used: []
-  related_skills:
-    - onboarding.cold-start-interview
-  execution_profile:
-    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
-    connector_behavior: no connectors required
-  constraints:
-    - Only writes to onboarding/CLAUDE.md — no other system writes
-  risk_level: low
-  approval_needed: false
-  success_criteria:
-    - Requested section updated and written to profile
-    - Validation report identifies all missing and placeholder fields
-  known_failure_modes:
-    - Section name mismatch — user must reference exact section headings from --view output
+  - id: onboarding.customize
+    name: customize
+    version: "1.0.0"
+    category: onboarding
+    owner: onboarding
+    config_skill: true
+    summary: >
+      View and update the onboarding plugin configuration — milestone targets, TtV
+      benchmarks, success criteria format, escalation contacts, graduation criteria,
+      and CS methodology references. Validates configuration for missing fields and
+      placeholder values before running other onboarding skills.
+    intended_tasks:
+      - Display current configuration with section-by-section status (--view, default)
+      - Update specific settings by section name (--update <section>)
+      - Restore a section to template defaults (--reset <section>)
+      - Validate configuration for completeness and consistency (--validate)
+    out_of_scope:
+      - Full profile rebuild (use cold-start-interview --redo)
+    invocation_cues:
+      - "update onboarding config"
+      - "change milestone targets"
+      - "onboarding settings"
+      - "view onboarding profile"
+      - "validate onboarding config"
+    anti_cues:
+      - Profile does not yet exist (use cold-start-interview)
+    priority: standard
+    argument_hint: "[--view | --update <section> | --reset <section> | --validate]"
+    required_context:
+      - onboarding CLAUDE.md (must exist)
+    consumes_files:
+      - onboarding/CLAUDE.md
+    produces_artifacts:
+      - Updated onboarding/CLAUDE.md
+      - Validation report (--validate)
+    tools_used: []
+    related_skills:
+      - onboarding.cold-start-interview
+    execution_profile:
+      pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+      connector_behavior: no connectors required
+    constraints:
+      - Only writes to onboarding/CLAUDE.md — no other system writes
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Requested section updated and written to profile
+      - Validation report identifies all missing and placeholder fields
+    known_failure_modes:
+      - Section name mismatch — user must reference exact section headings from --view output
 
-- id: onboarding.handoff-doc
-  name: handoff-doc
-  version: "1.0.0"
-  category: onboarding
-  owner: onboarding
-  summary: >
-    Generate the onboarding graduation handoff document — structured transfer of
-    account context from the onboarding CSM to the post-onboarding team. Reads
-    graduation criteria, escalation contacts, and handoff format from the onboarding
-    profile. Pulls account history from CRM and PM connectors if available.
-  intended_tasks:
-    - Full handoff document for graduation (--draft, default)
-    - Graduation readiness check before generating the document (--readiness)
-    - Abbreviated handoff brief for verbal or async transfer (--summary)
-  out_of_scope:
-    - Notifying the receiving team (no autonomous messaging)
-    - Modifying CRM records
-  invocation_cues:
-    - "handoff"
-    - "graduation"
-    - "transfer account"
-    - "onboarding complete"
-    - "handoff doc"
-  anti_cues:
-    - Mid-onboarding status update (use onboarding-plan --summary)
-    - Blocker escalation (use blocker-review --escalate)
-  priority: standard
-  argument_hint: "[<account-name-or-ID>] [--draft | --readiness | --summary]"
-  required_context:
-    - onboarding CLAUDE.md (graduation criteria, handoff format, escalation contacts)
-  consumes_files:
-    - onboarding/CLAUDE.md
-  produces_artifacts:
-    - Graduation handoff document (--draft)
-    - Readiness assessment with gap list (--readiness)
-    - Abbreviated handoff brief (--summary)
-  tools_used:
-    - CRM connector (optional)
-    - PM connector (optional)
-  related_skills:
-    - onboarding.success-criteria
-    - onboarding.milestone-tracker
-  execution_profile:
-    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
-    connector_behavior: falls back to CSM input if CRM/PM unavailable
-  constraints:
-    - No autonomous outreach to receiving team
-    - Graduation criteria sourced from profile only
-  risk_level: low
-  approval_needed: false
-  success_criteria:
-    - Complete handoff document produced with all required sections
-    - Readiness check identifies open items blocking graduation (--readiness)
-  known_failure_modes:
-    - Graduation criteria not configured — document uses generic template
-    - CRM unavailable — account history section requires manual input
+  - id: onboarding.handoff-doc
+    name: handoff-doc
+    version: "1.0.0"
+    category: onboarding
+    owner: onboarding
+    summary: >
+      Generate the onboarding graduation handoff document — structured transfer of
+      account context from the onboarding CSM to the post-onboarding team. Reads
+      graduation criteria, escalation contacts, and handoff format from the onboarding
+      profile. Pulls account history from CRM and PM connectors if available.
+    intended_tasks:
+      - Full handoff document for graduation (--draft, default)
+      - Graduation readiness check before generating the document (--readiness)
+      - Abbreviated handoff brief for verbal or async transfer (--summary)
+    out_of_scope:
+      - Notifying the receiving team (no autonomous messaging)
+      - Modifying CRM records
+    invocation_cues:
+      - "handoff"
+      - "graduation"
+      - "transfer account"
+      - "onboarding complete"
+      - "handoff doc"
+    anti_cues:
+      - Mid-onboarding status update (use onboarding-plan --summary)
+      - Blocker escalation (use blocker-review --escalate)
+    priority: standard
+    argument_hint: "[<account-name-or-ID>] [--draft | --readiness | --summary]"
+    required_context:
+      - onboarding CLAUDE.md (graduation criteria, handoff format, escalation contacts)
+    consumes_files:
+      - onboarding/CLAUDE.md
+    produces_artifacts:
+      - Graduation handoff document (--draft)
+      - Readiness assessment with gap list (--readiness)
+      - Abbreviated handoff brief (--summary)
+    tools_used:
+      - CRM connector (optional)
+      - PM connector (optional)
+    related_skills:
+      - onboarding.success-criteria
+      - onboarding.milestone-tracker
+    execution_profile:
+      pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+      connector_behavior: falls back to CSM input if CRM/PM unavailable
+    constraints:
+      - No autonomous outreach to receiving team
+      - Graduation criteria sourced from profile only
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Complete handoff document produced with all required sections
+      - Readiness check identifies open items blocking graduation (--readiness)
+    known_failure_modes:
+      - Graduation criteria not configured — document uses generic template
+      - CRM unavailable — account history section requires manual input
 
-- id: onboarding.kickoff-prep
-  name: kickoff-prep
-  version: "1.0.0"
-  category: onboarding
-  owner: onboarding
-  summary: >
-    Prepare for an onboarding kickoff — generates a customized customer-facing
-    agenda and an internal pre-kickoff checklist. Reads kickoff format, required
-    attendees, onboarding model, and milestone targets from the onboarding profile.
-    Pulls account context from CRM if available.
-  intended_tasks:
-    - Customer-facing agenda and internal prep checklist together (--prep, default)
-    - Customer-facing agenda only (--agenda)
-    - Internal prep checklist only (--checklist)
-  out_of_scope:
-    - Post-kickoff plan generation (use onboarding-plan --draft)
-    - Sending the agenda to the customer
-  invocation_cues:
-    - "kickoff prep"
-    - "prepare kickoff"
-    - "kickoff agenda"
-    - "kickoff checklist"
-  anti_cues:
-    - Post-kickoff planning (use onboarding-plan)
-    - Handoff from onboarding (use handoff-doc)
-  priority: standard
-  argument_hint: "[<account-name-or-ID>] [--prep | --agenda | --checklist]"
-  required_context:
-    - onboarding CLAUDE.md (kickoff format, required attendees, onboarding model)
-  consumes_files:
-    - onboarding/CLAUDE.md
-  produces_artifacts:
-    - Customer-facing kickoff agenda draft
-    - Internal pre-kickoff preparation checklist
-  tools_used:
-    - CRM connector (optional)
-  related_skills:
-    - onboarding.onboarding-plan
-    - onboarding.success-criteria
-  execution_profile:
-    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
-    connector_behavior: CRM used for account context; falls back to manual input
-  constraints:
-    - Agenda is a draft only — no autonomous send to customer
-    - Attendee requirements sourced from profile
-  risk_level: low
-  approval_needed: false
-  success_criteria:
-    - Agenda calibrated to onboarding model and segment
-    - Internal checklist covers pre-call logistics, attendee confirmation, materials readiness
-  known_failure_modes:
-    - Kickoff format not configured — uses generic template
-    - CRM unavailable — account section requires manual input
+  - id: onboarding.kickoff-prep
+    name: kickoff-prep
+    version: "1.0.0"
+    category: onboarding
+    owner: onboarding
+    summary: >
+      Prepare for an onboarding kickoff — generates a customized customer-facing
+      agenda and an internal pre-kickoff checklist. Reads kickoff format, required
+      attendees, onboarding model, and milestone targets from the onboarding profile.
+      Pulls account context from CRM if available.
+    intended_tasks:
+      - Customer-facing agenda and internal prep checklist together (--prep, default)
+      - Customer-facing agenda only (--agenda)
+      - Internal prep checklist only (--checklist)
+    out_of_scope:
+      - Post-kickoff plan generation (use onboarding-plan --draft)
+      - Sending the agenda to the customer
+    invocation_cues:
+      - "kickoff prep"
+      - "prepare kickoff"
+      - "kickoff agenda"
+      - "kickoff checklist"
+    anti_cues:
+      - Post-kickoff planning (use onboarding-plan)
+      - Handoff from onboarding (use handoff-doc)
+    priority: standard
+    argument_hint: "[<account-name-or-ID>] [--prep | --agenda | --checklist]"
+    required_context:
+      - onboarding CLAUDE.md (kickoff format, required attendees, onboarding model)
+    consumes_files:
+      - onboarding/CLAUDE.md
+    produces_artifacts:
+      - Customer-facing kickoff agenda draft
+      - Internal pre-kickoff preparation checklist
+    tools_used:
+      - CRM connector (optional)
+    related_skills:
+      - onboarding.onboarding-plan
+      - onboarding.success-criteria
+    execution_profile:
+      pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+      connector_behavior: CRM used for account context; falls back to manual input
+    constraints:
+      - Agenda is a draft only — no autonomous send to customer
+      - Attendee requirements sourced from profile
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Agenda calibrated to onboarding model and segment
+      - Internal checklist covers pre-call logistics, attendee confirmation, materials readiness
+    known_failure_modes:
+      - Kickoff format not configured — uses generic template
+      - CRM unavailable — account section requires manual input
 
-- id: onboarding.milestone-tracker
-  name: milestone-tracker
-  version: "1.0.0"
-  category: onboarding
-  owner: onboarding
-  summary: >
-    Track milestone progress across one account or the full onboarding portfolio.
-    Reads milestone framework, at-risk signals, and escalation thresholds from the
-    onboarding profile. Pulls current milestone status from PM connector (Asana,
-    Linear, Jira, or Monday) if configured.
-  intended_tasks:
-    - Current-state milestone view for one account (--status, default)
-    - Milestone health summary across all active onboarding accounts (--portfolio)
-    - At-risk and overdue milestones with recommended actions (--flag)
-  out_of_scope:
-    - Modifying milestones or task assignments in PM connector
-    - TtV performance analysis (use ttv-analysis)
-  invocation_cues:
-    - "milestone status"
-    - "milestone health"
-    - "track onboarding"
-    - "at-risk milestones"
-    - "overdue milestones"
-  anti_cues:
-    - Blocker diagnosis (use blocker-review)
-    - TtV performance analysis (use ttv-analysis)
-  priority: standard
-  argument_hint: "[<account-name-or-ID>] [--status | --portfolio | --flag]"
-  required_context:
-    - onboarding CLAUDE.md (milestone framework, at-risk signals, escalation thresholds)
-  consumes_files:
-    - onboarding/CLAUDE.md
-  produces_artifacts:
-    - Milestone health snapshot (--status or --portfolio)
-    - At-risk account list with recommended actions (--flag)
-  tools_used:
-    - PM connector: Asana, Linear, Jira, or Monday (optional)
-    - CRM connector (optional)
-  related_skills:
-    - onboarding.blocker-review
-    - onboarding.ttv-analysis
-    - onboarding.onboarding-plan
-  execution_profile:
-    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
-    connector_behavior: PM connector primary; falls back to CSM input
-  constraints:
-    - Read-only — no PM connector writes
-    - At-risk thresholds sourced from profile
-  risk_level: low
-  approval_needed: false
-  success_criteria:
-    - Milestone completion status current per PM connector or CSM input
-    - At-risk accounts surfaced with threshold-based classification (--flag)
-  known_failure_modes:
-    - PM connector not configured — all milestone data requires manual input
-    - Milestone framework not defined in profile — tracker uses generic milestone names
+  - id: onboarding.milestone-tracker
+    name: milestone-tracker
+    version: "1.0.0"
+    category: onboarding
+    owner: onboarding
+    summary: >
+      Track milestone progress across one account or the full onboarding portfolio.
+      Reads milestone framework, at-risk signals, and escalation thresholds from the
+      onboarding profile. Pulls current milestone status from PM connector (Asana,
+      Linear, Jira, or Monday) if configured.
+    intended_tasks:
+      - Current-state milestone view for one account (--status, default)
+      - Milestone health summary across all active onboarding accounts (--portfolio)
+      - At-risk and overdue milestones with recommended actions (--flag)
+    out_of_scope:
+      - Modifying milestones or task assignments in PM connector
+      - TtV performance analysis (use ttv-analysis)
+    invocation_cues:
+      - "milestone status"
+      - "milestone health"
+      - "track onboarding"
+      - "at-risk milestones"
+      - "overdue milestones"
+    anti_cues:
+      - Blocker diagnosis (use blocker-review)
+      - TtV performance analysis (use ttv-analysis)
+    priority: standard
+    argument_hint: "[<account-name-or-ID>] [--status | --portfolio | --flag]"
+    required_context:
+      - onboarding CLAUDE.md (milestone framework, at-risk signals, escalation thresholds)
+    consumes_files:
+      - onboarding/CLAUDE.md
+    produces_artifacts:
+      - Milestone health snapshot (--status or --portfolio)
+      - At-risk account list with recommended actions (--flag)
+    tools_used:
+      - PM connector: Asana, Linear, Jira, or Monday (optional)
+      - CRM connector (optional)
+    related_skills:
+      - onboarding.blocker-review
+      - onboarding.ttv-analysis
+      - onboarding.onboarding-plan
+    execution_profile:
+      pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+      connector_behavior: PM connector primary; falls back to CSM input
+    constraints:
+      - Read-only — no PM connector writes
+      - At-risk thresholds sourced from profile
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Milestone completion status current per PM connector or CSM input
+      - At-risk accounts surfaced with threshold-based classification (--flag)
+    known_failure_modes:
+      - PM connector not configured — all milestone data requires manual input
+      - Milestone framework not defined in profile — tracker uses generic milestone names
 
-- id: onboarding.onboarding-plan
-  name: onboarding-plan
-  version: "1.0.0"
-  category: onboarding
-  owner: onboarding
-  summary: >
-    Generate, update, or summarize the customer-facing onboarding plan document —
-    the primary shared artifact between the CSM and customer team. Defines milestone
-    timeline, ownership per stage, first priorities, communication cadence, and
-    success criteria placeholder. Reads onboarding model, milestone framework,
-    duration targets, and plan format from the onboarding profile.
-  intended_tasks:
-    - Generate a complete plan after kickoff (--draft, default)
-    - Revise the plan after a milestone completes or scope changes (--update)
-    - Abbreviated current-status view for async stakeholder updates (--summary)
-  out_of_scope:
-    - Sending the plan to the customer
-    - Modifying PM connector tasks
-  invocation_cues:
-    - "onboarding plan"
-    - "draft plan"
-    - "update plan"
-    - "plan document"
-  anti_cues:
-    - Kickoff preparation (use kickoff-prep)
-    - Success criteria definition session (use success-criteria --define)
-  priority: standard
-  argument_hint: "[<account-name-or-ID>] [--draft | --update | --summary]"
-  required_context:
-    - onboarding CLAUDE.md (onboarding model, milestone framework, plan format)
-  consumes_files:
-    - onboarding/CLAUDE.md
-  produces_artifacts:
-    - Customer-facing onboarding plan document (--draft)
-    - Revised plan with change log (--update)
-    - Status summary for async updates (--summary)
-  tools_used:
-    - CRM connector (optional)
-    - PM connector (optional — milestone status for --update)
-  related_skills:
-    - onboarding.kickoff-prep
-    - onboarding.success-criteria
-    - onboarding.milestone-tracker
-  execution_profile:
-    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
-    connector_behavior: CRM for account context; PM for milestone status on --update
-  constraints:
-    - Document is a draft — no autonomous delivery to customer
-  risk_level: low
-  approval_needed: false
-  success_criteria:
-    - Plan includes milestone timeline, ownership, communication cadence, and success criteria placeholder
-    - Revised plan tracks change reason and updated dates (--update)
-  known_failure_modes:
-    - Plan format not configured — uses generic template
-    - CRM unavailable — contract dates and stakeholders require manual input
+  - id: onboarding.onboarding-plan
+    name: onboarding-plan
+    version: "1.0.0"
+    category: onboarding
+    owner: onboarding
+    summary: >
+      Generate, update, or summarize the customer-facing onboarding plan document —
+      the primary shared artifact between the CSM and customer team. Defines milestone
+      timeline, ownership per stage, first priorities, communication cadence, and
+      success criteria placeholder. Reads onboarding model, milestone framework,
+      duration targets, and plan format from the onboarding profile.
+    intended_tasks:
+      - Generate a complete plan after kickoff (--draft, default)
+      - Revise the plan after a milestone completes or scope changes (--update)
+      - Abbreviated current-status view for async stakeholder updates (--summary)
+    out_of_scope:
+      - Sending the plan to the customer
+      - Modifying PM connector tasks
+    invocation_cues:
+      - "onboarding plan"
+      - "draft plan"
+      - "update plan"
+      - "plan document"
+    anti_cues:
+      - Kickoff preparation (use kickoff-prep)
+      - Success criteria definition session (use success-criteria --define)
+    priority: standard
+    argument_hint: "[<account-name-or-ID>] [--draft | --update | --summary]"
+    required_context:
+      - onboarding CLAUDE.md (onboarding model, milestone framework, plan format)
+    consumes_files:
+      - onboarding/CLAUDE.md
+    produces_artifacts:
+      - Customer-facing onboarding plan document (--draft)
+      - Revised plan with change log (--update)
+      - Status summary for async updates (--summary)
+    tools_used:
+      - CRM connector (optional)
+      - PM connector (optional — milestone status for --update)
+    related_skills:
+      - onboarding.kickoff-prep
+      - onboarding.success-criteria
+      - onboarding.milestone-tracker
+    execution_profile:
+      pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+      connector_behavior: CRM for account context; PM for milestone status on --update
+    constraints:
+      - Document is a draft — no autonomous delivery to customer
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Plan includes milestone timeline, ownership, communication cadence, and success criteria placeholder
+      - Revised plan tracks change reason and updated dates (--update)
+    known_failure_modes:
+      - Plan format not configured — uses generic template
+      - CRM unavailable — contract dates and stakeholders require manual input
 
-- id: onboarding.success-criteria
-  name: success-criteria
-  version: "1.0.0"
-  category: onboarding
-  owner: onboarding
-  summary: >
-    Define, refine, and track onboarding success criteria with the customer.
-    Produces a structured success criteria document — typically 3–5 measurable
-    outcomes the customer commits to achieving by end of onboarding. Reads
-    criteria format, review cadence, and methodology from the onboarding profile.
-  intended_tasks:
-    - Criteria definition session from scratch (--define, default)
-    - Adjust existing criteria after scope change (--refine)
-    - Progress assessment against confirmed criteria (--review)
-    - Customer-facing summary without internal notes (--export)
-  out_of_scope:
-    - Revenue or expansion metrics (use renewals or rev-ops skills)
-    - Full onboarding plan (use onboarding-plan)
-  invocation_cues:
-    - "success criteria"
-    - "define outcomes"
-    - "customer outcomes"
-    - "onboarding goals"
-  anti_cues:
-    - TtV performance analysis (use ttv-analysis)
-    - Graduation readiness (use handoff-doc --readiness)
-  priority: standard
-  argument_hint: "[<account-name-or-ID>] [--define | --refine | --review | --export]"
-  required_context:
-    - onboarding CLAUDE.md (criteria format, review cadence, methodology)
-  consumes_files:
-    - onboarding/CLAUDE.md
-  produces_artifacts:
-    - Structured success criteria document (--define)
-    - Refined criteria with change log (--refine)
-    - Progress assessment against criteria (--review)
-    - Customer-facing criteria summary (--export)
-  tools_used:
-    - CRM connector (optional)
-  related_skills:
-    - onboarding.onboarding-plan
-    - onboarding.handoff-doc
-  execution_profile:
-    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
-    connector_behavior: CRM used for account context; falls back to manual input
-  constraints:
-    - Criteria are 3–5 measurable outcomes; more requires profile override
-    - Internal review notes excluded from --export output
-  risk_level: low
-  approval_needed: false
-  success_criteria:
-    - Criteria document contains 3–5 measurable customer-agreed outcomes
-    - Progress assessment maps each criterion to current evidence (--review)
-  known_failure_modes:
-    - Criteria format not configured — uses generic template
-    - Customer declines measurable outcomes — document flagged for CSM review
+  - id: onboarding.success-criteria
+    name: success-criteria
+    version: "1.0.0"
+    category: onboarding
+    owner: onboarding
+    summary: >
+      Define, refine, and track onboarding success criteria with the customer.
+      Produces a structured success criteria document — typically 3–5 measurable
+      outcomes the customer commits to achieving by end of onboarding. Reads
+      criteria format, review cadence, and methodology from the onboarding profile.
+    intended_tasks:
+      - Criteria definition session from scratch (--define, default)
+      - Adjust existing criteria after scope change (--refine)
+      - Progress assessment against confirmed criteria (--review)
+      - Customer-facing summary without internal notes (--export)
+    out_of_scope:
+      - Revenue or expansion metrics (use renewals or rev-ops skills)
+      - Full onboarding plan (use onboarding-plan)
+    invocation_cues:
+      - "success criteria"
+      - "define outcomes"
+      - "customer outcomes"
+      - "onboarding goals"
+    anti_cues:
+      - TtV performance analysis (use ttv-analysis)
+      - Graduation readiness (use handoff-doc --readiness)
+    priority: standard
+    argument_hint: "[<account-name-or-ID>] [--define | --refine | --review | --export]"
+    required_context:
+      - onboarding CLAUDE.md (criteria format, review cadence, methodology)
+    consumes_files:
+      - onboarding/CLAUDE.md
+    produces_artifacts:
+      - Structured success criteria document (--define)
+      - Refined criteria with change log (--refine)
+      - Progress assessment against criteria (--review)
+      - Customer-facing criteria summary (--export)
+    tools_used:
+      - CRM connector (optional)
+    related_skills:
+      - onboarding.onboarding-plan
+      - onboarding.handoff-doc
+    execution_profile:
+      pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+      connector_behavior: CRM used for account context; falls back to manual input
+    constraints:
+      - Criteria are 3–5 measurable outcomes; more requires profile override
+      - Internal review notes excluded from --export output
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Criteria document contains 3–5 measurable customer-agreed outcomes
+      - Progress assessment maps each criterion to current evidence (--review)
+    known_failure_modes:
+      - Criteria format not configured — uses generic template
+      - Customer declines measurable outcomes — document flagged for CSM review
 
-- id: onboarding.ttv-analysis
-  name: ttv-analysis
-  version: "1.0.0"
-  category: onboarding
-  owner: onboarding
-  summary: >
-    Time-to-value analysis for onboarding performance — single account or portfolio.
-    Reads TtV targets by segment and milestone framework from the onboarding profile.
-    Analyzes actual milestone completion dates against targets to surface pace signals
-    and produce recommendations for accounts running behind. All TtV outputs are
-    labeled as internal planning targets — never customer commitments.
-  intended_tasks:
-    - Single-account TtV assessment (--account, default)
-    - Comparative TtV view across closed or active onboarding accounts (--portfolio)
-    - Common delay pattern identification with intervention recommendations (--patterns)
-  out_of_scope:
-    - Presenting TtV data to customers as commitments
-    - Modifying PM connector data
-  invocation_cues:
-    - "time to value"
-    - "TtV"
-    - "onboarding pace"
-    - "behind on onboarding"
-    - "delay patterns"
-  anti_cues:
-    - Real-time milestone status (use milestone-tracker)
-    - Blocker diagnosis (use blocker-review)
-  priority: standard
-  argument_hint: "[<account-name-or-ID>] [--account | --portfolio | --patterns]"
-  required_context:
-    - onboarding CLAUDE.md (TtV targets by segment, milestone framework)
-  consumes_files:
-    - onboarding/CLAUDE.md
-  produces_artifacts:
-    - TtV assessment with pace rating and variance (--account)
-    - Portfolio TtV comparison table (--portfolio)
-    - Delay pattern report with intervention recommendations (--patterns)
-  tools_used:
-    - PM connector (optional — actual milestone dates)
-    - CRM connector (optional — segment classification)
-  related_skills:
-    - onboarding.milestone-tracker
-    - onboarding.blocker-review
-  execution_profile:
-    pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
-    connector_behavior: PM connector for actual dates; falls back to CSM input
-  constraints:
-    - All TtV outputs labeled as internal planning targets — not customer commitments
-    - Targets sourced from profile; no hardcoded benchmarks
-  risk_level: low
-  approval_needed: false
-  success_criteria:
-    - Variance from TtV target computed and classified (on-track / at-risk / delayed)
-    - Delay pattern report identifies top 3 factors with recommended interventions (--patterns)
-  known_failure_modes:
-    - TtV targets not configured by segment — analysis uses generic single-tier target
-    - Milestone dates unavailable from PM — analysis relies on CSM recall
+  - id: onboarding.ttv-analysis
+    name: ttv-analysis
+    version: "1.0.0"
+    category: onboarding
+    owner: onboarding
+    summary: >
+      Time-to-value analysis for onboarding performance — single account or portfolio.
+      Reads TtV targets by segment and milestone framework from the onboarding profile.
+      Analyzes actual milestone completion dates against targets to surface pace signals
+      and produce recommendations for accounts running behind. All TtV outputs are
+      labeled as internal planning targets — never customer commitments.
+    intended_tasks:
+      - Single-account TtV assessment (--account, default)
+      - Comparative TtV view across closed or active onboarding accounts (--portfolio)
+      - Common delay pattern identification with intervention recommendations (--patterns)
+    out_of_scope:
+      - Presenting TtV data to customers as commitments
+      - Modifying PM connector data
+    invocation_cues:
+      - "time to value"
+      - "TtV"
+      - "onboarding pace"
+      - "behind on onboarding"
+      - "delay patterns"
+    anti_cues:
+      - Real-time milestone status (use milestone-tracker)
+      - Blocker diagnosis (use blocker-review)
+    priority: standard
+    argument_hint: "[<account-name-or-ID>] [--account | --portfolio | --patterns]"
+    required_context:
+      - onboarding CLAUDE.md (TtV targets by segment, milestone framework)
+    consumes_files:
+      - onboarding/CLAUDE.md
+    produces_artifacts:
+      - TtV assessment with pace rating and variance (--account)
+      - Portfolio TtV comparison table (--portfolio)
+      - Delay pattern report with intervention recommendations (--patterns)
+    tools_used:
+      - PM connector (optional — actual milestone dates)
+      - CRM connector (optional — segment classification)
+    related_skills:
+      - onboarding.milestone-tracker
+      - onboarding.blocker-review
+    execution_profile:
+      pre_flight: reads onboarding CLAUDE.md; routes to cold-start-interview if missing
+      connector_behavior: PM connector for actual dates; falls back to CSM input
+    constraints:
+      - All TtV outputs labeled as internal planning targets — not customer commitments
+      - Targets sourced from profile; no hardcoded benchmarks
+    risk_level: low
+    approval_needed: false
+    success_criteria:
+      - Variance from TtV target computed and classified (on-track / at-risk / delayed)
+      - Delay pattern report identifies top 3 factors with recommended interventions (--patterns)
+    known_failure_modes:
+      - TtV targets not configured by segment — analysis uses generic single-tier target
+      - Milestone dates unavailable from PM — analysis relies on CSM recall
 
-  # ── RENEWALS DOMAIN ──────────────────────────────────────────────────────────
+    # ── RENEWALS DOMAIN ──────────────────────────────────────────────────────────
 
   - id: renewals.churn-rca
     name: churn-rca
@@ -2152,8 +2152,7 @@ skills:
       latency: low
 
     constraints:
-      - --validate checks four consistency rules: GRR/NRR inversion, discount floor vs anchor,
-        escalation SLA vs renewal window, strategic threshold vs deal size
+      - --validate checks four consistency rules: GRR/NRR inversion, discount floor vs anchor, escalation SLA vs renewal window, strategic threshold vs deal size
       - Edits to company-profile.md affect all domains — confirm scope before writing
       - Cannot create CLAUDE.md if missing — routes to cold-start-interview
     risk_level: low
@@ -2731,7 +2730,7 @@ skills:
 
 
 # ============================================================
-# DOMAIN: rev-ops (34 skills)
+# DOMAIN: rev-ops (33 skills)
 # ============================================================
 
   - id: rev-ops.annual-planning-workflow
@@ -2743,7 +2742,7 @@ skills:
     summary: >
       Orchestrates the 7-phase annual GTM planning cycle — from scope setup through
       board ratification. Coordinates scenario-modeling, quota-sensitivity-analysis,
-      unit-of-growth-calculator, territory-optimization, and revenue-brief-generation
+      unit-of-growth-calculator, and revenue-brief-generation
       as sub-agents. Each phase has a named human approval gate; the skill never
       advances past a gate without explicit user confirmation.
     intended_tasks:
@@ -2782,14 +2781,12 @@ skills:
       - scenario-modeling (sub-agent)
       - quota-sensitivity-analysis (sub-agent)
       - unit-of-growth-calculator (sub-agent)
-      - territory-optimization (sub-agent)
       - revenue-brief-generation (sub-agent)
     related_skills:
       - rev-ops.mid-year-replan-triggering
       - rev-ops.scenario-modeling
       - rev-ops.quota-sensitivity-analysis
       - rev-ops.unit-of-growth-calculator
-      - rev-ops.territory-optimization
     execution_profile:
       complexity: T3
       typical_turns: 15-25
@@ -2858,7 +2855,6 @@ skills:
 
     tools_used: []
     related_skills:
-      - rev-ops.territory-optimization
       - rev-ops.quota-sensitivity-analysis
       - rev-ops.annual-planning-workflow
     execution_profile:
@@ -2876,7 +2872,7 @@ skills:
     success_criteria:
       - Audience-appropriate messaging produced for all specified audiences
       - Rationale and FAQ sections present
-      - [DRAFT] status signal on all outputs
+      - "[DRAFT] status signal on all outputs"
     known_failure_modes:
       - Missing change rationale → messaging lacks credibility; request before drafting
       - Audience list not specified → ask before producing undifferentiated copy
@@ -2909,7 +2905,6 @@ skills:
       - "how much capacity do these deals consume"
     anti_cues:
       - Requests for hiring recommendations — output is signals, not mandates
-      - Territory fairness analysis — use territory-optimization
     priority: medium
     argument_hint: "Provide closed-won deal list with ARR; optionally specify pod structure"
 
@@ -2960,8 +2955,7 @@ skills:
       Produces the completed CLAUDE.md; does not execute any domain task itself.
     intended_tasks:
       - Collect rev-ops domain configuration via structured interview
-      - Populate CLAUDE.md with: ARR baseline, pipeline structure, CRM source of truth,
-        forecast cadence, comp plan details, territory structure, data authority hierarchy
+      - Populate CLAUDE.md with: ARR baseline, pipeline structure, CRM source of truth, forecast cadence, comp plan details, territory structure, data authority hierarchy
       - Validate completeness before writing profile
     out_of_scope:
       - Executing rev-ops domain tasks (routes to domain skill after profile is written)
@@ -5133,87 +5127,6 @@ skills:
     known_failure_modes:
       - Stage history not available in HubSpot → declare unavailable; cannot complete audit
       - Historical stage median not established (<4Q data) → use avg_sales_cycle_days as proxy; flag as estimate
-
-  - id: rev-ops.territory-optimization
-    name: territory-optimization
-    version: 1.0.0
-    domain: rev-ops
-    category: planning
-    owner: rev-ops-lead
-
-    summary: >
-      Evaluates territory fairness across reps on four dimensions: TAM coverage, historical
-      attainment, account density, and whitespace. Proposes recarving when imbalances exceed
-      threshold. All proposals are DRAFT until dual-confirmed by RevOps lead and Sales lead.
-      Never finalizes territory changes autonomously.
-
-    intended_tasks:
-      - Score territory fairness across all AE territories on four dimensions
-      - Propose specific account recarving recommendations to address imbalances
-      - Surface attainment variance potentially explained by territory quality vs. rep performance
-
-    out_of_scope:
-      - Finalizing territory changes (G4 — requires dual confirmation by RevOps + Sales leadership)
-      - Headcount decisions (territory analysis is structural input, not hiring mandate)
-
-    invocation_cues:
-      - "territory balance"
-      - "recarve territories"
-      - "territory fairness"
-      - "territory analysis"
-      - "rep territory review"
-
-    anti_cues:
-      - Individual rep performance coaching (structural tool, not rep-level)
-      - Quota modeling (route to quota-sensitivity-analysis)
-
-    priority: standard
-    argument_hint: "Standalone or --inside annual-planning-workflow"
-
-    required_context:
-      - HubSpot account distribution data by rep
-      - current_ae_count, primary_segment, avg_deal_acv from practice profile
-      - Historical attainment by rep (trailing 4Q)
-
-    consumes_files:
-      - reference/revops-domain-model.md §9
-
-    produces_artifacts:
-      - Territory fairness scorecard (four dimensions × rep matrix)
-      - Recarving proposals (DRAFT — not final until dual-confirmed)
-
-    tools_used:
-      - HubSpot (account distribution read)
-
-    related_skills:
-      - rev-ops.annual-planning-workflow
-      - rev-ops.unit-of-growth-calculator
-      - rev-ops.quota-sensitivity-analysis
-
-    execution_profile:
-      reads_crm: true
-      writes_crm: false
-      reads_cs_platform: false
-      calls_llm: false
-      creates_linear_issue: false
-
-    constraints:
-      - G4 — every territory output labeled DRAFT until dual-confirmed by RevOps and Sales leadership
-      - G5 — structural analysis; Sales leadership owns territory decisions
-      - G2 — territory proposals do not constitute headcount decisions
-
-    risk_level: medium
-    approval_needed: true
-
-    success_criteria:
-      - All four fairness dimensions scored per rep
-      - Imbalance threshold breaches called out with evidence
-      - Recarving proposals include specific accounts/segments, rationale, and estimated attainment impact
-      - All output carries DRAFT label with dual-confirmation requirement stated
-
-    known_failure_modes:
-      - Account distribution not accessible from HubSpot → declare unavailable; cannot complete dimensional scoring
-      - Historical attainment by rep not available → flag attainment dimension as unscored; complete other three
 
   - id: rev-ops.unit-of-growth-calculator
     name: unit-of-growth-calculator

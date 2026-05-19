@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Compares submitted forecast to actual closed/won outcomes. Classifies variance by root cause: rep-level, deal-size band, stage-entry, seasonal, or product/segment. Surfaces systemic patterns — not one-off explanations. Minimum: 3 deals or 2 consecutive quarters before a pattern is surfaced. Triggers: 'why did we miss', 'forecast variance', 'call accuracy', 'forecast accuracy by rep', 'what caused the miss'."
 ---
 
+[PROPOSED]
+
 # Forecast Variance Analysis
 
 Traces the gap between what was called and what closed to its root cause.
@@ -14,6 +16,18 @@ One-off variance is noted but not classified as a pattern.
 
 **Reference:** Variance classification taxonomy → `../../../shared/revops-domain-model.md §4`
 **Config reads:** `current_arr`, `primary_segment`, `crm_system`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `current_arr`, `primary_segment`, `crm_system`
 
 ---
 
@@ -34,12 +48,44 @@ One-off variance is noted but not classified as a pattern.
 
 ## Reasoning Protocol
 
-1. Confirm activation — user is asking about forecast accuracy, miss analysis, or call quality
-2. Check HubSpot connector — multi-quarter history required; declare fallback if unavailable
-3. Confirm the period being analyzed (default: most recently closed quarter)
-4. Apply G6 — state data-as-of for all historical pipeline pulls
-5. Apply G1 — any forward-looking variance projection requires forecast language qualification
-6. Confirm output destination before delivering
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of forecast variance request is this?
+   - Single-quarter variance analysis (one period — total miss + root cause classification)
+   - Multi-quarter trend analysis (≥2Q — pattern detection across periods, rep accuracy trending)
+   - Rep call accuracy review (rep-level scorecard — submitted vs. actual by rep, trailing quarters)
+   - Root cause classification (pattern identification against taxonomy: rep-level, deal-size, stage-entry, seasonal, product/segment)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user asking about forecast accuracy, miss analysis, or call quality
+   2. Check HubSpot connector — multi-quarter history required; declare fallback if unavailable
+   3. Confirm the period being analyzed (default: most recently closed quarter)
+   4. Apply G6 — state data-as-of for all historical pipeline pulls
+   5. Apply G1 — any forward-looking variance projection requires forecast language qualification
+   6. Apply G5 — rep call accuracy scorecard is analytical input; manager owns the coaching response
+   7. Apply pattern confidence gate: ≥3 deals or ≥2 consecutive quarters before surfacing a classification
+
+3. **EXPERT CHECK**: What would a veteran RevOps forecast analyst verify first?
+   - Is the data-as-of timestamp declared before surfacing any variance pattern? Stale historical
+     reads may exclude deals that closed or slipped after the pull — declare data age upfront.
+   - Is the pattern confidence gate enforced before classifying variance? Below-threshold
+     observations are noise, not patterns — surfacing them as classifications misleads coaching.
+   - Is the rep accuracy scorecard framed as analytical input, not a performance directive?
+     Variance analysis surfaces what happened; the manager decides what to do about it.
+   - Is the submitted forecast source confirmed (HubSpot vs. user-provided spreadsheet)?
+     Mixed sources produce phantom variance that doesn't reflect actual call accuracy.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Surfacing HubSpot reads without data-as-of timestamp (G6 violation)
+   - Classifying variance as a systemic pattern below the ≥3-deal / ≥2Q confidence threshold
+   - Presenting rep accuracy scorecard as a performance directive rather than analytical input (G5 violation)
+   - Applying forward-looking language to variance projections without G1 qualification
+
+**After execution**, verify:
+- G6 data-as-of label applied to all HubSpot historical reads
+- G1 qualification present on any forward-looking projection derived from variance analysis
+- G5 qualifier present: rep scorecard is analytical input; manager owns the coaching response
+- Confidence: High when HubSpot is connected and multi-quarter data is current; Moderate when data is stale or connector is unavailable
 
 ---
 
@@ -90,7 +136,7 @@ Rep     Submitted    Actual    Variance    Accuracy
 
 ---
 
-## Output Format
+## Output
 
 ```
 FORECAST VARIANCE ANALYSIS — [Quarter/Period]
@@ -116,6 +162,12 @@ One-off variances (not classified as patterns):
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

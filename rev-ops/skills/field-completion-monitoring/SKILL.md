@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Tracks required field completion rates by stage gate across both Sales new-logo pipeline and CS expansion/renewal pipeline. Flags missing data that will break downstream forecasting before quarter close. CS expansion gates include OCV entry reference, commercial terms, and churn risk resolution. Escalates deals in Negotiation+ or Commercial Terms+ with missing fields 2 weeks before quarter close. Triggers: 'missing fields', 'field completion', 'gate fields', 'pre-quarter-close hygiene', 'what fields are missing', 'CS expansion field compliance'."
 ---
 
+[PROPOSED]
+
 # Field Completion Monitoring
 
 Stage gate field enforcement. Most important skill for forecast accuracy —
@@ -13,6 +15,18 @@ missing gate fields are the primary cause of forecast surprises.
 
 **Reference:** Handoff quality scoring → `../../../shared/revops-domain-model.md §10`
 **Config reads:** `crm_system`, `primary_segment`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `crm_system`, `primary_segment`
 
 ---
 
@@ -34,11 +48,44 @@ missing gate fields are the primary cause of forecast surprises.
 
 ## Reasoning Protocol
 
-1. Confirm activation — user requesting field completion check or pre-close hygiene
-2. Check HubSpot — field reads required; declare fallback if unavailable
-3. Apply G6 — data-as-of required
-4. For quarter-close escalations: confirm escalation path and owner (G7)
-5. Write-tier for any CRM field updates — proposals only
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of field completion request is this?
+   - Single rep or CSM field completion report (one person — completion rate by stage gate + deal-level gaps)
+   - Stage gate compliance scan (team or segment — aggregate completion rates across all gates)
+   - Pre-quarter-close hygiene check (Negotiation+ or Commercial Terms+ deals with missing fields, <2 weeks to quarter end)
+   - CS expansion pipeline field compliance (expansion/renewal deals moving through CS deal desk — equivalent gate enforcement to Sales)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user requesting field completion check or pre-close hygiene
+   2. Check HubSpot connector — field reads required for all pipeline objects; declare fallback if unavailable
+   3. Confirm scope before pulling data: Sales new-logo / CS expansion / both pipelines
+   4. Apply G6 — data-as-of on all HubSpot reads
+   5. Apply G7 — pre-close escalation flags must include escalation path and named owner
+   6. Apply G9 — no autonomous field updates; field corrections are proposals only
+
+3. **EXPERT CHECK**: What would a veteran RevOps data integrity analyst verify first?
+   - Is HubSpot data fresh enough to surface pre-close flags? Stale reads may miss fields
+     added in the last 24–48h — declare data age before surfacing any pre-close flag.
+   - Is the segment scope confirmed before running? Enterprise and SMB pipelines may have
+     different gate field requirements — misscoping inflates or deflates completion rates.
+   - Does every pre-close escalation flag name the escalation path and owner? "Escalate to
+     manager" is not actionable — the named manager or role must appear on every flag.
+   - Are CS expansion gate fields evaluated against the CS pipeline requirements, not Sales
+     requirements? The OCV entry reference, commercial terms, and churn risk fields are
+     CS-specific — applying Sales gate logic to CS deals misses required fields.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Surfacing HubSpot reads without data-as-of timestamp (G6 violation)
+   - Omitting escalation path or named owner on any pre-close flag (G7 violation)
+   - Proposing autonomous field updates or marking fields complete without human confirmation (G9 violation)
+   - Applying Sales new-logo gate fields to CS expansion deals when CS-specific gates are defined
+
+**After execution**, verify:
+- G6 data-as-of label applied to all HubSpot reads
+- G7 escalation path with named owner present on every pre-close flag
+- G9 Write-tier qualifier present: field updates require human confirmation before execution
+- Confidence: High when HubSpot is connected and data is current; Moderate when data is stale or connector is unavailable
 
 ---
 
@@ -95,7 +142,7 @@ Renewal Due → Renewal Closed:
 
 ---
 
-## Output Format
+## Output
 
 ```
 FIELD COMPLETION — [Scope/Stage] — [Date]
@@ -140,6 +187,12 @@ CS EXPANSION PIPELINE
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

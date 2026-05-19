@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Scores each closed/won deal on five handoff dimensions (0–100). Pass threshold: 80. Below-threshold deals trigger a Linear issue assigned to the AE manager with 48-hour SLA. CS onboarding proceeds but CSM is notified of open issue. Dimensions: OCV entry referenced, trigger match, measurement source accessible, stakeholder map, risk flags documented. Triggers: 'handoff quality', 'handoff score', 'what's missing for [deal] handoff', 'CS handoff check', 'handoff completeness'."
 ---
 
+[PROPOSED]
+
 # Sales-CS Handoff Quality Scoring
 
 Objective catalog alignment check — not subjective prose quality. The pass/fail
@@ -15,6 +17,18 @@ a judgment call on how good the rep's notes are.
 **Reference:** Handoff quality scoring rubric → `../../../shared/revops-domain-model.md §10`
 **Reference:** Governance tiers → `../../../shared/revops-domain-model.md §9`
 **Config reads:** `ocv_catalog_path`, `linear_connected`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `ocv_catalog_path`, `linear_connected`
 
 ---
 
@@ -35,12 +49,47 @@ a judgment call on how good the rep's notes are.
 
 ## Reasoning Protocol
 
-1. Confirm activation — user requesting handoff check for a specific deal or recent closes
-2. Read deal fields from HubSpot and OCV catalog
-3. Apply G8 — only Ratified OCV entries count toward dimension 1
-4. Apply G6 — data-as-of on all reads
-5. Confirm Linear is connected for issue creation if below threshold
-6. Apply G7 — below-threshold flags include named escalation path
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of handoff quality request is this?
+   - Single-deal scoring (one closed/won account — full five-dimension check)
+   - Batch scoring (multiple recent closes — all scored, digest summary produced)
+   - Trending analysis (handoff quality over time by rep or period)
+   - Below-threshold remediation (deal already flagged — what's needed to resolve)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user requesting handoff check for a specific deal or recent closes
+   2. Read deal fields from HubSpot and OCV catalog; declare connector status
+   3. Apply G8 — only Ratified OCV entries count toward D1; Draft entries do not satisfy
+   4. Apply G6 — data-as-of timestamp required on all HubSpot and OCV reads
+   5. Confirm Linear is connected before creating below-threshold issues; surface fallback if unavailable
+   6. Apply G7 — every below-threshold flag includes named escalation path (AE manager) and 48h SLA
+   7. CS onboarding proceeds regardless of score — flag is for the AE manager, not a CS blocker
+
+3. **EXPERT CHECK**: What would a veteran RevOps handoff analyst verify before surfacing scores?
+   - Is the OCV catalog path confirmed accessible? Scoring D1 without a live catalog read
+     produces a false PASS if the deal field happens to contain any text — the check
+     must verify the referenced entry is Ratified, not just present.
+   - Is D3 (measurement source) evaluated from CS's access context, not Sales'? A measurement
+     source accessible to the AE in Salesforce may be inaccessible to the CSM in Gainsight —
+     the check is CS-context, not deal-context.
+   - Is the Linear issue body specific enough to resolve in 48 hours? "D1 failed" is not
+     actionable — the body must name what field needs populating and which OCV entry to reference.
+   - Is the weekly digest compared to prior week? A 60% pass rate this week means nothing
+     without trending context — if available, include WoW delta.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Counting Draft OCV entries toward D1 (G8 violation — only Ratified entries count)
+   - Creating Linear issues without confirming Linear connector is live (produces phantom issues)
+   - Pulling HubSpot deal data without data-as-of timestamp (G6 violation)
+   - Blocking CS onboarding pending handoff remediation — onboarding proceeds; remediation is parallel
+
+**After execution**, verify:
+- G6 data-as-of label applied to all HubSpot and OCV catalog reads
+- G7 escalation path (AE manager, 48h SLA) present on all below-threshold flags
+- G8 compliance confirmed — only Ratified OCV entries counted toward D1
+- Linear issue body is specific and actionable, not just a dimension label
+- Confidence: High when HubSpot and OCV catalog connected and current; Moderate when connector unavailable or OCV catalog path missing
 
 ---
 
@@ -93,7 +142,7 @@ D5: Risk flags documented (20pts)
 
 ---
 
-## Output Format
+## Output
 
 ```
 HANDOFF QUALITY SCORING — [Deal / Week]
@@ -116,6 +165,12 @@ Weekly digest:
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

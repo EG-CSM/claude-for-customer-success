@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Weekly cross-functional metrics report covering five sections: revenue system pipeline (new logo + expansion + renewal pipelines across Sales and CS), handoff quality (RevOps/CS ops), CS capacity status (leadership), early churn flags with account names (#cs-leadership only), outcome realization summary (aggregate to all, account-level to #cs-leadership). All Slack posts require Write-tier confirmation. Triggers: 'weekly pulse', 'GTM metrics', 'alignment pulse', 'cross-functional metrics', 'run the weekly pulse'."
 ---
 
+[PROPOSED]
+
 # GTM Unified Metrics Pulse
 
 Five-section weekly signal for the full revenue lifecycle.
@@ -14,6 +16,18 @@ The one report that replaces "which number is right?" in the leadership meeting.
 **Reference:** Output destination labels → `../../../shared/revops-domain-model.md §11`
 **Reference:** Governance tiers → `../../../shared/revops-domain-model.md §9`
 **Config reads:** `slack_connected`, `linear_connected`, `cs_platform_connected`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `slack_connected`, `linear_connected`, `cs_platform_connected`
 
 ---
 
@@ -34,13 +48,46 @@ The one report that replaces "which number is right?" in the leadership meeting.
 
 ## Reasoning Protocol
 
-1. Confirm activation — user requesting weekly pulse or GTM alignment report
-2. Check all connectors — pulse quality degrades section-by-section if unavailable
-3. Build each section independently; label connector status per section
-4. Apply G1 — forecast language qualification in Section 1
-5. Apply G7 — Section 4 churn flags require escalation path per account
-6. **Confirm Slack destination before posting** — Write-tier; RevOps lead approval required
-7. Route Sections 4–5 account-level data to #cs-leadership only
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of GTM pulse request is this?
+   - Full five-section pulse (all sections — weekly leadership-ready report)
+   - Single-section deep dive (one section requested in isolation)
+   - Slack delivery run (pulse already built — routing to correct channels)
+   - Fallback-mode pulse (one or more connectors unavailable — labeled partial output)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user requesting weekly pulse or GTM alignment report
+   2. Check all connectors — HubSpot, CS platform, OCV catalog; pulse quality degrades section-by-section if unavailable
+   3. Build each section independently; label connector status and data-as-of per section
+   4. Apply G1 — forecast language qualification required in Section 1
+   5. Apply G7 — Section 4 churn flags require escalation path and named owner per account
+   6. Apply G6 — data-as-of timestamp required on every section header
+   7. Confirm Slack destination before any post — Write-tier; RevOps lead preview required
+   8. Route Sections 4–5 account-level data to #cs-leadership only; never to #revops-alignment
+
+3. **EXPERT CHECK**: What would a veteran RevOps GTM analyst verify first?
+   - Is data freshness declared on every section before surfacing numbers? A stale HubSpot read
+     in Section 1 that doesn't show the data-as-of date misleads leadership on pipeline currency.
+   - Are CS-owned vectors (Expansion and Renewal) correctly labeled as CS accountability signals,
+     not Sales? Misattributing CS-owned ARR to Sales creates conflicting ownership in the meeting.
+   - Does every Section 4 churn flag carry a named escalation owner? "Flag to CS team" is not
+     actionable — the named CSM or CS manager must appear on every account-level flag.
+   - Is the Slack destination confirmed for account-level data before any post? Section 4 and
+     Section 5 account detail must never land in #revops-alignment — only #cs-leadership.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Producing any section from unavailable connector data without a labeled fallback (produces phantom metrics)
+   - Posting account-level churn flags or outcome data to #revops-alignment instead of #cs-leadership
+   - Applying G1 forecast qualification only to new logo pipeline but not to expansion or renewal forecast
+   - Surfacing connector reads without data-as-of timestamp (G6 violation)
+
+**After execution**, verify:
+- G1 qualification present on all Section 1 forecast lines
+- G6 data-as-of label applied to every section header with a connector read
+- G7 escalation path with named owner present on every Section 4 churn flag
+- Slack destination confirmed for account-level data — #cs-leadership only
+- Confidence: High when all connectors are live and data is current; Moderate when any connector is unavailable or data is stale
 
 ---
 
@@ -142,6 +189,12 @@ Always declare what's missing. Never produce a section from unavailable data
 without labeling it.
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Monitors plan-vs-actual drift against the UoG baseline. Fires a replan recommendation when actuals diverge >15% from P50 plan, CS headroom crosses 10%, AE attainment runs >20pp below plan for 2+ months, or a material territory event occurs. Produces a replan recommendation memo with supporting data. Triggers: 'replan', 'plan vs actual drift', 'mid-year adjustment', 'are we off plan', 'should we replan'."
 ---
 
+[PROPOSED]
+
 # Mid-Year Replan Triggering
 
 Monitors four drift signals against the annual plan baseline. Produces a replan
@@ -13,6 +15,18 @@ recommendation memo when a trigger fires — not a replan itself.
 
 **Reference:** UoG formulas → `../../../shared/revops-domain-model.md §5`
 **Config reads:** `uog_baseline_path`, `target_growth_pct`, `current_csm_count`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `uog_baseline_path`, `target_growth_pct`, `current_csm_count`
 
 ---
 
@@ -33,12 +47,46 @@ recommendation memo when a trigger fires — not a replan itself.
 
 ## Reasoning Protocol
 
-1. Confirm activation — user asking about plan drift or replan need
-2. Read UoG baseline from `uog_baseline_path` — if absent, declare and run in reporting mode
-3. Read current actuals from HubSpot and practice profile
-4. Compare actuals vs. baseline on all four trigger dimensions
-5. Apply G1 — replan recommendation for finance requires forecast language qualification
-6. Apply G2 — headcount signals in replan are structural inputs, not hiring mandates
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of replan triggering request is this?
+   - Single-trigger assessment (one dimension — evaluate whether one signal is firing)
+   - Full four-trigger assessment (all dimensions — produce replan recommendation memo)
+   - Reporting mode (UoG baseline absent — actuals only, no variance analysis)
+   - Post-trigger routing (trigger has fired — recommend replan scope and urgency)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user asking about plan drift or replan criteria
+   2. Read UoG baseline from `uog_baseline_path` — if absent, run in reporting mode; label output accordingly
+   3. Check HubSpot connector for actuals; declare fallback if unavailable
+   4. Apply G1 — replan projections require forecast language qualification
+   5. Apply G2 — headcount signals in replan are structural inputs, not hiring mandates
+   6. Apply G6 — data-as-of on all connector reads
+   7. Evaluate all four trigger dimensions before surfacing recommendation
+   8. Replan recommendation requires at least one trigger firing — do not recommend replan without evidence
+
+3. **EXPERT CHECK**: What would a veteran RevOps planning analyst verify first?
+   - Is the UoG baseline confirmed present before running variance analysis? Comparing actuals
+     to an absent baseline produces phantom variance — declare reporting mode explicitly.
+   - Are all four trigger dimensions evaluated independently? A CS headroom breach and an ARR
+     drift may require different replan scopes — conflating them obscures the recommendation.
+   - Is G1 qualification applied to all year-end projections? "Projected year-end ARR without
+     replan" is a model output, not a commitment — it must be labeled as such.
+   - Is the replan recommendation tied to specific firing triggers, not general concern? A
+     recommendation without evidence is noise — name which trigger(s) fired and the delta.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Running variance analysis without confirming UoG baseline is accessible (produces phantom variance)
+   - Recommending a replan when no trigger has crossed threshold (produces false urgency)
+   - Applying forward-looking year-end projections without G1 qualification
+   - Surfacing connector reads without data-as-of timestamp (G6 violation)
+
+**After execution**, verify:
+- G1 qualification present on all year-end projections and forward-looking outputs
+- G2 qualifier present if headcount signal appears in output
+- G6 data-as-of label applied to all HubSpot and practice profile reads
+- Replan recommendation tied to named firing trigger(s) with supporting delta
+- Confidence: High when HubSpot connected and baseline present; Moderate when data stale or baseline absent (reporting mode)
 
 ---
 
@@ -68,7 +116,7 @@ Label: `[Variance analysis unavailable — UoG baseline not configured. Reportin
 
 ---
 
-## Output Format
+## Output
 
 ```
 MID-YEAR REPLAN ASSESSMENT — [Date]
@@ -96,6 +144,12 @@ To initiate replan: /rev-ops:annual-planning-workflow --phase [1 or relevant pha
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

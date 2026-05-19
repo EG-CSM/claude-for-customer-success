@@ -281,7 +281,67 @@ includes_qbr_note: true
 
 ---
 
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/csm:cold-start-interview`.
+
+Note from config:
+- CS motion — shapes how directive vs. collaborative the progress review framing is
+- Health model — provides context for milestone status interpretation and escalation thresholds
+- Escalation matrix — required if milestone ratings trigger escalation routing
+- Integrations — determines which data sources are available for canvas and OCV resolution
+
+---
+
 ## Reasoning Protocol
+
+> Blueprint: `reference/reasoning-blueprint.md` (on-demand only)
+
+Before generating output, apply these primers:
+
+1. **CLASSIFY** — Determine operation validity and data completeness before proceeding:
+   - Is `operation` present and equal to `"review"`? If absent or any other value → return an error and halt before any output.
+   - Is `account_name` non-empty? If not → reject immediately with a clear error; do not attempt canvas resolution.
+   - Does an upstream canvas file exist for this account (located via `canvas_date` or most-recent scan)? If not → return the canonical canvas-not-found error and halt; produce no partial output.
+   - Are `milestone_updates` provided and non-empty? If absent → halt with a missing-required-input error; the progress scorecard cannot be generated without milestone data.
+   - CLASSIFY is complete when: operation confirmed as `"review"`, `account_name` validated, canvas file located and readable, `milestone_updates` present.
+
+2. **CONSTRAINTS** — Apply before generating any output (blocking before non-blocking):
+   - **C-1 BLOCKING**: `account_name` must be non-empty — reject all operations if absent; `safe_account` derivation cannot proceed.
+   - **C-2 BLOCKING**: Canvas file must exist for the target account before any review output is generated — return the canonical error message exactly as specified; do not generate partial output.
+   - **C-3 BLOCKING**: `milestone_updates` must be provided and non-empty — the Progress Scorecard is always-present and cannot be built without milestone data.
+   - **C-4 BLOCKING**: Each `milestone_updates[].status` value must be one of `On Track`, `At Risk`, `Missed` — halt with a validation error on any invalid value; do not process the remaining list.
+   - **C-5 BLOCKING**: Each `ocv_updates[].status` value (when provided) must be one of `Delivered`, `In Progress`, `Not Started`, `Blocked` — halt with a validation error on any invalid value.
+   - **C-6 Non-blocking**: `safe_account` derivation (lowercase → replace non-alphanumeric with `-` → collapse hyphens → trim to 30 chars) must be applied before any file path construction — never use raw `account_name` in a path.
+   - **C-7 Non-blocking**: Canvas content is read-only; this skill never writes to canvas files or OCV files under any condition — write scope is `context/progress-review-*` only.
+   - G5: Internal data (health scores, ARR, expansion signals) must never appear in customer-facing output
+   - G7: Flag any data older than 30 days with source date and staleness indicator
+
+3. **EXPERT CHECK** — What a veteran CSM verifies before generating a progress review:
+   - Do the `milestone_updates` statuses reflect the current state rather than the planned state? A CSM who copies milestone names from the canvas without providing actual status assessments produces a review that adds no signal. Flag if all milestones are listed as `On Track` with no notes — this pattern often signals incomplete input rather than genuine account health.
+   - For `At Risk` milestones: does each entry include a `notes` field with a specific reason? A bare `At Risk` status without a root cause observation produces a CSM Action List with generic recommendations — flag for input enrichment.
+   - For `Missed` milestones: has the escalation threshold check (Step 8, `reference/milestone-rating-guide.md` § 2) been applied? A missed milestone on a high-ARR account or near-renewal account may trigger escalation — this check must not be skipped.
+   - If `include_customer_summary: true`: does the milestone mix support the tone selected from the template? A cautionary summary generated from an all-`On Track` milestone set is misaligned — verify tone selection against the actual milestone_summary counts.
+   - If `include_qbr_note: true`: are `key_benefits_realized` entries present? A QBR Pre-Work Note without Key Wins forces the template to fall back to `On Track` milestones — this produces weaker pre-work material; prompt the CSM to provide explicit benefits if absent.
+
+4. **ANTI-PATTERNS** — Mistakes to catch before generating output:
+   - **AP-1 Partial output on canvas-not-found**: beginning any section generation before the canvas file has been confirmed readable — the error path must halt all output, not produce a partial review with a warning appended.
+   - **AP-2 Invalid status values silently coerced**: accepting a `milestone_updates[].status` of `"Delayed"` or `"Complete"` and mapping it to a valid enum value — invalid values must surface as validation errors, not be silently normalized.
+   - **AP-3 Customer-facing summary with internal language**: allowing health tier labels (`Red`, `Yellow`, `Green`), escalation routing details, ARR values, or internal action items to appear in the Customer-Facing Summary section — customer output is firewalled from internal language.
+   - **AP-4 Notes field overwrite**: if a prior review file exists for the same account and date, overwriting prior notes without surfacing the conflict — v1.0.0 behavior is overwrite, but the CSM should be aware.
+   - **AP-5 QBR note without risk acknowledgment**: generating a QBR Pre-Work Note that lists only Key Wins when At Risk or Missed milestones are present — the Open Risks section must reflect the milestone mix, not be omitted for tone reasons.
+
+**After execution**, verify:
+- Does the output file contain all required sections in fixed order (Progress Scorecard → OCV Outcome Status → Success Criteria Evaluation → CSM Action List → Customer-Facing Summary → QBR Pre-Work Note → Notes)? Are conditional sections present only when their conditions were met?
+- Is the YAML frontmatter complete? Are `review_id`, `canvas_reference`, `plan_id`, `milestone_summary` counts, and all `includes_*` boolean flags correctly populated?
+- For any `At Risk` or `Missed` milestones: does the CSM Action List contain specific actions (not generic "monitor closely" entries)?
+- Is the `safe_account` derivation applied correctly in the output file path? Does `canvas_reference` point to the exact canvas file that was read?
+- Is the customer-facing language firewall intact? No health scores, escalation identifiers, ARR values, or internal routing language in the Customer-Facing Summary or QBR Pre-Work Note.
+- Confidence: [High] if canvas file confirmed readable with complete frontmatter, all milestone statuses are valid enum values, and `milestone_updates` entries include notes / [Medium] if canvas file located but some frontmatter fields missing, or milestone entries lack notes for At Risk/Missed statuses / [Low] if canvas file not found and operating on CSM-provided description only, or if `milestone_updates` statuses are unvalidated — state which.
 
 Execute the following steps in order for every `review` operation. Do not skip steps or reorder them.
 
@@ -369,6 +429,7 @@ The following reference files are loaded on-demand during skill execution:
 | `reference/progress-review-schema.md` | Canonical review record format, YAML frontmatter field definitions, section assembly order, field validation rules, auto-ID generation rules | Every `review` operation |
 | `reference/milestone-rating-guide.md` | Rating criteria for On Track / At Risk / Missed; escalation thresholds; CSM action generation logic per rating; Success Criteria evaluation logic; Measures of Success assessment; Key Benefits Already Realized guidance | Every `review` operation |
 | `reference/customer-summary-templates.md` | Customer-facing language templates by milestone status (positive, cautionary, escalation tones); QBR pre-work note structure and language guidance | When `include_customer_summary: true` or `include_qbr_note: true` |
+| `reference/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill | On-demand per Reasoning Protocol |
 
 ---
 

@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Links every closed/won opportunity to its downstream CS trajectory using the OCV Outcome Catalog. At deal close: checks catalog completeness (OCV entry, trigger match, measurement source). At 30/60/90/180-day checkpoints: assesses L0–L3 rubric level per OCV entry. When OCV catalog is absent: falls back to structural risk signals with [Confidence: Low]. Triggers: 'outcome tracing', 'what did we promise [account]', 'deal-to-outcome', 'track outcomes for [account]', 'which rubric level is [account] at'."
 ---
 
+[PROPOSED]
+
 # Deal-to-Outcome Tracing
 
 The longitudinal link between what Sales sold and what CS delivers.
@@ -14,6 +16,18 @@ Replaces free-form deal notes with structured OCV catalog references.
 **Reference:** OCV catalog conventions → `../../../shared/revops-domain-model.md §6`
 **Reference:** Confidence bands → `../../../shared/revops-domain-model.md §2`
 **Config reads:** `ocv_catalog_path`, `ocv_catalog_version`, `cs_platform_connected`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `ocv_catalog_path`, `ocv_catalog_version`, `cs_platform_connected`
 
 ---
 
@@ -35,12 +49,45 @@ Replaces free-form deal notes with structured OCV catalog references.
 
 ## Reasoning Protocol
 
-1. Confirm activation — user asking about outcomes for a specific account, or running a cohort trace
-2. Check OCV catalog path — if absent, declare and switch to structural fallback mode
-3. Check CS platform connector for health score and usage data
-4. Apply G8 — Draft OCV entries must be labeled; only Ratified entries used
-5. Apply G6 — data-as-of on all CS platform and CRM reads
-6. Apply G5 — rubric level assessment is analytical input; CS owns the response
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of deal-to-outcome request is this?
+   - Single account trace (one deal, full OCV catalog completeness + rubric assessment)
+   - Checkpoint assessment (30/60/90/180-day rubric level for one account or cohort)
+   - Cohort view (segment or period — aggregate rubric distribution + L0 pattern signal)
+   - Catalog completeness check (at deal close — OCV entry, trigger match, source accessible)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user asking about outcomes for a specific account, or running a cohort trace
+   2. Check OCV catalog path — if absent, declare and switch to structural fallback mode
+   3. Check CS platform connector for health score and usage data
+   4. Apply G8 — Draft OCV entries must be labeled; only Ratified entries used
+   5. Apply G6 — data-as-of on all CS platform and CRM reads
+   6. Apply G5 — rubric level assessment is analytical input; CS owns the response
+
+3. **EXPERT CHECK**: What would a veteran RevOps analyst verify first?
+   - Is the OCV catalog status confirmed before using any entry? Draft entries produce
+     misleading rubric assessments — only Ratified entries carry measurement authority.
+   - Is the checkpoint date aligned to the OCV verification_milestone, not a calendar default?
+     30/60/90/180-day marks mean nothing without the OCV milestone anchor.
+   - Is the structural fallback clearly labeled when OCV is absent? Presenting structural
+     signals as outcome signals is a confidence misrepresentation — G8 violation.
+   - Is the trigger condition match verified against the account's actual situation?
+     A mismatch between what was sold and what the account has is a "Sold to wrong problem"
+     flag — surfaces to CS and Sales manager, not buried in the output.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Using Draft OCV entries in rubric assessment (G8 violation — only Ratified entries)
+   - Surfacing connector reads without data-as-of timestamp (G6 violation)
+   - Presenting rubric level as a directive rather than analytical input (G5 violation)
+   - Omitting catalog completeness flags when OCV reference is absent or mismatched
+
+**After execution**, verify:
+- G5 qualifier present: rubric level is analytical input; CS owns the response plan
+- G6 data-as-of label applied to all CS platform and CRM reads
+- G8 confirmation: Draft OCV entries excluded; labeled if referenced
+- Confidence: High when OCV catalog is current and CS platform is connected; Moderate when
+  either is unavailable; Low when OCV catalog is absent (structural fallback mode)
 
 ---
 
@@ -134,6 +181,12 @@ L0 pattern signal: [Account attributes common to L0 accounts]
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 
