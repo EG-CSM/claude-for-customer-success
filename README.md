@@ -240,6 +240,32 @@ Running cookbook agents unattended introduces failure scenarios that interactive
 
 ---
 
+## Claude Managed Agents
+
+Deploy a cookbook agent using the included script:
+
+```bash
+scripts/deploy-managed-agent.sh <slug>
+```
+
+The script reads `managed-agent-cookbooks/<slug>/agent.yaml`, posts to `/v1/agents`, and writes the returned `agent_id` to `.env.deploy`. Pass `agent_id` as the `model` parameter in every API call targeting that agent:
+
+```python
+client.messages.create(
+    model="<agent_id>",
+    max_tokens=4096,
+    messages=[{"role": "user", "content": "Run portfolio health scan"}],
+)
+```
+
+`scripts/orchestrate.py` is a reference event loop that routes `handoff_request` events between agents. Update `AGENT_ROUTING_TABLE` with your deployed agent IDs before running it.
+
+Subagent delegation (`callable_agents`) is a preview capability — it requires a preview-tier API key. Each cookbook `README.md` flags which agents use it and documents the preview constraints.
+
+Scheduled agents include a `suggested_cron` field in `agent.yaml`. On-demand agents omit it. Both types deploy through the same script.
+
+---
+
 ## Shared Guardrails
 
 All six plugins enforce these constraints. They are not optional and cannot be overridden by plugin configuration:
@@ -611,6 +637,159 @@ The hooks implement a T1/T2/T3 protocol: T1 retries the widget once, T2 injects 
 Installing the plugin is a one-step install. Wiring it into a plugin requires adding two entries to that plugin's `hooks/hooks.json`. All five CS plugins ship with empty hook slots ready to receive the wiring. The auq-resilience plugin does not change how AUQ works when it succeeds. It only catches failures.
 
 See [`auq-resilience/README.md`](./auq-resilience/README.md) for install steps and the full T1/T2/T3 protocol.
+
+---
+
+## Making It Yours
+
+Every plugin ships with defaults that work out of the box. Four layers of configuration let you tune behavior without modifying plugin source files:
+
+- **Swap connectors** — edit the plugin's `.mcp.json` to point at your CRM, CS platform, Slack workspace, or data warehouse. Skills that use a connector degrade gracefully when the connector is absent; skills that don't need one ignore the file entirely.
+- **Add firm context** — the `cold-start-interview` command in each plugin writes a practice profile to `~/.claude/plugins/config/claude-for-customer-success/[plugin]/CLAUDE.md`. Edit that file directly to update segmentation thresholds, renewal risk criteria, escalation matrices, and named contacts. Agents and skills read the profile on every run.
+- **Bring your own templates** — paste your team's QBR template, success plan format, or executive summary structure into the relevant section of the practice profile. Skills use your template instead of the built-in one.
+- **Adjust agent scope** — fork a cookbook's `agent.yaml` to change which skills it calls, what output it routes, and which HITL gates it enforces. No changes to the plugin itself are required.
+- **Add your own** — write a `SKILL.md` using the CS plugin skill pattern and bundle it into a new plugin file alongside the stock skills. The [Skill Design](#skill-design) section documents the pattern and required frontmatter.
+
+---
+
+## Claude for Microsoft 365 — Install Tooling
+
+`claude-for-msft-365-install/` is a Claude Code plugin — not a Cowork plugin — for IT administrators provisioning the Claude for Microsoft 365 add-in. It is separate from the six CS suite plugins and does not need to be installed by individual CS team members.
+
+Install in Claude Code (admin terminal):
+
+```
+/install claude-for-msft-365-install
+```
+
+Then run the setup command:
+
+```
+/claude-for-msft-365-install:setup
+```
+
+The setup command provisions the M365 add-in via Microsoft Graph API. It supports Vertex AI, Amazon Bedrock, and internal LLM gateways as the backing model endpoint and writes a deployment summary to `~/.claude/plugins/config/msft-365-install/deployment.md` on completion.
+
+---
+
+## Skill & Command Reference
+
+Run `/[plugin]:cold-start-interview` first in any plugin — it writes the practice profile that every other skill reads for firm context, thresholds, and templates.
+
+### csm (19 skills)
+
+| Command | What it does |
+|---------|-------------|
+| `/csm:cold-start-interview` | Writes firm context, segmentation thresholds, and templates to practice profile |
+| `/csm:customize` | Updates any section of the CSM practice profile interactively |
+| `/csm:account-research` | Multi-source account intelligence snapshot before a call or review |
+| `/csm:call-prep` | Call agenda, talking points, and risk context from CRM and CS platform data |
+| `/csm:communication-planner` | Builds a structured comms sequence for a lifecycle moment |
+| `/csm:customer-comms` | Drafts customer-facing messages: check-ins, updates, and announcements |
+| `/csm:escalation-memo` | Writes a structured escalation package for internal stakeholders |
+| `/csm:expansion-business-case` | Builds the business case and AE handoff package for an expansion |
+| `/csm:expansion-onboarding` | Plans onboarding for a newly expanded or cross-sold product |
+| `/csm:health-score-review` | Interprets health score signals and recommends a response motion |
+| `/csm:qbr-builder` | Researches and assembles a QBR package from CRM, CS platform, and usage data |
+| `/csm:renewal-readiness` | 90/60/30-day renewal readiness check with risk classification |
+| `/csm:risk-flag` | Generates a structured risk flag with evidence, severity, and escalation path |
+| `/csm:stakeholder-map` | Maps account stakeholders: sponsors, champions, detractors, and coverage gaps |
+| `/csm:success-plan-builder` | Creates a structured success plan from onboarding data and business goals |
+| `/csm:success-plan-canvas` | Interactive canvas for co-building a success plan with the customer |
+| `/csm:success-plan-progress-review` | Reviews milestone progress and surfaces course corrections |
+| `/csm:taro-play-runner` | Selects and executes a TARO play for a detected account trigger |
+| `/csm:value-statement` | Builds a value statement using two-layer outcome and value chain models |
+
+### renewals (12 skills)
+
+| Command | What it does |
+|---------|-------------|
+| `/renewals:cold-start-interview` | Writes renewal thresholds, risk criteria, and team context to practice profile |
+| `/renewals:customize` | Updates any section of the renewals practice profile |
+| `/renewals:churn-analysis` | Synthesizes churn signals into a risk score and recommended play |
+| `/renewals:churn-rca` | Root cause analysis on a churned or churning account |
+| `/renewals:contract-review` | Reviews contract terms for renewal, uplift, and risk clauses |
+| `/renewals:downgrade-analysis` | Diagnoses downgrade drivers and quantifies ARR impact |
+| `/renewals:executive-summary` | Produces an executive-ready renewal situation summary |
+| `/renewals:expansion-signal` | Identifies expansion readiness signals in a renewal account |
+| `/renewals:negotiation-prep` | Prepares negotiation posture, fallback positions, and authority matrix |
+| `/renewals:price-increase-prep` | Builds a price-increase rationale package for the renewal conversation |
+| `/renewals:renewal-forecast` | Generates a confidence-weighted renewal forecast |
+| `/renewals:risk-assessment` | Structured risk assessment with severity, evidence, and recommended action |
+
+### cs-ops (9 skills)
+
+| Command | What it does |
+|---------|-------------|
+| `/cs-ops:cold-start-interview` | Writes ops scope, tech stack, and metrics context to practice profile |
+| `/cs-ops:customize` | Updates any section of the CS-Ops practice profile |
+| `/cs-ops:capacity-planner` | Models current vs. projected CSM capacity against book-of-business growth |
+| `/cs-ops:data-quality-check` | Audits CRM field completion and data consistency across the CS portfolio |
+| `/cs-ops:health-model-review` | Reviews the health scoring model for signal coverage and weighting logic |
+| `/cs-ops:metric-dashboard` | Builds a metric dashboard spec or reviews current CS KPI coverage |
+| `/cs-ops:playbook-auditor` | Reviews playbooks for trigger coverage, action completeness, and gaps |
+| `/cs-ops:process-doc` | Documents a CS workflow or process for team reference |
+| `/cs-ops:segment-analyzer` | Profiles portfolio segments by ARR band, industry, and health distribution |
+
+### onboarding (10 skills)
+
+| Command | What it does |
+|---------|-------------|
+| `/onboarding:cold-start-interview` | Writes onboarding scope, milestone definitions, and team context to practice profile |
+| `/onboarding:customize` | Updates any section of the onboarding practice profile |
+| `/onboarding:blocker-review` | Identifies and prioritizes implementation blockers with recommended actions |
+| `/onboarding:handoff-doc` | Generates a structured sales-to-CS handoff document |
+| `/onboarding:kickoff-prep` | Prepares kickoff agenda, stakeholder brief, and success criteria for Day 1 |
+| `/onboarding:milestone-tracker` | Reviews milestone completion and flags at-risk accounts |
+| `/onboarding:onboarding-plan` | Builds a time-to-value onboarding plan tailored to customer goals |
+| `/onboarding:references` | Identifies reference candidates from the onboarding cohort |
+| `/onboarding:success-criteria` | Defines measurable success criteria aligned to customer business goals |
+| `/onboarding:ttv-analysis` | Analyzes time-to-value performance and identifies acceleration opportunities |
+
+### rev-ops (36 skills)
+
+| Command | What it does |
+|---------|-------------|
+| `/rev-ops:cold-start-interview` | Writes GTM scope, CRM schema, and metrics baseline to practice profile |
+| `/rev-ops:annual-planning-workflow` | Orchestrates the annual GTM planning cycle with phase-gate governance |
+| `/rev-ops:change-communication-packaging` | Packages process or policy changes for field communication |
+| `/rev-ops:closed-won-to-cs-capacity-modeling` | Models CS capacity requirements from closed-won actuals |
+| `/rev-ops:comp-simulation` | Simulates comp plan scenarios and models quota/OTE sensitivity |
+| `/rev-ops:crm-hygiene-audit` | Audits CRM data quality across field completion, consistency, and accuracy |
+| `/rev-ops:cross-system-reconciliation` | Reconciles data across CRM, CS platform, billing, and product systems |
+| `/rev-ops:csql-tracking` | Tracks CS-qualified lead volume, conversion, and pipeline contribution |
+| `/rev-ops:csql-tracking-workspace` | Multi-account CSQL pipeline workspace with filtering and export |
+| `/rev-ops:data-decay-tracking` | Monitors data decay rates and surfaces stale records requiring refresh |
+| `/rev-ops:deal-classification` | Classifies deals by type, complexity, and CS handoff requirements |
+| `/rev-ops:deal-desk-workflow-management` | Manages deal desk SLA compliance and approval pipeline hygiene |
+| `/rev-ops:deal-health-scoring` | Scores deal health across stage, velocity, stakeholder coverage, and risk |
+| `/rev-ops:deal-to-outcome-tracing` | Traces deals from closed-won through onboarding to value delivery |
+| `/rev-ops:discount-threshold-monitoring` | Flags deals exceeding discount thresholds for deal desk review |
+| `/rev-ops:duplicate-detection` | Detects duplicate accounts, contacts, and opportunities in CRM |
+| `/rev-ops:early-churn-downgrade-signal-detection` | Scans for early churn and downgrade signals across the portfolio |
+| `/rev-ops:field-completion-monitoring` | Monitors CRM field completion rates by object, team, and region |
+| `/rev-ops:forecast-variance-analysis` | Decomposes forecast variance into deal, rep, and category drivers |
+| `/rev-ops:growth-model-vs-actuals-tracking` | Compares growth model assumptions to actuals for planning revalidation |
+| `/rev-ops:gtm-unified-metrics-pulse` | Produces the weekly unified GTM metrics digest across pipeline, NRR, and CS |
+| `/rev-ops:mid-year-replan-triggering` | Evaluates mid-year variance and triggers a replan when thresholds are breached |
+| `/rev-ops:next-best-action-recommendation` | Recommends the highest-value next action per account from signal data |
+| `/rev-ops:non-standard-terms-detection` | Flags non-standard contract terms requiring deal desk or legal review |
+| `/rev-ops:outcome-statement-builder` | Builds structured outcome statements for the CS outcome catalog |
+| `/rev-ops:outcome-to-value-tracking` | Traces customer outcomes to value chain delivery milestones |
+| `/rev-ops:pipeline-coverage-analysis` | Analyzes pipeline coverage by segment, stage, and close-date cohort |
+| `/rev-ops:pipeline-velocity-tracking` | Tracks pipeline velocity changes and surfaces acceleration and friction signals |
+| `/rev-ops:portfolio-health-report` | Generates a portfolio health report segmented by ARR, tier, and region |
+| `/rev-ops:quota-sensitivity-analysis` | Models quota attainment sensitivity to ramp, churn, and expansion inputs |
+| `/rev-ops:revenue-brief-generation` | Produces an executive revenue brief for leadership and board review |
+| `/rev-ops:revenue-leakage-scanning` | Scans for revenue leakage: missed expansions, discount overuse, delayed renewals |
+| `/rev-ops:sales-cs-handoff-quality-scoring` | Scores the quality of sales-to-CS handoffs against defined criteria |
+| `/rev-ops:scenario-modeling` | Models GTM scenarios for planning, reforecast, and board preparation |
+| `/rev-ops:stage-integrity-audit` | Audits stage-gate criteria compliance across the pipeline |
+| `/rev-ops:unit-of-growth-calculator` | Calculates unit of growth economics: CAC, LTV, payback, and NRR contribution |
+
+### auq-resilience
+
+Hook-only plugin. Installs `PreToolUse` and `PostToolUse` hooks; ships no user-facing skills or commands. See [AUQ Resilience](#auq-resilience) for the T1/T2/T3 fallback protocol.
 
 ---
 
