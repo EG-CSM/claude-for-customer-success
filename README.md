@@ -232,14 +232,14 @@ Each cookbook agent is a thin orchestration layer over the existing plugin skill
 
 ### Value map system (multi-cookbook fleet)
 
-The [`value-map-system`](./managed-agent-cookbooks/value-map-system/) is a coordinated fleet of five cookbooks operating on a shared filesystem control plane — the Customer Value Map. Unlike the single-purpose agents above, this system maintains persistent per-account state across the full customer lifecycle. Agents are classified by write authority: **Blue agents** write to the Value Map; **Green agents** read from it. P1/P2 leakage blocks Green agent output completely — no score, brief, or expansion angle is produced until leakage is resolved.
+The [`value-map-system`](./managed-agent-cookbooks/value-map-system/) is a coordinated fleet of five cookbooks operating on a shared filesystem control plane — the Customer Value Map. Unlike the single-purpose agents above, this system maintains persistent per-account state across the full customer lifecycle. Agents are classified by write authority: **Blue agents** write to the Value Map; **Green agents** read from it. P1/P2 leakage constrains Green agent output: VCS flags the leakage pattern; QBR still produces the full brief but suppresses the expansion angles section; ERD produces no score or brief at all until leakage is resolved.
 
 | Agent | Color | Trigger | What it does |
 |-------|-------|---------|--------------|
 | [`hie`](./managed-agent-cookbooks/value-map-system/) — Handoff Integrity Enforcer | 🔵 Blue | CRM `opportunity.won` | Builds the initial Value Map from the sales handoff; enforces seven-stage value chain alignment before kickoff |
 | [`vmb`](./managed-agent-cookbooks/value-map-system/) — Value Map Builder | 🔵 Blue | CS platform `kickoff_completed` | Populates all four quadrants from kickoff interviews, early usage data, and the success plan |
 | [`vcs`](./managed-agent-cookbooks/value-map-system/) — Value Chain Position Scanner | 🟢 Green | Weekly, Mon 06:00 | Scores position health (stage alignment, evidence density, active leakage); flags P1/P2 leakage patterns |
-| [`qbr`](./managed-agent-cookbooks/value-map-system/) — QBR Intelligence Agent | 🟢 Green | 14 days before renewal | Generates QBR brief from full Value Map history; hard-blocked by active P1/P2 leakage |
+| [`qbr`](./managed-agent-cookbooks/value-map-system/) — QBR Intelligence Agent | 🟢 Green | Quarterly schedule (`qbr_due` event); CSM manual invocation | Generates QBR brief from full Value Map history; expansion angles section blocked when `signals.hard_block_active` is true or `signals.intervention_priority` is P1/P2 — full brief still produced |
 | [`erd`](./managed-agent-cookbooks/value-map-system/) — Expansion Readiness Detector | 🟢 Green | Weekly, Mon 06:00 + Growth stage entry | Evaluates expansion signal against leakage state; produces no score or brief when active leakage exists |
 
 See [`managed-agent-cookbooks/value-map-system/README.md`](./managed-agent-cookbooks/value-map-system/README.md) for the full Value Map schema, position health scoring model, and leakage pattern taxonomy.

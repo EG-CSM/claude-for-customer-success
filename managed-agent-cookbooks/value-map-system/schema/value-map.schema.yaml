@@ -1,0 +1,849 @@
+# Value Map Document Schema
+#
+# Canonical schema for per-account Value Map YAML files.
+# Path convention: value-map-system/value-maps/{account-id}/value-map.yaml
+#
+# VALIDATION BEHAVIOR (Design Decision #2 — resolved 2026-05-18):
+#   Hard-fail on schema validation error.
+#   - Writing agent writes NOTHING to the filesystem on validation failure.
+#   - Handoff is blocked and closing rep is alerted via Slack.
+#   - Schema validation must pass before any write is attempted.
+#
+# VERSION HISTORY (system NEVER rule):
+#   Every write MUST archive the prior version:
+#   value-maps/{account-id}/history/value-map-{ISO-timestamp}.yaml
+#   The writing agent reads the current file, copies it to history/, then
+#   writes the updated version. No write proceeds without this archive step.
+#
+# WRITE AUTHORITY (Blue/Green classification):
+#   Blue agents (HIE, VMB): may write all fields below.
+#   Green agents (VCS, QBR, ERD): may ONLY write signal flag fields
+#     (scanner_stale_flag, expansion_readiness_signal, expansion_readiness_score).
+#   All other fields are read-only for green agents.
+#
+# Schema format: JSON Schema semantics expressed in YAML.
+# $schema version: draft-07
+
+$schema: "http://json-schema.org/draft-07/schema#"
+title: CustomerValueMap
+description: >
+  Per-account state artifact for the Value Map System. Encodes the four value map
+  quadrants, the seven-stage value chain position vector, leakage diagnostics,
+  readiness signals, and audit metadata. This file is the only shared state
+  between the five Value Map System cookbooks.
+type: object
+required:
+  - schema_version
+  - account
+  - meta
+  - position_vector
+  - quadrants
+  - leakage_diagnostics
+  - signals
+additionalProperties: false
+
+properties:
+
+  # ---------------------------------------------------------------------------
+  # Schema versioning
+  # ---------------------------------------------------------------------------
+  schema_version:
+    type: string
+    description: >
+      Schema version this document conforms to. Increment on breaking changes.
+      Agents must reject documents whose schema_version they do not support.
+    pattern: "^\\d+\\.\\d+\\.\\d+$"
+    example: "1.0.0"
+
+  # ---------------------------------------------------------------------------
+  # Account identity
+  # ---------------------------------------------------------------------------
+  account:
+    type: object
+    description: >
+      Stable account identifiers. account_id is the CRM account_id and is used
+      as the filesystem directory name (value-maps/{account_id}/). This is the
+      canonical identifier across all cookbooks (Design Decision #1).
+    required:
+      - account_id
+      - account_name
+      - opportunity_id
+      - segment
+      - arr
+      - renewal_date
+      - csm_owner
+    additionalProperties: false
+    properties:
+      account_id:
+        type: string
+        description: >
+          CRM account_id. Must match the parent directory name.
+          This field is immutable after Value Map creation.
+      account_name:
+        type: string
+        description: Human-readable account name for display purposes.
+      opportunity_id:
+        type: string
+        description: >
+          CRM opportunity_id that originated this Value Map.
+          SYSTEM NEVER RULE: A Value Map may not be created without a CRM
+          opportunity record. This field documents the linkage.
+      segment:
+        type: string
+        description: Customer segment — determines expansion_readiness_threshold default.
+        enum:
+          - enterprise
+          - mid_market
+          - smb
+      arr:
+        type: number
+        description: Annual Recurring Revenue at time of most recent update. USD.
+        minimum: 0
+      renewal_date:
+        type: string
+        format: date
+        description: Current contract renewal date (YYYY-MM-DD).
+      csm_owner:
+        type: string
+        description: Email address of the assigned CSM.
+      champion:
+        type: string
+        description: Name or email of the primary customer champion. Optional at creation.
+      executive_sponsor:
+        type: string
+        description: >
+          Name or email of the customer executive sponsor. Required for Stage 4
+          advancement. Optional at creation.
+
+  # ---------------------------------------------------------------------------
+  # Audit metadata
+  # ---------------------------------------------------------------------------
+  meta:
+    type: object
+    description: >
+      Version, provenance, and timing metadata for this document.
+      All timestamps are ISO 8601 UTC.
+    required:
+      - created_at
+      - created_by
+      - last_updated_at
+      - last_updated_by
+      - version_number
+      - history_path
+    additionalProperties: false
+    properties:
+      created_at:
+        type: string
+        format: date-time
+        description: ISO 8601 UTC timestamp when this Value Map was first created.
+      created_by:
+        type: string
+        description: Agent name that created this Value Map (always handoff-integrity-enforcer).
+      last_updated_at:
+        type: string
+        format: date-time
+        description: ISO 8601 UTC timestamp of the most recent write.
+      last_updated_by:
+        type: string
+        description: Agent name that performed the most recent write.
+      version_number:
+        type: integer
+        description: >
+          Monotonically increasing write counter. Starts at 1 on creation.
+          Incremented on every successful write. Used to detect concurrent
+          write conflicts.
+        minimum: 1
+      last_value_map_build:
+        type: string
+        format: date-time
+        description: >
+          Timestamp of the most recent Value Map Builder run. Used by the
+          Position Scanner to detect stale Value Maps (threshold: 90 days).
+          Null if Value Map Builder has never run (handoff-only state).
+      history_path:
+        type: string
+        description: >
+          Relative path to this account's history directory.
+          Convention: value-maps/{account_id}/history/
+      handoff_integrity_score:
+        type: number
+        description: >
+          0–100 score from Handoff Integrity Enforcer reflecting coverage of
+          Stages 3–5 at deal close. Scores below 60 on any stage trigger the
+          handoff gap alert. Null before HIE has run.
+        minimum: 0
+        maximum: 100
+      handoff_gaps:
+        type: array
+        description: >
+          Structured list of gaps identified by handoff-completeness-assessor.
+          Empty array indicates a clean handoff. Populated even after gaps are
+          addressed, to preserve audit trail. Each gap records resolution status.
+        items:
+          type: object
+          required:
+            - stage
+            - field
+            - description
+            - severity
+            - resolved
+          additionalProperties: false
+          properties:
+            stage:
+              type: integer
+              minimum: 3
+              maximum: 5
+              description: Value chain stage where the gap was identified.
+            field:
+              type: string
+              description: Field or data element that was missing or incomplete.
+            description:
+              type: string
+              description: Human-readable description of what is missing.
+            severity:
+              type: string
+              enum: [critical, major, minor]
+              description: >
+                critical — blocks handoff entirely until resolved;
+                major — handoff proceeds with CSM flag;
+                minor — noted for follow-up.
+            resolved:
+              type: boolean
+              description: Whether this gap has been resolved post-alert.
+            resolved_at:
+              type: string
+              format: date-time
+              description: ISO 8601 UTC timestamp when gap was resolved.
+
+  # ---------------------------------------------------------------------------
+  # Value chain position vector
+  # ---------------------------------------------------------------------------
+  position_vector:
+    type: object
+    description: >
+      Independent per-stage encoding of the account's value chain position.
+      The seven stages are:
+        1 — Product Capabilities
+        2 — Deliverable Outcomes
+        3 — Desired Outcomes
+        4 — Business Goals
+        5 — Expected Value
+        6 — Delivered Value
+        7 — Business Impact
+      Each stage has an independent status, confidence, completeness score,
+      and evidence citation. An account can be confirmed at stage 5 but
+      stalled at stage 6 — these are qualitatively distinct states.
+      SYSTEM NEVER RULE: A stage may not advance without cited evidence.
+      Inference from health scores or relationship length is not evidence.
+    required:
+      - stage_1
+      - stage_2
+      - stage_3
+      - stage_4
+      - stage_5
+      - stage_6
+      - stage_7
+    additionalProperties: false
+    properties:
+      stage_1:
+        $ref: "#/definitions/value_chain_stage"
+        description: "Stage 1 — Product Capabilities: product is deployed and accessible."
+      stage_2:
+        $ref: "#/definitions/value_chain_stage"
+        description: "Stage 2 — Deliverable Outcomes: product is generating its intended outputs."
+      stage_3:
+        $ref: "#/definitions/value_chain_stage"
+        description: >
+          Stage 3 — Desired Outcomes: customer's desired outcomes from using the
+          product are documented and understood.
+          Advancement to stage 4 requires: desired outcomes mapped to at least one
+          business goal with a named executive sponsor.
+      stage_4:
+        $ref: "#/definitions/value_chain_stage"
+        description: >
+          Stage 4 — Business Goals: product outcomes are tied to specific business
+          goals the customer is pursuing.
+          Advancement to stage 5 requires: expected value articulated in customer's
+          business metrics (not vendor metrics).
+      stage_5:
+        $ref: "#/definitions/value_chain_stage"
+        description: >
+          Stage 5 — Expected Value: the value the customer expected when they
+          purchased is documented in their terms.
+          Advancement to stage 6 requires: at least one desired outcome confirmed
+          achieved with supporting data.
+      stage_6:
+        $ref: "#/definitions/value_chain_stage"
+        description: >
+          Stage 6 — Delivered Value: value has been delivered and confirmed by
+          the customer.
+          Advancement to stage 7 requires: value achievement documented in
+          customer's business reporting or exec communication.
+      stage_7:
+        $ref: "#/definitions/value_chain_stage"
+        description: >
+          Stage 7 — Business Impact: the delivered value has translated into
+          measurable business impact the customer can report internally.
+
+  # ---------------------------------------------------------------------------
+  # Four value map quadrants
+  # ---------------------------------------------------------------------------
+  quadrants:
+    type: object
+    description: >
+      The four quadrants of the Customer Value Map. Each quadrant has a
+      data_source field recording whether values came from live MCP, file
+      input, or manual entry (Manual-First Instrumentation Principle).
+      Blue agents maintain these quadrants. Green agents read but do not
+      write them.
+    required:
+      - promised_outcomes
+      - delivered_capabilities
+      - realized_value
+      - unrealized_potential
+    additionalProperties: false
+    properties:
+
+      promised_outcomes:
+        type: object
+        description: >
+          What was committed to the customer during the sales process.
+          Populated by Handoff Integrity Enforcer from CRM opportunity data.
+          Represents the contract the CS team inherits.
+        required:
+          - data_source
+          - outcomes
+        additionalProperties: false
+        properties:
+          data_source:
+            $ref: "#/definitions/data_source_enum"
+          last_updated_at:
+            type: string
+            format: date-time
+          outcomes:
+            type: array
+            description: >
+              Each promised outcome documented at deal close. These form the
+              baseline against which delivered and realized value are measured.
+            items:
+              $ref: "#/definitions/outcome_record"
+          success_criteria:
+            type: array
+            description: >
+              Explicit success criteria agreed to at close, if documented in CRM.
+            items:
+              type: string
+          value_commitment_statement:
+            type: string
+            description: >
+              Verbatim or paraphrased statement of expected value from the
+              opportunity record. In customer's business terms.
+
+      delivered_capabilities:
+        type: object
+        description: >
+          What the product has actually made available to the customer —
+          features deployed, workflows enabled, integrations live.
+          Maintained by Value Map Builder from product analytics data.
+        required:
+          - data_source
+          - capabilities
+        additionalProperties: false
+        properties:
+          data_source:
+            $ref: "#/definitions/data_source_enum"
+          last_updated_at:
+            type: string
+            format: date-time
+          capabilities:
+            type: array
+            description: Features and capabilities the customer currently has access to and has activated.
+            items:
+              type: object
+              required:
+                - capability_name
+                - adoption_status
+              additionalProperties: false
+              properties:
+                capability_name:
+                  type: string
+                adoption_status:
+                  type: string
+                  enum: [active, configured_not_used, not_configured, deprecated]
+                adoption_rate_pct:
+                  type: number
+                  minimum: 0
+                  maximum: 100
+                  description: Percentage of eligible users actively using this capability.
+                last_usage_date:
+                  type: string
+                  format: date
+                notes:
+                  type: string
+          workflow_completion_rates:
+            type: object
+            description: >
+              Key workflow completion rates from product analytics.
+              Keys are workflow names; values are 0–100 percentage completion rates.
+            additionalProperties:
+              type: number
+              minimum: 0
+              maximum: 100
+
+      realized_value:
+        type: object
+        description: >
+          Value the customer has explicitly confirmed receiving. Requires
+          evidence — self-reported, data-backed, or documented in QBR notes.
+          This quadrant drives the value narrative in QBR briefs.
+        required:
+          - data_source
+          - realized_items
+        additionalProperties: false
+        properties:
+          data_source:
+            $ref: "#/definitions/data_source_enum"
+          last_updated_at:
+            type: string
+            format: date-time
+          realized_items:
+            type: array
+            description: >
+              Each item of confirmed realized value. Must be tied to a promised
+              outcome or documented business goal.
+            items:
+              type: object
+              required:
+                - description
+                - evidence_source
+                - confirmed_at
+              additionalProperties: false
+              properties:
+                description:
+                  type: string
+                  description: What value was realized, in customer's business terms.
+                evidence_source:
+                  type: string
+                  description: >
+                    Named source confirming this value (e.g., "QBR note 2026-03-15",
+                    "executive email 2026-04-02", "product analytics export").
+                metric_before:
+                  type: string
+                  description: Baseline metric before the customer achieved this value.
+                metric_after:
+                  type: string
+                  description: Current metric demonstrating the value achieved.
+                confirmed_by:
+                  type: string
+                  description: Name or role of customer stakeholder who confirmed this value.
+                confirmed_at:
+                  type: string
+                  format: date
+                linked_promised_outcome:
+                  type: string
+                  description: Reference to the promised_outcomes item this maps to, if applicable.
+
+      unrealized_potential:
+        type: object
+        description: >
+          Value the customer could achieve but has not yet. The gap between
+          what is possible (benchmarks, best-in-class peers) and what is
+          delivered. The foundation for expansion conversations.
+        required:
+          - data_source
+          - potential_items
+        additionalProperties: false
+        properties:
+          data_source:
+            $ref: "#/definitions/data_source_enum"
+          last_updated_at:
+            type: string
+            format: date-time
+          potential_items:
+            type: array
+            description: >
+              Each area of unrealized potential. Must have a benchmark source
+              to prevent generic "you could do more" assertions.
+            items:
+              type: object
+              required:
+                - description
+                - benchmark_source
+              additionalProperties: false
+              properties:
+                description:
+                  type: string
+                  description: What value remains unrealized, in customer's business terms.
+                benchmark_source:
+                  type: string
+                  description: >
+                    Source of the benchmark or comparison (e.g., "similar enterprise
+                    accounts at 18 months", "industry benchmark Q1 2026").
+                current_state:
+                  type: string
+                  description: Where the customer is today on this dimension.
+                potential_state:
+                  type: string
+                  description: Where comparable customers reach on this dimension.
+                expansion_angle:
+                  type: boolean
+                  default: false
+                  description: >
+                    True if this unrealized potential maps to a specific expansion
+                    opportunity (additional seats, new module, upgraded tier).
+                expansion_description:
+                  type: string
+                  description: >
+                    If expansion_angle is true, describe the specific commercial
+                    opportunity this represents. Required when expansion_angle is true.
+
+  # ---------------------------------------------------------------------------
+  # Leakage diagnostics
+  # ---------------------------------------------------------------------------
+  leakage_diagnostics:
+    type: object
+    description: >
+      Output of the Value Map Builder's leakage scan. Five named patterns.
+      Written by leakage-diagnoser subagent. Read by all green agents.
+      Active leakage in delivered_value blocks expansion signals (system NEVER rule).
+    required:
+      - last_scan_at
+      - patterns
+    additionalProperties: false
+    properties:
+      last_scan_at:
+        type: string
+        format: date-time
+        description: ISO 8601 UTC timestamp of the most recent leakage scan.
+      patterns:
+        type: object
+        required:
+          - capability_outcome_gap
+          - outcome_goal_misalignment
+          - expectation_reality_disconnect
+          - value_perception_disconnect
+          - impact_communication_failure
+        additionalProperties: false
+        properties:
+
+          capability_outcome_gap:
+            $ref: "#/definitions/leakage_pattern"
+            description: >
+              Features are being used but the associated outcomes are not
+              being achieved. Symptom: high product usage, low realized value.
+
+          outcome_goal_misalignment:
+            $ref: "#/definitions/leakage_pattern"
+            description: >
+              Outcomes are being achieved but they are not connected to the
+              customer's stated business goals. The product is solving the
+              wrong problem.
+
+          expectation_reality_disconnect:
+            $ref: "#/definitions/leakage_pattern"
+            description: >
+              The value the customer expected at purchase exceeds what the
+              product can realistically deliver given their adoption level.
+              Symptom: Promised Outcomes >> Delivered Capabilities.
+
+          value_perception_disconnect:
+            $ref: "#/definitions/leakage_pattern"
+            description: >
+              Value is being delivered but the customer does not recognize or
+              acknowledge it. Symptom: data shows value; QBR notes show skepticism.
+              NOTE: Active leakage here blocks expansion signals.
+
+          impact_communication_failure:
+            $ref: "#/definitions/leakage_pattern"
+            description: >
+              Business impact has been achieved but it is not documented or
+              communicated in the customer's internal reporting.
+              Symptom: Stage 6 confirmed; Stage 7 not advancing.
+
+  # ---------------------------------------------------------------------------
+  # Signals (green agents write here; blue agents read)
+  # ---------------------------------------------------------------------------
+  signals:
+    type: object
+    description: >
+      Signal flags written by green agents to trigger blue agent actions
+      or surface system state. Green agents ONLY write these fields.
+    additionalProperties: false
+    properties:
+
+      scanner_stale_flag:
+        type: boolean
+        default: false
+        description: >
+          Set to true by value-chain-position-scanner when
+          meta.last_value_map_build is older than 90 days.
+          Value Map Builder reads this flag on its next trigger cycle
+          and re-builds the Value Map. Reset to false after VMB writes.
+
+      scanner_stale_flagged_at:
+        type: string
+        format: date-time
+        description: Timestamp when scanner_stale_flag was set. Null if not set.
+
+      expansion_readiness_signal:
+        type: boolean
+        default: false
+        description: >
+          Set to true by expansion-readiness-detector when the account's
+          readiness score meets or exceeds expansion_readiness_threshold.
+          SYSTEM NEVER RULE: This flag must not be set when active leakage
+          exists in the value_perception_disconnect or delivered_value patterns.
+          QBR Intelligence Agent reads this flag and auto-triggers on detection.
+
+      expansion_readiness_score:
+        type: number
+        description: >
+          0–100 composite readiness score from Expansion Readiness Detector.
+          Dimension weights: Value Chain Progression 50%, Stakeholder Engagement 30%,
+          Commercial Alignment 20%.
+        minimum: 0
+        maximum: 100
+
+      expansion_readiness_threshold:
+        type: number
+        description: >
+          Minimum score required to fire expansion_readiness_signal.
+          Defaults by segment (Design Decision #5 — resolved 2026-05-18):
+            enterprise:   80
+            mid_market:   75
+            smb:          70
+          May be overridden per account by CSM or revenue team.
+        minimum: 0
+        maximum: 100
+
+      expansion_signal_fired_at:
+        type: string
+        format: date-time
+        description: >
+          Timestamp when expansion_readiness_signal was most recently set to true.
+          Null if signal has never fired.
+
+      intervention_priority:
+        type: string
+        description: >
+          Current intervention classification set by value-chain-position-scanner.
+          P1 accounts receive a mid-week re-scan (Thursday 06:00) in addition to
+          the weekly Monday sweep.
+          This is the canonical field for active leakage classification. Do NOT read
+          leakage_diagnostics directly for priority — always read from
+          signals.intervention_priority. After VMB processes leakage diagnostics,
+          the result is promoted to this field.
+          Omit this field (do not set to null) when no intervention priority has
+          been classified.
+        enum: [P1, P2, P3, P4]
+
+      intervention_classified_at:
+        type: string
+        format: date-time
+        description: Timestamp of the most recent intervention_priority classification.
+
+      p1_midweek_rescan_required:
+        type: boolean
+        default: false
+        description: >
+          Set to true by the weekly scanner when intervention_priority is P1.
+          Triggers the Thursday 06:00 re-scan. Reset after re-scan completes.
+          If deterioration is confirmed at re-scan, priority escalates to P0
+          (which triggers an immediate CSM notification outside the weekly cadence).
+
+      hard_block_active:
+        type: boolean
+        description: >
+          Set to true when active leakage (P1 or P2) exists in the Delivered Value quadrant.
+          Any cookbook reading this field as true MUST suppress expansion signals and refuse
+          to produce expansion angles or expansion briefs. Set by VMB leakage-diagnoser.
+          Cleared only by VMB after P1/P2 leakage is resolved.
+        default: false
+
+# =============================================================================
+# Shared definitions (referenced via $ref)
+# =============================================================================
+definitions:
+
+  # ---------------------------------------------------------------------------
+  # Value chain stage (reused for all seven stages)
+  # ---------------------------------------------------------------------------
+  value_chain_stage:
+    type: object
+    required:
+      - status
+    additionalProperties: false
+    properties:
+      status:
+        type: string
+        description: >
+          Current status of this stage.
+            not_yet_assessed — HIE has not evaluated this stage.
+            in_progress — Stage is partially satisfied; advancement criteria not yet met.
+            confirmed — Stage criteria fully met with cited evidence.
+            stalled — Stage was in_progress but has not advanced in 45+ days.
+            regressed — Stage was confirmed but evidence no longer holds.
+        enum:
+          - not_yet_assessed
+          - in_progress
+          - confirmed
+          - stalled
+          - regressed
+      confidence:
+        type: string
+        description: >
+          Confidence level in the current status assessment.
+          high — multiple independent evidence points.
+          medium — single evidence point.
+          low — inferred or incomplete data.
+        enum: [high, medium, low]
+      completeness_score:
+        type: number
+        description: >
+          0–100 score reflecting how thoroughly the stage criteria are met.
+          Below 60 triggers a handoff gap alert for Stages 3–5.
+          Used by the Position Scanner for threshold evaluation.
+        minimum: 0
+        maximum: 100
+      evidence:
+        type: array
+        description: >
+          Cited evidence supporting the current status and completeness score.
+          SYSTEM NEVER RULE: No stage may advance without at least one entry here.
+          Evidence must name a specific data source, not infer from health score
+          or relationship length.
+        items:
+          type: object
+          required:
+            - source
+            - description
+            - recorded_at
+          additionalProperties: false
+          properties:
+            source:
+              type: string
+              description: >
+                Named source: e.g., "cs-platform touchpoint 2026-03-10",
+                "product-analytics export 2026-04-01",
+                "QBR note 2026-02-15", "CRM opportunity field: expected_value".
+            description:
+              type: string
+              description: What this evidence demonstrates about stage advancement.
+            recorded_at:
+              type: string
+              format: date-time
+              description: When this evidence was recorded.
+      last_evaluated_at:
+        type: string
+        format: date-time
+        description: Timestamp of the most recent evaluation of this stage.
+      stalled_since:
+        type: string
+        format: date-time
+        description: >
+          Populated when status transitions to 'stalled'. Records when stall began.
+          Position Scanner uses this for the 45-day stall alert threshold.
+      notes:
+        type: string
+        description: Free-text notes from the evaluating agent.
+
+  # ---------------------------------------------------------------------------
+  # Outcome record (used in promised_outcomes.outcomes)
+  # ---------------------------------------------------------------------------
+  outcome_record:
+    type: object
+    required:
+      - outcome_id
+      - description
+      - stage_mapping
+    additionalProperties: false
+    properties:
+      outcome_id:
+        type: string
+        description: >
+          Stable identifier for this outcome. Used to link Promised Outcomes
+          to Realized Value records. Format: OUT-{sequence}.
+        pattern: "^OUT-\\d+$"
+      description:
+        type: string
+        description: The promised outcome in customer's business terms.
+      stage_mapping:
+        type: integer
+        description: Which value chain stage this outcome lives at (3, 4, or 5).
+        enum: [3, 4, 5]
+      success_metric:
+        type: string
+        description: How achievement of this outcome will be measured.
+      realization_status:
+        type: string
+        description: Whether this promised outcome has been realized.
+        enum: [not_started, in_progress, realized, at_risk, abandoned]
+        default: not_started
+      realized_at:
+        type: string
+        format: date
+        description: Date this outcome was confirmed realized.
+
+  # ---------------------------------------------------------------------------
+  # Leakage pattern (reused for all five patterns)
+  # ---------------------------------------------------------------------------
+  leakage_pattern:
+    type: object
+    description: >
+      Defines the state of a single leakage pattern. No 'evidence' field exists on
+      leakage_pattern. Evidence is contained within the position_vector stage entries,
+      not on the pattern itself.
+    required:
+      - active
+    additionalProperties: false
+    properties:
+      active:
+        type: boolean
+        description: >
+          Whether this leakage pattern is currently detected as active.
+          Active leakage in value_perception_disconnect or any delivered
+          value pattern blocks expansion signals (system NEVER rule).
+      severity:
+        type: string
+        description: Severity when active. Null when inactive.
+        enum: [high, medium, low]
+      description:
+        type: string
+        description: >
+          Specific description of how this pattern manifests in this account.
+          Must reference actual account data, not generic text.
+      detected_at:
+        type: string
+        format: date-time
+        description: When this leakage pattern was first detected. Null if never active.
+      last_evaluated_at:
+        type: string
+        format: date-time
+        description: Timestamp of the most recent evaluation of this pattern.
+      remediation_notes:
+        type: string
+        description: >
+          CSM or agent notes on remediation actions taken or planned.
+          Updated by Value Map Builder on each run.
+      resolved_at:
+        type: string
+        format: date-time
+        description: When this pattern was resolved (active set to false). Null if still active.
+
+  # ---------------------------------------------------------------------------
+  # Data source enum (reused across quadrants)
+  # ---------------------------------------------------------------------------
+  data_source_enum:
+    type: string
+    description: >
+      Records how this quadrant's data was populated (Manual-First Principle).
+        live_mcp — data pulled from live MCP server during this build.
+        file — data provided as a structured YAML file input by CSM.
+        manual — data entered interactively during agent prompting.
+        not_populated — quadrant has not yet been populated.
+      Used for quality tracking; CSMs can see where to invest in MCP connectivity.
+    enum:
+      - live_mcp
+      - file
+      - manual
+      - not_populated
