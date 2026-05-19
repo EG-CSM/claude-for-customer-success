@@ -91,7 +91,7 @@ The **CSMBOK Knowledge Graph** maps the body of knowledge for Customer Success a
 
 The **Agentic Capability Graph** takes that foundation and maps it to the Customer Lifecycle and Value Chain specifically — what capabilities are needed at each stage, how they connect across stages, and where agent intervention changes outcomes rather than just accelerating tasks. This is what made it possible to design 15 agents that cover the full arc rather than 15 agents that each do one thing faster.
 
-The **training/fine-tuning datasets** and **developer toolkits** built alongside these graphs provide the technical scaffolding for AI-enabled CS solutions: structured content representations, entity models, intent taxonomies, and query-to-capability mappings that let skills reason about CS work the way a senior practitioner would.
+The **Training/Fine-tuning Datasets** and **Developer Toolkits** built alongside these graphs provide the technical scaffolding for AI-enabled CS solutions: structured content representations, entity models, intent taxonomies, and query-to-capability mappings that let skills reason about CS work the way a senior practitioner would.
 
 This suite is one application of that research — a **working reference implementation** and **customizable harness** for building and testing AI-enabled CS solutions and CS-tuned models. The domain knowledge itself is packaged for consumption in multiple forms: MCPs, APIs, Playbooks, and Developer Kits. The suite shows one way to use it. The methodologies aren't a selection from available options — they're the output of a deliberate program to build the domain knowledge layer that makes agent-enabled Customer Success actually work.
 
