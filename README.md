@@ -1,6 +1,12 @@
 # Claude for Customer Success
 
-A reference implementation showing what AI-native Customer Success looks like when built on deep domain knowledge — not a deployment-ready product, but a working demonstration of what's possible and what a minimum viable architecture requires. Six Claude Code/Claude Cowork plugins covering every function in a modern CS organization: CSMs, CS Ops, renewals specialists, onboarding teams, RevOps (for Customer Success), and the infrastructure that connects them. Methodology-opinionated (SuccessCOACHING Customer Success methodologies and frameworks), tool-agnostic.
+A reference implementation showing what AI-native Customer Success looks like when built on deep domain knowledge — not a deployment-ready product, but a working demonstration of what's possible and what a minimum viable architecture requires.
+
+Six Claude Code/Claude Cowork plugins covering every function in a modern CS organization: CSMs, CS Ops, renewals specialists, onboarding teams, RevOps (for Customer Success), and the infrastructure that connects them. Methodology-opinionated (SuccessCOACHING Customer Success methodologies and frameworks), tool-agnostic.
+
+> New here? Start with **[QUICKSTART.md](./QUICKSTART.md)** — install in 60 seconds. This README is the full reference.
+
+Everything here is available two ways from one source: install it as a **[Claude Cowork](https://claude.com/product/cowork)** or **[Claude Code](https://claude.com/product/claude-code)** plugin, or deploy it through the **[Claude Managed Agents API](https://docs.claude.com/en/api/managed-agents)** behind your own workflow engine. Same system prompt, same skills — you choose where it runs.
 
 ---
 
