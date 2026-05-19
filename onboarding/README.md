@@ -9,7 +9,7 @@
 
 Brings AI-native assistance to the full onboarding lifecycle: kickoff preparation, onboarding plan creation, success criteria definition, milestone tracking, blocker reviews, time-to-value analysis, and CSM handoff documentation.
 
-Every skill reads your configured practice profile — your onboarding model, your milestone definitions, your TtV targets, your escalation chain — so outputs are calibrated to how your team actually runs onboarding, not a generic implementation template.
+Every skill reads your configured company profile — your onboarding model, your milestone definitions, your TtV targets, your escalation chain — so outputs are calibrated to how your team actually runs onboarding, not a generic implementation template.
 
 ---
 
@@ -31,7 +31,7 @@ Takes 2 minutes for quick start (role + integrations + defaults) or 15 minutes f
 
 | Skill | What it does | Typical use |
 |-------|-------------|-------------|
-| `cold-start-interview` | Setup interview — configures your practice profile | First install; re-run with `--redo` to update |
+| `cold-start-interview` | Setup interview — configures your company profile | First install; re-run with `--redo` to update |
 | `kickoff-prep` | Internal and customer-facing kickoff brief with agenda and attendee research | 24–48 hours before kickoff call |
 | `onboarding-plan` | Generate or review a structured onboarding plan with milestones and owners | Kickoff; plan reset; mid-onboarding review |
 | `success-criteria-builder` | Co-author account-specific success criteria with observable milestones | Kickoff; when criteria drift or need reset |
@@ -39,7 +39,7 @@ Takes 2 minutes for quick start (role + integrations + defaults) or 15 minutes f
 | `blockers-review` | Structured review of active blockers — type, owner, path to resolution | When progress stalls; pre-escalation |
 | `time-to-value-review` | Assess TtV trajectory — on track / at risk / off track — with assumption audit | Mid-onboarding; ahead of milestone gate reviews |
 | `handoff-doc` | Generate a CSM handoff document when onboarding graduation criteria are met | Graduation; CSM transition call prep |
-| `customize` | Update practice profile mid-session | When account context, milestones, or team changes |
+| `customize` | Update company profile mid-session | When account context, milestones, or team changes |
 
 ---
 
@@ -74,7 +74,7 @@ These apply to every skill in this plugin and cannot be overridden:
 
 ## Configuration
 
-Your practice profile lives at:
+Your company profile lives at:
 ```
 ~/.claude/plugins/config/claude-for-customer-success/onboarding/CLAUDE.md
 ```

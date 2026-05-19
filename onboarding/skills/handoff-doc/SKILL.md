@@ -13,6 +13,8 @@ version: "1.0.0"
 deployment_target: plugin
 ---
 
+<!-- Status: [PROPOSED] -->
+
 # /onboarding:handoff-doc
 
 Onboarding graduation handoff document.
@@ -58,13 +60,13 @@ Proceed with generic graduation criteria if confirmed.
 - Blocker resolution before the account is ready to graduate (use `/onboarding:blocker-review`)
 - Success criteria definition — graduation criteria must be configured before handoff is valid
 
-**Typical activation:**
+## Typical Activation
 - "Run the graduation readiness check for [Account]"
 - "Generate the handoff document for [Account]"
 - "I need a quick handoff brief for [Account] for tomorrow's call"
-- `/onboarding:handoff-doc [account] --readiness`
-- `/onboarding:handoff-doc [account] --draft`
-- `/onboarding:handoff-doc [account] --summary`
+- CSM runs `/onboarding:handoff-doc [account] --readiness` before generating the handoff doc
+- CSM runs `/onboarding:handoff-doc [account] --draft` to produce the full graduation handoff document
+- CSM runs `/onboarding:handoff-doc [account] --summary` for an abbreviated async handoff brief
 
 ---
 
@@ -372,6 +374,12 @@ graduation checklist with go/no-go recommendation. Summary mode: concise async
 handoff note. See mode-specific sections for field-level structure.
 
 > [review before sending]
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill
+
+---
 
 ## Security & Permissions
 

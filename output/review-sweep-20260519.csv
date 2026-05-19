@@ -1,0 +1,1702 @@
+plugin,skill,check_id,severity,result,detail
+csm,account-research,1.1,BLOCK,PASS,deployment_target=plugin
+csm,account-research,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,account-research,1.2,WARN,PASS,version=1.0.0
+csm,account-research,1.3,WARN,PASS,name=account-research
+csm,account-research,1.4,WARN,PASS,description present
+csm,account-research,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,account-research,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,account-research,2.3,WARN,PASS,## Typical Activation present
+csm,account-research,3.1,WARN,PASS,## Pre-flight present
+csm,account-research,3.2,WARN,PASS,company-profile.md referenced
+csm,account-research,5.1,WARN,PASS,## Reasoning Protocol present
+csm,account-research,5.1-D1a,WARN,PASS,D1 opening line present
+csm,account-research,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,account-research,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,account-research,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,account-research,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,account-research,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,account-research,6.1,WARN,PASS,## Reference Files section present
+csm,account-research,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,account-research,9.1,WARN,PASS,G-code governance reference found
+csm,account-research,S1,WARN,PASS,status signal=[PROPOSED]
+csm,call-prep,1.1,BLOCK,PASS,deployment_target=plugin
+csm,call-prep,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,call-prep,1.2,WARN,PASS,version=1.0.0
+csm,call-prep,1.3,WARN,PASS,name=call-prep
+csm,call-prep,1.4,WARN,PASS,description present
+csm,call-prep,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,call-prep,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,call-prep,2.3,WARN,PASS,## Typical Activation present
+csm,call-prep,3.1,WARN,PASS,## Pre-flight present
+csm,call-prep,3.2,WARN,PASS,company-profile.md referenced
+csm,call-prep,5.1,WARN,PASS,## Reasoning Protocol present
+csm,call-prep,5.1-D1a,WARN,PASS,D1 opening line present
+csm,call-prep,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,call-prep,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,call-prep,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,call-prep,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,call-prep,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,call-prep,6.1,WARN,PASS,## Reference Files section present
+csm,call-prep,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,call-prep,9.1,WARN,PASS,G-code governance reference found
+csm,call-prep,S1,WARN,PASS,status signal=[PROPOSED]
+csm,cold-start-interview,1.1,BLOCK,PASS,deployment_target=plugin
+csm,cold-start-interview,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,cold-start-interview,1.2,WARN,PASS,version=1.0.0
+csm,cold-start-interview,1.3,WARN,PASS,name=cold-start-interview
+csm,cold-start-interview,1.4,WARN,PASS,description present
+csm,cold-start-interview,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,cold-start-interview,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,cold-start-interview,2.3,WARN,PASS,## Typical Activation present
+csm,cold-start-interview,3.1,WARN,PASS,## Pre-flight present
+csm,cold-start-interview,3.2,WARN,PASS,company-profile.md referenced
+csm,cold-start-interview,5.1,WARN,PASS,## Reasoning Protocol present
+csm,cold-start-interview,5.1-D1a,WARN,PASS,D1 opening line present
+csm,cold-start-interview,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,cold-start-interview,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,cold-start-interview,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,cold-start-interview,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,cold-start-interview,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,cold-start-interview,6.1,WARN,PASS,## Reference Files section present
+csm,cold-start-interview,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,cold-start-interview,9.1,WARN,PASS,G-code governance reference found
+csm,cold-start-interview,S1,WARN,PASS,status signal=[PROPOSED]
+csm,customize,1.1,BLOCK,PASS,deployment_target=plugin
+csm,customize,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,customize,1.2,WARN,PASS,version=1.0.0
+csm,customize,1.3,WARN,PASS,name=customize
+csm,customize,1.4,WARN,PASS,description present
+csm,customize,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,customize,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,customize,2.3,WARN,PASS,## Typical Activation present
+csm,customize,3.1,WARN,PASS,## Pre-flight present
+csm,customize,3.2,WARN,PASS,company-profile.md referenced
+csm,customize,5.1,WARN,PASS,## Reasoning Protocol present
+csm,customize,5.1-D1a,WARN,PASS,D1 opening line present
+csm,customize,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,customize,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,customize,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,customize,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,customize,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,customize,6.1,WARN,PASS,## Reference Files section present
+csm,customize,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,customize,9.1,WARN,PASS,G-code governance reference found
+csm,customize,S1,WARN,PASS,status signal=[PROPOSED]
+csm,escalation-memo,1.1,BLOCK,PASS,deployment_target=plugin
+csm,escalation-memo,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,escalation-memo,1.2,WARN,PASS,version=1.0.0
+csm,escalation-memo,1.3,WARN,PASS,name=escalation-memo
+csm,escalation-memo,1.4,WARN,PASS,description present
+csm,escalation-memo,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,escalation-memo,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,escalation-memo,2.3,WARN,PASS,## Typical Activation present
+csm,escalation-memo,3.1,WARN,PASS,## Pre-flight present
+csm,escalation-memo,3.2,WARN,PASS,company-profile.md referenced
+csm,escalation-memo,5.1,WARN,PASS,## Reasoning Protocol present
+csm,escalation-memo,5.1-D1a,WARN,PASS,D1 opening line present
+csm,escalation-memo,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,escalation-memo,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,escalation-memo,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,escalation-memo,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,escalation-memo,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,escalation-memo,6.1,WARN,PASS,## Reference Files section present
+csm,escalation-memo,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,escalation-memo,9.1,WARN,PASS,G-code governance reference found
+csm,escalation-memo,S1,WARN,PASS,status signal=[PROPOSED]
+csm,expansion-business-case,1.1,BLOCK,PASS,deployment_target=plugin
+csm,expansion-business-case,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,expansion-business-case,1.2,WARN,PASS,version=1.0.0
+csm,expansion-business-case,1.3,WARN,PASS,name=csm:expansion-business-case
+csm,expansion-business-case,1.4,WARN,PASS,description present
+csm,expansion-business-case,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,expansion-business-case,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,expansion-business-case,2.3,WARN,PASS,## Typical Activation present
+csm,expansion-business-case,3.1,WARN,PASS,## Pre-flight present
+csm,expansion-business-case,3.2,WARN,PASS,company-profile.md referenced
+csm,expansion-business-case,5.1,WARN,PASS,## Reasoning Protocol present
+csm,expansion-business-case,5.1-D1a,WARN,PASS,D1 opening line present
+csm,expansion-business-case,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,expansion-business-case,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,expansion-business-case,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,expansion-business-case,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,expansion-business-case,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,expansion-business-case,6.1,WARN,PASS,## Reference Files section present
+csm,expansion-business-case,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,expansion-business-case,9.1,WARN,PASS,G-code governance reference found
+csm,expansion-business-case,S1,WARN,PASS,status signal=[PROPOSED]
+csm,expansion-onboarding,1.1,BLOCK,PASS,deployment_target=plugin
+csm,expansion-onboarding,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,expansion-onboarding,1.2,WARN,PASS,version=1.0.0
+csm,expansion-onboarding,1.3,WARN,PASS,name=csm:expansion-onboarding
+csm,expansion-onboarding,1.4,WARN,PASS,description present
+csm,expansion-onboarding,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,expansion-onboarding,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,expansion-onboarding,2.3,WARN,PASS,## Typical Activation present
+csm,expansion-onboarding,3.1,WARN,PASS,## Pre-flight present
+csm,expansion-onboarding,3.2,WARN,PASS,company-profile.md referenced
+csm,expansion-onboarding,5.1,WARN,PASS,## Reasoning Protocol present
+csm,expansion-onboarding,5.1-D1a,WARN,PASS,D1 opening line present
+csm,expansion-onboarding,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,expansion-onboarding,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,expansion-onboarding,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,expansion-onboarding,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,expansion-onboarding,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,expansion-onboarding,6.1,WARN,PASS,## Reference Files section present
+csm,expansion-onboarding,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,expansion-onboarding,9.1,WARN,PASS,G-code governance reference found
+csm,expansion-onboarding,S1,WARN,PASS,status signal=[VALIDATED]
+csm,health-score-review,1.1,BLOCK,PASS,deployment_target=plugin
+csm,health-score-review,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,health-score-review,1.2,WARN,PASS,version=1.0.0
+csm,health-score-review,1.3,WARN,PASS,name=health-score-review
+csm,health-score-review,1.4,WARN,PASS,description present
+csm,health-score-review,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,health-score-review,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,health-score-review,2.3,WARN,PASS,## Typical Activation present
+csm,health-score-review,3.1,WARN,PASS,## Pre-flight present
+csm,health-score-review,3.2,WARN,PASS,company-profile.md referenced
+csm,health-score-review,5.1,WARN,PASS,## Reasoning Protocol present
+csm,health-score-review,5.1-D1a,WARN,PASS,D1 opening line present
+csm,health-score-review,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,health-score-review,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,health-score-review,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,health-score-review,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,health-score-review,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,health-score-review,6.1,WARN,PASS,## Reference Files section present
+csm,health-score-review,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,health-score-review,9.1,WARN,PASS,G-code governance reference found
+csm,health-score-review,S1,WARN,PASS,status signal=[PROPOSED]
+csm,qbr-builder,1.1,BLOCK,PASS,deployment_target=plugin
+csm,qbr-builder,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,qbr-builder,1.2,WARN,PASS,version=1.0.0
+csm,qbr-builder,1.3,WARN,PASS,name=qbr-builder
+csm,qbr-builder,1.4,WARN,PASS,description present
+csm,qbr-builder,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,qbr-builder,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,qbr-builder,2.3,WARN,PASS,## Typical Activation present
+csm,qbr-builder,3.1,WARN,PASS,## Pre-flight present
+csm,qbr-builder,3.2,WARN,PASS,company-profile.md referenced
+csm,qbr-builder,5.1,WARN,PASS,## Reasoning Protocol present
+csm,qbr-builder,5.1-D1a,WARN,PASS,D1 opening line present
+csm,qbr-builder,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,qbr-builder,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,qbr-builder,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,qbr-builder,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,qbr-builder,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,qbr-builder,6.1,WARN,PASS,## Reference Files section present
+csm,qbr-builder,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,qbr-builder,9.1,WARN,PASS,G-code governance reference found
+csm,qbr-builder,S1,WARN,PASS,status signal=[PROPOSED]
+csm,renewal-readiness,1.1,BLOCK,PASS,deployment_target=plugin
+csm,renewal-readiness,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,renewal-readiness,1.2,WARN,PASS,version=1.0.0
+csm,renewal-readiness,1.3,WARN,PASS,name=renewal-readiness
+csm,renewal-readiness,1.4,WARN,PASS,description present
+csm,renewal-readiness,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,renewal-readiness,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,renewal-readiness,2.3,WARN,PASS,## Typical Activation present
+csm,renewal-readiness,3.1,WARN,PASS,## Pre-flight present
+csm,renewal-readiness,3.2,WARN,PASS,company-profile.md referenced
+csm,renewal-readiness,5.1,WARN,PASS,## Reasoning Protocol present
+csm,renewal-readiness,5.1-D1a,WARN,PASS,D1 opening line present
+csm,renewal-readiness,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,renewal-readiness,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,renewal-readiness,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,renewal-readiness,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,renewal-readiness,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,renewal-readiness,6.1,WARN,PASS,## Reference Files section present
+csm,renewal-readiness,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,renewal-readiness,9.1,WARN,PASS,G-code governance reference found
+csm,renewal-readiness,S1,WARN,PASS,status signal=[PROPOSED]
+csm,risk-flag,1.1,BLOCK,PASS,deployment_target=plugin
+csm,risk-flag,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,risk-flag,1.2,WARN,PASS,version=1.0.0
+csm,risk-flag,1.3,WARN,PASS,name=risk-flag
+csm,risk-flag,1.4,WARN,PASS,description present
+csm,risk-flag,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,risk-flag,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,risk-flag,2.3,WARN,PASS,## Typical Activation present
+csm,risk-flag,3.1,WARN,PASS,## Pre-flight present
+csm,risk-flag,3.2,WARN,PASS,company-profile.md referenced
+csm,risk-flag,5.1,WARN,PASS,## Reasoning Protocol present
+csm,risk-flag,5.1-D1a,WARN,PASS,D1 opening line present
+csm,risk-flag,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,risk-flag,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,risk-flag,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,risk-flag,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,risk-flag,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,risk-flag,6.1,WARN,PASS,## Reference Files section present
+csm,risk-flag,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,risk-flag,9.1,WARN,PASS,G-code governance reference found
+csm,risk-flag,S1,WARN,PASS,status signal=[PROPOSED]
+csm,stakeholder-map,1.1,BLOCK,PASS,deployment_target=plugin
+csm,stakeholder-map,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,stakeholder-map,1.2,WARN,PASS,version=1.0.0
+csm,stakeholder-map,1.3,WARN,PASS,name=stakeholder-map
+csm,stakeholder-map,1.4,WARN,PASS,description present
+csm,stakeholder-map,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,stakeholder-map,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,stakeholder-map,2.3,WARN,PASS,## Typical Activation present
+csm,stakeholder-map,3.1,WARN,PASS,## Pre-flight present
+csm,stakeholder-map,3.2,WARN,PASS,company-profile.md referenced
+csm,stakeholder-map,5.1,WARN,PASS,## Reasoning Protocol present
+csm,stakeholder-map,5.1-D1a,WARN,PASS,D1 opening line present
+csm,stakeholder-map,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,stakeholder-map,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,stakeholder-map,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,stakeholder-map,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,stakeholder-map,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,stakeholder-map,6.1,WARN,PASS,## Reference Files section present
+csm,stakeholder-map,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,stakeholder-map,9.1,WARN,PASS,G-code governance reference found
+csm,stakeholder-map,S1,WARN,PASS,status signal=[PROPOSED]
+csm,success-plan-builder,1.1,BLOCK,PASS,deployment_target=plugin
+csm,success-plan-builder,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,success-plan-builder,1.2,WARN,PASS,version=1.0.0
+csm,success-plan-builder,1.3,WARN,PASS,name=success-plan-builder
+csm,success-plan-builder,1.4,WARN,PASS,description present
+csm,success-plan-builder,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,success-plan-builder,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,success-plan-builder,2.3,WARN,PASS,## Typical Activation present
+csm,success-plan-builder,3.1,WARN,PASS,## Pre-flight present
+csm,success-plan-builder,3.2,WARN,PASS,company-profile.md referenced
+csm,success-plan-builder,5.1,WARN,PASS,## Reasoning Protocol present
+csm,success-plan-builder,5.1-D1a,WARN,PASS,D1 opening line present
+csm,success-plan-builder,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,success-plan-builder,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,success-plan-builder,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,success-plan-builder,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,success-plan-builder,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,success-plan-builder,6.1,WARN,PASS,## Reference Files section present
+csm,success-plan-builder,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,success-plan-builder,9.1,WARN,PASS,G-code governance reference found
+csm,success-plan-builder,S1,WARN,PASS,status signal=[PROPOSED]
+csm,success-plan-canvas,1.1,BLOCK,PASS,deployment_target=plugin
+csm,success-plan-canvas,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,success-plan-canvas,1.2,WARN,PASS,version=1.0.0
+csm,success-plan-canvas,1.3,WARN,PASS,name=success-plan-canvas
+csm,success-plan-canvas,1.4,WARN,PASS,description present
+csm,success-plan-canvas,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,success-plan-canvas,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,success-plan-canvas,2.3,WARN,PASS,## Typical Activation present
+csm,success-plan-canvas,3.1,WARN,PASS,## Pre-flight present
+csm,success-plan-canvas,3.2,WARN,PASS,company-profile.md referenced
+csm,success-plan-canvas,5.1,WARN,PASS,## Reasoning Protocol present
+csm,success-plan-canvas,5.1-D1a,WARN,PASS,D1 opening line present
+csm,success-plan-canvas,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,success-plan-canvas,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,success-plan-canvas,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,success-plan-canvas,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,success-plan-canvas,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,success-plan-canvas,6.1,WARN,PASS,## Reference Files section present
+csm,success-plan-canvas,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,success-plan-canvas,9.1,WARN,PASS,G-code governance reference found
+csm,success-plan-canvas,S1,WARN,PASS,status signal=[PROPOSED]
+csm,success-plan-progress-review,1.1,BLOCK,PASS,deployment_target=plugin
+csm,success-plan-progress-review,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,success-plan-progress-review,1.2,WARN,PASS,version=1.0.0
+csm,success-plan-progress-review,1.3,WARN,PASS,name=success-plan-progress-review
+csm,success-plan-progress-review,1.4,WARN,PASS,description present
+csm,success-plan-progress-review,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,success-plan-progress-review,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,success-plan-progress-review,2.3,WARN,PASS,## Typical Activation present
+csm,success-plan-progress-review,3.1,WARN,PASS,## Pre-flight present
+csm,success-plan-progress-review,3.2,WARN,PASS,company-profile.md referenced
+csm,success-plan-progress-review,5.1,WARN,PASS,## Reasoning Protocol present
+csm,success-plan-progress-review,5.1-D1a,WARN,PASS,D1 opening line present
+csm,success-plan-progress-review,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,success-plan-progress-review,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,success-plan-progress-review,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,success-plan-progress-review,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,success-plan-progress-review,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,success-plan-progress-review,6.1,WARN,PASS,## Reference Files section present
+csm,success-plan-progress-review,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,success-plan-progress-review,9.1,WARN,PASS,G-code governance reference found
+csm,success-plan-progress-review,S1,WARN,PASS,status signal=[PROPOSED]
+csm,taro-play-runner,1.1,BLOCK,PASS,deployment_target=plugin
+csm,taro-play-runner,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,taro-play-runner,1.2,WARN,PASS,version=1.0.0
+csm,taro-play-runner,1.3,WARN,PASS,name=taro-play-runner
+csm,taro-play-runner,1.4,WARN,PASS,description present
+csm,taro-play-runner,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,taro-play-runner,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,taro-play-runner,2.3,WARN,PASS,## Typical Activation present
+csm,taro-play-runner,3.1,WARN,PASS,## Pre-flight present
+csm,taro-play-runner,3.2,WARN,PASS,company-profile.md referenced
+csm,taro-play-runner,5.1,WARN,PASS,## Reasoning Protocol present
+csm,taro-play-runner,5.1-D1a,WARN,PASS,D1 opening line present
+csm,taro-play-runner,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,taro-play-runner,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,taro-play-runner,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,taro-play-runner,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,taro-play-runner,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,taro-play-runner,6.1,WARN,PASS,## Reference Files section present
+csm,taro-play-runner,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,taro-play-runner,9.1,WARN,PASS,G-code governance reference found
+csm,taro-play-runner,S1,WARN,PASS,status signal=[PROPOSED]
+csm,value-statement,1.1,BLOCK,PASS,deployment_target=plugin
+csm,value-statement,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+csm,value-statement,1.2,WARN,PASS,version=1.0.0
+csm,value-statement,1.3,WARN,PASS,name=value-statement
+csm,value-statement,1.4,WARN,PASS,description present
+csm,value-statement,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+csm,value-statement,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+csm,value-statement,2.3,WARN,PASS,## Typical Activation present
+csm,value-statement,3.1,WARN,PASS,## Pre-flight present
+csm,value-statement,3.2,WARN,PASS,company-profile.md referenced
+csm,value-statement,5.1,WARN,PASS,## Reasoning Protocol present
+csm,value-statement,5.1-D1a,WARN,PASS,D1 opening line present
+csm,value-statement,5.1-D1b,WARN,PASS,all 4 primer headings present
+csm,value-statement,5.1-D1c,WARN,PASS,post-execution verification block present
+csm,value-statement,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+csm,value-statement,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+csm,value-statement,5.1a,WARN,PASS,references/reasoning-blueprint.md
+csm,value-statement,6.1,WARN,PASS,## Reference Files section present
+csm,value-statement,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+csm,value-statement,9.1,WARN,PASS,G-code governance reference found
+csm,value-statement,S1,WARN,PASS,status signal=[PROPOSED]
+renewals,churn-analysis,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,churn-analysis,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,churn-analysis,1.2,WARN,PASS,version=1.0.0
+renewals,churn-analysis,1.3,WARN,PASS,name=churn-analysis
+renewals,churn-analysis,1.4,WARN,PASS,description present
+renewals,churn-analysis,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,churn-analysis,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,churn-analysis,2.3,WARN,PASS,## Typical Activation present
+renewals,churn-analysis,3.1,WARN,PASS,## Pre-flight present
+renewals,churn-analysis,3.2,WARN,PASS,company-profile.md referenced
+renewals,churn-analysis,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,churn-analysis,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,churn-analysis,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,churn-analysis,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,churn-analysis,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,churn-analysis,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,churn-analysis,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,churn-analysis,6.1,WARN,PASS,## Reference Files section present
+renewals,churn-analysis,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,churn-analysis,9.1,WARN,PASS,G-code governance reference found
+renewals,churn-analysis,S1,WARN,PASS,status signal=[VALIDATED]
+renewals,churn-rca,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,churn-rca,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,churn-rca,1.2,WARN,PASS,version=1.0.0
+renewals,churn-rca,1.3,WARN,PASS,name=churn-rca
+renewals,churn-rca,1.4,WARN,PASS,description present
+renewals,churn-rca,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,churn-rca,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,churn-rca,2.3,WARN,PASS,## Typical Activation present
+renewals,churn-rca,3.1,WARN,PASS,## Pre-flight present
+renewals,churn-rca,3.2,WARN,PASS,company-profile.md referenced
+renewals,churn-rca,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,churn-rca,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,churn-rca,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,churn-rca,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,churn-rca,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,churn-rca,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,churn-rca,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,churn-rca,6.1,WARN,PASS,## Reference Files section present
+renewals,churn-rca,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,churn-rca,9.1,WARN,PASS,G-code governance reference found
+renewals,churn-rca,S1,WARN,PASS,status signal=[VALIDATED]
+renewals,cold-start-interview,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,cold-start-interview,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,cold-start-interview,1.2,WARN,PASS,version=1.0.0
+renewals,cold-start-interview,1.3,WARN,PASS,name=cold-start-interview
+renewals,cold-start-interview,1.4,WARN,PASS,description present
+renewals,cold-start-interview,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,cold-start-interview,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,cold-start-interview,2.3,WARN,PASS,## Typical Activation present
+renewals,cold-start-interview,3.1,WARN,PASS,## Pre-flight present
+renewals,cold-start-interview,3.2,WARN,PASS,company-profile.md referenced
+renewals,cold-start-interview,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,cold-start-interview,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,cold-start-interview,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,cold-start-interview,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,cold-start-interview,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,cold-start-interview,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,cold-start-interview,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,cold-start-interview,6.1,WARN,PASS,## Reference Files section present
+renewals,cold-start-interview,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,cold-start-interview,9.1,WARN,PASS,G-code governance reference found
+renewals,cold-start-interview,S1,WARN,PASS,status signal=[VALIDATED]
+renewals,contract-review,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,contract-review,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,contract-review,1.2,WARN,PASS,version=1.0.0
+renewals,contract-review,1.3,WARN,PASS,name=contract-review
+renewals,contract-review,1.4,WARN,PASS,description present
+renewals,contract-review,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,contract-review,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,contract-review,2.3,WARN,PASS,## Typical Activation present
+renewals,contract-review,3.1,WARN,PASS,## Pre-flight present
+renewals,contract-review,3.2,WARN,PASS,company-profile.md referenced
+renewals,contract-review,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,contract-review,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,contract-review,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,contract-review,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,contract-review,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,contract-review,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,contract-review,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,contract-review,6.1,WARN,PASS,## Reference Files section present
+renewals,contract-review,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,contract-review,9.1,WARN,PASS,G-code governance reference found
+renewals,contract-review,S1,WARN,PASS,status signal=[VALIDATED]
+renewals,customize,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,customize,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,customize,1.2,WARN,PASS,version=1.0.0
+renewals,customize,1.3,WARN,PASS,name=customize
+renewals,customize,1.4,WARN,PASS,description present
+renewals,customize,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,customize,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,customize,2.3,WARN,PASS,## Typical Activation present
+renewals,customize,3.1,WARN,PASS,## Pre-flight present
+renewals,customize,3.2,WARN,PASS,company-profile.md referenced
+renewals,customize,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,customize,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,customize,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,customize,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,customize,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,customize,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,customize,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,customize,6.1,WARN,PASS,## Reference Files section present
+renewals,customize,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,customize,9.1,WARN,PASS,G-code governance reference found
+renewals,customize,S1,WARN,PASS,status signal=[VALIDATED]
+renewals,downgrade-analysis,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,downgrade-analysis,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,downgrade-analysis,1.2,WARN,PASS,version=1.0.0
+renewals,downgrade-analysis,1.3,WARN,PASS,name=downgrade-analysis
+renewals,downgrade-analysis,1.4,WARN,PASS,description present
+renewals,downgrade-analysis,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,downgrade-analysis,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,downgrade-analysis,2.3,WARN,PASS,## Typical Activation present
+renewals,downgrade-analysis,3.1,WARN,PASS,## Pre-flight present
+renewals,downgrade-analysis,3.2,WARN,PASS,company-profile.md referenced
+renewals,downgrade-analysis,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,downgrade-analysis,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,downgrade-analysis,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,downgrade-analysis,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,downgrade-analysis,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,downgrade-analysis,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,downgrade-analysis,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,downgrade-analysis,6.1,WARN,PASS,## Reference Files section present
+renewals,downgrade-analysis,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,downgrade-analysis,9.1,WARN,PASS,G-code governance reference found
+renewals,downgrade-analysis,S1,WARN,PASS,status signal=[VALIDATED]
+renewals,executive-summary,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,executive-summary,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,executive-summary,1.2,WARN,PASS,version=1.0.0
+renewals,executive-summary,1.3,WARN,PASS,name=executive-summary
+renewals,executive-summary,1.4,WARN,PASS,description present
+renewals,executive-summary,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,executive-summary,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,executive-summary,2.3,WARN,PASS,## Typical Activation present
+renewals,executive-summary,3.1,WARN,PASS,## Pre-flight present
+renewals,executive-summary,3.2,WARN,PASS,company-profile.md referenced
+renewals,executive-summary,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,executive-summary,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,executive-summary,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,executive-summary,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,executive-summary,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,executive-summary,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,executive-summary,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,executive-summary,6.1,WARN,PASS,## Reference Files section present
+renewals,executive-summary,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,executive-summary,9.1,WARN,PASS,G-code governance reference found
+renewals,executive-summary,S1,WARN,PASS,status signal=[VALIDATED]
+renewals,expansion-signal,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,expansion-signal,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,expansion-signal,1.2,WARN,PASS,version=1.0.0
+renewals,expansion-signal,1.3,WARN,PASS,name=expansion-signal
+renewals,expansion-signal,1.4,WARN,PASS,description present
+renewals,expansion-signal,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,expansion-signal,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,expansion-signal,2.3,WARN,PASS,## Typical Activation present
+renewals,expansion-signal,3.1,WARN,PASS,## Pre-flight present
+renewals,expansion-signal,3.2,WARN,PASS,company-profile.md referenced
+renewals,expansion-signal,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,expansion-signal,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,expansion-signal,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,expansion-signal,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,expansion-signal,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,expansion-signal,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,expansion-signal,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,expansion-signal,6.1,WARN,PASS,## Reference Files section present
+renewals,expansion-signal,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,expansion-signal,9.1,WARN,PASS,G-code governance reference found
+renewals,expansion-signal,S1,WARN,PASS,status signal=[VALIDATED]
+renewals,negotiation-prep,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,negotiation-prep,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,negotiation-prep,1.2,WARN,PASS,version=1.0.0
+renewals,negotiation-prep,1.3,WARN,PASS,name=negotiation-prep
+renewals,negotiation-prep,1.4,WARN,PASS,description present
+renewals,negotiation-prep,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,negotiation-prep,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,negotiation-prep,2.3,WARN,PASS,## Typical Activation present
+renewals,negotiation-prep,3.1,WARN,PASS,## Pre-flight present
+renewals,negotiation-prep,3.2,WARN,PASS,company-profile.md referenced
+renewals,negotiation-prep,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,negotiation-prep,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,negotiation-prep,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,negotiation-prep,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,negotiation-prep,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,negotiation-prep,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,negotiation-prep,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,negotiation-prep,6.1,WARN,PASS,## Reference Files section present
+renewals,negotiation-prep,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,negotiation-prep,9.1,WARN,PASS,G-code governance reference found
+renewals,negotiation-prep,S1,WARN,PASS,status signal=[VALIDATED]
+renewals,price-increase-prep,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,price-increase-prep,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,price-increase-prep,1.2,WARN,PASS,version=1.0.0
+renewals,price-increase-prep,1.3,WARN,PASS,name=price-increase-prep
+renewals,price-increase-prep,1.4,WARN,PASS,description present
+renewals,price-increase-prep,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,price-increase-prep,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,price-increase-prep,2.3,WARN,PASS,## Typical Activation present
+renewals,price-increase-prep,3.1,WARN,PASS,## Pre-flight present
+renewals,price-increase-prep,3.2,WARN,PASS,company-profile.md referenced
+renewals,price-increase-prep,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,price-increase-prep,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,price-increase-prep,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,price-increase-prep,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,price-increase-prep,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,price-increase-prep,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,price-increase-prep,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,price-increase-prep,6.1,WARN,PASS,## Reference Files section present
+renewals,price-increase-prep,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,price-increase-prep,9.1,WARN,PASS,G-code governance reference found
+renewals,price-increase-prep,S1,WARN,PASS,status signal=[VALIDATED]
+renewals,renewal-forecast,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,renewal-forecast,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,renewal-forecast,1.2,WARN,PASS,version=1.0.0
+renewals,renewal-forecast,1.3,WARN,PASS,name=renewal-forecast
+renewals,renewal-forecast,1.4,WARN,PASS,description present
+renewals,renewal-forecast,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,renewal-forecast,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,renewal-forecast,2.3,WARN,PASS,## Typical Activation present
+renewals,renewal-forecast,3.1,WARN,PASS,## Pre-flight present
+renewals,renewal-forecast,3.2,WARN,PASS,company-profile.md referenced
+renewals,renewal-forecast,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,renewal-forecast,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,renewal-forecast,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,renewal-forecast,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,renewal-forecast,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,renewal-forecast,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,renewal-forecast,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,renewal-forecast,6.1,WARN,PASS,## Reference Files section present
+renewals,renewal-forecast,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,renewal-forecast,9.1,WARN,PASS,G-code governance reference found
+renewals,renewal-forecast,S1,WARN,PASS,status signal=[VALIDATED]
+renewals,risk-assessment,1.1,BLOCK,PASS,deployment_target=plugin
+renewals,risk-assessment,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+renewals,risk-assessment,1.2,WARN,PASS,version=1.0.0
+renewals,risk-assessment,1.3,WARN,PASS,name=risk-assessment
+renewals,risk-assessment,1.4,WARN,PASS,description present
+renewals,risk-assessment,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+renewals,risk-assessment,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+renewals,risk-assessment,2.3,WARN,PASS,## Typical Activation present
+renewals,risk-assessment,3.1,WARN,PASS,## Pre-flight present
+renewals,risk-assessment,3.2,WARN,PASS,company-profile.md referenced
+renewals,risk-assessment,5.1,WARN,PASS,## Reasoning Protocol present
+renewals,risk-assessment,5.1-D1a,WARN,PASS,D1 opening line present
+renewals,risk-assessment,5.1-D1b,WARN,PASS,all 4 primer headings present
+renewals,risk-assessment,5.1-D1c,WARN,PASS,post-execution verification block present
+renewals,risk-assessment,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+renewals,risk-assessment,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+renewals,risk-assessment,5.1a,WARN,PASS,references/reasoning-blueprint.md
+renewals,risk-assessment,6.1,WARN,PASS,## Reference Files section present
+renewals,risk-assessment,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+renewals,risk-assessment,9.1,WARN,PASS,G-code governance reference found
+renewals,risk-assessment,S1,WARN,PASS,status signal=[VALIDATED]
+onboarding,blocker-review,1.1,BLOCK,PASS,deployment_target=plugin
+onboarding,blocker-review,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+onboarding,blocker-review,1.2,WARN,PASS,version=1.0.0
+onboarding,blocker-review,1.3,WARN,PASS,name=blocker-review
+onboarding,blocker-review,1.4,WARN,PASS,description present
+onboarding,blocker-review,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+onboarding,blocker-review,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+onboarding,blocker-review,2.3,WARN,PASS,## Typical Activation present
+onboarding,blocker-review,3.1,WARN,PASS,## Pre-flight present
+onboarding,blocker-review,3.2,WARN,PASS,company-profile.md referenced
+onboarding,blocker-review,5.1,WARN,PASS,## Reasoning Protocol present
+onboarding,blocker-review,5.1-D1a,WARN,PASS,D1 opening line present
+onboarding,blocker-review,5.1-D1b,WARN,PASS,all 4 primer headings present
+onboarding,blocker-review,5.1-D1c,WARN,PASS,post-execution verification block present
+onboarding,blocker-review,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+onboarding,blocker-review,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+onboarding,blocker-review,5.1a,WARN,PASS,references/reasoning-blueprint.md
+onboarding,blocker-review,6.1,WARN,PASS,## Reference Files section present
+onboarding,blocker-review,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+onboarding,blocker-review,9.1,WARN,PASS,G-code governance reference found
+onboarding,blocker-review,S1,WARN,PASS,status signal=[PROPOSED]
+onboarding,cold-start-interview,1.1,BLOCK,PASS,deployment_target=plugin
+onboarding,cold-start-interview,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+onboarding,cold-start-interview,1.2,WARN,PASS,version=1.0.0
+onboarding,cold-start-interview,1.3,WARN,PASS,name=cold-start-interview
+onboarding,cold-start-interview,1.4,WARN,PASS,description present
+onboarding,cold-start-interview,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+onboarding,cold-start-interview,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+onboarding,cold-start-interview,2.3,WARN,PASS,## Typical Activation present
+onboarding,cold-start-interview,3.1,WARN,PASS,## Pre-flight present
+onboarding,cold-start-interview,3.2,WARN,PASS,company-profile.md referenced
+onboarding,cold-start-interview,5.1,WARN,PASS,## Reasoning Protocol present
+onboarding,cold-start-interview,5.1-D1a,WARN,PASS,D1 opening line present
+onboarding,cold-start-interview,5.1-D1b,WARN,PASS,all 4 primer headings present
+onboarding,cold-start-interview,5.1-D1c,WARN,PASS,post-execution verification block present
+onboarding,cold-start-interview,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+onboarding,cold-start-interview,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+onboarding,cold-start-interview,5.1a,WARN,PASS,references/reasoning-blueprint.md
+onboarding,cold-start-interview,6.1,WARN,PASS,## Reference Files section present
+onboarding,cold-start-interview,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+onboarding,cold-start-interview,9.1,WARN,PASS,G-code governance reference found
+onboarding,cold-start-interview,S1,WARN,PASS,status signal=[PROPOSED]
+onboarding,customize,1.1,BLOCK,PASS,deployment_target=plugin
+onboarding,customize,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+onboarding,customize,1.2,WARN,PASS,version=1.0.0
+onboarding,customize,1.3,WARN,PASS,name=customize
+onboarding,customize,1.4,WARN,PASS,description present
+onboarding,customize,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+onboarding,customize,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+onboarding,customize,2.3,WARN,PASS,## Typical Activation present
+onboarding,customize,3.1,WARN,PASS,## Pre-flight present
+onboarding,customize,3.2,WARN,PASS,company-profile.md referenced
+onboarding,customize,5.1,WARN,PASS,## Reasoning Protocol present
+onboarding,customize,5.1-D1a,WARN,PASS,D1 opening line present
+onboarding,customize,5.1-D1b,WARN,PASS,all 4 primer headings present
+onboarding,customize,5.1-D1c,WARN,PASS,post-execution verification block present
+onboarding,customize,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+onboarding,customize,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+onboarding,customize,5.1a,WARN,PASS,references/reasoning-blueprint.md
+onboarding,customize,6.1,WARN,PASS,## Reference Files section present
+onboarding,customize,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+onboarding,customize,9.1,WARN,PASS,G-code governance reference found
+onboarding,customize,S1,WARN,PASS,status signal=[PROPOSED]
+onboarding,handoff-doc,1.1,BLOCK,PASS,deployment_target=plugin
+onboarding,handoff-doc,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+onboarding,handoff-doc,1.2,WARN,PASS,version=1.0.0
+onboarding,handoff-doc,1.3,WARN,PASS,name=handoff-doc
+onboarding,handoff-doc,1.4,WARN,PASS,description present
+onboarding,handoff-doc,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+onboarding,handoff-doc,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+onboarding,handoff-doc,2.3,WARN,PASS,## Typical Activation present
+onboarding,handoff-doc,3.1,WARN,PASS,## Pre-flight present
+onboarding,handoff-doc,3.2,WARN,PASS,company-profile.md referenced
+onboarding,handoff-doc,5.1,WARN,PASS,## Reasoning Protocol present
+onboarding,handoff-doc,5.1-D1a,WARN,PASS,D1 opening line present
+onboarding,handoff-doc,5.1-D1b,WARN,PASS,all 4 primer headings present
+onboarding,handoff-doc,5.1-D1c,WARN,PASS,post-execution verification block present
+onboarding,handoff-doc,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+onboarding,handoff-doc,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+onboarding,handoff-doc,5.1a,WARN,PASS,references/reasoning-blueprint.md
+onboarding,handoff-doc,6.1,WARN,PASS,## Reference Files section present
+onboarding,handoff-doc,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+onboarding,handoff-doc,9.1,WARN,PASS,G-code governance reference found
+onboarding,handoff-doc,S1,WARN,PASS,status signal=[PROPOSED]
+onboarding,kickoff-prep,1.1,BLOCK,PASS,deployment_target=plugin
+onboarding,kickoff-prep,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+onboarding,kickoff-prep,1.2,WARN,PASS,version=1.0.0
+onboarding,kickoff-prep,1.3,WARN,PASS,name=kickoff-prep
+onboarding,kickoff-prep,1.4,WARN,PASS,description present
+onboarding,kickoff-prep,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+onboarding,kickoff-prep,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+onboarding,kickoff-prep,2.3,WARN,PASS,## Typical Activation present
+onboarding,kickoff-prep,3.1,WARN,PASS,## Pre-flight present
+onboarding,kickoff-prep,3.2,WARN,PASS,company-profile.md referenced
+onboarding,kickoff-prep,5.1,WARN,PASS,## Reasoning Protocol present
+onboarding,kickoff-prep,5.1-D1a,WARN,PASS,D1 opening line present
+onboarding,kickoff-prep,5.1-D1b,WARN,PASS,all 4 primer headings present
+onboarding,kickoff-prep,5.1-D1c,WARN,PASS,post-execution verification block present
+onboarding,kickoff-prep,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+onboarding,kickoff-prep,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+onboarding,kickoff-prep,5.1a,WARN,PASS,references/reasoning-blueprint.md
+onboarding,kickoff-prep,6.1,WARN,PASS,## Reference Files section present
+onboarding,kickoff-prep,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+onboarding,kickoff-prep,9.1,WARN,PASS,G-code governance reference found
+onboarding,kickoff-prep,S1,WARN,PASS,status signal=[PROPOSED]
+onboarding,milestone-tracker,1.1,BLOCK,PASS,deployment_target=plugin
+onboarding,milestone-tracker,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+onboarding,milestone-tracker,1.2,WARN,PASS,version=1.0.0
+onboarding,milestone-tracker,1.3,WARN,PASS,name=milestone-tracker
+onboarding,milestone-tracker,1.4,WARN,PASS,description present
+onboarding,milestone-tracker,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+onboarding,milestone-tracker,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+onboarding,milestone-tracker,2.3,WARN,PASS,## Typical Activation present
+onboarding,milestone-tracker,3.1,WARN,PASS,## Pre-flight present
+onboarding,milestone-tracker,3.2,WARN,PASS,company-profile.md referenced
+onboarding,milestone-tracker,5.1,WARN,PASS,## Reasoning Protocol present
+onboarding,milestone-tracker,5.1-D1a,WARN,PASS,D1 opening line present
+onboarding,milestone-tracker,5.1-D1b,WARN,PASS,all 4 primer headings present
+onboarding,milestone-tracker,5.1-D1c,WARN,PASS,post-execution verification block present
+onboarding,milestone-tracker,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+onboarding,milestone-tracker,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+onboarding,milestone-tracker,5.1a,WARN,PASS,references/reasoning-blueprint.md
+onboarding,milestone-tracker,6.1,WARN,PASS,## Reference Files section present
+onboarding,milestone-tracker,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+onboarding,milestone-tracker,9.1,WARN,PASS,G-code governance reference found
+onboarding,milestone-tracker,S1,WARN,PASS,status signal=[PROPOSED]
+onboarding,onboarding-plan,1.1,BLOCK,PASS,deployment_target=plugin
+onboarding,onboarding-plan,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+onboarding,onboarding-plan,1.2,WARN,PASS,version=1.0.0
+onboarding,onboarding-plan,1.3,WARN,PASS,name=onboarding-plan
+onboarding,onboarding-plan,1.4,WARN,PASS,description present
+onboarding,onboarding-plan,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+onboarding,onboarding-plan,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+onboarding,onboarding-plan,2.3,WARN,PASS,## Typical Activation present
+onboarding,onboarding-plan,3.1,WARN,PASS,## Pre-flight present
+onboarding,onboarding-plan,3.2,WARN,PASS,company-profile.md referenced
+onboarding,onboarding-plan,5.1,WARN,PASS,## Reasoning Protocol present
+onboarding,onboarding-plan,5.1-D1a,WARN,PASS,D1 opening line present
+onboarding,onboarding-plan,5.1-D1b,WARN,PASS,all 4 primer headings present
+onboarding,onboarding-plan,5.1-D1c,WARN,PASS,post-execution verification block present
+onboarding,onboarding-plan,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+onboarding,onboarding-plan,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+onboarding,onboarding-plan,5.1a,WARN,PASS,references/reasoning-blueprint.md
+onboarding,onboarding-plan,6.1,WARN,PASS,## Reference Files section present
+onboarding,onboarding-plan,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+onboarding,onboarding-plan,9.1,WARN,PASS,G-code governance reference found
+onboarding,onboarding-plan,S1,WARN,PASS,status signal=[PROPOSED]
+onboarding,success-criteria,1.1,BLOCK,PASS,deployment_target=plugin
+onboarding,success-criteria,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+onboarding,success-criteria,1.2,WARN,PASS,version=1.0.0
+onboarding,success-criteria,1.3,WARN,PASS,name=success-criteria
+onboarding,success-criteria,1.4,WARN,PASS,description present
+onboarding,success-criteria,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+onboarding,success-criteria,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+onboarding,success-criteria,2.3,WARN,PASS,## Typical Activation present
+onboarding,success-criteria,3.1,WARN,PASS,## Pre-flight present
+onboarding,success-criteria,3.2,WARN,PASS,company-profile.md referenced
+onboarding,success-criteria,5.1,WARN,PASS,## Reasoning Protocol present
+onboarding,success-criteria,5.1-D1a,WARN,PASS,D1 opening line present
+onboarding,success-criteria,5.1-D1b,WARN,PASS,all 4 primer headings present
+onboarding,success-criteria,5.1-D1c,WARN,PASS,post-execution verification block present
+onboarding,success-criteria,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+onboarding,success-criteria,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+onboarding,success-criteria,5.1a,WARN,PASS,references/reasoning-blueprint.md
+onboarding,success-criteria,6.1,WARN,PASS,## Reference Files section present
+onboarding,success-criteria,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+onboarding,success-criteria,9.1,WARN,PASS,G-code governance reference found
+onboarding,success-criteria,S1,WARN,PASS,status signal=[PROPOSED]
+onboarding,ttv-analysis,1.1,BLOCK,PASS,deployment_target=plugin
+onboarding,ttv-analysis,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+onboarding,ttv-analysis,1.2,WARN,PASS,version=1.0.0
+onboarding,ttv-analysis,1.3,WARN,PASS,name=ttv-analysis
+onboarding,ttv-analysis,1.4,WARN,PASS,description present
+onboarding,ttv-analysis,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+onboarding,ttv-analysis,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+onboarding,ttv-analysis,2.3,WARN,PASS,## Typical Activation present
+onboarding,ttv-analysis,3.1,WARN,PASS,## Pre-flight present
+onboarding,ttv-analysis,3.2,WARN,PASS,company-profile.md referenced
+onboarding,ttv-analysis,5.1,WARN,PASS,## Reasoning Protocol present
+onboarding,ttv-analysis,5.1-D1a,WARN,PASS,D1 opening line present
+onboarding,ttv-analysis,5.1-D1b,WARN,PASS,all 4 primer headings present
+onboarding,ttv-analysis,5.1-D1c,WARN,PASS,post-execution verification block present
+onboarding,ttv-analysis,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+onboarding,ttv-analysis,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+onboarding,ttv-analysis,5.1a,WARN,PASS,references/reasoning-blueprint.md
+onboarding,ttv-analysis,6.1,WARN,PASS,## Reference Files section present
+onboarding,ttv-analysis,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+onboarding,ttv-analysis,9.1,WARN,PASS,G-code governance reference found
+onboarding,ttv-analysis,S1,WARN,PASS,status signal=[PROPOSED]
+cs-ops,capacity-planner,1.1,BLOCK,PASS,deployment_target=plugin
+cs-ops,capacity-planner,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+cs-ops,capacity-planner,1.2,WARN,PASS,version=1.0.0
+cs-ops,capacity-planner,1.3,WARN,PASS,name=capacity-planner
+cs-ops,capacity-planner,1.4,WARN,PASS,description present
+cs-ops,capacity-planner,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+cs-ops,capacity-planner,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+cs-ops,capacity-planner,2.3,WARN,PASS,## Typical Activation present
+cs-ops,capacity-planner,3.1,WARN,PASS,## Pre-flight present
+cs-ops,capacity-planner,3.2,WARN,PASS,company-profile.md referenced
+cs-ops,capacity-planner,5.1,WARN,PASS,## Reasoning Protocol present
+cs-ops,capacity-planner,5.1-D1a,WARN,PASS,D1 opening line present
+cs-ops,capacity-planner,5.1-D1b,WARN,PASS,all 4 primer headings present
+cs-ops,capacity-planner,5.1-D1c,WARN,PASS,post-execution verification block present
+cs-ops,capacity-planner,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+cs-ops,capacity-planner,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+cs-ops,capacity-planner,5.1a,WARN,PASS,references/reasoning-blueprint.md
+cs-ops,capacity-planner,6.1,WARN,PASS,## Reference Files section present
+cs-ops,capacity-planner,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+cs-ops,capacity-planner,9.1,WARN,PASS,G-code governance reference found
+cs-ops,capacity-planner,S1,WARN,PASS,status signal=[PROPOSED]
+cs-ops,cold-start-interview,1.1,BLOCK,PASS,deployment_target=plugin
+cs-ops,cold-start-interview,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+cs-ops,cold-start-interview,1.2,WARN,PASS,version=1.0.0
+cs-ops,cold-start-interview,1.3,WARN,PASS,name=cold-start-interview
+cs-ops,cold-start-interview,1.4,WARN,PASS,description present
+cs-ops,cold-start-interview,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+cs-ops,cold-start-interview,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+cs-ops,cold-start-interview,2.3,WARN,PASS,## Typical Activation present
+cs-ops,cold-start-interview,3.1,WARN,PASS,## Pre-flight present
+cs-ops,cold-start-interview,3.2,WARN,PASS,company-profile.md referenced
+cs-ops,cold-start-interview,5.1,WARN,PASS,## Reasoning Protocol present
+cs-ops,cold-start-interview,5.1-D1a,WARN,PASS,D1 opening line present
+cs-ops,cold-start-interview,5.1-D1b,WARN,PASS,all 4 primer headings present
+cs-ops,cold-start-interview,5.1-D1c,WARN,PASS,post-execution verification block present
+cs-ops,cold-start-interview,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+cs-ops,cold-start-interview,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+cs-ops,cold-start-interview,5.1a,WARN,PASS,references/reasoning-blueprint.md
+cs-ops,cold-start-interview,6.1,WARN,PASS,## Reference Files section present
+cs-ops,cold-start-interview,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+cs-ops,cold-start-interview,9.1,WARN,PASS,G-code governance reference found
+cs-ops,cold-start-interview,S1,WARN,PASS,status signal=[PROPOSED]
+cs-ops,customize,1.1,BLOCK,PASS,deployment_target=plugin
+cs-ops,customize,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+cs-ops,customize,1.2,WARN,PASS,version=1.1.0
+cs-ops,customize,1.3,WARN,PASS,name=customize
+cs-ops,customize,1.4,WARN,PASS,description present
+cs-ops,customize,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+cs-ops,customize,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+cs-ops,customize,2.3,WARN,PASS,## Typical Activation present
+cs-ops,customize,3.1,WARN,PASS,## Pre-flight present
+cs-ops,customize,3.2,WARN,PASS,company-profile.md referenced
+cs-ops,customize,5.1,WARN,PASS,## Reasoning Protocol present
+cs-ops,customize,5.1-D1a,WARN,PASS,D1 opening line present
+cs-ops,customize,5.1-D1b,WARN,PASS,all 4 primer headings present
+cs-ops,customize,5.1-D1c,WARN,PASS,post-execution verification block present
+cs-ops,customize,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+cs-ops,customize,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+cs-ops,customize,5.1a,WARN,PASS,references/reasoning-blueprint.md
+cs-ops,customize,6.1,WARN,PASS,## Reference Files section present
+cs-ops,customize,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+cs-ops,customize,9.1,WARN,PASS,G-code governance reference found
+cs-ops,customize,S1,WARN,PASS,status signal=[PROPOSED]
+cs-ops,data-quality-check,1.1,BLOCK,PASS,deployment_target=plugin
+cs-ops,data-quality-check,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+cs-ops,data-quality-check,1.2,WARN,PASS,version=1.0.0
+cs-ops,data-quality-check,1.3,WARN,PASS,name=data-quality-check
+cs-ops,data-quality-check,1.4,WARN,PASS,description present
+cs-ops,data-quality-check,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+cs-ops,data-quality-check,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+cs-ops,data-quality-check,2.3,WARN,PASS,## Typical Activation present
+cs-ops,data-quality-check,3.1,WARN,PASS,## Pre-flight present
+cs-ops,data-quality-check,3.2,WARN,PASS,company-profile.md referenced
+cs-ops,data-quality-check,5.1,WARN,PASS,## Reasoning Protocol present
+cs-ops,data-quality-check,5.1-D1a,WARN,PASS,D1 opening line present
+cs-ops,data-quality-check,5.1-D1b,WARN,PASS,all 4 primer headings present
+cs-ops,data-quality-check,5.1-D1c,WARN,PASS,post-execution verification block present
+cs-ops,data-quality-check,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+cs-ops,data-quality-check,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+cs-ops,data-quality-check,5.1a,WARN,PASS,references/reasoning-blueprint.md
+cs-ops,data-quality-check,6.1,WARN,PASS,## Reference Files section present
+cs-ops,data-quality-check,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+cs-ops,data-quality-check,9.1,WARN,PASS,G-code governance reference found
+cs-ops,data-quality-check,S1,WARN,PASS,status signal=[PROPOSED]
+cs-ops,health-model-review,1.1,BLOCK,PASS,deployment_target=plugin
+cs-ops,health-model-review,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+cs-ops,health-model-review,1.2,WARN,PASS,version=1.0.0
+cs-ops,health-model-review,1.3,WARN,PASS,name=health-model-review
+cs-ops,health-model-review,1.4,WARN,PASS,description present
+cs-ops,health-model-review,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+cs-ops,health-model-review,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+cs-ops,health-model-review,2.3,WARN,PASS,## Typical Activation present
+cs-ops,health-model-review,3.1,WARN,PASS,## Pre-flight present
+cs-ops,health-model-review,3.2,WARN,PASS,company-profile.md referenced
+cs-ops,health-model-review,5.1,WARN,PASS,## Reasoning Protocol present
+cs-ops,health-model-review,5.1-D1a,WARN,PASS,D1 opening line present
+cs-ops,health-model-review,5.1-D1b,WARN,PASS,all 4 primer headings present
+cs-ops,health-model-review,5.1-D1c,WARN,PASS,post-execution verification block present
+cs-ops,health-model-review,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+cs-ops,health-model-review,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+cs-ops,health-model-review,5.1a,WARN,PASS,references/reasoning-blueprint.md
+cs-ops,health-model-review,6.1,WARN,PASS,## Reference Files section present
+cs-ops,health-model-review,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+cs-ops,health-model-review,9.1,WARN,PASS,G-code governance reference found
+cs-ops,health-model-review,S1,WARN,PASS,status signal=[PROPOSED]
+cs-ops,metric-dashboard,1.1,BLOCK,PASS,deployment_target=plugin
+cs-ops,metric-dashboard,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+cs-ops,metric-dashboard,1.2,WARN,PASS,version=1.0.0
+cs-ops,metric-dashboard,1.3,WARN,PASS,name=metric-dashboard
+cs-ops,metric-dashboard,1.4,WARN,PASS,description present
+cs-ops,metric-dashboard,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+cs-ops,metric-dashboard,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+cs-ops,metric-dashboard,2.3,WARN,PASS,## Typical Activation present
+cs-ops,metric-dashboard,3.1,WARN,PASS,## Pre-flight present
+cs-ops,metric-dashboard,3.2,WARN,PASS,company-profile.md referenced
+cs-ops,metric-dashboard,5.1,WARN,PASS,## Reasoning Protocol present
+cs-ops,metric-dashboard,5.1-D1a,WARN,PASS,D1 opening line present
+cs-ops,metric-dashboard,5.1-D1b,WARN,PASS,all 4 primer headings present
+cs-ops,metric-dashboard,5.1-D1c,WARN,PASS,post-execution verification block present
+cs-ops,metric-dashboard,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+cs-ops,metric-dashboard,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+cs-ops,metric-dashboard,5.1a,WARN,PASS,references/reasoning-blueprint.md
+cs-ops,metric-dashboard,6.1,WARN,PASS,## Reference Files section present
+cs-ops,metric-dashboard,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+cs-ops,metric-dashboard,9.1,WARN,PASS,G-code governance reference found
+cs-ops,metric-dashboard,S1,WARN,PASS,status signal=[PROPOSED]
+cs-ops,playbook-auditor,1.1,BLOCK,PASS,deployment_target=plugin
+cs-ops,playbook-auditor,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+cs-ops,playbook-auditor,1.2,WARN,PASS,version=1.0.0
+cs-ops,playbook-auditor,1.3,WARN,PASS,name=playbook-auditor
+cs-ops,playbook-auditor,1.4,WARN,PASS,description present
+cs-ops,playbook-auditor,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+cs-ops,playbook-auditor,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+cs-ops,playbook-auditor,2.3,WARN,PASS,## Typical Activation present
+cs-ops,playbook-auditor,3.1,WARN,PASS,## Pre-flight present
+cs-ops,playbook-auditor,3.2,WARN,PASS,company-profile.md referenced
+cs-ops,playbook-auditor,5.1,WARN,PASS,## Reasoning Protocol present
+cs-ops,playbook-auditor,5.1-D1a,WARN,PASS,D1 opening line present
+cs-ops,playbook-auditor,5.1-D1b,WARN,PASS,all 4 primer headings present
+cs-ops,playbook-auditor,5.1-D1c,WARN,PASS,post-execution verification block present
+cs-ops,playbook-auditor,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+cs-ops,playbook-auditor,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+cs-ops,playbook-auditor,5.1a,WARN,PASS,references/reasoning-blueprint.md
+cs-ops,playbook-auditor,6.1,WARN,PASS,## Reference Files section present
+cs-ops,playbook-auditor,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+cs-ops,playbook-auditor,9.1,WARN,PASS,G-code governance reference found
+cs-ops,playbook-auditor,S1,WARN,PASS,status signal=[PROPOSED]
+cs-ops,process-doc,1.1,BLOCK,PASS,deployment_target=plugin
+cs-ops,process-doc,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+cs-ops,process-doc,1.2,WARN,PASS,version=1.1.0
+cs-ops,process-doc,1.3,WARN,PASS,name=process-doc
+cs-ops,process-doc,1.4,WARN,PASS,description present
+cs-ops,process-doc,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+cs-ops,process-doc,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+cs-ops,process-doc,2.3,WARN,PASS,## Typical Activation present
+cs-ops,process-doc,3.1,WARN,PASS,## Pre-flight present
+cs-ops,process-doc,3.2,WARN,PASS,company-profile.md referenced
+cs-ops,process-doc,5.1,WARN,PASS,## Reasoning Protocol present
+cs-ops,process-doc,5.1-D1a,WARN,PASS,D1 opening line present
+cs-ops,process-doc,5.1-D1b,WARN,PASS,all 4 primer headings present
+cs-ops,process-doc,5.1-D1c,WARN,PASS,post-execution verification block present
+cs-ops,process-doc,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+cs-ops,process-doc,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+cs-ops,process-doc,5.1a,WARN,PASS,references/reasoning-blueprint.md
+cs-ops,process-doc,6.1,WARN,PASS,## Reference Files section present
+cs-ops,process-doc,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+cs-ops,process-doc,9.1,WARN,PASS,G-code governance reference found
+cs-ops,process-doc,S1,WARN,PASS,status signal=[PROPOSED]
+cs-ops,segment-analyzer,1.1,BLOCK,PASS,deployment_target=plugin
+cs-ops,segment-analyzer,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+cs-ops,segment-analyzer,1.2,WARN,PASS,version=1.0.0
+cs-ops,segment-analyzer,1.3,WARN,PASS,name=segment-analyzer
+cs-ops,segment-analyzer,1.4,WARN,PASS,description present
+cs-ops,segment-analyzer,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+cs-ops,segment-analyzer,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+cs-ops,segment-analyzer,2.3,WARN,PASS,## Typical Activation present
+cs-ops,segment-analyzer,3.1,WARN,PASS,## Pre-flight present
+cs-ops,segment-analyzer,3.2,WARN,PASS,company-profile.md referenced
+cs-ops,segment-analyzer,5.1,WARN,PASS,## Reasoning Protocol present
+cs-ops,segment-analyzer,5.1-D1a,WARN,PASS,D1 opening line present
+cs-ops,segment-analyzer,5.1-D1b,WARN,PASS,all 4 primer headings present
+cs-ops,segment-analyzer,5.1-D1c,WARN,PASS,post-execution verification block present
+cs-ops,segment-analyzer,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+cs-ops,segment-analyzer,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+cs-ops,segment-analyzer,5.1a,WARN,PASS,references/reasoning-blueprint.md
+cs-ops,segment-analyzer,6.1,WARN,PASS,## Reference Files section present
+cs-ops,segment-analyzer,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+cs-ops,segment-analyzer,9.1,WARN,PASS,G-code governance reference found
+cs-ops,segment-analyzer,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,annual-planning-workflow,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,annual-planning-workflow,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,annual-planning-workflow,1.2,WARN,PASS,version=1.0.0
+rev-ops,annual-planning-workflow,1.3,WARN,PASS,name=annual-planning-workflow
+rev-ops,annual-planning-workflow,1.4,WARN,PASS,description present
+rev-ops,annual-planning-workflow,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,annual-planning-workflow,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,annual-planning-workflow,2.3,WARN,PASS,## Typical Activation present
+rev-ops,annual-planning-workflow,3.1,WARN,PASS,## Pre-flight present
+rev-ops,annual-planning-workflow,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,annual-planning-workflow,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,annual-planning-workflow,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,annual-planning-workflow,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,annual-planning-workflow,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,annual-planning-workflow,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,annual-planning-workflow,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,annual-planning-workflow,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,annual-planning-workflow,6.1,WARN,PASS,## Reference Files section present
+rev-ops,annual-planning-workflow,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,annual-planning-workflow,9.1,WARN,PASS,G-code governance reference found
+rev-ops,annual-planning-workflow,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,change-communication-packaging,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,change-communication-packaging,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,change-communication-packaging,1.2,WARN,PASS,version=1.0.0
+rev-ops,change-communication-packaging,1.3,WARN,PASS,name=change-communication-packaging
+rev-ops,change-communication-packaging,1.4,WARN,PASS,description present
+rev-ops,change-communication-packaging,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,change-communication-packaging,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,change-communication-packaging,2.3,WARN,PASS,## Typical Activation present
+rev-ops,change-communication-packaging,3.1,WARN,PASS,## Pre-flight present
+rev-ops,change-communication-packaging,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,change-communication-packaging,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,change-communication-packaging,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,change-communication-packaging,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,change-communication-packaging,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,change-communication-packaging,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,change-communication-packaging,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,change-communication-packaging,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,change-communication-packaging,6.1,WARN,PASS,## Reference Files section present
+rev-ops,change-communication-packaging,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,change-communication-packaging,9.1,WARN,PASS,G-code governance reference found
+rev-ops,change-communication-packaging,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,closed-won-to-cs-capacity-modeling,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,closed-won-to-cs-capacity-modeling,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,closed-won-to-cs-capacity-modeling,1.2,WARN,PASS,version=1.0.0
+rev-ops,closed-won-to-cs-capacity-modeling,1.3,WARN,PASS,name=closed-won-to-cs-capacity-modeling
+rev-ops,closed-won-to-cs-capacity-modeling,1.4,WARN,PASS,description present
+rev-ops,closed-won-to-cs-capacity-modeling,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,closed-won-to-cs-capacity-modeling,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,closed-won-to-cs-capacity-modeling,2.3,WARN,PASS,## Typical Activation present
+rev-ops,closed-won-to-cs-capacity-modeling,3.1,WARN,PASS,## Pre-flight present
+rev-ops,closed-won-to-cs-capacity-modeling,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,closed-won-to-cs-capacity-modeling,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,closed-won-to-cs-capacity-modeling,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,closed-won-to-cs-capacity-modeling,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,closed-won-to-cs-capacity-modeling,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,closed-won-to-cs-capacity-modeling,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,closed-won-to-cs-capacity-modeling,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,closed-won-to-cs-capacity-modeling,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,closed-won-to-cs-capacity-modeling,6.1,WARN,PASS,## Reference Files section present
+rev-ops,closed-won-to-cs-capacity-modeling,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,closed-won-to-cs-capacity-modeling,9.1,WARN,PASS,G-code governance reference found
+rev-ops,closed-won-to-cs-capacity-modeling,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,cold-start-interview,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,cold-start-interview,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,cold-start-interview,1.2,WARN,PASS,version=1.0.0
+rev-ops,cold-start-interview,1.3,WARN,PASS,name=cold-start-interview
+rev-ops,cold-start-interview,1.4,WARN,PASS,description present
+rev-ops,cold-start-interview,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,cold-start-interview,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,cold-start-interview,2.3,WARN,PASS,## Typical Activation present
+rev-ops,cold-start-interview,3.1,WARN,PASS,## Pre-flight present
+rev-ops,cold-start-interview,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,cold-start-interview,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,cold-start-interview,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,cold-start-interview,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,cold-start-interview,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,cold-start-interview,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,cold-start-interview,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,cold-start-interview,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,cold-start-interview,6.1,WARN,PASS,## Reference Files section present
+rev-ops,cold-start-interview,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,cold-start-interview,9.1,WARN,PASS,G-code governance reference found
+rev-ops,cold-start-interview,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,comp-simulation,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,comp-simulation,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,comp-simulation,1.2,WARN,PASS,version=1.0.0
+rev-ops,comp-simulation,1.3,WARN,PASS,name=comp-simulation
+rev-ops,comp-simulation,1.4,WARN,PASS,description present
+rev-ops,comp-simulation,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,comp-simulation,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,comp-simulation,2.3,WARN,PASS,## Typical Activation present
+rev-ops,comp-simulation,3.1,WARN,PASS,## Pre-flight present
+rev-ops,comp-simulation,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,comp-simulation,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,comp-simulation,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,comp-simulation,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,comp-simulation,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,comp-simulation,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,comp-simulation,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,comp-simulation,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,comp-simulation,6.1,WARN,PASS,## Reference Files section present
+rev-ops,comp-simulation,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,comp-simulation,9.1,WARN,PASS,G-code governance reference found
+rev-ops,comp-simulation,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,crm-hygiene-audit,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,crm-hygiene-audit,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,crm-hygiene-audit,1.2,WARN,PASS,version=1.0.0
+rev-ops,crm-hygiene-audit,1.3,WARN,PASS,name=crm-hygiene-audit
+rev-ops,crm-hygiene-audit,1.4,WARN,PASS,description present
+rev-ops,crm-hygiene-audit,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,crm-hygiene-audit,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,crm-hygiene-audit,2.3,WARN,PASS,## Typical Activation present
+rev-ops,crm-hygiene-audit,3.1,WARN,PASS,## Pre-flight present
+rev-ops,crm-hygiene-audit,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,crm-hygiene-audit,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,crm-hygiene-audit,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,crm-hygiene-audit,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,crm-hygiene-audit,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,crm-hygiene-audit,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,crm-hygiene-audit,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,crm-hygiene-audit,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,crm-hygiene-audit,6.1,WARN,PASS,## Reference Files section present
+rev-ops,crm-hygiene-audit,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,crm-hygiene-audit,9.1,WARN,PASS,G-code governance reference found
+rev-ops,crm-hygiene-audit,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,cross-system-reconciliation,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,cross-system-reconciliation,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,cross-system-reconciliation,1.2,WARN,PASS,version=1.0.0
+rev-ops,cross-system-reconciliation,1.3,WARN,PASS,name=cross-system-reconciliation
+rev-ops,cross-system-reconciliation,1.4,WARN,PASS,description present
+rev-ops,cross-system-reconciliation,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,cross-system-reconciliation,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,cross-system-reconciliation,2.3,WARN,PASS,## Typical Activation present
+rev-ops,cross-system-reconciliation,3.1,WARN,PASS,## Pre-flight present
+rev-ops,cross-system-reconciliation,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,cross-system-reconciliation,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,cross-system-reconciliation,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,cross-system-reconciliation,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,cross-system-reconciliation,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,cross-system-reconciliation,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,cross-system-reconciliation,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,cross-system-reconciliation,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,cross-system-reconciliation,6.1,WARN,PASS,## Reference Files section present
+rev-ops,cross-system-reconciliation,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,cross-system-reconciliation,9.1,WARN,PASS,G-code governance reference found
+rev-ops,cross-system-reconciliation,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,csql-tracking,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,csql-tracking,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,csql-tracking,1.2,WARN,PASS,version=1.0.0
+rev-ops,csql-tracking,1.3,WARN,PASS,name=rev-ops:csql-tracking
+rev-ops,csql-tracking,1.4,WARN,PASS,description present
+rev-ops,csql-tracking,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,csql-tracking,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,csql-tracking,2.3,WARN,PASS,## Typical Activation present
+rev-ops,csql-tracking,3.1,WARN,PASS,## Pre-flight present
+rev-ops,csql-tracking,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,csql-tracking,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,csql-tracking,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,csql-tracking,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,csql-tracking,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,csql-tracking,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,csql-tracking,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,csql-tracking,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,csql-tracking,6.1,WARN,PASS,## Reference Files section present
+rev-ops,csql-tracking,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,csql-tracking,9.1,WARN,PASS,G-code governance reference found
+rev-ops,csql-tracking,S1,WARN,PASS,status signal=[VALIDATED]
+rev-ops,data-decay-tracking,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,data-decay-tracking,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,data-decay-tracking,1.2,WARN,PASS,version=1.0.0
+rev-ops,data-decay-tracking,1.3,WARN,PASS,name=data-decay-tracking
+rev-ops,data-decay-tracking,1.4,WARN,PASS,description present
+rev-ops,data-decay-tracking,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,data-decay-tracking,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,data-decay-tracking,2.3,WARN,PASS,## Typical Activation present
+rev-ops,data-decay-tracking,3.1,WARN,PASS,## Pre-flight present
+rev-ops,data-decay-tracking,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,data-decay-tracking,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,data-decay-tracking,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,data-decay-tracking,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,data-decay-tracking,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,data-decay-tracking,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,data-decay-tracking,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,data-decay-tracking,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,data-decay-tracking,6.1,WARN,PASS,## Reference Files section present
+rev-ops,data-decay-tracking,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,data-decay-tracking,9.1,WARN,PASS,G-code governance reference found
+rev-ops,data-decay-tracking,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,deal-classification,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,deal-classification,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,deal-classification,1.2,WARN,PASS,version=1.0.0
+rev-ops,deal-classification,1.3,WARN,PASS,name=deal-classification
+rev-ops,deal-classification,1.4,WARN,PASS,description present
+rev-ops,deal-classification,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,deal-classification,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,deal-classification,2.3,WARN,PASS,## Typical Activation present
+rev-ops,deal-classification,3.1,WARN,PASS,## Pre-flight present
+rev-ops,deal-classification,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,deal-classification,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,deal-classification,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,deal-classification,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,deal-classification,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,deal-classification,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,deal-classification,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,deal-classification,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,deal-classification,6.1,WARN,PASS,## Reference Files section present
+rev-ops,deal-classification,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,deal-classification,9.1,WARN,PASS,G-code governance reference found
+rev-ops,deal-classification,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,deal-desk-workflow-management,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,deal-desk-workflow-management,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,deal-desk-workflow-management,1.2,WARN,PASS,version=1.0.0
+rev-ops,deal-desk-workflow-management,1.3,WARN,PASS,name=deal-desk-workflow-management
+rev-ops,deal-desk-workflow-management,1.4,WARN,PASS,description present
+rev-ops,deal-desk-workflow-management,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,deal-desk-workflow-management,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,deal-desk-workflow-management,2.3,WARN,PASS,## Typical Activation present
+rev-ops,deal-desk-workflow-management,3.1,WARN,PASS,## Pre-flight present
+rev-ops,deal-desk-workflow-management,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,deal-desk-workflow-management,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,deal-desk-workflow-management,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,deal-desk-workflow-management,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,deal-desk-workflow-management,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,deal-desk-workflow-management,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,deal-desk-workflow-management,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,deal-desk-workflow-management,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,deal-desk-workflow-management,6.1,WARN,PASS,## Reference Files section present
+rev-ops,deal-desk-workflow-management,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,deal-desk-workflow-management,9.1,WARN,PASS,G-code governance reference found
+rev-ops,deal-desk-workflow-management,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,deal-health-scoring,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,deal-health-scoring,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,deal-health-scoring,1.2,WARN,PASS,version=1.0.0
+rev-ops,deal-health-scoring,1.3,WARN,PASS,name=deal-health-scoring
+rev-ops,deal-health-scoring,1.4,WARN,PASS,description present
+rev-ops,deal-health-scoring,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,deal-health-scoring,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,deal-health-scoring,2.3,WARN,PASS,## Typical Activation present
+rev-ops,deal-health-scoring,3.1,WARN,PASS,## Pre-flight present
+rev-ops,deal-health-scoring,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,deal-health-scoring,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,deal-health-scoring,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,deal-health-scoring,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,deal-health-scoring,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,deal-health-scoring,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,deal-health-scoring,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,deal-health-scoring,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,deal-health-scoring,6.1,WARN,PASS,## Reference Files section present
+rev-ops,deal-health-scoring,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,deal-health-scoring,9.1,WARN,PASS,G-code governance reference found
+rev-ops,deal-health-scoring,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,deal-to-outcome-tracing,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,deal-to-outcome-tracing,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,deal-to-outcome-tracing,1.2,WARN,PASS,version=1.0.0
+rev-ops,deal-to-outcome-tracing,1.3,WARN,PASS,name=deal-to-outcome-tracing
+rev-ops,deal-to-outcome-tracing,1.4,WARN,PASS,description present
+rev-ops,deal-to-outcome-tracing,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,deal-to-outcome-tracing,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,deal-to-outcome-tracing,2.3,WARN,PASS,## Typical Activation present
+rev-ops,deal-to-outcome-tracing,3.1,WARN,PASS,## Pre-flight present
+rev-ops,deal-to-outcome-tracing,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,deal-to-outcome-tracing,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,deal-to-outcome-tracing,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,deal-to-outcome-tracing,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,deal-to-outcome-tracing,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,deal-to-outcome-tracing,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,deal-to-outcome-tracing,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,deal-to-outcome-tracing,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,deal-to-outcome-tracing,6.1,WARN,PASS,## Reference Files section present
+rev-ops,deal-to-outcome-tracing,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,deal-to-outcome-tracing,9.1,WARN,PASS,G-code governance reference found
+rev-ops,deal-to-outcome-tracing,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,discount-threshold-monitoring,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,discount-threshold-monitoring,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,discount-threshold-monitoring,1.2,WARN,PASS,version=1.0.0
+rev-ops,discount-threshold-monitoring,1.3,WARN,PASS,name=discount-threshold-monitoring
+rev-ops,discount-threshold-monitoring,1.4,WARN,PASS,description present
+rev-ops,discount-threshold-monitoring,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,discount-threshold-monitoring,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,discount-threshold-monitoring,2.3,WARN,PASS,## Typical Activation present
+rev-ops,discount-threshold-monitoring,3.1,WARN,PASS,## Pre-flight present
+rev-ops,discount-threshold-monitoring,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,discount-threshold-monitoring,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,discount-threshold-monitoring,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,discount-threshold-monitoring,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,discount-threshold-monitoring,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,discount-threshold-monitoring,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,discount-threshold-monitoring,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,discount-threshold-monitoring,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,discount-threshold-monitoring,6.1,WARN,PASS,## Reference Files section present
+rev-ops,discount-threshold-monitoring,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,discount-threshold-monitoring,9.1,WARN,PASS,G-code governance reference found
+rev-ops,discount-threshold-monitoring,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,duplicate-detection,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,duplicate-detection,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,duplicate-detection,1.2,WARN,PASS,version=1.0.0
+rev-ops,duplicate-detection,1.3,WARN,PASS,name=duplicate-detection
+rev-ops,duplicate-detection,1.4,WARN,PASS,description present
+rev-ops,duplicate-detection,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,duplicate-detection,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,duplicate-detection,2.3,WARN,PASS,## Typical Activation present
+rev-ops,duplicate-detection,3.1,WARN,PASS,## Pre-flight present
+rev-ops,duplicate-detection,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,duplicate-detection,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,duplicate-detection,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,duplicate-detection,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,duplicate-detection,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,duplicate-detection,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,duplicate-detection,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,duplicate-detection,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,duplicate-detection,6.1,WARN,PASS,## Reference Files section present
+rev-ops,duplicate-detection,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,duplicate-detection,9.1,WARN,PASS,G-code governance reference found
+rev-ops,duplicate-detection,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,early-churn-downgrade-signal-detection,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,early-churn-downgrade-signal-detection,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,early-churn-downgrade-signal-detection,1.2,WARN,PASS,version=1.0.0
+rev-ops,early-churn-downgrade-signal-detection,1.3,WARN,PASS,name=early-churn-downgrade-signal-detection
+rev-ops,early-churn-downgrade-signal-detection,1.4,WARN,PASS,description present
+rev-ops,early-churn-downgrade-signal-detection,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,early-churn-downgrade-signal-detection,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,early-churn-downgrade-signal-detection,2.3,WARN,PASS,## Typical Activation present
+rev-ops,early-churn-downgrade-signal-detection,3.1,WARN,PASS,## Pre-flight present
+rev-ops,early-churn-downgrade-signal-detection,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,early-churn-downgrade-signal-detection,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,early-churn-downgrade-signal-detection,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,early-churn-downgrade-signal-detection,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,early-churn-downgrade-signal-detection,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,early-churn-downgrade-signal-detection,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,early-churn-downgrade-signal-detection,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,early-churn-downgrade-signal-detection,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,early-churn-downgrade-signal-detection,6.1,WARN,PASS,## Reference Files section present
+rev-ops,early-churn-downgrade-signal-detection,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,early-churn-downgrade-signal-detection,9.1,WARN,PASS,G-code governance reference found
+rev-ops,early-churn-downgrade-signal-detection,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,field-completion-monitoring,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,field-completion-monitoring,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,field-completion-monitoring,1.2,WARN,PASS,version=1.0.0
+rev-ops,field-completion-monitoring,1.3,WARN,PASS,name=field-completion-monitoring
+rev-ops,field-completion-monitoring,1.4,WARN,PASS,description present
+rev-ops,field-completion-monitoring,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,field-completion-monitoring,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,field-completion-monitoring,2.3,WARN,PASS,## Typical Activation present
+rev-ops,field-completion-monitoring,3.1,WARN,PASS,## Pre-flight present
+rev-ops,field-completion-monitoring,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,field-completion-monitoring,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,field-completion-monitoring,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,field-completion-monitoring,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,field-completion-monitoring,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,field-completion-monitoring,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,field-completion-monitoring,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,field-completion-monitoring,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,field-completion-monitoring,6.1,WARN,PASS,## Reference Files section present
+rev-ops,field-completion-monitoring,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,field-completion-monitoring,9.1,WARN,PASS,G-code governance reference found
+rev-ops,field-completion-monitoring,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,forecast-variance-analysis,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,forecast-variance-analysis,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,forecast-variance-analysis,1.2,WARN,PASS,version=1.0.0
+rev-ops,forecast-variance-analysis,1.3,WARN,PASS,name=forecast-variance-analysis
+rev-ops,forecast-variance-analysis,1.4,WARN,PASS,description present
+rev-ops,forecast-variance-analysis,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,forecast-variance-analysis,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,forecast-variance-analysis,2.3,WARN,PASS,## Typical Activation present
+rev-ops,forecast-variance-analysis,3.1,WARN,PASS,## Pre-flight present
+rev-ops,forecast-variance-analysis,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,forecast-variance-analysis,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,forecast-variance-analysis,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,forecast-variance-analysis,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,forecast-variance-analysis,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,forecast-variance-analysis,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,forecast-variance-analysis,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,forecast-variance-analysis,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,forecast-variance-analysis,6.1,WARN,PASS,## Reference Files section present
+rev-ops,forecast-variance-analysis,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,forecast-variance-analysis,9.1,WARN,PASS,G-code governance reference found
+rev-ops,forecast-variance-analysis,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,growth-model-vs-actuals-tracking,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,growth-model-vs-actuals-tracking,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,growth-model-vs-actuals-tracking,1.2,WARN,PASS,version=1.0.0
+rev-ops,growth-model-vs-actuals-tracking,1.3,WARN,PASS,name=growth-model-vs-actuals-tracking
+rev-ops,growth-model-vs-actuals-tracking,1.4,WARN,PASS,description present
+rev-ops,growth-model-vs-actuals-tracking,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,growth-model-vs-actuals-tracking,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,growth-model-vs-actuals-tracking,2.3,WARN,PASS,## Typical Activation present
+rev-ops,growth-model-vs-actuals-tracking,3.1,WARN,PASS,## Pre-flight present
+rev-ops,growth-model-vs-actuals-tracking,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,growth-model-vs-actuals-tracking,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,growth-model-vs-actuals-tracking,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,growth-model-vs-actuals-tracking,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,growth-model-vs-actuals-tracking,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,growth-model-vs-actuals-tracking,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,growth-model-vs-actuals-tracking,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,growth-model-vs-actuals-tracking,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,growth-model-vs-actuals-tracking,6.1,WARN,PASS,## Reference Files section present
+rev-ops,growth-model-vs-actuals-tracking,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,growth-model-vs-actuals-tracking,9.1,WARN,PASS,G-code governance reference found
+rev-ops,growth-model-vs-actuals-tracking,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,gtm-unified-metrics-pulse,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,gtm-unified-metrics-pulse,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,gtm-unified-metrics-pulse,1.2,WARN,PASS,version=1.0.0
+rev-ops,gtm-unified-metrics-pulse,1.3,WARN,PASS,name=gtm-unified-metrics-pulse
+rev-ops,gtm-unified-metrics-pulse,1.4,WARN,PASS,description present
+rev-ops,gtm-unified-metrics-pulse,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,gtm-unified-metrics-pulse,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,gtm-unified-metrics-pulse,2.3,WARN,PASS,## Typical Activation present
+rev-ops,gtm-unified-metrics-pulse,3.1,WARN,PASS,## Pre-flight present
+rev-ops,gtm-unified-metrics-pulse,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,gtm-unified-metrics-pulse,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,gtm-unified-metrics-pulse,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,gtm-unified-metrics-pulse,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,gtm-unified-metrics-pulse,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,gtm-unified-metrics-pulse,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,gtm-unified-metrics-pulse,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,gtm-unified-metrics-pulse,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,gtm-unified-metrics-pulse,6.1,WARN,PASS,## Reference Files section present
+rev-ops,gtm-unified-metrics-pulse,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,gtm-unified-metrics-pulse,9.1,WARN,PASS,G-code governance reference found
+rev-ops,gtm-unified-metrics-pulse,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,mid-year-replan-triggering,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,mid-year-replan-triggering,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,mid-year-replan-triggering,1.2,WARN,PASS,version=1.0.0
+rev-ops,mid-year-replan-triggering,1.3,WARN,PASS,name=mid-year-replan-triggering
+rev-ops,mid-year-replan-triggering,1.4,WARN,PASS,description present
+rev-ops,mid-year-replan-triggering,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,mid-year-replan-triggering,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,mid-year-replan-triggering,2.3,WARN,PASS,## Typical Activation present
+rev-ops,mid-year-replan-triggering,3.1,WARN,PASS,## Pre-flight present
+rev-ops,mid-year-replan-triggering,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,mid-year-replan-triggering,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,mid-year-replan-triggering,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,mid-year-replan-triggering,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,mid-year-replan-triggering,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,mid-year-replan-triggering,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,mid-year-replan-triggering,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,mid-year-replan-triggering,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,mid-year-replan-triggering,6.1,WARN,PASS,## Reference Files section present
+rev-ops,mid-year-replan-triggering,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,mid-year-replan-triggering,9.1,WARN,PASS,G-code governance reference found
+rev-ops,mid-year-replan-triggering,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,next-best-action-recommendation,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,next-best-action-recommendation,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,next-best-action-recommendation,1.2,WARN,PASS,version=1.0.0
+rev-ops,next-best-action-recommendation,1.3,WARN,PASS,name=next-best-action-recommendation
+rev-ops,next-best-action-recommendation,1.4,WARN,PASS,description present
+rev-ops,next-best-action-recommendation,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,next-best-action-recommendation,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,next-best-action-recommendation,2.3,WARN,PASS,## Typical Activation present
+rev-ops,next-best-action-recommendation,3.1,WARN,PASS,## Pre-flight present
+rev-ops,next-best-action-recommendation,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,next-best-action-recommendation,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,next-best-action-recommendation,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,next-best-action-recommendation,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,next-best-action-recommendation,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,next-best-action-recommendation,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,next-best-action-recommendation,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,next-best-action-recommendation,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,next-best-action-recommendation,6.1,WARN,PASS,## Reference Files section present
+rev-ops,next-best-action-recommendation,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,next-best-action-recommendation,9.1,WARN,PASS,G-code governance reference found
+rev-ops,next-best-action-recommendation,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,non-standard-terms-detection,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,non-standard-terms-detection,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,non-standard-terms-detection,1.2,WARN,PASS,version=1.0.0
+rev-ops,non-standard-terms-detection,1.3,WARN,PASS,name=non-standard-terms-detection
+rev-ops,non-standard-terms-detection,1.4,WARN,PASS,description present
+rev-ops,non-standard-terms-detection,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,non-standard-terms-detection,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,non-standard-terms-detection,2.3,WARN,PASS,## Typical Activation present
+rev-ops,non-standard-terms-detection,3.1,WARN,PASS,## Pre-flight present
+rev-ops,non-standard-terms-detection,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,non-standard-terms-detection,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,non-standard-terms-detection,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,non-standard-terms-detection,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,non-standard-terms-detection,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,non-standard-terms-detection,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,non-standard-terms-detection,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,non-standard-terms-detection,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,non-standard-terms-detection,6.1,WARN,PASS,## Reference Files section present
+rev-ops,non-standard-terms-detection,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,non-standard-terms-detection,9.1,WARN,PASS,G-code governance reference found
+rev-ops,non-standard-terms-detection,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,outcome-statement-builder,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,outcome-statement-builder,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,outcome-statement-builder,1.2,WARN,PASS,version=1.0.0
+rev-ops,outcome-statement-builder,1.3,WARN,PASS,name=outcome-statement-builder
+rev-ops,outcome-statement-builder,1.4,WARN,PASS,description present
+rev-ops,outcome-statement-builder,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,outcome-statement-builder,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,outcome-statement-builder,2.3,WARN,PASS,## Typical Activation present
+rev-ops,outcome-statement-builder,3.1,WARN,PASS,## Pre-flight present
+rev-ops,outcome-statement-builder,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,outcome-statement-builder,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,outcome-statement-builder,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,outcome-statement-builder,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,outcome-statement-builder,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,outcome-statement-builder,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,outcome-statement-builder,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,outcome-statement-builder,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,outcome-statement-builder,6.1,WARN,PASS,## Reference Files section present
+rev-ops,outcome-statement-builder,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,outcome-statement-builder,9.1,WARN,PASS,G-code governance reference found
+rev-ops,outcome-statement-builder,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,outcome-to-value-tracking,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,outcome-to-value-tracking,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,outcome-to-value-tracking,1.2,WARN,PASS,version=1.0.0
+rev-ops,outcome-to-value-tracking,1.3,WARN,PASS,name=outcome-to-value-tracking
+rev-ops,outcome-to-value-tracking,1.4,WARN,PASS,description present
+rev-ops,outcome-to-value-tracking,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,outcome-to-value-tracking,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,outcome-to-value-tracking,2.3,WARN,PASS,## Typical Activation present
+rev-ops,outcome-to-value-tracking,3.1,WARN,PASS,## Pre-flight present
+rev-ops,outcome-to-value-tracking,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,outcome-to-value-tracking,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,outcome-to-value-tracking,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,outcome-to-value-tracking,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,outcome-to-value-tracking,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,outcome-to-value-tracking,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,outcome-to-value-tracking,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,outcome-to-value-tracking,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,outcome-to-value-tracking,6.1,WARN,PASS,## Reference Files section present
+rev-ops,outcome-to-value-tracking,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,outcome-to-value-tracking,9.1,WARN,PASS,G-code governance reference found
+rev-ops,outcome-to-value-tracking,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,pipeline-coverage-analysis,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,pipeline-coverage-analysis,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,pipeline-coverage-analysis,1.2,WARN,PASS,version=1.0.0
+rev-ops,pipeline-coverage-analysis,1.3,WARN,PASS,name=pipeline-coverage-analysis
+rev-ops,pipeline-coverage-analysis,1.4,WARN,PASS,description present
+rev-ops,pipeline-coverage-analysis,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,pipeline-coverage-analysis,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,pipeline-coverage-analysis,2.3,WARN,PASS,## Typical Activation present
+rev-ops,pipeline-coverage-analysis,3.1,WARN,PASS,## Pre-flight present
+rev-ops,pipeline-coverage-analysis,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,pipeline-coverage-analysis,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,pipeline-coverage-analysis,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,pipeline-coverage-analysis,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,pipeline-coverage-analysis,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,pipeline-coverage-analysis,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,pipeline-coverage-analysis,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,pipeline-coverage-analysis,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,pipeline-coverage-analysis,6.1,WARN,PASS,## Reference Files section present
+rev-ops,pipeline-coverage-analysis,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,pipeline-coverage-analysis,9.1,WARN,PASS,G-code governance reference found
+rev-ops,pipeline-coverage-analysis,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,pipeline-velocity-tracking,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,pipeline-velocity-tracking,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,pipeline-velocity-tracking,1.2,WARN,PASS,version=1.0.0
+rev-ops,pipeline-velocity-tracking,1.3,WARN,PASS,name=pipeline-velocity-tracking
+rev-ops,pipeline-velocity-tracking,1.4,WARN,PASS,description present
+rev-ops,pipeline-velocity-tracking,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,pipeline-velocity-tracking,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,pipeline-velocity-tracking,2.3,WARN,PASS,## Typical Activation present
+rev-ops,pipeline-velocity-tracking,3.1,WARN,PASS,## Pre-flight present
+rev-ops,pipeline-velocity-tracking,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,pipeline-velocity-tracking,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,pipeline-velocity-tracking,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,pipeline-velocity-tracking,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,pipeline-velocity-tracking,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,pipeline-velocity-tracking,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,pipeline-velocity-tracking,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,pipeline-velocity-tracking,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,pipeline-velocity-tracking,6.1,WARN,PASS,## Reference Files section present
+rev-ops,pipeline-velocity-tracking,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,pipeline-velocity-tracking,9.1,WARN,PASS,G-code governance reference found
+rev-ops,pipeline-velocity-tracking,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,quota-sensitivity-analysis,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,quota-sensitivity-analysis,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,quota-sensitivity-analysis,1.2,WARN,PASS,version=1.0.0
+rev-ops,quota-sensitivity-analysis,1.3,WARN,PASS,name=quota-sensitivity-analysis
+rev-ops,quota-sensitivity-analysis,1.4,WARN,PASS,description present
+rev-ops,quota-sensitivity-analysis,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,quota-sensitivity-analysis,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,quota-sensitivity-analysis,2.3,WARN,PASS,## Typical Activation present
+rev-ops,quota-sensitivity-analysis,3.1,WARN,PASS,## Pre-flight present
+rev-ops,quota-sensitivity-analysis,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,quota-sensitivity-analysis,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,quota-sensitivity-analysis,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,quota-sensitivity-analysis,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,quota-sensitivity-analysis,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,quota-sensitivity-analysis,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,quota-sensitivity-analysis,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,quota-sensitivity-analysis,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,quota-sensitivity-analysis,6.1,WARN,PASS,## Reference Files section present
+rev-ops,quota-sensitivity-analysis,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,quota-sensitivity-analysis,9.1,WARN,PASS,G-code governance reference found
+rev-ops,quota-sensitivity-analysis,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,revenue-brief-generation,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,revenue-brief-generation,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,revenue-brief-generation,1.2,WARN,PASS,version=1.0.0
+rev-ops,revenue-brief-generation,1.3,WARN,PASS,name=revenue-brief-generation
+rev-ops,revenue-brief-generation,1.4,WARN,PASS,description present
+rev-ops,revenue-brief-generation,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,revenue-brief-generation,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,revenue-brief-generation,2.3,WARN,PASS,## Typical Activation present
+rev-ops,revenue-brief-generation,3.1,WARN,PASS,## Pre-flight present
+rev-ops,revenue-brief-generation,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,revenue-brief-generation,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,revenue-brief-generation,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,revenue-brief-generation,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,revenue-brief-generation,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,revenue-brief-generation,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,revenue-brief-generation,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,revenue-brief-generation,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,revenue-brief-generation,6.1,WARN,PASS,## Reference Files section present
+rev-ops,revenue-brief-generation,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,revenue-brief-generation,9.1,WARN,PASS,G-code governance reference found
+rev-ops,revenue-brief-generation,S1,WARN,PASS,status signal=[DRAFT]
+rev-ops,revenue-leakage-scanning,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,revenue-leakage-scanning,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,revenue-leakage-scanning,1.2,WARN,PASS,version=1.0.0
+rev-ops,revenue-leakage-scanning,1.3,WARN,PASS,name=revenue-leakage-scanning
+rev-ops,revenue-leakage-scanning,1.4,WARN,PASS,description present
+rev-ops,revenue-leakage-scanning,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,revenue-leakage-scanning,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,revenue-leakage-scanning,2.3,WARN,PASS,## Typical Activation present
+rev-ops,revenue-leakage-scanning,3.1,WARN,PASS,## Pre-flight present
+rev-ops,revenue-leakage-scanning,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,revenue-leakage-scanning,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,revenue-leakage-scanning,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,revenue-leakage-scanning,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,revenue-leakage-scanning,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,revenue-leakage-scanning,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,revenue-leakage-scanning,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,revenue-leakage-scanning,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,revenue-leakage-scanning,6.1,WARN,PASS,## Reference Files section present
+rev-ops,revenue-leakage-scanning,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,revenue-leakage-scanning,9.1,WARN,PASS,G-code governance reference found
+rev-ops,revenue-leakage-scanning,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,sales-cs-handoff-quality-scoring,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,sales-cs-handoff-quality-scoring,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,sales-cs-handoff-quality-scoring,1.2,WARN,PASS,version=1.0.0
+rev-ops,sales-cs-handoff-quality-scoring,1.3,WARN,PASS,name=sales-cs-handoff-quality-scoring
+rev-ops,sales-cs-handoff-quality-scoring,1.4,WARN,PASS,description present
+rev-ops,sales-cs-handoff-quality-scoring,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,sales-cs-handoff-quality-scoring,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,sales-cs-handoff-quality-scoring,2.3,WARN,PASS,## Typical Activation present
+rev-ops,sales-cs-handoff-quality-scoring,3.1,WARN,PASS,## Pre-flight present
+rev-ops,sales-cs-handoff-quality-scoring,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,sales-cs-handoff-quality-scoring,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,sales-cs-handoff-quality-scoring,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,sales-cs-handoff-quality-scoring,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,sales-cs-handoff-quality-scoring,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,sales-cs-handoff-quality-scoring,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,sales-cs-handoff-quality-scoring,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,sales-cs-handoff-quality-scoring,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,sales-cs-handoff-quality-scoring,6.1,WARN,PASS,## Reference Files section present
+rev-ops,sales-cs-handoff-quality-scoring,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,sales-cs-handoff-quality-scoring,9.1,WARN,PASS,G-code governance reference found
+rev-ops,sales-cs-handoff-quality-scoring,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,scenario-modeling,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,scenario-modeling,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,scenario-modeling,1.2,WARN,PASS,version=1.0.0
+rev-ops,scenario-modeling,1.3,WARN,PASS,name=scenario-modeling
+rev-ops,scenario-modeling,1.4,WARN,PASS,description present
+rev-ops,scenario-modeling,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,scenario-modeling,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,scenario-modeling,2.3,WARN,PASS,## Typical Activation present
+rev-ops,scenario-modeling,3.1,WARN,PASS,## Pre-flight present
+rev-ops,scenario-modeling,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,scenario-modeling,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,scenario-modeling,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,scenario-modeling,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,scenario-modeling,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,scenario-modeling,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,scenario-modeling,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,scenario-modeling,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,scenario-modeling,6.1,WARN,PASS,## Reference Files section present
+rev-ops,scenario-modeling,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,scenario-modeling,9.1,WARN,PASS,G-code governance reference found
+rev-ops,scenario-modeling,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,stage-integrity-audit,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,stage-integrity-audit,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,stage-integrity-audit,1.2,WARN,PASS,version=1.0.0
+rev-ops,stage-integrity-audit,1.3,WARN,PASS,name=stage-integrity-audit
+rev-ops,stage-integrity-audit,1.4,WARN,PASS,description present
+rev-ops,stage-integrity-audit,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,stage-integrity-audit,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,stage-integrity-audit,2.3,WARN,PASS,## Typical Activation present
+rev-ops,stage-integrity-audit,3.1,WARN,PASS,## Pre-flight present
+rev-ops,stage-integrity-audit,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,stage-integrity-audit,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,stage-integrity-audit,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,stage-integrity-audit,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,stage-integrity-audit,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,stage-integrity-audit,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,stage-integrity-audit,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,stage-integrity-audit,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,stage-integrity-audit,6.1,WARN,PASS,## Reference Files section present
+rev-ops,stage-integrity-audit,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,stage-integrity-audit,9.1,WARN,PASS,G-code governance reference found
+rev-ops,stage-integrity-audit,S1,WARN,PASS,status signal=[PROPOSED]
+rev-ops,unit-of-growth-calculator,1.1,BLOCK,PASS,deployment_target=plugin
+rev-ops,unit-of-growth-calculator,1.1a,BLOCK,PASS,no top-level security: block in frontmatter
+rev-ops,unit-of-growth-calculator,1.2,WARN,PASS,version=1.0.0
+rev-ops,unit-of-growth-calculator,1.3,WARN,PASS,name=unit-of-growth-calculator
+rev-ops,unit-of-growth-calculator,1.4,WARN,PASS,description present
+rev-ops,unit-of-growth-calculator,2.1,BLOCK,PASS,## Use When / Trigger Precision present
+rev-ops,unit-of-growth-calculator,2.2,BLOCK,PASS,## Do NOT Use For / Trigger Precision present
+rev-ops,unit-of-growth-calculator,2.3,WARN,PASS,## Typical Activation present
+rev-ops,unit-of-growth-calculator,3.1,WARN,PASS,## Pre-flight present
+rev-ops,unit-of-growth-calculator,3.2,WARN,PASS,company-profile.md referenced
+rev-ops,unit-of-growth-calculator,5.1,WARN,PASS,## Reasoning Protocol present
+rev-ops,unit-of-growth-calculator,5.1-D1a,WARN,PASS,D1 opening line present
+rev-ops,unit-of-growth-calculator,5.1-D1b,WARN,PASS,all 4 primer headings present
+rev-ops,unit-of-growth-calculator,5.1-D1c,WARN,PASS,post-execution verification block present
+rev-ops,unit-of-growth-calculator,5.1-D1d,WARN,PASS,3-band confidence calibration line present
+rev-ops,unit-of-growth-calculator,5.1-D4a,WARN,SKIP,anti-pattern count=0 (check 5.1 FAIL may explain; verify manually)
+rev-ops,unit-of-growth-calculator,5.1a,WARN,PASS,references/reasoning-blueprint.md
+rev-ops,unit-of-growth-calculator,6.1,WARN,PASS,## Reference Files section present
+rev-ops,unit-of-growth-calculator,6.1a,WARN,PASS,reasoning-blueprint.md referenced in SKILL.md
+rev-ops,unit-of-growth-calculator,9.1,WARN,PASS,G-code governance reference found
+rev-ops,unit-of-growth-calculator,S1,WARN,PASS,status signal=[PROPOSED]

@@ -115,13 +115,13 @@ When required fields are absent, skills behave as follows:
 
 ---
 
-## Practice Profile Template
+## Company Profile Template
 
 Cold-start writes this file to:
 `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md`
 
 ```markdown
-# Rev-Ops Practice Profile
+# Rev-Ops Company Profile
 ## claude-for-customer-success / rev-ops
 ## Written by: cold-start-interview v1.0.0
 ## Date: [DATE]

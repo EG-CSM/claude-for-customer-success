@@ -62,7 +62,7 @@
       "name": "degraded-no-ocv-catalog",
       "category": "degraded-input",
       "prompt": "Trace the outcome for Buildco.",
-      "context": "HubSpot connected. Buildco closed 45 days ago. No OCV catalog configured (ocv_catalog_path absent from practice profile). CS platform connected.",
+      "context": "HubSpot connected. Buildco closed 45 days ago. No OCV catalog configured (ocv_catalog_path absent from company profile). CS platform connected.",
       "expected_output": "Skill detects absent OCV catalog, switches to structural fallback mode, runs Tier 1 structural risk signals only (discount level, cycle length, stakeholder count), and explicitly labels the output with the degraded confidence declaration.",
       "files": [],
       "assertions": [

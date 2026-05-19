@@ -33,7 +33,7 @@ of business — not generic defaults.
 - Any task where configuration is already complete and no update is needed
 - Quick in-session clarification of configuration values (ask in the skill's output instead)
 
-## Typical activation
+## Typical Activation
 > `/renewals:cold-start-interview` — automatic trigger when configuration is missing or contains `[PLACEHOLDER]` markers
 > `/renewals:cold-start-interview --quick` — fast bootstrap for first-time setup (≈2 minutes)
 > `/renewals:cold-start-interview --redo` — re-run the full interview to update an existing configuration
@@ -251,9 +251,16 @@ markdown. Organize by section with headers. Replace unconfigured items with
 
 After confirmation:
 
-1. Write the configuration to `~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md`.
-2. If Section 1 was completed: also write/update `~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
-3. Confirm the write with a timestamp.
+## Write Safety Protocol
+
+When writing configuration to multiple locations:
+1. Write to the primary location first: `~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md`.
+2. Confirm the primary write succeeded by reading back the written content before proceeding.
+3. Only proceed to write the secondary location (`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`) after confirming step 2.
+4. If the secondary write fails: surface an explicit error to the user. Do NOT silently proceed.
+5. Provide the user the content that failed to write so they can manually apply it.
+
+After both writes complete: Confirm with a timestamp.
 
 ---
 
@@ -341,14 +348,16 @@ Every write follows this sequence:
 1. Display the proposed configuration section for review.
 2. Require explicit confirmation ("Yes / confirm") before writing.
 3. Write to `~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md`.
-4. Confirm with timestamp.
-5. Surface which skills will behave differently now that configuration is present.
+4. Confirm the write succeeded by reading back the written content.
+5. If writing to `company-profile.md` is also required (Section 1 completed or `--redo-company-profile` mode): write only after step 4 confirms success. If the company-profile.md write fails, surface an explicit error and provide the content so the user can apply it manually.
+6. Confirm with timestamp.
+7. Surface which skills will behave differently now that configuration is present.
 
 ---
 
 ## After setup
 
-> ✅ Renewals plugin configured. Your practice profile is live at:
+> ✅ Renewals plugin configured. Your company profile is live at:
 > `~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md`
 
 Suggested next steps based on what was configured:
@@ -419,3 +428,9 @@ shared guardrail across all renewals skills."
 **Integrations that are not verified remain unverified.** If a connector is listed
 but `--check-integrations` hasn't been run, mark it as ✓ configured (not ✓ verified).
 The distinction matters for sourcing attribution in skill outputs.
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill

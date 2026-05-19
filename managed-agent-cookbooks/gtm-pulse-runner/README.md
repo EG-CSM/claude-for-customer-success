@@ -111,7 +111,7 @@ Appended on every execution (including failed runs). Each line is a JSON record:
 
 ## Deployment Prerequisites
 
-- [ ] `rev-ops` plugin cold-start complete (practice profile populated)
+- [ ] `rev-ops` plugin cold-start complete (company profile populated)
 - [ ] HubSpot MCP server running — `HUBSPOT_MCP_URL` env var set
 - [ ] CS platform MCP server running — `CS_PLATFORM_MCP_URL` env var set
   *(Section 4 degrades gracefully if unavailable — see Data Gap Behavior)*
@@ -335,7 +335,7 @@ many flagged accounts. See `reference/token-economics.md` for detail.
 | File | Purpose |
 |------|---------|
 | `reference/revops-domain-model.md` | Guardrails G1–G8, confidence bands, churn tier definitions, pipeline thresholds |
-| `reference/config-schema.md` | Practice profile fields — `company_name`, `primary_segment`, `current_arr`, etc. |
+| `reference/config-schema.md` | Company profile fields — `company_name`, `primary_segment`, `current_arr`, etc. |
 | `reference/token-economics.md` | Token budget guidance for all rev-ops agents |
 | `skills/gtm-unified-metrics-pulse/SKILL.md` | Interactive skill version of this pulse (single-session, no Slack posting) |
 | `skills/unit-of-growth-calculator/SKILL.md` | NRR-adjusted target calculations used in Section 2 |

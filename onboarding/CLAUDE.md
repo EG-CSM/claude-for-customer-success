@@ -21,7 +21,7 @@ Rules for every skill, command, and agent in this plugin:
    every plugin update. Never write user data here.
 -->
 
-# Onboarding Practice Profile
+# Onboarding Company Profile
 *Written by cold-start on [DATE]. If `[PLACEHOLDER]`, run `/onboarding:cold-start-interview`.*
 
 ---
@@ -177,7 +177,7 @@ If you ask an onboarding question that no skill covers, answer it using the shar
 
 ## Ad-hoc onboarding questions
 
-When you ask a question in this domain outside a formal skill, I'll read the practice profile and company profile first:
+When you ask a question in this domain outside a formal skill, I'll read the company profile and company profile first:
 
 - Apply your onboarding model, success criteria, milestone definitions, and escalation chain
 - Apply the guardrails even without a formal skill running

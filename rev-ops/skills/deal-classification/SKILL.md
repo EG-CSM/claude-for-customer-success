@@ -40,7 +40,7 @@ Note from config: `primary_segment`, `avg_sales_cycle_days`
 - Revenue recognition decisions (classification is analytical input only)
 - Bulk ARR reporting (classification feeds reporting but does not produce it)
 
-## Typical activation
+## Typical Activation
 "Classify this deal", "what type of ARR is [deal]", "is this new or expansion", "deal classification for [account]", "verify ARR classification"
 
 ## Classification routing
@@ -88,6 +88,7 @@ Before generating output, apply these primers:
 - G6 data-as-of label applied to all HubSpot reads
 - Delta column populated when rep call and model call diverge
 - Confidence: High when HubSpot is connected and activity data is current; Moderate when data is stale or connector is unavailable
+    - Confidence: [High] when HubSpot is connected and activity data is current / [Medium] when data is stale or connector is unavailable / [Low] if all inputs are manual or unverified
 
 ---
 

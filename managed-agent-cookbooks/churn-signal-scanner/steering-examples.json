@@ -22,7 +22,7 @@
         }
       },
       "expected_behavior": {
-        "orchestrator": "Reads practice profile → delegates to churn-signal-collector → receives 2 Tier 3 accounts → delegates to churn-escalation-writer with require_confirmation=true → operator confirms all → 2 Linear issues created → delegates to churn-alert-poster → posts to #revops-alignment and #cs-leadership",
+        "orchestrator": "Reads company profile → delegates to churn-signal-collector → receives 2 Tier 3 accounts → delegates to churn-escalation-writer with require_confirmation=true → operator confirms all → 2 Linear issues created → delegates to churn-alert-poster → posts to #revops-alignment and #cs-leadership",
         "churn_signal_collector": "Returns 2 Tier 3 accounts (ACV $220K and $185K) each with 2+ signals fired. Both accounts have cs_manager populated.",
         "churn_escalation_writer": "Renders proposal table for 2 accounts → operator replies 'confirm all' → creates 2 Linear issues with labels churn-risk, tier-3, cs-escalation, priority Urgent → returns write_log with 2 entries (human_approval_status=approved)",
         "churn_alert_poster": "Posts full alert to #revops-alignment. Posts Tier 3-only summary to #cs-leadership. G7 enforced: both rows include owner name, 48h response time. G5 disclaimer present. G6 freshness lines present."

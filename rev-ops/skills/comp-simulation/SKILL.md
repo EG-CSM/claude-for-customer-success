@@ -25,11 +25,11 @@ G3 applies: all comp outputs require HR + Finance dual review before rep distrib
 - Quota setting without comp context (use quota-sensitivity-analysis)
 - Full annual planning orchestration (use annual-planning-workflow)
 
-## Typical activation
+## Typical Activation
 "Simulate comp plan payouts", "comp modeling for [role]", "what does the plan cost at 80/100/120% attainment", "stress test the comp plan"
 
 **Reference:** Governance tiers → `../../../shared/revops-domain-model.md §9`
-**Config reads:** `ae_quota`, `ae_attainment_planning_rate`, `current_ae_count`, OTE inputs from practice profile
+**Config reads:** `ae_quota`, `ae_attainment_planning_rate`, `current_ae_count`, OTE inputs from company profile
 
 ---
 
@@ -41,7 +41,7 @@ Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` an
 If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
 `/rev-ops:cold-start-interview`.
 
-Note from config: `ae_quota`, `ae_attainment_planning_rate`, `current_ae_count`, OTE inputs from practice profile
+Note from config: `ae_quota`, `ae_attainment_planning_rate`, `current_ae_count`, OTE inputs from company profile
 
 ---
 
@@ -57,7 +57,7 @@ Before generating output, apply these primers:
 
 2. **CONSTRAINTS**: What limits the solution space?
    1. Confirm activation — user modeling comp plan payouts or stress-testing comp structure
-   2. Read OTE, quota, and accelerator inputs from practice profile or user-provided parameters
+   2. Read OTE, quota, and accelerator inputs from company profile or user-provided parameters
    3. Apply G3 — all outputs labeled with HR + Finance dual-review requirement before any rep distribution
    4. Model at all five attainment levels; flag any cliff effects, kink points, or unintended payout concentrations
    5. Surface cost-to-company at each level alongside per-rep payout
@@ -78,14 +78,15 @@ Before generating output, apply these primers:
 **After execution**, verify:
 - G3 label present on all outputs: "Requires HR + Finance dual review before rep distribution."
 - Unintended behavior flags section populated (or "NONE DETECTED" explicitly stated)
-- Confidence: High when OTE and quota are confirmed from practice profile; Moderate when any input is estimated
+- Confidence: High when OTE and quota are confirmed from company profile; Moderate when any input is estimated
+    - Confidence: [High] when OTE and quota are confirmed from company profile / [Medium] when any input is estimated / [Low] if all inputs are manual or unverified
 
 ---
 
 ## Workflow
 
 ```
-Inputs (from practice profile or user-provided):
+Inputs (from company profile or user-provided):
   ote_base         = base salary component
   ote_variable     = variable / at-risk component
   ae_quota         = per-rep quota for the plan period
@@ -116,7 +117,7 @@ Unintended behavior flags:
 
 ```
 COMP SIMULATION [DRAFT]
-[Practice profile] [Confidence: High if OTE confirmed / Moderate if estimated]
+[Company profile] [Confidence: High if OTE confirmed / Moderate if estimated]
 [G3: Requires HR + Finance dual review before rep distribution]
 
 Inputs:

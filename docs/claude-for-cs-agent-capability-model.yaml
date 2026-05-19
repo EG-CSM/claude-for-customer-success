@@ -42,7 +42,7 @@ skills:
     priority: standard
     argument_hint: "[--current | --headcount | --redistribution | --departure]"
     required_context:
-      - cs-ops CLAUDE.md practice profile
+      - cs-ops CLAUDE.md company profile
       - CSM roster with segment assignments and ARR
     consumes_files:
       - cs-ops/CLAUDE.md
@@ -79,13 +79,13 @@ skills:
     summary: >
       Configures the CS-Ops plugin by collecting team structure, segmentation model,
       health model parameters, reporting cadence, and connector status. Writes the
-      cs-ops CLAUDE.md practice profile consumed by all other cs-ops skills.
+      cs-ops CLAUDE.md company profile consumed by all other cs-ops skills.
     intended_tasks:
       - First-time cs-ops plugin setup
-      - Full practice profile rebuild after major org changes
+      - Full company profile rebuild after major org changes
       - Section-specific updates via --section flag
     out_of_scope:
-      - CSM-specific practice profiles (use csm.cold-start-interview)
+      - CSM-specific company profiles (use csm.cold-start-interview)
       - Onboarding or renewals configuration
     invocation_cues:
       - "set up cs-ops"
@@ -100,7 +100,7 @@ skills:
       - None — bootstraps from zero
     consumes_files: []
     produces_artifacts:
-      - cs-ops/CLAUDE.md practice profile
+      - cs-ops/CLAUDE.md company profile
     tools_used: []
     related_skills:
       - cs-ops.customize
@@ -122,7 +122,7 @@ skills:
     category: cs-ops
     owner: cs-ops
     summary: >
-      Updates specific sections of the cs-ops practice profile without rerunning
+      Updates specific sections of the cs-ops company profile without rerunning
       the full cold-start interview. Displays current values before editing and
       confirms changes before writing.
     intended_tasks:
@@ -480,7 +480,7 @@ skills:
       - All configured segments analyzed
       - Reclassification candidates identified with rationale
     known_failure_modes:
-      - Missing segment definitions in practice profile cause unclassified accounts
+      - Missing segment definitions in company profile cause unclassified accounts
 
   # ─────────────────────────────────────────────
   # DOMAIN: csm
@@ -512,7 +512,7 @@ skills:
     priority: standard
     argument_hint: "[<account-name>] [--brief | --deep | --stakeholders]"
     required_context:
-      - csm CLAUDE.md practice profile
+      - csm CLAUDE.md company profile
       - Account name or ID
     consumes_files:
       - csm/CLAUDE.md
@@ -600,13 +600,13 @@ skills:
     category: csm
     owner: csm
     summary: >
-      Configures the CSM practice profile — motion type, segment, product catalog,
+      Configures the CSM company profile — motion type, segment, product catalog,
       success plan template, outcome catalog path, and connector status. Writes
       csm/CLAUDE.md consumed by all csm skills. Optionally generates an outcome catalog
       from the product catalog during setup.
     intended_tasks:
       - First-time CSM plugin setup
-      - Full practice profile rebuild
+      - Full company profile rebuild
       - Connector re-verification
       - Outcome catalog generation from product catalog
     out_of_scope:
@@ -624,7 +624,7 @@ skills:
       - None — bootstraps from zero
     consumes_files: []
     produces_artifacts:
-      - csm/CLAUDE.md practice profile
+      - csm/CLAUDE.md company profile
       - Outcome catalog (optional)
     tools_used: []
     related_skills:
@@ -647,7 +647,7 @@ skills:
     category: csm
     owner: csm
     summary: >
-      Updates specific sections of the CSM practice profile without a full re-interview.
+      Updates specific sections of the CSM company profile without a full re-interview.
       Alias for cold-start-interview when profile is entirely missing. Shows current
       values, confirms changes before writing.
     intended_tasks:
@@ -700,7 +700,7 @@ skills:
       - Close an escalation with resolution summary
     out_of_scope:
       - Churn risk assessment (use renewals.risk-assessment)
-      - Escalation routing decisions (governed by practice profile matrix)
+      - Escalation routing decisions (governed by company profile matrix)
     invocation_cues:
       - "escalation memo"
       - "open an escalation"
@@ -736,7 +736,7 @@ skills:
     success_criteria:
       - Escalation memo created with owner, SLA, and routing path
     known_failure_modes:
-      - Missing escalation matrix in practice profile causes routing failure
+      - Missing escalation matrix in company profile causes routing failure
 
   - id: csm.health-score-review
     name: health-score-review
@@ -1446,7 +1446,7 @@ skills:
     owner: onboarding
     config_skill: true
     summary: >
-      First-time setup for the onboarding practice profile. Collects role, onboarding
+      First-time setup for the onboarding company profile. Collects role, onboarding
       model, segment configuration, TtV targets, milestone definitions, success criteria
       model, kickoff and handoff format, escalation matrix, integrations, and CS
       methodology preferences. Writes to onboarding CLAUDE.md so all other onboarding
@@ -1474,7 +1474,7 @@ skills:
       - None (generates the profile)
     consumes_files: []
     produces_artifacts:
-      - onboarding/CLAUDE.md (complete practice profile)
+      - onboarding/CLAUDE.md (complete company profile)
     tools_used:
       - CRM connector (optional — auto-populate company profile)
     related_skills:
@@ -4665,8 +4665,8 @@ skills:
     argument_hint: "--phase 4 (inside annual-planning-workflow) or standalone"
 
     required_context:
-      - UoG-confirmed AE count and revenue target (from annual-planning-workflow Phase 2 or practice profile)
-      - ae_quota from practice profile
+      - UoG-confirmed AE count and revenue target (from annual-planning-workflow Phase 2 or company profile)
+      - ae_quota from company profile
       - Historical attainment actuals (trailing 4Q) for achievability flag
 
     consumes_files:
@@ -4745,7 +4745,7 @@ skills:
     argument_hint: "Period: weekly (default) or monthly"
 
     required_context:
-      - All practice profile fields
+      - All company profile fields
       - Live connector data from HubSpot, CS platform
       - Source skill outputs (pipeline-coverage-analysis, deal-health-scoring, etc.)
 
@@ -4835,7 +4835,7 @@ skills:
 
     required_context:
       - HubSpot deal fields, product configuration, and notes for target deal
-      - avg_deal_acv, primary_segment from practice profile
+      - avg_deal_acv, primary_segment from company profile
 
     consumes_files:
       - reference/revops-domain-model.md §2
@@ -4914,8 +4914,8 @@ skills:
 
     required_context:
       - HubSpot deal fields for target deal(s)
-      - OCV catalog (ocv_catalog_path from practice profile) — Ratified entries only
-      - linear_connected flag from practice profile
+      - OCV catalog (ocv_catalog_path from company profile) — Ratified entries only
+      - linear_connected flag from company profile
 
     consumes_files:
       - reference/revops-domain-model.md §10
@@ -5005,7 +5005,7 @@ skills:
     required_context:
       - HubSpot current pipeline with stage breakdown
       - Win rate history (trailing 4Q) by stage and segment
-      - target_growth_pct, nrr_current, primary_segment, ae_quota, ae_attainment_planning_rate from practice profile
+      - target_growth_pct, nrr_current, primary_segment, ae_quota, ae_attainment_planning_rate from company profile
 
     consumes_files:
       - reference/revops-domain-model.md §4
@@ -5048,7 +5048,7 @@ skills:
 
     known_failure_modes:
       - HubSpot pipeline unavailable → declare unavailable; do not estimate scenarios from memory
-      - Win rate history < 4Q → flag data gap; use stated win rate from practice profile with Moderate confidence
+      - Win rate history < 4Q → flag data gap; use stated win rate from company profile with Moderate confidence
 
   - id: rev-ops.stage-integrity-audit
     name: stage-integrity-audit
@@ -5088,7 +5088,7 @@ skills:
 
     required_context:
       - HubSpot stage change history (entry/exit dates per deal)
-      - avg_sales_cycle_days and historical median by stage from practice profile
+      - avg_sales_cycle_days and historical median by stage from company profile
 
     consumes_files:
       - reference/revops-domain-model.md §9

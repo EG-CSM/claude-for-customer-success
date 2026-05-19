@@ -14,6 +14,8 @@ version: "1.0.0"
 deployment_target: plugin
 ---
 
+<!-- Status: [PROPOSED] -->
+
 # /onboarding:success-criteria
 
 Define and track onboarding success criteria.
@@ -65,15 +67,15 @@ Proceed with outcome-based format as default.
 - Generating the full onboarding plan (use `/onboarding:onboarding-plan`)
 - Handoff graduation readiness checks (use `/onboarding:handoff-doc --readiness`)
 
-**Typical activation:**
+## Typical Activation
 - "Define success criteria for [Account]"
 - "We need to refine the success criteria after the kickoff call"
 - "Review success criteria achievement for [Account]'s QBR"
 - "Export the success criteria for [Account] to share with the customer"
-- `/onboarding:success-criteria [account] --define`
-- `/onboarding:success-criteria [account] --refine`
-- `/onboarding:success-criteria [account] --review`
-- `/onboarding:success-criteria [account] --export`
+- CSM runs `/onboarding:success-criteria [account] --define` to facilitate a criteria definition session
+- CSM runs `/onboarding:success-criteria [account] --refine` to adjust criteria after a scope or stakeholder change
+- CSM runs `/onboarding:success-criteria [account] --review` to assess progress at a milestone checkpoint
+- CSM runs `/onboarding:success-criteria [account] --export` to produce a clean customer-facing criteria summary
 
 ---
 
@@ -398,6 +400,12 @@ Questions? [CSM name] · [contact]
 > - **Before sharing:** Remove internal notes section and this reviewer note.
 >   Confirm all criteria have been discussed with the customer, not just the CSM.
 >   Replace `[Pending customer confirmation]` markers before the export.
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill
 
 ---
 

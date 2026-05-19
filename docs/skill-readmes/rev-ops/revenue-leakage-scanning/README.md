@@ -30,7 +30,7 @@ Say something like:
 ## Prerequisites
 
 - HubSpot deal fields, product configuration, and notes for target deal
-- avg_deal_acv, primary_segment from practice profile
+- avg_deal_acv, primary_segment from company profile
 
 ## Governance
 

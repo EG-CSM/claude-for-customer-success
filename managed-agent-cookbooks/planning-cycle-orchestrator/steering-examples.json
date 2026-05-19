@@ -198,8 +198,8 @@
   },
   {
     "id": "SE-PCO-008",
-    "title": "Hard stop — company_name missing from practice profile",
-    "description": "Practice profile exists but company_name field is absent. Orchestrator stops immediately, reports the missing field, and invokes no subagents.",
+    "title": "Hard stop — company_name missing from company profile",
+    "description": "Company profile exists but company_name field is absent. Orchestrator stops immediately, reports the missing field, and invokes no subagents.",
     "input": {
       "operator_command": "show planning cycle",
       "practice_profile_snippet": {
@@ -212,7 +212,7 @@
       "phase_gate_writer_invoked": false,
       "cycle_digest_poster_invoked": false,
       "hard_stop": true,
-      "error_message_contains": "Required practice profile field missing: company_name",
+      "error_message_contains": "Required company profile field missing: company_name",
       "recovery_hint_shown": true
     },
     "notes": "This is the earliest possible hard stop — before any subagent is invoked. The orchestrator reports 'Run rev-ops cold-start to configure.' as the recovery hint. No state file is read, no HubSpot is contacted."

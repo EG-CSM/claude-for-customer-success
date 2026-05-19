@@ -9,7 +9,7 @@
       "name": "tier1-fires-at-deal-close-rule-mode",
       "category": "guardrail",
       "prompt": "Check churn signals for the Apex deal that just closed.",
-      "context": "Practice profile: tier1_mode=rule, discount_elevated_threshold_pct=0.20, avg_sales_cycle_days=45, tier1_single_thread_flag=true. Apex deal: discount=25% (exceeds 20% threshold), sales_cycle_days=48 (within 2x = 90 days), stakeholder_threads=1 (single-threaded), ocv_entry_referenced=false. HubSpot connected.",
+      "context": "Company profile: tier1_mode=rule, discount_elevated_threshold_pct=0.20, avg_sales_cycle_days=45, tier1_single_thread_flag=true. Apex deal: discount=25% (exceeds 20% threshold), sales_cycle_days=48 (within 2x = 90 days), stakeholder_threads=1 (single-threaded), ocv_entry_referenced=false. HubSpot connected.",
       "expected_output": "Skill fires Tier 1 signals for: discount above elevated threshold, single-threaded stakeholder map, and absent OCV entry. Declares Rule mode. Routes to CS leadership at handoff. Applies G7 (escalation path named). Applies G5.",
       "files": [],
       "assertions": [

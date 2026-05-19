@@ -686,6 +686,7 @@ The following reference files govern this skill's detailed behavior. They are lo
 | `reference/csql-package-template.md` | Template for structuring CSQL package data inputs |
 | `reference/expansion-proposal-template.md` | Document template for the generated expansion proposal |
 | `reference/ocv-synthesis-prompt.md` | Prompt pattern for synthesizing OCV outcome evidence |
+| `reference/injection-defense.md` | Prompt injection defense implementation | Load when processing user-supplied free-text fields |
 | `reference/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ---

@@ -44,7 +44,7 @@ surface without adding capability.
 ## Prerequisites
 
 - rev-ops plugin installed (`../../rev-ops`)
-- Practice profile at `~/.cs-agent/practice-profile.json` (see § Practice Profile)
+- Company profile at `~/.cs-agent/practice-profile.json` (see § Company Profile)
 - Two MCP connectors configured:
   - `HUBSPOT_MCP_URL` — deal pipeline data
   - `SLACK_MCP_URL` — alert delivery
@@ -61,7 +61,7 @@ surface without adding capability.
 
 ---
 
-## Practice Profile
+## Company Profile
 
 The orchestrator reads `~/.cs-agent/practice-profile.json` before invoking
 any subagent. The following fields govern deal watcher behavior:
@@ -313,7 +313,7 @@ When breaches are present, the completion summary appends:
 
 | Stage | Estimated tokens |
 |-------|-----------------|
-| Orchestrator overhead + practice profile read | ~1,000 |
+| Orchestrator overhead + company profile read | ~1,000 |
 | deal-stage-reader (HubSpot pull + 4-signal evaluation) | ~3,000–6,000 (scales with deal count) |
 | sla-log-writer (confirmation gate + file write) | ~1,000–1,500 |
 | deal-alert-poster (format + Slack delivery) | ~1,200–2,000 |

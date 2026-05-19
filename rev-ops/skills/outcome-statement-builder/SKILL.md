@@ -1,9 +1,12 @@
 ---
 name: outcome-statement-builder
+version: 1.0.0
 description: "Outcome Statement Builder -- transform raw product or service capabilities into structured, verifiable outcome statements using the Seven-Stage Value Chain, then assign tangible business metrics and generate a multi-level achievement rubric. Use during Outcome Catalog development to convert capability inputs into catalog-ready outcome entries with approval checkpoints and rubric-based evaluation criteria. Produces a local Outcome & Value Registry in machine-readable Markdown and a presentation-ready HTML review deck for cross-functional ratification with Sales, Marketing, RevOps, and CS."
 deployment_target: plugin
 status: PROPOSED
 ---
+
+[PROPOSED]
 
 # Outcome Statement Builder
 
@@ -29,8 +32,63 @@ Operates in two sequential phases with an explicit approval gate between them.
 - Competitive analysis or benchmarking
 - Capabilities that are not yet delivered — this skill works with what exists, not roadmap items
 
-## Typical activation
+## Typical Activation
 "Help me turn these capabilities into outcomes", "Transform my capability list into outcome statements", "Build outcomes from these features and generate the registry", "I need to create outcome statements, rubrics, and a review deck"
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `ocv_catalog_path`, `primary_segment`
+
+---
+
+## Reasoning Protocol
+
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of outcome-building request is this?
+   - Phase 1 capability intake (raw capability list → structured outcome statements via Seven-Stage Value Chain)
+   - Phase 2 value assignment (approved outcome statements → business metrics and L0–L3 achievement rubric)
+   - Rubric generation only (outcome statements already approved — skip to rubric construction)
+   - Full pipeline with artifact output (Phase 1 + approval gate + Phase 2 + registry and HTML deck)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user providing product/service capabilities for outcome translation
+   2. Confirm which phase to execute — Phase 1, Phase 2, or full pipeline
+   3. Apply approval gate strictly — Phase 2 does not begin until user explicitly approves Phase 1 output
+   4. Apply G8 — outcome statements tagged as Draft are excluded from Sales commitments or CS plans until cross-functional ratification is complete
+   5. No roadmap capabilities — this skill processes delivered capabilities only; flag and exclude any capability not yet in production
+   6. Verify business metrics are measurable and tied to a named measurement source — magnitude estimates require explicit uncertainty labeling
+   7. Confirm output destination before delivering — internal registry draft vs. cross-functional ratification deck vs. catalog submission
+
+3. **EXPERT CHECK**: What would a veteran CS outcomes architect verify before presenting results?
+   - Are outcome statements role-specific and trigger-conditioned, not generic capability descriptions? "Customers can see analytics" is not an outcome statement — "Revenue-owning CSMs can identify expansion opportunities 30 days earlier by surfacing usage-based signals at the account level" is. Each statement must include a named role, a measurable change, and a trigger condition.
+   - Are business metrics grounded in the customer's measurement reality, not the vendor's preferred narrative? The metric and its measurement source must come from how the customer actually measures success — not what the vendor wants to claim. When the measurement source is unknown, label the metric with [Estimated] and surface the gap.
+   - Is the rubric differentiated, not graduated? L0–L3 levels must represent qualitatively different achievement states — not just "more of the same." L3 is not "L2 but harder." If the rubric levels collapse into degree distinctions rather than state distinctions, flag it before proceeding.
+   - Is the approval gate enforced before Phase 2 begins? Proceeding to value assignment before the user has reviewed and approved the Phase 1 outcome statements corrupts the downstream rubric — metrics get assigned to outcome language the user hasn't validated. The gate is non-negotiable.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Generating outcome statements that are capability descriptions in different words — every statement must pass the role/metric/trigger test
+   - Proceeding to Phase 2 before receiving explicit approval on Phase 1 output (approval gate violation)
+   - Assigning business metrics without a named measurement source — floating magnitudes without a grounding source are unverifiable and undermine catalog quality
+   - Producing rubric levels that are degree distinctions rather than state distinctions — L0–L3 must be qualitatively different achievement states
+   - Including roadmap capabilities in the output — flag and exclude anything not yet in production
+
+**After execution**, verify:
+- Approval gate enforced — Phase 2 was not entered without explicit user confirmation of Phase 1
+- G8 compliance — all output registry entries are tagged as Draft pending cross-functional ratification; no entry presented as ratified without confirmation
+- Business metrics each carry a named measurement source or an [Estimated] label
+- Rubric levels are state-differentiated, not degree-differentiated
+- Roadmap capabilities excluded and flagged if present in input
+- Confidence: High when capabilities are well-defined and measurement sources are provided by user; Moderate when capabilities are vague or measurement sources must be inferred
+    - Confidence: [High] when capabilities are well-defined and measurement sources are provided by user / [Medium] when capabilities are vague or measurement sources must be inferred / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -43,7 +101,7 @@ Operates in two sequential phases with an explicit approval gate between them.
 | Output Format | Outcome Statement → Approval → Value Assignment → Rubric → Registry + HTML Deck |
 | Interaction Mode | Collaborative — user approves or edits before Phase 2 |
 | Complexity | T2 — Professional |
-| Worked Examples | See `references/worked-examples.md` — Gong.io CRO segment, OCV-001 and OCV-002 |
+| Worked Examples | See `references/worked-examples.md` — Meridian Analytics CRO segment, OCV-001 and OCV-002 |
 | Reference Output | See `references/reference-registry.md` — complete 6-entry populated registry |
 
 ---
@@ -96,15 +154,15 @@ rubric_set:
 
 artifacts:
   - [product-slug]-outcome-value-registry.md   # Machine-readable + human-readable registry
-                                                # e.g., gong-outcome-value-registry.md
+                                                # e.g., example-outcome-value-registry.md
   - [product-slug]-outcome-review-deck.html    # Presentation-ready cross-functional review artifact
-                                                # e.g., gong-outcome-review-deck.html
+                                                # e.g., example-outcome-review-deck.html
 ```
 
 For the exact structure of both artifacts from a live test run, see:
-- `references/reference-registry.md` — canonical registry schema (6-entry Gong.io CRO example)
-- `gong-outcome-value-registry.md` — live registry output from the Gong.io test run
-- `gong-outcome-review-deck.html` — live HTML deck from the same test run
+- `references/reference-registry.md` — canonical registry schema (6-entry worked example)
+- `example-outcome-value-registry.md` — worked registry output demonstrating the full schema
+- `example-outcome-review-deck.html` — worked HTML deck demonstrating the full layout
 
 ---
 
@@ -340,10 +398,10 @@ Reply with A, B, or C.
 **When A is selected — produce the Markdown Registry:**
 
 **Filename convention:** `[product-slug]-outcome-value-registry.md`
-e.g., for Gong.io CRO segment: `gong-outcome-value-registry.md`
+e.g., for an AI revenue intelligence platform: `example-outcome-value-registry.md`
 
-For a live populated example of this file at full scale, open `gong-outcome-value-registry.md`
-in the package root — all six Gong.io CRO entries with complete rubrics and registry metadata.
+For a fully populated example of this file at full scale, open `example-outcome-value-registry.md`
+in the package root — all six entries with complete rubrics and registry metadata.
 
 Each entry follows this schema (consistent headers required for machine readability):
 
@@ -409,11 +467,11 @@ For a complete populated example of this schema with all six entries, see `refer
 Generate a clean HTML artifact using SuccessCOACHING brand colors and Poppins font.
 
 **Filename convention:** `[product-slug]-outcome-review-deck.html`
-e.g., for Gong.io CRO segment: `gong-outcome-review-deck.html`
+e.g., for an AI revenue intelligence platform: `example-outcome-review-deck.html`
 
-For the structure and formatting of a complete live example, open
-`gong-outcome-review-deck.html` — this is the direct output from the Gong.io CRO test run
-and should be used as the visual and structural template for all subsequent decks.
+For the structure and formatting of a complete worked example, open
+`example-outcome-review-deck.html` — this demonstrates the full layout, color treatment,
+card structure, and typography that all subsequent decks should match exactly.
 
 Required structure:
 
@@ -475,11 +533,11 @@ no navigation required between entries during discussion.
 
 Two full Phase 1 examples are provided in `references/worked-examples.md`:
 
-**Example A — OCV-001: Win Rate via Conversation Intelligence (Gong.io, CRO segment)**
+**Example A — OCV-001: Win Rate via Conversation Intelligence (AI revenue intelligence platform, CRO segment)**
 Demonstrates: all three evaluation criteria failing on a single input; elevation from Stage 2
 to Stage 3; TRIGGER slot distinguishing business context from product activation.
 
-**Example B — OCV-002: Outbound Pipeline Efficiency (Gong.io, CRO segment)**
+**Example B — OCV-002: Outbound Pipeline Efficiency (AI revenue intelligence platform, CRO segment)**
 Demonstrates: partial role anchoring failure (correct product area, wrong buyer lens);
 elevation from rep-level to CRO-level framing; Stage 4 classification when the metric
 is a CFO/board metric.
@@ -536,10 +594,15 @@ RevOps, CS) and magnitude verification before use in Sales commitments or CS pla
 
 | File | Purpose |
 |------|---------|
-| `references/worked-examples.md` | Phase 1 evaluation and transformation for OCV-001 and OCV-002 (Gong.io CRO segment). Includes madlib slot-by-slot annotation, all three evaluation failure modes, and stage classification reasoning. Use as the template for showing Phase 1 evaluation work. |
-| `references/reference-registry.md` | Canonical registry schema documentation with complete 6-entry populated example from the Gong.io CRO test run. Shows the full Phase 1 + Phase 2 output in the exact schema this skill produces. Includes schema notes for downstream machine consumers. |
-| `gong-outcome-value-registry.md` | Live Phase 2 registry output from the Gong.io CRO test run. All 6 entries (OCV-001 through OCV-006) with value assignment, rubrics, and registry metadata in the production format. Use as the visual and structural reference for registry output. |
-| `gong-outcome-review-deck.html` | Live HTML review deck from the Gong.io CRO test run. Full branded deck with all 6 entries, rubric cards, TBD magnitude banner, and ratification status fields. Use as the visual and structural template for all HTML deck outputs — match the layout, color treatment, card structure, and typography exactly. |
+| `references/worked-examples.md` | Phase 1 evaluation and transformation for OCV-001 and OCV-002 (AI revenue intelligence platform, CRO segment). Includes madlib slot-by-slot annotation, all three evaluation failure modes, and stage classification reasoning. Use as the template for showing Phase 1 evaluation work. |
+| `references/reference-registry.md` | Canonical registry schema documentation with complete 6-entry populated example. Shows the full Phase 1 + Phase 2 output in the exact schema this skill produces. Includes schema notes for downstream machine consumers. |
+| `example-outcome-value-registry.md` | Worked Phase 2 registry output. All 6 entries (OCV-001 through OCV-006) with value assignment, rubrics, and registry metadata in the production format. Uses fictional product (Meridian Analytics) as a neutral example. Use as the visual and structural reference for registry output. |
+| `example-outcome-review-deck.html` | Worked HTML review deck. Full branded deck with all 6 entries, rubric cards, TBD magnitude banner, and ratification status fields. Uses fictional product (Meridian Analytics) as a neutral example. Use as the visual and structural template for all HTML deck outputs — match the layout, color treatment, card structure, and typography exactly. |
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ---
+
+## Guardrails
+
+- G8: Registry entries with Draft status are excluded from Sales commitments or CS plans until cross-functional ratification is complete
 

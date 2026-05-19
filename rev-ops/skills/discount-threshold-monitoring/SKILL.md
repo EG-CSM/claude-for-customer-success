@@ -3,7 +3,7 @@ name: discount-threshold-monitoring
 version: 1.0.0
 deployment_target: plugin
 status: PROPOSED
-description: "Flags deals where discount exceeds the approved threshold for that segment. Routes approval to the correct authority based on discount depth using thresholds from practice profile. Tracks discount frequency by rep and segment. Never approves deals autonomously. Triggers: 'discount approval', 'discount threshold', 'discount frequency by rep', 'is this discount approved', 'flag a discount'."
+description: "Flags deals where discount exceeds the approved threshold for that segment. Routes approval to the correct authority based on discount depth using thresholds from company profile. Tracks discount frequency by rep and segment. Never approves deals autonomously. Triggers: 'discount approval', 'discount threshold', 'discount frequency by rep', 'is this discount approved', 'flag a discount'."
 ---
 
 [PROPOSED]
@@ -11,7 +11,7 @@ description: "Flags deals where discount exceeds the approved threshold for that
 # Discount Threshold Monitoring
 
 Threshold-based routing — not subjective review. The approval tier is determined
-by the discount depth against practice profile thresholds.
+by the discount depth against company profile thresholds.
 
 **Reference:** Governance tiers → `../../../shared/revops-domain-model.md §9`
 **Config reads:** `discount_standard_threshold_pct`, `discount_elevated_threshold_pct`,
@@ -52,7 +52,7 @@ Discount pattern monitoring tracks both Sales reps and CSMs on the same trailing
 - Discount negotiation decisions (output is analytical input only)
 - Revenue leakage structural analysis (use revenue-leakage-scanning)
 
-## Typical activation
+## Typical Activation
 "Discount threshold check", "which tier does this deal require", "discount monitoring", "is this discount within policy", "discount level for [deal]"
 
 ---
@@ -69,7 +69,7 @@ Before generating output, apply these primers:
 
 2. **CONSTRAINTS**: What limits the solution space?
    1. Confirm activation — user flagging a discount or requesting discount review
-   2. Read configured thresholds from practice profile — never estimate thresholds
+   2. Read configured thresholds from company profile — never estimate thresholds
    3. Determine deal type (Sales new-logo vs. CS expansion) before applying threshold chain
    4. Apply G1 — discount approval does not constitute revenue commitment
    5. Apply G6 — data-as-of on all HubSpot reads
@@ -77,7 +77,7 @@ Before generating output, apply these primers:
    7. Never approve deals autonomously
 
 3. **EXPERT CHECK**: What would a veteran RevOps analyst verify first?
-   - Are configured thresholds from the practice profile, not estimated? Hardcoded
+   - Are configured thresholds from the company profile, not estimated? Hardcoded
      thresholds drift from policy — always read from config before routing.
    - Is the deal type correctly identified before applying thresholds? CS expansion deals
      may have separate cs_expansion_* thresholds — misapplying Sales thresholds to CS
@@ -88,7 +88,7 @@ Before generating output, apply these primers:
      dilute pattern signals; narrower windows miss rep behavior trends.
 
 4. **ANTI-PATTERNS**: Common mistakes to avoid:
-   - Using estimated or hardcoded thresholds instead of configured practice profile values (G1 violation)
+   - Using estimated or hardcoded thresholds instead of configured company profile values (G1 violation)
    - Applying Sales new-logo threshold chain to CS expansion deals when cs_expansion_* config exists
    - Creating a Linear issue without Write-tier confirmation (G9 violation)
    - Surfacing HubSpot reads without data-as-of timestamp (G6 violation)
@@ -97,7 +97,8 @@ Before generating output, apply these primers:
 - G1 qualifier present: discount approval does not lock revenue or constitute a commitment
 - G6 data-as-of label applied to all HubSpot reads
 - Deal type (Sales vs. CS expansion) declared; correct threshold chain applied
-- Confidence: High when HubSpot is connected and practice profile thresholds are configured; Moderate when thresholds are defaulted from Sales config due to absent CS-specific config
+- Confidence: High when HubSpot is connected and company profile thresholds are configured; Moderate when thresholds are defaulted from Sales config due to absent CS-specific config
+    - Confidence: [High] when HubSpot is connected and company profile thresholds are configured / [Medium] when thresholds are defaulted from Sales config due to absent CS-specific config / [Low] if all inputs are manual or unverified
 
 ---
 

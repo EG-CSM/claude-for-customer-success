@@ -1,9 +1,12 @@
 ---
 name: unit-of-growth-calculator
+version: 1.0.0
 description: "Unit of Growth Calculator -- compute GTM headcount requirements, capacity imbalances, and efficiency diagnostics for B2B SaaS organizations using the AE-anchored or CSM-anchored pod model. Use during revenue planning, board preparation, CRO/CFO reviews, or CS capacity modeling to surface under/over-capacity signals across AE, SDR, CSM, and Support functions with specific remediation guidance. Synthesizes the SuccessCOACHING Unit of Growth research model with 2025 SaaS benchmarks."
 deployment_target: plugin
 status: PROPOSED
 ---
+
+[PROPOSED]
 
 # Unit of Growth Calculator
 
@@ -33,8 +36,62 @@ to find the maximum ARR growth the post-sales org can absorb before breaking.
 - Customer health scoring or churn prediction on specific accounts
 - Detailed financial modeling with COGS, EBITDA, or equity dilution — route to a CFO model
 
-## Typical activation
+## Typical Activation
 "Model my GTM headcount for a $5M ARR target", "Do I have enough CSMs to support my current AE team?", "How much ARR can my current CS team support?", "Is my pipeline coverage ratio healthy?", "Run the unit of growth calculation for my company", "Show me where my GTM org is over or under capacity"
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `primary_segment`, `crm_system`
+
+---
+
+## Reasoning Protocol
+
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of unit of growth calculation is this?
+   - AE-anchored calculation (revenue target → derived GTM headcount requirements)
+   - CS-anchored reverse (existing CSM headcount → maximum supportable ARR ceiling)
+   - Scenario comparison (multi-scenario modeling across segments, growth rates, or headcount assumptions)
+   - Imbalance diagnostic only (user has headcount and revenue data and wants signals without running a full model)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user requesting headcount planning, capacity analysis, or GTM structure review
+   2. Pull company profile from config; declare segment, CRM system, and any stored benchmark overrides
+   3. Apply benchmark source discipline — all defaults traced to `references/benchmark-library.md`; no training-memory benchmarks
+   4. Apply G5 — all headcount outputs are analytical inputs for planning review; no output is an approved headcount plan
+   5. Flag when user-provided inputs deviate significantly from benchmarks — note the deviation, never override the user's number
+   6. Confirm `primary_segment` from config before applying segment-specific benchmark defaults
+   7. Confirm output destination before delivering — board deck vs. CFO/CRO planning session vs. internal RevOps analysis
+
+3. **EXPERT CHECK**: What would a veteran RevOps capacity planner verify before surfacing findings?
+   - Is the pipeline coverage calculation win-rate-anchored rather than a static 3x rule? Required coverage = 1 ÷ win rate — presenting 3x as universal without checking win rate is a common planning error that can understate or overstate pipeline need by 30–50%.
+   - Is the CS hiring timing sequenced correctly? CS must be hired in advance of AE-driven growth, not in arrears — a model that shows CS and AE scaling in lockstep understates the CS hiring lead time required to avoid churn spikes.
+   - Is the segment boundary applied to benchmarks? SMB, mid-market, and enterprise benchmarks diverge significantly on AE quota, CSM portfolio size, and attainment rates — applying a blended benchmark to a segment-specific question produces misleading signals.
+   - Is the NRR effect on new ARR requirements declared? High NRR reduces the new ARR burden on Sales; low NRR increases it. A model that omits NRR as an input variable will overstate or understate AE headcount need for the same net growth target.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Applying SMB benchmarks to enterprise accounts or vice versa without flagging the mismatch
+   - Using 3x pipeline coverage without checking win rate first (produces incorrect coverage targets)
+   - Presenting headcount outputs as exact counts rather than ranges (benchmarks are ranges, not point estimates)
+   - Skipping the CS capacity reverse check when current CSM count is available — it must always run
+   - Omitting NRR from the new ARR requirement calculation when the user provides it
+
+**After execution**, verify:
+- G5 qualifier present — all headcount outputs labeled as planning proposals, not approved decisions
+- Benchmark sources cited per `references/benchmark-library.md` — no training-memory benchmarks presented as defaults
+- CS capacity check run in both directions (forward and reverse) when CSM headcount is available
+- Segment-appropriate benchmarks applied per `primary_segment` config
+- Confidence: High for formula calculations; Moderate for GTM headcount benchmarks (sourced from industry synthesis, shifting with AI-assisted CS tooling)
+    - Confidence: [High] for formula calculations / [Medium] for GTM headcount benchmarks (sourced from industry synthesis, shifting with AI-assisted CS tooling) / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -478,6 +535,10 @@ Imbalance Signals:      [list]          [list]       [list]
 | Segment is ambiguous (e.g., "mid-market and enterprise mix") | Benchmarks diverge across segments | Run both and present the range; ask which segment represents the majority of the ARR target |
 | NRR not known | User unsure of NRR | Default to 100% (neutral) with note; ask for churn rate as proxy if available |
 
+### Guardrail Codes
+
+- G5: All headcount model outputs are analytical inputs — planning proposals for board, CFO, or CRO review. No output constitutes an approved headcount plan.
+
 ---
 
 ## Worked Examples
@@ -651,6 +712,7 @@ primary survey, and shifting as AI-assisted CS tooling compresses CSM headcount 
 |------|---------|-------------|
 | `references/benchmark-library.md` | Full benchmark tables for NRR/GRR, gross churn, downsell, unit economics, GTM headcount (AE quota, attainment, SDR:AE, CSM portfolio sizes), operating efficiency, growth rates, imbalance signal thresholds, and AI/pricing risk signals. Source Registry with URLs, vintage, and sample sizes. Per-row confidence tiers [Verified / Synthesized / Heuristic]. | When applying benchmark defaults, citing sources in output, or checking imbalance signal thresholds |
 | `references/metrics-and-glossary.md` | Section 1: Metrics Catalog — definition, formula, inputs, units, interpretation, benchmarks, and common errors for every metric used in the skill. Section 2: Formula Reference — all formulas in execution order (Phases 1–6). Section 3: Glossary — plain-language definitions for all terms. | When answering "what does X mean?", verifying a formula, or explaining a metric to the user |
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill | |
 
 ---
 

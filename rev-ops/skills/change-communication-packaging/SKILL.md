@@ -24,7 +24,7 @@ before it leaves RevOps.
 - Escalation communications mid-incident (use different escalation path)
 - Customer-facing communications
 
-## Typical activation
+## Typical Activation
 "Package the territory changes for communication", "draft the comp plan announcement", "change communication for [change type]", "how do we communicate [change] to the field"
 
 **Reference:** Output destination labels → `../../../shared/revops-domain-model.md §11`
@@ -80,6 +80,7 @@ Before generating output, apply these primers:
 - [Rep-facing] label applied to all rep-facing content
 - G4/G3 confirmation notes present for territory and comp changes respectively
 - Confidence: High when data inputs are specific; Moderate when change details are estimated
+- Confidence: [High] when data inputs are specific and governance gates confirmed / [Medium] when change details estimated / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -109,7 +110,7 @@ Written from the rep's perspective — the objections they will actually raise.
 Format per FAQ item:
   Q: [The objection, stated bluntly — as the rep would say it]
   A: [Data-backed response — specific numbers, not reassurances]
-     Source: [CRM / Practice profile / UoG model]
+     Source: [CRM / Company profile / UoG model]
 ```
 
 Common objection categories by change type:

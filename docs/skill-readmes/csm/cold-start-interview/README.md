@@ -1,11 +1,11 @@
 # csm.cold-start-interview
 
-Configures the CSM practice profile — motion type, segment, product catalog, success plan template, outcome catalog path, and connector status. Writes csm/CLAUDE.md consumed by all csm skills. Optionally generates an outcome catalog from the product catalog during setup.
+Configures the CSM company profile — motion type, segment, product catalog, success plan template, outcome catalog path, and connector status. Writes csm/CLAUDE.md consumed by all csm skills. Optionally generates an outcome catalog from the product catalog during setup.
 
 ## Use it for
 
 - First-time CSM plugin setup
-- Full practice profile rebuild
+- Full company profile rebuild
 - Connector re-verification
 - Outcome catalog generation from product catalog
 
@@ -24,7 +24,7 @@ Say something like:
 
 ## What you get
 
-- csm/CLAUDE.md practice profile
+- csm/CLAUDE.md company profile
 - Outcome catalog (optional)
 
 ## See also

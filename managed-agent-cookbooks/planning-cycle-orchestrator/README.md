@@ -60,9 +60,9 @@ planning-cycle-orchestrator/
 
 ---
 
-## Practice Profile Fields
+## Company Profile Fields
 
-The orchestrator reads the following fields from the practice profile. Fields
+The orchestrator reads the following fields from the company profile. Fields
 marked **required** trigger a hard stop if absent.
 
 | Field | Required | Default | Purpose |
@@ -353,7 +353,7 @@ normally. Only pipeline-coverage-dependent criteria are affected.
 
 | Condition | Behaviour | Hard Stop? |
 |---|---|---|
-| `company_name` missing from practice profile | Report missing field; show recovery hint | **Yes** |
+| `company_name` missing from company profile | Report missing field; show recovery hint | **Yes** |
 | State file is invalid JSON | Report corruption; show recovery hint | **Yes** |
 | State file does not exist | Initialise empty 5-phase structure in memory only | No |
 | HubSpot unavailable | Mark pipeline criteria `unevaluable`; continue run | No |

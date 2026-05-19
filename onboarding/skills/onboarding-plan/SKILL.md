@@ -15,6 +15,8 @@ version: "1.0.0"
 deployment_target: plugin
 ---
 
+<!-- Status: [PROPOSED] -->
+
 # /onboarding:onboarding-plan
 
 Onboarding plan document — generate, update, or summarize.
@@ -68,13 +70,13 @@ missing config.
 - Success criteria definition — criteria must be defined before or during plan generation, not after
 - Handoff document generation (use `/onboarding:handoff-doc`)
 
-**Typical activation:**
+## Typical Activation
 - "Draft the onboarding plan for [Account]"
 - "The timeline changed — update the onboarding plan for [Account]"
 - "Give me a summary of the [Account] onboarding plan to share with the customer"
-- `/onboarding:onboarding-plan [account] --draft`
-- `/onboarding:onboarding-plan [account] --update`
-- `/onboarding:onboarding-plan [account] --summary`
+- CSM runs `/onboarding:onboarding-plan [account] --draft` to generate a new post-kickoff plan
+- CSM runs `/onboarding:onboarding-plan [account] --update` after a milestone completion or scope change
+- CSM runs `/onboarding:onboarding-plan [account] --summary` to produce an async stakeholder update
 
 ---
 
@@ -415,6 +417,12 @@ Questions? [CSM name] · [contact]
 > - **Before sharing:** Remove the internal section (Section 7) and this reviewer
 >   note. Confirm all milestone dates are accurate. Replace the success criteria
 >   placeholder if criteria have been established.
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill
 
 ---
 

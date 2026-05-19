@@ -31,6 +31,7 @@ Note from config: `crm_system`, `primary_segment`
 ---
 
 ## Use when
+> Routing: Use this skill when **tracking field completion rates over time** — for a point-in-time CRM health score use `crm-hygiene-audit`; for contact/record age and enrichment staleness use `data-decay-tracking`.
 - Required CRM field completion rates need to be tracked over time — applies to both Sales new-logo pipeline and CS expansion pipeline
 - Field compliance reporting required for rep, CSM, or team review
 - Specific high-value fields (close date, ACV, next step) need completion rate trending
@@ -41,8 +42,8 @@ Note from config: `crm_system`, `primary_segment`
 - Stage integrity checking (use stage-integrity-audit)
 - Duplicate record detection (use duplicate-detection)
 
-## Typical activation
-"Field completion monitoring", "field completion rate for [field/team]", "required field compliance", "how complete is our CRM data", "track field fill rates"
+## Typical Activation
+"Field completion monitoring", "field completion rate for [field/team]", "required field compliance", "track field fill rates"
 
 ---
 
@@ -86,6 +87,7 @@ Before generating output, apply these primers:
 - G7 escalation path with named owner present on every pre-close flag
 - G9 Write-tier qualifier present: field updates require human confirmation before execution
 - Confidence: High when HubSpot is connected and data is current; Moderate when data is stale or connector is unavailable
+    - Confidence: [High] when HubSpot is connected and data is current / [Medium] when data is stale or connector is unavailable / [Low] if all inputs are manual or unverified
 
 ---
 

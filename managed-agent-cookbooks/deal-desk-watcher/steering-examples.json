@@ -10,7 +10,7 @@
       "scenario": "Operator runs the watcher. HubSpot returns three breached deals (one Critical, one High, one Medium). Operator confirms all log writes. Digest posts to Slack.",
       "operator_trigger": "Run deal desk watcher.",
       "orchestrator_behavior": [
-        "Reads practice profile from ~/.cs-agent/practice-profile.json",
+        "Reads company profile from ~/.cs-agent/practice-profile.json",
         "Sends config payload to deal-stage-reader",
         "Receives 3 breaches: one approval_aging Critical, one stage_sla High, one single_threaded_late_stage Medium",
         "Invokes sla-log-writer with require_confirmation: true",

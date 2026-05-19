@@ -30,7 +30,7 @@ Say something like:
 ## Prerequisites
 
 - HubSpot stage change history (entry/exit dates per deal)
-- avg_sales_cycle_days and historical median by stage from practice profile
+- avg_sales_cycle_days and historical median by stage from company profile
 
 ## Governance
 

@@ -9,7 +9,7 @@
       "name": "happy-path-all-sections-full-connectors",
       "category": "happy-path",
       "prompt": "Run the weekly GTM pulse.",
-      "context": "HubSpot connected. CS platform connected. OCV catalog present. Linear connected. Slack connected. Practice profile complete with UoG baseline. All five sections have data available.",
+      "context": "HubSpot connected. CS platform connected. OCV catalog present. Linear connected. Slack connected. Company profile complete with UoG baseline. All five sections have data available.",
       "expected_output": "Skill produces all five sections. Sections 1-3 and 5 (aggregate) marked for #revops-alignment. Section 4 and 5 (account-level) marked for #cs-leadership only. Requests Write-tier confirmation before posting. Applies G1 (Section 1), G2 (Section 3), G7 (Section 4), G6 (all sections).",
       "files": [],
       "assertions": [

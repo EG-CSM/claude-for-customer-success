@@ -148,7 +148,7 @@ The OCV is produced once and referenced by many skills. Account value statements
 
 Run the cold-start interview in whichever plugin you install first. It will:
 1. Build a **shared company profile** at `~/.claude/plugins/config/claude-for-customer-success/company-profile.md`
-2. Configure that plugin's practice profile
+2. Configure that plugin's company profile
 
 Subsequent plugin installs reuse the shared company profile and skip company-level questions (~2 min vs. ~15 min for the full first setup).
 
@@ -238,7 +238,7 @@ Running cookbook agents unattended introduces failure scenarios that interactive
 
 **Connector unavailability** — A scheduled agent calls a CRM connector that returns a timeout or auth failure. Agents log the failure and produce a partial output with an explicit data gap notice rather than silently omitting affected accounts. Check `agent.yaml` MCP server configuration if connectors are consistently unavailable.
 
-**Stale configuration** — An agent reads a practice profile (`~/.claude/plugins/config/claude-for-customer-success/[plugin]/CLAUDE.md`) that was written at cold-start but not updated when the team's segmentation thresholds, escalation matrix, or renewal fields changed. Agents surface a configuration staleness warning when they detect a mismatch between profile values and live CRM data. Run `/[plugin]:customize` to refresh the relevant configuration section.
+**Stale configuration** — An agent reads a company profile (`~/.claude/plugins/config/claude-for-customer-success/[plugin]/CLAUDE.md`) that was written at cold-start but not updated when the team's segmentation thresholds, escalation matrix, or renewal fields changed. Agents surface a configuration staleness warning when they detect a mismatch between profile values and live CRM data. Run `/[plugin]:customize` to refresh the relevant configuration section.
 
 **HITL gate timeout** — Agents with human-in-the-loop gates (e.g., `gtm-pulse-runner`) wait for an approval before posting final output. If no approval arrives within the configured timeout window, the agent aborts the run and logs the timeout. Set the `hitl_timeout_minutes` field in `agent.yaml` to match your team's response SLA.
 
@@ -353,9 +353,9 @@ Full composition pattern definitions live in [`docs/claude-for-cs-agent-capabili
 
 **Files:** `[plugin]/reference/config-schema.md` (one per plugin)
 
-Structured schemas defining every configuration field each plugin reads from its practice profile: field names, types, valid values, defaults, and required vs. optional status. Skills reference these schemas when reading configuration rather than making assumptions about what fields exist.
+Structured schemas defining every configuration field each plugin reads from its company profile: field names, types, valid values, defaults, and required vs. optional status. Skills reference these schemas when reading configuration rather than making assumptions about what fields exist.
 
-**Why this matters:** Cold-start interviews write practice profiles that skills then read. Without a schema, skills guess at field names, handle missing fields inconsistently, and break silently when configuration is incomplete. The schema creates a contract between the interview that writes configuration and the skills that consume it.
+**Why this matters:** Cold-start interviews write company profiles that skills then read. Without a schema, skills guess at field names, handle missing fields inconsistently, and break silently when configuration is incomplete. The schema creates a contract between the interview that writes configuration and the skills that consume it.
 
 ### Per-Plugin Token Economics
 
@@ -487,7 +487,7 @@ The chaining is conditional. It fires based on what the current output revealed,
 
 #### 3. Config Scope Redirect
 
-Some skills depend on configuration that lives in a different plugin's practice profile. Rather than duplicating configuration logic, those skills redirect to the owning plugin's `customize` command.
+Some skills depend on configuration that lives in a different plugin's company profile. Rather than duplicating configuration logic, those skills redirect to the owning plugin's `customize` command.
 
 From `onboarding/skills/handoff-doc/SKILL.md`:
 
@@ -584,11 +584,11 @@ The coverage gaps in Stages 6 and 7 are architectural decisions, not oversights.
 ```
 ~/.claude/plugins/config/claude-for-customer-success/
 ├── company-profile.md          # Shared — all six plugins read this
-├── csm/CLAUDE.md               # CSM practice profile (written at cold-start)
-├── cs-ops/CLAUDE.md            # CS Ops practice profile
-├── renewals/CLAUDE.md          # Renewals practice profile
-├── onboarding/CLAUDE.md        # Onboarding practice profile
-└── rev-ops/CLAUDE.md           # Rev-Ops practice profile
+├── csm/CLAUDE.md               # CSM company profile (written at cold-start)
+├── cs-ops/CLAUDE.md            # CS Ops company profile
+├── renewals/CLAUDE.md          # Renewals company profile
+├── onboarding/CLAUDE.md        # Onboarding company profile
+└── rev-ops/CLAUDE.md           # Rev-Ops company profile
 ```
 
 Plugin templates (this directory) ship with the plugin and are replaced on update. User data lives only in `~/.claude/plugins/config/`.
@@ -651,8 +651,8 @@ See [`auq-resilience/README.md`](./auq-resilience/README.md) for install steps a
 Every plugin ships with defaults that work out of the box. Four layers of configuration let you tune behavior without modifying plugin source files:
 
 - **Swap connectors** — edit the plugin's `.mcp.json` to point at your CRM, CS platform, Slack workspace, or data warehouse. Skills that use a connector degrade gracefully when the connector is absent; skills that don't need one ignore the file entirely.
-- **Add firm context** — the `cold-start-interview` command in each plugin writes a practice profile to `~/.claude/plugins/config/claude-for-customer-success/[plugin]/CLAUDE.md`. Edit that file directly to update segmentation thresholds, renewal risk criteria, escalation matrices, and named contacts. Agents and skills read the profile on every run.
-- **Bring your own templates** — paste your team's QBR template, success plan format, or executive summary structure into the relevant section of the practice profile. Skills use your template instead of the built-in one.
+- **Add firm context** — the `cold-start-interview` command in each plugin writes a company profile to `~/.claude/plugins/config/claude-for-customer-success/[plugin]/CLAUDE.md`. Edit that file directly to update segmentation thresholds, renewal risk criteria, escalation matrices, and named contacts. Agents and skills read the profile on every run.
+- **Bring your own templates** — paste your team's QBR template, success plan format, or executive summary structure into the relevant section of the company profile. Skills use your template instead of the built-in one.
 - **Adjust agent scope** — fork a cookbook's `agent.yaml` to change which skills it calls, what output it routes, and which HITL gates it enforces. No changes to the plugin itself are required.
 - **Add your own** — write a `SKILL.md` using the CS plugin skill pattern and bundle it into a new plugin file alongside the stock skills. The [Skill Design](#skill-design) section documents the pattern and required frontmatter.
 
@@ -680,14 +680,14 @@ The setup command provisions the M365 add-in via Microsoft Graph API. It support
 
 ## Skill & Command Reference
 
-Run `/[plugin]:cold-start-interview` first in any plugin — it writes the practice profile that every other skill reads for firm context, thresholds, and templates.
+Run `/[plugin]:cold-start-interview` first in any plugin — it writes the company profile that every other skill reads for firm context, thresholds, and templates.
 
 ### csm (19 skills)
 
 | Command | What it does |
 |---------|-------------|
-| `/csm:cold-start-interview` | Writes firm context, segmentation thresholds, and templates to practice profile |
-| `/csm:customize` | Updates any section of the CSM practice profile interactively |
+| `/csm:cold-start-interview` | Writes firm context, segmentation thresholds, and templates to company profile |
+| `/csm:customize` | Updates any section of the CSM company profile interactively |
 | `/csm:account-research` | Multi-source account intelligence snapshot before a call or review |
 | `/csm:call-prep` | Call agenda, talking points, and risk context from CRM and CS platform data |
 | `/csm:communication-planner` | Builds a structured comms sequence for a lifecycle moment |
@@ -710,8 +710,8 @@ Run `/[plugin]:cold-start-interview` first in any plugin — it writes the pract
 
 | Command | What it does |
 |---------|-------------|
-| `/renewals:cold-start-interview` | Writes renewal thresholds, risk criteria, and team context to practice profile |
-| `/renewals:customize` | Updates any section of the renewals practice profile |
+| `/renewals:cold-start-interview` | Writes renewal thresholds, risk criteria, and team context to company profile |
+| `/renewals:customize` | Updates any section of the renewals company profile |
 | `/renewals:churn-analysis` | Synthesizes churn signals into a risk score and recommended play |
 | `/renewals:churn-rca` | Root cause analysis on a churned or churning account |
 | `/renewals:contract-review` | Reviews contract terms for renewal, uplift, and risk clauses |
@@ -727,8 +727,8 @@ Run `/[plugin]:cold-start-interview` first in any plugin — it writes the pract
 
 | Command | What it does |
 |---------|-------------|
-| `/cs-ops:cold-start-interview` | Writes ops scope, tech stack, and metrics context to practice profile |
-| `/cs-ops:customize` | Updates any section of the CS-Ops practice profile |
+| `/cs-ops:cold-start-interview` | Writes ops scope, tech stack, and metrics context to company profile |
+| `/cs-ops:customize` | Updates any section of the CS-Ops company profile |
 | `/cs-ops:capacity-planner` | Models current vs. projected CSM capacity against book-of-business growth |
 | `/cs-ops:data-quality-check` | Audits CRM field completion and data consistency across the CS portfolio |
 | `/cs-ops:health-model-review` | Reviews the health scoring model for signal coverage and weighting logic |
@@ -741,8 +741,8 @@ Run `/[plugin]:cold-start-interview` first in any plugin — it writes the pract
 
 | Command | What it does |
 |---------|-------------|
-| `/onboarding:cold-start-interview` | Writes onboarding scope, milestone definitions, and team context to practice profile |
-| `/onboarding:customize` | Updates any section of the onboarding practice profile |
+| `/onboarding:cold-start-interview` | Writes onboarding scope, milestone definitions, and team context to company profile |
+| `/onboarding:customize` | Updates any section of the onboarding company profile |
 | `/onboarding:blocker-review` | Identifies and prioritizes implementation blockers with recommended actions |
 | `/onboarding:handoff-doc` | Generates a structured sales-to-CS handoff document |
 | `/onboarding:kickoff-prep` | Prepares kickoff agenda, stakeholder brief, and success criteria for Day 1 |
@@ -756,7 +756,7 @@ Run `/[plugin]:cold-start-interview` first in any plugin — it writes the pract
 
 | Command | What it does |
 |---------|-------------|
-| `/rev-ops:cold-start-interview` | Writes GTM scope, CRM schema, and metrics baseline to practice profile |
+| `/rev-ops:cold-start-interview` | Writes GTM scope, CRM schema, and metrics baseline to company profile |
 | `/rev-ops:annual-planning-workflow` | Orchestrates the annual GTM planning cycle with phase-gate governance |
 | `/rev-ops:change-communication-packaging` | Packages process or policy changes for field communication |
 | `/rev-ops:closed-won-to-cs-capacity-modeling` | Models CS capacity requirements from closed-won actuals |

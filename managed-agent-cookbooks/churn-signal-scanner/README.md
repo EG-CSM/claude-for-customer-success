@@ -44,7 +44,7 @@ declares.
 ## Prerequisites
 
 - rev-ops plugin installed (`../../rev-ops`)
-- Practice profile at `~/.cs-agent/practice-profile.json` (see § Practice Profile)
+- Company profile at `~/.cs-agent/practice-profile.json` (see § Company Profile)
 - Four MCP connectors configured:
   - `HUBSPOT_MCP_URL` — CRM account data
   - `CS_PLATFORM_MCP_URL` — Health scores and usage data
@@ -64,7 +64,7 @@ declares.
 
 ---
 
-## Practice Profile
+## Company Profile
 
 The orchestrator reads `~/.cs-agent/practice-profile.json` before invoking
 any subagent. The following fields govern churn scan behavior:
@@ -333,7 +333,7 @@ When Tier 3 accounts are present:
 
 | Stage | Estimated tokens |
 |-------|-----------------|
-| Orchestrator overhead + practice profile read | ~1,200 |
+| Orchestrator overhead + company profile read | ~1,200 |
 | churn-signal-collector (HubSpot + CS platform + evaluation) | ~4,000–8,000 (scales with portfolio size) |
 | churn-escalation-writer (confirmation gate + Linear writes) | ~1,500–2,500 |
 | churn-alert-poster (format + Slack delivery) | ~1,500–2,000 |

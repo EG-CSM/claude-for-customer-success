@@ -50,6 +50,15 @@ If the request contains signals of full contract cancellation ("cancel everythin
 
 ---
 
+## Pre-flight
+
+- Confirm account context (company name, CSM/AM, current contract, renewal date)
+- Identify the specific analysis goal (new analyze or update to existing DGA)
+- Note any prior analysis or existing documentation to reference
+- Check `~/.claude/plugins/config/claude-for-customer-success/company-profile.md` for company segment and escalation context (`company-profile.md` is a runtime config dependency, not a reference file)
+
+---
+
 ## Operations
 
 This skill supports two operations: `analyze` and `update`.
@@ -205,6 +214,36 @@ current_contract: [value or omitted if not provided]
 
 ## Reasoning Protocol
 
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of downgrade analysis request is this?
+   - **New Analysis** (`analyze`): New downgrade request — driver classification, value chain failure map, counter-proposal inputs, response strategy.
+   - **Update** (`update`): Append new context to an existing DGA record — preserve prior analysis verbatim, append as numbered update block.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G4: Escalation triggers must be specific and actionable — not generic "escalate to your manager."
+   - G5: Counter-proposal inputs (walk-away figures, concession authority, competitive analysis) are CSM/AM internal use only — never include in customer-facing output.
+   - Never infer driver category from a single ambiguous signal — require clear signal vocabulary match or flag as mixed-signal.
+
+3. **EXPERT CHECK**: What would a veteran renewals specialist verify first?
+   - Is the value chain failure classification (Missing link / Broken link / Non-value-chain) correctly matched to the driver category and OCV data?
+   - Does the recommended response strategy address the actual driver — not the surface objection?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Accepting the stated downgrade reason as the root driver without checking for secondary signals in the vocabulary.
+   - Classifying a budget cut as a value chain failure when it is a non-value-chain driver (external mandate).
+   - Generating escalation triggers that are time-based but not tied to a specific outcome or escalation owner.
+   - Proceeding to counter-proposal without first checking for full-churn signals — always run the redirect check first.
+   - Modifying immutable fields (dga_id, created_at, created_by, account_name) in update operations — these are locked at creation.
+
+**After execution**, verify:
+- Did the full-churn signal check run before any analysis?
+- Is the value chain failure classification consistent with the driver category and OCV evidence?
+- Are escalation triggers specific (condition, owner, timeframe)?
+- Confidence: [High] when account data is complete and driver vocabulary is unambiguous / [Medium] when partial data or mixed signals / [Low] if inputs are manual or inferred
+
+---
+
 ### For `analyze` operations
 
 **Step 1 — Full-churn signal check**
@@ -307,8 +346,11 @@ OCV data is accepted only through the `ocv_snapshot` input parameter. This skill
 
 ## Reference Files
 
+> **Lifecycle alignment:** This analysis supports G4.1 (Retention/Renewal) and G5.1 (Recovery) stages.
+
 | File | Path | Purpose |
 |------|------|---------|
+| Reasoning Blueprint | `reference/reasoning-blueprint.md` | Reasoning framework for this skill — D1 cognitive stance, constraints, and expert orientation |
 | Downgrade Driver Taxonomy | `reference/downgrade-driver-taxonomy.md` | Full definitions, signal vocabulary, diagnostic questions, and mixed-signal handling for all 5 driver categories |
 | Value Chain Failure Map | `reference/value-chain-failure-map.md` | Missing link / Broken link / Non-value-chain definitions, detection patterns, remediation pathways, and escalation guidance |
 | Counter-Proposal Framework | `reference/counter-proposal-framework.md` | Retention levers per driver category, negotiation anchors, concession guidance, and escalation trigger conditions |

@@ -42,7 +42,7 @@ Note from config: `ocv_catalog_path`, `linear_connected`
 - Outcome tracing post-onboarding (use deal-to-outcome-tracing)
 - CS capacity modeling (use closed-won-to-cs-capacity-modeling)
 
-## Typical activation
+## Typical Activation
 "Handoff quality score", "score the handoff for [account]", "sales to CS handoff quality", "handoff completeness check", "is this deal ready for CS"
 
 ---
@@ -90,6 +90,7 @@ Before generating output, apply these primers:
 - G8 compliance confirmed — only Ratified OCV entries counted toward D1
 - Linear issue body is specific and actionable, not just a dimension label
 - Confidence: High when HubSpot and OCV catalog connected and current; Moderate when connector unavailable or OCV catalog path missing
+    - Confidence: [High] when HubSpot and OCV catalog connected and current / [Medium] when connector unavailable or OCV catalog path missing / [Low] if all inputs are manual or unverified
 
 ---
 

@@ -290,7 +290,7 @@ All agents read from a two-file config stack:
 ```
 
 The renewal-scanner reads `../csm/CLAUDE.md` (not a dedicated `../renewals/CLAUDE.md`) because
-the renewal pipeline configuration is part of the CSM practice profile. The portfolio-segment-digest
+the renewal pipeline configuration is part of the CSM company profile. The portfolio-segment-digest
 reads `../cs-ops/CLAUDE.md` (not csm/CLAUDE.md) because segment definitions, capacity targets, and
 reporting cadences are configured there. The onboarding milestone tracker and the expansion-onboarding-agent both read from
 `../onboarding/CLAUDE.md` — they are the only CSM-adjacent agents that do not read csm/CLAUDE.md.

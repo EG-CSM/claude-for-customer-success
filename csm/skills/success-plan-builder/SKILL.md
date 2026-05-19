@@ -16,10 +16,11 @@ deployment_target: plugin
 [PROPOSED]
 
 ## Use When
-- Starting a new customer engagement and need to establish a formal success plan
+- Starting a new customer engagement and need to establish a formal success plan — in free-form narrative or co-authored document format, without requiring the OCV canvas structure
 - An existing success plan needs to be updated after a QBR, health review, or goal change
 - Renewal is approaching and the success plan needs to reflect value delivered and next-period goals
 - Executive sponsor has changed and the plan needs to be refreshed for the new stakeholder
+- The organization does not use the OCV (Outcome-to-Customer Value) system, or the OCV canvas format is not applicable to this account or engagement
 
 ## Do NOT Use For
 - The structured success plan canvas format — use /csm:success-plan-canvas for OCV-aligned canvas output
@@ -31,7 +32,7 @@ deployment_target: plugin
 "/csm:success-plan-builder Acme Corp"
 "/csm:success-plan-builder Acme Corp --update"
 "/csm:success-plan-builder Acme Corp --review"
-"Build a success plan for [account]"
+"Build a success plan for [account]" (free-form narrative, no OCV canvas required)
 "Update the success plan for [customer]"
 
 ---

@@ -9,7 +9,7 @@
 
 Brings AI-native analytics and operational intelligence to CS Ops work: portfolio health analysis, segmentation modeling, capacity planning, playbook auditing, data quality checks, and metric dashboard specs.
 
-Every skill reads your configured practice profile — your data warehouse, your health model weights, your segmentation tiers, your playbook inventory — so outputs reflect your actual portfolio structure, not a generic CS Ops template.
+Every skill reads your configured company profile — your data warehouse, your health model weights, your segmentation tiers, your playbook inventory — so outputs reflect your actual portfolio structure, not a generic CS Ops template.
 
 ---
 
@@ -31,7 +31,7 @@ Takes 2 minutes for quick start (role + data stack + defaults) or 15 minutes for
 
 | Skill | What it does | Typical use |
 |-------|-------------|-------------|
-| `cold-start-interview` | Setup interview — configures your practice profile | First install; re-run with `--redo` to update |
+| `cold-start-interview` | Setup interview — configures your company profile | First install; re-run with `--redo` to update |
 | `health-model-review` | Audit health model components, weights, and signal coverage | Quarterly health model calibration; board prep |
 | `segment-analyzer` | Analyze portfolio health and risk distribution by segment | Weekly/monthly segment review; leadership reporting |
 | `capacity-planner` | Model CSM capacity against book of business; surface overload risk | Headcount planning; reorg scenarios |
@@ -39,7 +39,7 @@ Takes 2 minutes for quick start (role + data stack + defaults) or 15 minutes for
 | `data-quality-check` | Identify data quality issues in CRM, CSP, or warehouse exports | Before board reporting; after system migration |
 | `metric-dashboard` | Spec or interpret a portfolio metrics dashboard | Leadership reporting; QBR prep; investor materials |
 | `process-doc` | Document or audit a CS Ops process — workflow, ownership, cadences | Process improvement; team onboarding; SOC audit |
-| `customize` | Update practice profile mid-session | When data stack, team structure, or segments change |
+| `customize` | Update company profile mid-session | When data stack, team structure, or segments change |
 
 ---
 
@@ -74,7 +74,7 @@ These apply to every skill in this plugin and cannot be overridden:
 
 ## Configuration
 
-Your practice profile lives at:
+Your company profile lives at:
 ```
 ~/.claude/plugins/config/claude-for-customer-success/cs-ops/CLAUDE.md
 ```

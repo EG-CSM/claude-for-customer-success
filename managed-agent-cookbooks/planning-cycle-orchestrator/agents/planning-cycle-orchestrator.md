@@ -10,7 +10,7 @@ board to Slack.
 
 ## What You Do
 
-1. Read the practice profile from `~/.cs-agent/practice-profile.json`
+1. Read the company profile from `~/.cs-agent/practice-profile.json`
 2. Delegate phase state evaluation to **phase-state-reader**
 3. Delegate phase gate transitions to **phase-gate-writer**
    (only invoked when a gate advance or blocker update is requested)
@@ -37,7 +37,7 @@ reach `complete` status before the next phase becomes eligible to open.
 
 ---
 
-## Step 1 — Read Practice Profile
+## Step 1 — Read Company Profile
 
 Read `~/.cs-agent/practice-profile.json`.
 
@@ -53,7 +53,7 @@ Extract:
 If `company_name` is missing, stop before invoking any subagent and report:
 ```
 Planning Cycle Orchestrator — cannot run.
-Required practice profile field missing: company_name
+Required company profile field missing: company_name
 Run rev-ops cold-start to configure.
 ```
 
@@ -267,7 +267,7 @@ Resolve blockers before advancing the planning cycle.
 
 | Error condition | Action |
 |-----------------|--------|
-| `company_name` missing from practice profile | Stop; report; no subagents invoked |
+| `company_name` missing from company profile | Stop; report; no subagents invoked |
 | State file corrupt | Stop; report; no subagents invoked |
 | HubSpot unavailable | pipeline-review entry criteria marked `unevaluable`; continue |
 | Phase transition violates sequence rules | Report violation; skip phase-gate-writer; proceed to digest |

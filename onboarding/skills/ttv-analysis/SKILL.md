@@ -15,6 +15,8 @@ version: "1.0.0"
 deployment_target: plugin
 ---
 
+<!-- Status: [PROPOSED] -->
+
 # /onboarding:ttv-analysis
 
 Time-to-value performance analysis — internal planning use only.
@@ -58,13 +60,13 @@ Proceed using milestone day targets as the reference if confirmed.
 - Customer-facing progress reporting — TtV is an internal planning metric only; redirect to milestone-date language
 - Handoff readiness assessment (use `/onboarding:handoff-doc --readiness`)
 
-**Typical activation:**
+## Typical Activation
 - "Is [Account] on track for TtV?"
 - "Show me the portfolio TtV performance"
 - "What patterns are causing delays across my book?"
-- `/onboarding:ttv-analysis [account] --account`
-- `/onboarding:ttv-analysis --portfolio`
-- `/onboarding:ttv-analysis --patterns`
+- CSM runs `/onboarding:ttv-analysis [account] --account` to assess TtV pace for a single account mid-onboarding
+- CSM runs `/onboarding:ttv-analysis --portfolio` to generate a comparative TtV view across all active accounts
+- CSM runs `/onboarding:ttv-analysis --patterns` to identify systemic delay patterns across the book
 
 ---
 
@@ -340,6 +342,12 @@ Time-to-Value analysis output — format driven by flag (`--account`, `--portfol
 factors and acceleration recommendations. Portfolio mode: ranked table. Patterns
 mode: cohort analysis with systemic findings. See mode-specific sections for
 field-level structure.
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill
+
+---
 
 ## Security & Permissions
 

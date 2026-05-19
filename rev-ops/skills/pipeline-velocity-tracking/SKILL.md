@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Tracks average sales cycle time by segment, rep, and deal size. Flags deals aging past 1.5x historical average for their current stage. Surfaces velocity trend vs. prior quarter. Triggers: 'pipeline velocity', 'cycle time', 'deals aging', 'stalling pipeline', 'how long are deals taking'."
 ---
 
+[PROPOSED]
+
 # Pipeline Velocity Tracking
 
 Surfaces where pipeline is slowing before it shows up in a missed quarter.
@@ -13,6 +15,18 @@ Aging threshold: 1.5x historical average for stage and segment.
 
 **Reference:** Confidence bands → `../../../shared/revops-domain-model.md §2`
 **Config reads:** `avg_sales_cycle_days`, `primary_segment`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `avg_sales_cycle_days`, `primary_segment`
 
 ---
 
@@ -26,18 +40,57 @@ Aging threshold: 1.5x historical average for stage and segment.
 - Individual deal health (use deal-health-scoring)
 - Stage integrity verification (use stage-integrity-audit)
 
-## Typical activation
+## Typical Activation
 "Pipeline velocity", "how fast are deals moving", "velocity by stage", "where are deals getting stuck", "track pipeline velocity for [segment/period]"
 
 ---
 
 ## Reasoning Protocol
 
-1. Confirm activation — user asking about deal velocity, aging, or cycle time
-2. Check HubSpot stage history — required; declare fallback if unavailable
-3. Apply G6 — data-as-of on all stage history reads
-4. Apply G5 — velocity signals are inputs; manager owns the coaching response
-5. Confirm output destination
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of pipeline velocity request is this?
+   - Single-rep velocity review (one rep's deals — stage-age ratios across active pipeline)
+   - Segment-level velocity analysis (Enterprise vs. SMB cycle time comparison)
+   - Quarter-over-quarter trend (velocity acceleration or deceleration vs. prior period)
+   - Aging flag sweep (all open deals exceeding 1.5x stage-avg threshold)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user asking about deal velocity, aging, or cycle time
+   2. Pull HubSpot stage entry/exit history for scope; declare connector status and data-as-of timestamp per G6
+   3. Apply G5 — velocity signals are analytical inputs; manager owns the coaching response
+   4. Apply G7 — aging flags must include a named escalation path (manager) per at-risk signal protocol
+   5. Confirm `avg_sales_cycle_days` from config before computing stage-age ratios
+   6. Apply `primary_segment` from config to scope segment-level comparisons correctly
+   7. Confirm output destination before delivering — internal RevOps vs. manager coaching vs. leadership
+
+3. **EXPERT CHECK**: What would a veteran RevOps pipeline analyst verify before surfacing findings?
+   - Is the stage-age ratio segment-aware? Enterprise deals have longer median stage duration than SMB —
+     applying a single `avg_sales_cycle_days` baseline to a mixed-segment pipeline produces false positives
+     on enterprise deals and misses SMB stalls. Confirm segment before applying the 1.5x flag.
+   - Is the HubSpot stage history scoped to the current active cycle? Pulling all-time stage history
+     surfaces legitimate re-stages (deals reopened after closed/lost) alongside current velocity data —
+     filter to current active deal cycle, not full deal lifetime.
+   - Is the velocity trend directionally consistent with pipeline composition changes? A cycle-time
+     increase that coincides with an enterprise mix shift is not the same as a coaching problem —
+     distinguish composition effects from rep performance signals before surfacing to management.
+   - Is the escalation path named before surfacing aging flags? G7 requires a named owner and channel,
+     not a generic "review with manager" instruction.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Applying `avg_sales_cycle_days` without segment-level breakdown (produces noise in mixed pipelines)
+   - Surfacing aging flags without a named escalation path (G7 violation)
+   - Pulling HubSpot stage history without data-as-of timestamp (G6 violation)
+   - Presenting velocity as a rep performance signal without accounting for pipeline composition changes
+   - Routing aging flag findings directly to reps — escalation path is manager, not rep
+
+**After execution**, verify:
+- G5 qualifier present — velocity signals named as analytical inputs; manager named as decision owner
+- G6 data-as-of label applied to all HubSpot stage history reads
+- G7 escalation path present on every aging flag (named manager + channel)
+- Stage-age ratio computed against segment-appropriate baseline, not blended `avg_sales_cycle_days`
+- Confidence: High when HubSpot connected and stage history current; Moderate when connector unavailable or `avg_sales_cycle_days` is estimated
+- Confidence: [High] when HubSpot connected and stage history current / [Medium] when connector unavailable or cycle data estimated / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -57,7 +110,7 @@ Compare overall cycle time trend: current quarter avg vs. prior quarter avg.
 
 ---
 
-## Output Format
+## Output
 
 ```
 PIPELINE VELOCITY — [Scope] [HubSpot ✓ live — as of YYYY-MM-DD]
@@ -75,6 +128,12 @@ Velocity trend: [Slowing / Stable / Accelerating]
 [DRAFT — RevOps internal] [Confidence: High/Moderate]
 [G5: Velocity flags are analytical inputs. Manager owns the response.]
 ```
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

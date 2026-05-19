@@ -32,7 +32,7 @@ why it happened, and whether it's about to happen again somewhere else.
 - Expansion or upsell signals in current accounts
 - Generating a risk tier or triggering an escalation from portfolio scan output alone — scan results require a full risk-assessment before any tier is assigned
 
-## Typical activation
+## Typical Activation
 > `/renewals:churn-analysis Acme Corp` — full post-mortem on a recently closed loss
 > `/renewals:churn-analysis Acme Corp --quick` — abbreviated root cause and lesson, use when processing multiple losses
 > `/renewals:churn-analysis --portfolio-scan` — skip single-account analysis and scan the active book for matching signal patterns after root cause is already established
@@ -100,7 +100,7 @@ Before generating output, apply these primers:
 - Are all data sources timestamped and staleness-flagged per G7?
 - Is the response adequacy assessment based on what was visible at the time, not hindsight?
 - Are lessons actionable (specify what to do differently) rather than observational (state what went wrong)?
-- Confidence: [High] if 2+ independent sources corroborate root cause / [Moderate] if single-source or partial corroboration / [Low] if stated reason only — state which.
+- Confidence: [High] if 2+ independent sources corroborate root cause / [Medium] if single-source or partial corroboration / [Low] if stated reason only — state which.
 
 ## This Skill vs. Risk Assessment
 
@@ -468,3 +468,9 @@ after close:
 > may be incomplete and CRM data may have been modified. Treat the timeline
 > reconstruction as [Moderate] confidence unless corroborated by call recordings
 > or timestamped CRM entries."
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill

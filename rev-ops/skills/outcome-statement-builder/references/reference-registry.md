@@ -2,7 +2,7 @@
 ## outcome-statement-builder — Reference File
 
 This file shows a complete end-to-end skill output: a populated registry with all six entries
-produced from the Gong.io CRO capability set. Use this as the reference pattern for what a
+produced from the Meridian Analytics CRO capability set. Use this as the reference pattern for what a
 completed Phase 1 + Phase 2 run produces — the schema, the entry structure, the rubric format,
 and the registry metadata block.
 
@@ -13,7 +13,7 @@ before the entry is ratified.
 ---
 
 # Outcome & Value Registry
-**Product / Service:** Gong.io — AI Revenue Intelligence Platform
+**Product / Service:** Meridian Analytics — AI Revenue Intelligence Platform
 **Customer Segment:** CRO at mid-market to enterprise B2B SaaS
 **Version:** 1.0.0
 **Date:** 2026-05-14
@@ -35,7 +35,7 @@ before the entry is ratified.
 | OCV-003 | Late-Stage Deal Slippage Reduction | Stage 3 — Desired Outcome | Late-stage slippage rate (%) | Draft |
 | OCV-004 | Forecast Variance Reduction | Stage 4 — Business Goal | Forecast variance (pp gap, commit vs. closed) | Draft |
 | OCV-005 | Rep Ramp and Performance Scaling | Stage 3 — Desired Outcome | Time-to-first-close (days) + win rate gap (pp) | Draft |
-| OCV-006 | Regulated Segment Revenue Coverage | Stage 3 — Desired Outcome | % of total revenue org covered by Gong | Draft |
+| OCV-006 | Regulated Segment Revenue Coverage | Stage 3 — Desired Outcome | % of total revenue org covered by Meridian Analytics | Draft |
 
 ---
 
@@ -64,7 +64,7 @@ before the entry is ratified.
 |-------|-------|---------------------|-----------|---------------|
 | L0 | Not Achieved | Call capture adoption <70% of reps; CRM win/loss data not yet segmented by conversation signal | Baseline captured only | Escalate adoption; no outcome measurement possible yet |
 | L1 | Partial | Call capture >70%; topics and sentiment flowing; managers running ≥2 call reviews/week per rep; win rate trending up but below threshold | Win rate improving; [TBD] threshold not yet reached | Confirm coaching cadence; identify top/bottom rep cohorts |
-| L2 | Achieved | Win rate improvement of [TBD]% from baseline sustained across 2 consecutive quarters; CRO can attribute delta to specific talk track or objection handling pattern identified in Gong | [TBD]% increase from baseline | Document in QBR; present attribution evidence to CEO; advance renewal |
+| L2 | Achieved | Win rate improvement of [TBD]% from baseline sustained across 2 consecutive quarters; CRO can attribute delta to specific talk track or objection handling pattern identified in Meridian Analytics | [TBD]% increase from baseline | Document in QBR; present attribution evidence to CEO; advance renewal |
 | L3 | Exceeded | Win rate at [TBD]% threshold AND rep win rate variance between top-quartile and median reps has narrowed by [TBD] pp — top performer behaviors measurably scaling | Primary metric + rep variance metric verified | Flag for case study; surface expansion conversation |
 
 ### Status
@@ -100,7 +100,7 @@ before the entry is ratified.
 ### Achievement Rubric
 | Level | Label | Observable Evidence | Magnitude | CRO/CS Action |
 |-------|-------|---------------------|-----------|---------------|
-| L0 | Not Achieved | AI Composer adoption <60% of SDR/AE team; outbound sequences not running through Gong; pipeline source attribution not configured in CRM | Baseline captured only | Escalate to implementation; pipeline attribution setup required before measurement |
+| L0 | Not Achieved | AI Composer adoption <60% of SDR/AE team; outbound sequences not running through Meridian Analytics; pipeline source attribution not configured in CRM | Baseline captured only | Escalate to implementation; pipeline attribution setup required before measurement |
 | L1 | Partial | Composer adoption >60%; reply rates or meeting booking rates trending positive; pipeline per rep trending up but below threshold | Pipeline per rep improving; [TBD] threshold not yet reached | Confirm sequence templates used, not bypassed; review reply rate data |
 | L2 | Achieved | Outbound pipeline per rep increased [TBD]% from baseline sustained over one full quarter; same or reduced headcount holding same coverage ratio | [TBD]% increase in pipeline per rep | Document coverage ratio before/after; present to CFO as efficiency metric |
 | L3 | Exceeded | Pipeline per rep at [TBD]% threshold AND pipeline coverage ratio improved; CRO has held or reduced SDR headcount while maintaining or growing pipeline | Primary metric + coverage ratio metric verified | Flag as efficiency case study; expansion signal for additional workflow seats |
@@ -139,8 +139,8 @@ before the entry is ratified.
 | Level | Label | Observable Evidence | Magnitude | CRO/CS Action |
 |-------|-------|---------------------|-----------|---------------|
 | L0 | Not Achieved | Deal health scoring not calibrated; at-risk flags not surfacing in pipeline review; CRM integration incomplete | Baseline captured only | Escalate to implementation; deal health calibration required |
-| L1 | Partial | At-risk flags surfacing in pipeline review; managers actioning on Gong alerts; at least one executive save or commercial restructure executed based on Gong signal in the quarter | Slippage rate trending down; [TBD] threshold not yet reached | Confirm alert-to-action workflow running; document saves with deal ID |
-| L2 | Achieved | Late-stage slippage rate reduced [TBD]% from baseline; at least [TBD] documented saves based on Gong at-risk signal in the quarter | [TBD]% reduction in slippage rate | Present saved-deal log at QBR with estimated ARR protected; use in renewal |
+| L1 | Partial | At-risk flags surfacing in pipeline review; managers actioning on Meridian Analytics alerts; at least one executive save or commercial restructure executed based on Meridian Analytics signal in the quarter | Slippage rate trending down; [TBD] threshold not yet reached | Confirm alert-to-action workflow running; document saves with deal ID |
+| L2 | Achieved | Late-stage slippage rate reduced [TBD]% from baseline; at least [TBD] documented saves based on Meridian Analytics at-risk signal in the quarter | [TBD]% reduction in slippage rate | Present saved-deal log at QBR with estimated ARR protected; use in renewal |
 | L3 | Exceeded | Slippage rate at [TBD]% threshold AND average deal cycle time in final stage has shortened — closing faster, not just losing less | Primary metric + deal cycle time in final stage verified | Quantify ARR protected; flag for CFO conversation on forecast reliability |
 
 ### Status
@@ -156,7 +156,7 @@ before the entry is ratified.
 ## OCV-004 — Forecast Variance Reduction
 
 ### Outcome Statement
-> When a CRO is committing to a quarterly revenue number to the CEO and board and the commit is built from manually reconciled CRM data with no signal from actual customer conversations, the CRO reduces forecast variance — the gap between the committed number and closed revenue — by [TBD percentage points — source required] within [TBD quarters] of full Gong forecasting adoption, enabling the CRO to commit to a number with documented evidence rather than rep sentiment that advances revenue predictability as a metric the CFO uses in investor and board reporting.
+> When a CRO is committing to a quarterly revenue number to the CEO and board and the commit is built from manually reconciled CRM data with no signal from actual customer conversations, the CRO reduces forecast variance — the gap between the committed number and closed revenue — by [TBD percentage points — source required] within [TBD quarters] of full Meridian Analytics forecasting adoption, enabling the CRO to commit to a number with documented evidence rather than rep sentiment that advances revenue predictability as a metric the CFO uses in investor and board reporting.
 
 ### Value Chain Classification
 | Field | Value |
@@ -169,17 +169,17 @@ before the entry is ratified.
 |-------|-------|
 | Metric | Forecast variance (percentage point gap between committed revenue and closed revenue per quarter) |
 | Source | CRO commit number submitted to CEO at start of quarter vs. actual closed-won ARR at quarter close |
-| Baseline Method | Average variance across trailing 4 quarters pre-Gong forecasting adoption |
+| Baseline Method | Average variance across trailing 4 quarters pre-Meridian Analytics forecasting adoption |
 | Direction | Lower is better |
 | Verification Milestone | End of second full quarter post adoption (Q1 = calibration, Q2 = measurement) |
 
 ### Achievement Rubric
 | Level | Label | Observable Evidence | Magnitude | CRO/CS Action |
 |-------|-------|---------------------|-----------|---------------|
-| L0 | Not Achieved | Gong forecast model not yet calibrated; CRO still committing from manual CRM reconciliation; conversational data not informing the commit number | Baseline captured only | Escalate calibration timeline; set Q1 as calibration quarter expectation |
-| L1 | Partial | Gong forecast running alongside manual process; CRO reviewing both; trending toward convergence within [TBD] pp of manual commit | Variance trending down; Gong and manual forecasts converging | Run both models in parallel; document which was closer to actuals each week |
-| L2 | Achieved | Forecast variance reduced to [TBD] pp from baseline for 2 consecutive quarters; CRO is committing the Gong-informed number, not the manually reconciled number | [TBD] pp reduction in variance | Present variance trend to CEO and CFO; primary renewal proof point for this outcome |
-| L3 | Exceeded | Variance at [TBD] threshold AND board/CFO has adopted Gong-informed forecast as the planning input for headcount and budget modeling | Primary metric + CFO/board adoption of forecast as planning input verified | Executive story candidate; highest-leverage renewal and expansion narrative in the set |
+| L0 | Not Achieved | Meridian Analytics forecast model not yet calibrated; CRO still committing from manual CRM reconciliation; conversational data not informing the commit number | Baseline captured only | Escalate calibration timeline; set Q1 as calibration quarter expectation |
+| L1 | Partial | Meridian Analytics forecast running alongside manual process; CRO reviewing both; trending toward convergence within [TBD] pp of manual commit | Variance trending down; Meridian Analytics and manual forecasts converging | Run both models in parallel; document which was closer to actuals each week |
+| L2 | Achieved | Forecast variance reduced to [TBD] pp from baseline for 2 consecutive quarters; CRO is committing the Meridian Analytics-informed number, not the manually reconciled number | [TBD] pp reduction in variance | Present variance trend to CEO and CFO; primary renewal proof point for this outcome |
+| L3 | Exceeded | Variance at [TBD] threshold AND board/CFO has adopted Meridian Analytics-informed forecast as the planning input for headcount and budget modeling | Primary metric + CFO/board adoption of forecast as planning input verified | Executive story candidate; highest-leverage renewal and expansion narrative in the set |
 
 ### Status
 | Field | Value |
@@ -209,12 +209,12 @@ before the entry is ratified.
 | Source | (a) CRM: rep start date vs. first closed-won date / (b) CRM win rate segmented by rep performance quartile |
 | Baseline Method | (a) Average ramp time for last [N] rep cohorts pre-adoption / (b) Win rate quartile gap for trailing 2 quarters pre-adoption |
 | Direction | Both: lower is better |
-| Verification Milestone | (a) 90 days post first new-hire cohort through Gong onboarding / (b) 180 days post full coaching workflow adoption |
+| Verification Milestone | (a) 90 days post first new-hire cohort through Meridian Analytics onboarding / (b) 180 days post full coaching workflow adoption |
 
 ### Achievement Rubric
 | Level | Label | Observable Evidence | Magnitude | CRO/CS Action |
 |-------|-------|---------------------|-----------|---------------|
-| L0 | Not Achieved | Call library not built; scorecards not configured; managers not running structured Gong reviews; no coaching workflow active | Baseline captured only | Escalate to enablement setup; outcomes not measurable without coaching workflow |
+| L0 | Not Achieved | Call library not built; scorecards not configured; managers not running structured Meridian Analytics reviews; no coaching workflow active | Baseline captured only | Escalate to enablement setup; outcomes not measurable without coaching workflow |
 | L1 | Partial | Call library populated with [TBD] tagged examples; scorecards in use; new reps completing structured reviews; managers running weekly sessions; ramp time trending down | Ramp time and win rate gap trending toward threshold; [TBD] not yet reached | Confirm coaching cadence; identify which scorecard dimensions correlate with early closes |
 | L2 | Achieved | Time-to-first-close reduced [TBD]% from baseline for at least one full hire cohort; win rate gap between top-quartile and median reps narrowed by [TBD] pp | [TBD]% ramp reduction + [TBD] pp gap narrowing | Document cohort comparison; present ramp data at QBR; connect to revenue-per-head metric |
 | L3 | Exceeded | Both ramp and gap metrics at [TBD] thresholds AND revenue per head across the full org has increased — productivity showing in the P&L, not just the performance report | Primary metrics + revenue per head metric verified | P&L-level story; strongest CFO and board narrative in the coaching category |
@@ -243,8 +243,8 @@ before the entry is ratified.
 ### Business Metric
 | Field | Value |
 |-------|-------|
-| Metric | % of total addressable revenue org covered by Gong (including regulated accounts previously excluded) |
-| Source | Gong seat report vs. total licensed user count; compliance-cleared account list vs. total account list |
+| Metric | % of total addressable revenue org covered by Meridian Analytics (including regulated accounts previously excluded) |
+| Source | Meridian Analytics seat report vs. total licensed user count; compliance-cleared account list vs. total account list |
 | Baseline Method | % of revenue org and accounts covered pre-compliance clearance; list of account types or segments previously excluded |
 | Direction | Higher is better |
 | Verification Milestone | 60 days post compliance clearance and deployment to regulated segment |
@@ -270,8 +270,8 @@ before the entry is ratified.
 ## Registry Metadata
 
 ```yaml
-registry_id: gong-cro-ocv-v1
-product: Gong.io
+registry_id: example-cro-ocv-v1
+product: Meridian Analytics
 segment: CRO — mid-market to enterprise B2B SaaS
 entry_count: 6
 status_values: [Draft, Under Review, Ratified, Deprecated]
@@ -301,4 +301,4 @@ unverified. Do not surface unverified magnitudes in Sales or CS-facing outputs w
 
 ---
 
-*outcome-statement-builder v1.0.0 | References: Reference Output Registry | Gong.io CRO Segment*
+*outcome-statement-builder v1.0.0 | References: Reference Output Registry | Meridian Analytics CRO Segment*

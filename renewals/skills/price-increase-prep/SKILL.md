@@ -33,7 +33,7 @@ Plan, approve, and communicate a price increase — in the right order.
 - Expansion pricing or upsell proposals not tied to a renewal — this skill is scoped to renewal-time price adjustment only
 - Renewals at flat pricing with no increase component — use `/renewals:executive-summary` or contact the account directly
 
-## Typical activation
+## Typical Activation
 > `/renewals:price-increase-prep Acme Corp` — full price increase plan for a single account: approval routing, rationale framing, timing guidance
 > `/renewals:price-increase-prep Acme Corp --draft` — proceed directly to customer-facing communication after plan approval is confirmed
 > `/renewals:price-increase-prep --cohort` — multi-account rollout planning; provide account list with ARR, renewal dates, and proposed increase percentages
@@ -486,3 +486,9 @@ a churn decision.
 **Revenue commitment language.** Any ARR figure in this plan is a target, not
 a closed-won revenue commitment. Flag with `[review — not yet a revenue commitment]`
 if shared with leadership before the renewal is signed.
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill

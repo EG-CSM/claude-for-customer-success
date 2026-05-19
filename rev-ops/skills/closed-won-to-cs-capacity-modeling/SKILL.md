@@ -29,7 +29,7 @@ The skill that prevents hiring CSMs one quarter after you needed them.
 - CS performance assessment
 - Pipeline coverage analysis from a Sales perspective (use pipeline-coverage-analysis)
 
-## Typical activation
+## Typical Activation
 "CS capacity model", "can CS absorb this pipeline", "capacity planning for CS", "closed-won to onboarding capacity", "do we have enough CS capacity"
 
 ---
@@ -58,7 +58,7 @@ Before generating output, apply these primers:
 
 2. **CONSTRAINTS**: What limits the solution space?
    1. Confirm activation — user asking about CS capacity, CSM headcount, or CS ability to absorb growth
-   2. Read current CSM count and ARR per CSM from practice profile
+   2. Read current CSM count and ARR per CSM from company profile
    3. Read P10/P50/P90 forecast from `scenario-modeling` output or ask for current pipeline
    4. Read UoG baseline from `uog_baseline_path` for plan comparison
    5. Apply G2 — capacity outputs are structural inputs, not hiring mandates
@@ -81,6 +81,7 @@ Before generating output, apply these primers:
 - Data-as-of label applied per G6
 - Hiring lead time flag included when CS_Gap > 0
 - Confidence: High when baseline is present and all config fields are populated; Moderate when baseline is absent or any field is estimated
+- Confidence: [High] when baseline is present and all config fields populated / [Medium] when baseline is absent or any field is estimated / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -119,7 +120,7 @@ If CS_Gap > 0:
 
 ```
 CS CAPACITY MODELING — [Quarter/Period]
-[Practice profile] [Confidence: High/Moderate]
+[Company profile] [Confidence: High/Moderate]
 [UoG baseline: present / absent]
 
 Current state:

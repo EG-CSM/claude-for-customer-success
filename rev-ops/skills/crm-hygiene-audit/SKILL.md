@@ -31,6 +31,7 @@ Note from config: `crm_system`, `primary_segment`
 ---
 
 ## Use when
+> Routing: Use this skill when a **point-in-time CRM health score** is needed — for field completion rates over time use `field-completion-monitoring`; for contact/record age and enrichment staleness use `data-decay-tracking`.
 - CRM data quality needs a structured audit across key pipeline fields
 - Missing fields, stale close dates, or inactive deals need systematic identification
 - Pre-forecast hygiene sweep required to improve forecast accuracy
@@ -39,9 +40,10 @@ Note from config: `crm_system`, `primary_segment`
 - Stage entry/exit criteria validation (use stage-integrity-audit)
 - Duplicate contact or company detection (use duplicate-detection)
 - Field completion rate monitoring over time (use field-completion-monitoring)
+- CS platform data quality — use /cs-ops:data-quality-check
 
-## Typical activation
-"CRM hygiene audit", "audit the CRM", "data quality check", "hygiene sweep before forecast", "clean up the pipeline"
+## Typical Activation
+"CRM hygiene audit", "audit the CRM", "hygiene sweep before forecast", "clean up the pipeline"
 
 ---
 
@@ -79,6 +81,7 @@ Before generating output, apply these primers:
 - Write-tier confirmation note present on all correction proposals
 - Rep scorecard labeled [DRAFT — for RevOps review before sharing with Sales managers]
 - Confidence: High when HubSpot is connected and data is fresh; Moderate when any field group is estimated or connector data is stale
+    - Confidence: [High] when HubSpot is connected and data is fresh / [Medium] when any field group is estimated or connector data is stale / [Low] if all inputs are manual or unverified
 
 ---
 

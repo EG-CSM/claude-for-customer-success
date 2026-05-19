@@ -1,6 +1,6 @@
 # onboarding.cold-start-interview
 
-First-time setup for the onboarding practice profile. Collects role, onboarding model, segment configuration, TtV targets, milestone definitions, success criteria model, kickoff and handoff format, escalation matrix, integrations, and CS methodology preferences. Writes to onboarding CLAUDE.md so all other onboarding skills have required context. Run once at setup; use customize for updates.
+First-time setup for the onboarding company profile. Collects role, onboarding model, segment configuration, TtV targets, milestone definitions, success criteria model, kickoff and handoff format, escalation matrix, integrations, and CS methodology preferences. Writes to onboarding CLAUDE.md so all other onboarding skills have required context. Run once at setup; use customize for updates.
 
 ## Use it for
 
@@ -27,7 +27,7 @@ Say something like:
 
 ## What you get
 
-- onboarding/CLAUDE.md (complete practice profile)
+- onboarding/CLAUDE.md (complete company profile)
 
 ## Prerequisites
 

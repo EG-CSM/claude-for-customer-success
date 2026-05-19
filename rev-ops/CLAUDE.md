@@ -21,7 +21,7 @@ Rules for every skill, command, and agent in this plugin:
    every plugin update. Never write user data here.
 -->
 
-# Rev-Ops Practice Profile
+# Rev-Ops Company Profile
 *Written by cold-start on [DATE]. If `[PLACEHOLDER]`, run `/rev-ops:cold-start-interview`.*
 
 ---
@@ -80,7 +80,7 @@ The deliverable should read like you wrote it.
 > **⚠️ Reviewer note**
 > - **Sources:** [CRM ✓ verified | CS Platform ✓ verified | manual input]
 > - **Data as of:** [timestamp from last CRM/CSP pull | N/A]
-> - **Read:** [pipeline + health scores + practice profile | conversation context only]
+> - **Read:** [pipeline + health scores + company profile | conversation context only]
 > - **Flagged for your judgment:** [N items marked `[review]` inline | none]
 > - **Before sending:** [the 1-2 things to validate before sharing with leadership or submitting to finance]
 
@@ -160,7 +160,7 @@ Tag outputs to describe what was actually used:
 - `[CRM — HubSpot]` / `[CRM — Salesforce]` — only if a live tool call returned data this session
 - `[CS Platform — Gainsight]` etc. — only if a live tool call returned data
 - `[Drive]` / `[SharePoint]` etc. — only if retrieved this session
-- `[Practice Profile]` — from user config (company-profile.md or rev-ops CLAUDE.md)
+- `[Company Profile]` — from user config (company-profile.md or rev-ops CLAUDE.md)
 - `[Computed]` — derived from two or more sources; inherits lowest confidence of its inputs
 - `[user provided]` — you pasted it, described it, or uploaded it
 - `[model knowledge]` — background from training data; not account- or portfolio-specific
@@ -184,13 +184,13 @@ When a user pastes a deal list, pipeline export, or planning document, acknowled
 
 ## Scaffolding, not blinders
 
-The skills are frameworks, not ceilings. If you ask a RevOps question that no skill covers, answer it using the shared guardrails and the practice profile context. Say: "This isn't a structured skill, but here's my read on it: [answer]." A plugin that gives a worse answer than bare Claude on a RevOps question has failed.
+The skills are frameworks, not ceilings. If you ask a RevOps question that no skill covers, answer it using the shared guardrails and the company profile context. Say: "This isn't a structured skill, but here's my read on it: [answer]." A plugin that gives a worse answer than bare Claude on a RevOps question has failed.
 
 ---
 
 ## Ad-hoc RevOps questions
 
-When you ask a question in this plugin's domain outside of a formal skill, I'll read the practice profile and company profile first and answer as your configured RevOps assistant:
+When you ask a question in this plugin's domain outside of a formal skill, I'll read the company profile and company profile first and answer as your configured RevOps assistant:
 
 - Apply your GTM model, pipeline definitions, commercial parameters, and escalation chain
 - Apply the guardrails even without a formal skill running
@@ -336,11 +336,11 @@ Output from `/rev-ops:unit-of-growth-calculator`. When present, the capacity mon
 
 **What it does:** Computes max supportable ARR against current CSM headcount with NRR-adjusted growth projections. Fires threshold alerts to `#revops-alignment` (CRITICAL and HIGH also cc `#cs-leadership`). Silent-green pattern: posts on every run including healthy ones.
 
-**Required params:** CRM connector (closed-won actuals), Slack connector, ARR per CSM and NRR target in practice profile
+**Required params:** CRM connector (closed-won actuals), Slack connector, ARR per CSM and NRR target in company profile
 **Optional params:** UoG baseline file (overrides config-level targets when present)
 
 **Pipeline stages:**
-1. `capacity-reader` — Reads practice profile + UoG baseline; pulls closed-won QTD from CRM
+1. `capacity-reader` — Reads company profile + UoG baseline; pulls closed-won QTD from CRM
 2. `capacity-reporter` — Formats alert; zero filesystem access; posts to Slack
 
 **Alert levels:** CRITICAL / HIGH / MEDIUM / HEALTHY
@@ -366,7 +366,7 @@ CRITICAL and HIGH cc `#cs-leadership`; MEDIUM and HEALTHY post to `#revops-align
 2. `churn-escalation-writer` — Project tracker write only; receives payload from orchestrator; zero independent data access; fires only on confirmed Tier-3 accounts
 3. `churn-alert-poster` — Slack delivery only; zero filesystem and connector access
 
-**Tier definitions (from practice profile):**
+**Tier definitions (from company profile):**
 - **Tier 1** — Early warning signals; included in digest, no escalation
 - **Tier 2** — Elevated risk; flagged in pulse and digest
 - **Tier 3** — Immediate risk or high-ACV; triggers escalation issue with human confirmation
@@ -409,7 +409,7 @@ CRITICAL and HIGH cc `#cs-leadership`; MEDIUM and HEALTHY post to `#revops-align
 
 **What it does:** Tracks a GTM planning cycle through five sequential phases with phase-gate governance. Evaluates pipeline coverage via CRM before advancing each gate. All state writes are behind a human confirmation prompt. Delivers a formatted digest to Slack after every run.
 
-**Required params:** CRM connector, Slack connector, practice profile with growth targets and quota parameters
+**Required params:** CRM connector, Slack connector, company profile with growth targets and quota parameters
 **Optional params:** Document storage connector (for planning document retrieval)
 
 **Pipeline stages:**

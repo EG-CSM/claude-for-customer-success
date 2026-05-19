@@ -1,7 +1,7 @@
 ---
 name: customize
 description: >
-  Update your renewals practice profile — edit any section of the renewals
+  Update your renewals company profile — edit any section of the renewals
   CLAUDE.md or company-profile.md without rerunning the full cold-start
   interview. Use when a specific field has changed (discount authority updated,
   new escalation matrix, pricing model revision, new AE partner, churn signal
@@ -17,7 +17,7 @@ deployment_target: plugin
 
 # /renewals:customize [VALIDATED]
 
-Update specific sections of your renewals practice profile without re-running the
+Update specific sections of your renewals company profile without re-running the
 full interview.
 
 ---
@@ -34,10 +34,19 @@ full interview.
 - Any operational renewals task (risk assessment, contract review, forecast) — this skill edits config only
 - Verifying integration connectivity — use `/renewals:cold-start-interview --check-integrations`
 
-## Typical activation
+## Typical Activation
 > `/renewals:customize --section discount-authority` — update a single config section directly
 > `/renewals:customize --validate` — audit the full profile for missing fields and consistency issues before a renewal motion
 > `/renewals:customize` — prompted section selection when no section argument is provided
+
+---
+
+## Pre-flight
+
+- Confirm target section or `--validate` / `--show` mode
+- Read `~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md` before any edit operation
+- Read `~/.claude/plugins/config/claude-for-customer-success/company-profile.md` for company-level fields
+- Identify any downstream skills that consume the target field
 
 ---
 
@@ -428,3 +437,9 @@ one.
 
 **Downstream impact transparency.** After any edit, surface which skills are affected
 by the changed field so the user knows what to re-run before the next renewal motion.
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill

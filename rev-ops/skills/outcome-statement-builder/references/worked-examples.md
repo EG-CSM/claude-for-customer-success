@@ -5,7 +5,7 @@ These two examples trace the full Phase 1 workflow end-to-end for a single produ
 They show evaluation diagnosis before transformation, stage classification reasoning, and the
 approval gate format. Use them to calibrate what correct skill execution looks like.
 
-**Product:** Gong.io — AI Revenue Intelligence Platform
+**Product:** Meridian Analytics — AI Revenue Intelligence Platform
 **Segment:** CRO at mid-market to enterprise B2B SaaS
 
 ---
@@ -19,7 +19,7 @@ approval gate format. Use them to calibrate what correct skill execution looks l
 ### Input
 
 ```
-Product: Gong.io
+Product: Meridian Analytics
 Customer Segment: CRO at mid-market B2B SaaS
 Capability: "Conversation Intelligence: automatically records, transcribes, and analyzes
 customer interactions across all channels. AI detects topics, sentiment, market trends,
@@ -31,7 +31,7 @@ and hidden buying signals rather than just keyword tracking."
 ### Step 2 — Evaluation
 
 **Capability vs. outcome test: FAIL**
-The input describes what Gong does — "records, transcribes, analyzes" — not what the CRO achieves. The product is the grammatical subject throughout. A valid outcome statement has the customer role as the subject.
+The input describes what Meridian Analytics does — "records, transcribes, analyzes" — not what the CRO achieves. The product is the grammatical subject throughout. A valid outcome statement has the customer role as the subject.
 
 **Measurability test: FAIL**
 "Detects buying signals" is a directional signal with no magnitude, metric, or timeframe attached. There is nothing in this input that could be measured before and after implementation to confirm achievement. "Hidden buying signals" is a product marketing phrase, not a change-in-state.
@@ -49,7 +49,7 @@ The input describes what Gong does — "records, transcribes, analyzes" — not 
 | TRIGGER | a CRO at a mid-market B2B SaaS company is managing a revenue organization where deal outcomes are inconsistent across reps and loss reasons are based on rep self-reporting rather than evidence |
 | ROLE | the CRO |
 | CHANGE | reduces revenue lost to undetected deal risk by [TBD% — source required] within [TBD days] of full call capture adoption |
-| MECHANISM | identifying which talk tracks, objection responses, and competitive moments correlate with closed-won outcomes across the entire pipeline using Gong conversation analysis |
+| MECHANISM | identifying which talk tracks, objection responses, and competitive moments correlate with closed-won outcomes across the entire pipeline using Meridian Analytics conversation analysis |
 | FUNCTIONAL OUTCOME | identify what actually drives wins and losses at scale — not just the top performers' anecdotes |
 | BUSINESS GOAL | win rate as a board-level revenue metric |
 
@@ -84,7 +84,7 @@ The distinction matters for the renewal conversation: a CS team presenting "you 
 ### Input
 
 ```
-Product: Gong.io
+Product: Meridian Analytics
 Customer Segment: CRO at mid-market B2B SaaS
 Capability: "AI Sales Engagement & Outreach: AI Composer drafts highly personalized
 prospecting emails and follow-ups based on real conversational context. Provides tools
@@ -117,7 +117,7 @@ The input implies sales reps and SDRs as the direct users — correct product ar
 | TRIGGER | a CRO is accountable for pipeline generation targets but outbound productivity per rep is inconsistent and follow-up execution degrades after multi-touch sequences beyond three contacts |
 | ROLE | the CRO |
 | CHANGE | increases outbound pipeline generated per rep per quarter by [TBD% — source required] within [TBD days] of full AI Composer adoption across the SDR and AE teams |
-| MECHANISM | AI Composer-assisted outbound sequences with personalization drawn from Gong conversational context |
+| MECHANISM | AI Composer-assisted outbound sequences with personalization drawn from Meridian Analytics conversational context |
 | FUNCTIONAL OUTCOME | hold the pipeline coverage ratio without headcount increases |
 | BUSINESS GOAL | sales efficiency (pipeline generated per fully-loaded rep cost) as an operating metric reported to the CFO |
 
@@ -135,7 +135,7 @@ The input implies sales reps and SDRs as the direct users — correct product ar
 
 **Stage 4 — Business Goal.**
 
-This is the only entry in the Gong CRO set that reaches Stage 4 directly from the capability input. The reason: "pipeline generated per fully-loaded rep cost" is a metric the CFO and board track, not just the sales org. The CRO's mandate to hold pipeline coverage without headcount increases is an operating efficiency objective, not a desired sales outcome.
+This is the only entry in the Meridian Analytics CRO set that reaches Stage 4 directly from the capability input. The reason: "pipeline generated per fully-loaded rep cost" is a metric the CFO and board track, not just the sales org. The CRO's mandate to hold pipeline coverage without headcount increases is an operating efficiency objective, not a desired sales outcome.
 
 Stage 4 classification changes the renewal conversation posture. A Stage 4 outcome is presented to the CFO alongside the CS leader, not just to the CRO. It requires a calculation: if pipeline per rep increased X% and headcount held flat, what is the dollar value of the efficiency gain? That calculation belongs in the Business Impact Statement, which is the next layer of the full catalog entry beyond this skill's scope.
 
@@ -156,4 +156,4 @@ The pattern across both: the raw capability inputs described the product. The tr
 
 ---
 
-*outcome-statement-builder v1.0.0 | References: Worked Examples | Gong.io CRO Segment*
+*outcome-statement-builder v1.0.0 | References: Worked Examples | Meridian Analytics CRO Segment*

@@ -30,7 +30,7 @@ Say something like:
 
 ## Prerequisites
 
-- All practice profile fields
+- All company profile fields
 - Live connector data from HubSpot, CS platform
 - Source skill outputs (pipeline-coverage-analysis, deal-health-scoring, etc.)
 

@@ -39,7 +39,7 @@ Please use renewals:downgrade-analysis for downgrade analysis.
 
 Contraction signals: "reduce," "downgrade," "fewer seats," "smaller tier," "partial cancellation."
 
-## Typical activation
+## Typical Activation
 > `/renewals:churn-rca analyze "Acme Corp"` — full RCA on a single churned account with root cause taxonomy, timeline reconstruction, and win-back assessment
 > `/renewals:churn-rca cohort` — multi-account pattern analysis to detect systemic churn drivers; triggers portfolio-level escalation if cohort churn rate ≥ 25%
 > `/renewals:churn-rca export "Acme Corp"` — retrieve and format an existing RCA record for stakeholder reporting or portfolio review
@@ -62,6 +62,15 @@ Contraction signals: "reduce," "downgrade," "fewer seats," "smaller tier," "part
 > `/renewals:churn-rca analyze "Acme Corp"` — full RCA on a single churned account with root cause taxonomy, timeline reconstruction, and win-back assessment
 > `/renewals:churn-rca cohort` — multi-account pattern analysis to detect systemic churn drivers; triggers portfolio-level escalation if cohort churn rate ≥ 25%
 > `/renewals:churn-rca export "Acme Corp"` — retrieve and format an existing RCA record for stakeholder reporting or portfolio review
+
+---
+
+## Pre-flight
+
+- Confirm account context (company name, CSM, churn date, ARR)
+- Identify the specific analysis goal (individual RCA, cohort pattern, or export)
+- Note any prior analysis or existing documentation to reference
+- Check `~/.claude/plugins/config/claude-for-customer-success/company-profile.md` for company segment and escalation context
 
 ---
 
@@ -311,6 +320,37 @@ created_by: [session user email]
 
 ## Reasoning Protocol
 
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of churn analysis request is this?
+   - **Individual RCA** (`analyze`): Single churned account — root cause taxonomy, timeline reconstruction, win-back assessment.
+   - **Cohort Pattern Analysis** (`cohort`): Multi-account batch — systemic driver identification, frequency ranking, portfolio-level escalation if churn rate ≥ 25%.
+   - **Export** (`export`): Retrieval and formatting of an existing RCA or cohort record for stakeholder distribution.
+
+2. **CONSTRAINTS**: What limits the solution space?
+   - G4: Escalation guidance must reference the configured escalation matrix — no generic "escalate to leadership."
+   - G5: RCA files containing ARR, health data, and stakeholder details are internal-only — confirm recipient authorization before distribution.
+   - Never assign root cause without named evidence; never treat stated close reason as root cause without corroboration.
+
+3. **EXPERT CHECK**: What would a veteran CS analyst verify first?
+   - Is the root cause assignment based on the earliest signal in the timeline, or the most recent/dramatic one?
+   - Does the cohort frequency table rank by count descending? Are systemic recommendations scaled to the churn rate severity?
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Accepting the stated churn reason as root cause without independent corroboration — stated reasons and actual root causes diverge frequently.
+   - Assigning root cause to the last signal before churn rather than the first — recency bias is the most common analytical error.
+   - Including force majeure losses in process-improvement conclusions — uncontrollable losses should not drive response process changes.
+   - Generating portfolio escalation from a cohort without validating the churn_rate calculation against portfolio_size.
+   - Running export without validating the ID against frontmatter — never interpolate IDs into file paths.
+
+**After execution**, verify:
+- Does the root cause assignment cite specific, named evidence?
+- Is the cohort churn rate calculation correct (count / portfolio_size × 100)?
+- Are escalation references specific (owner, channel, SLA) — not generic?
+- Confidence: [High] when data is complete and multi-signal / [Medium] when partial data available / [Low] if single-signal or inferred
+
+---
+
 Execute in this order for each operation:
 
 **For `analyze`:**
@@ -399,13 +439,14 @@ The following reference files are loaded on-demand. They are not front-loaded.
 
 | File | Purpose |
 |------|---------|
+| `reference/reasoning-blueprint.md` | Reasoning framework for this skill — D1 cognitive stance, constraints, and expert orientation |
 | `reference/churn-rca-taxonomy.md` | 7-category root cause taxonomy with definitions, signal vocabulary, classification heuristics, value chain position mapping, and win-back viability assessment rules per category |
 | `reference/cohort-analysis-framework.md` | Cohort construction methods, pattern identification algorithm, churn rate threshold logic, lifecycle stage concentration analysis, systemic recommendation generation, and portfolio_size validation |
 | `reference/remediation-playbook.md` | Prevention lever per root cause category, systemic recommendation templates, win-back timing guidance and approach templates per root cause, and escalation guidance |
 
-Load `churn-rca-taxonomy.md` when classifying root causes during `analyze` or `cohort`.
-Load `cohort-analysis-framework.md` when executing `cohort` pattern analysis.
-Load `remediation-playbook.md` when generating remediation recommendations or win-back assessments.
+Load `reference/churn-rca-taxonomy.md` when classifying root causes during `analyze` or `cohort`.
+Load `reference/cohort-analysis-framework.md` when executing `cohort` pattern analysis.
+Load `reference/remediation-playbook.md` when generating remediation recommendations or win-back assessments.
 
 ---
 

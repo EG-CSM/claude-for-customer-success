@@ -41,7 +41,7 @@ Note from config: `avg_sales_cycle_days`, `primary_segment`
 - Pipeline coverage ratio analysis (use pipeline-coverage-analysis)
 - Closed deal outcome tracing (use deal-to-outcome-tracing)
 
-## Typical activation
+## Typical Activation
 "Score this deal", "deal health for [account]", "which deals are at risk", "health check on my pipeline", "flag unhealthy expansion deals", "CS pipeline health"
 
 ## Application context
@@ -94,6 +94,7 @@ Before generating output, apply these primers:
 - G7 escalation path named for every at-risk deal (score < 50)
 - Confidence: High when HubSpot is connected and activity data is current; Moderate when
   data is stale or connector is unavailable
+    - Confidence: [High] when HubSpot is connected and activity data is current / [Medium] when data is stale or connector is unavailable / [Low] if all inputs are manual or unverified
 
 ---
 

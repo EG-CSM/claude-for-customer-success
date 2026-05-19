@@ -14,6 +14,8 @@ version: "1.0.0"
 deployment_target: plugin
 ---
 
+<!-- Status: [PROPOSED] -->
+
 # /onboarding:blocker-review
 
 Blocker diagnosis, escalation, and resolution tracking.
@@ -57,13 +59,13 @@ Proceed with a generic escalation path description if the user confirms.
 - Proactive risk flagging before a blocker is confirmed (use `/onboarding:milestone-tracker --flag`)
 - Reviewing overall onboarding health across a portfolio
 
-**Typical activation:**
+## Typical Activation
 - "We have a blocker on [Account] — the integration isn't working"
 - "I need to escalate this to the AE — generate me a brief"
 - "That blocker is resolved — log it"
-- `/onboarding:blocker-review [account] --diagnose`
-- `/onboarding:blocker-review [account] --escalate`
-- `/onboarding:blocker-review [account] --log`
+- CSM runs `/onboarding:blocker-review [account] --diagnose` to work through an active blocker
+- CSM runs `/onboarding:blocker-review [account] --escalate` to produce a formatted escalation brief
+- CSM runs `/onboarding:blocker-review [account] --log` to record a resolved blocker
 
 ## Reasoning Protocol
 
@@ -346,6 +348,12 @@ root cause analysis, and recommended actions. Escalate mode: escalation brief.
 Log mode: CRM-ready note. See mode-specific sections for field-level structure.
 
 > [review before sending]
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill
+
+---
 
 ## Security & Permissions
 

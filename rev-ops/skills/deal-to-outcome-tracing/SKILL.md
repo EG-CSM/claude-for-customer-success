@@ -41,8 +41,9 @@ Note from config: `ocv_catalog_path`, `ocv_catalog_version`, `cs_platform_connec
 - Pre-close deal structure review (use revenue-leakage-scanning)
 - Churn signal detection without outcome context (use early-churn-downgrade-signal-detection)
 - OCV catalog entry creation
+- Portfolio-level value realization mapping and outcome-to-value linkage (use outcome-to-value-tracking)
 
-## Typical activation
+## Typical Activation
 "Outcome tracing for [account]", "what did we promise [account]", "deal-to-outcome", "track outcomes", "which rubric level is [account] at", "30-day checkpoint for [account]"
 
 ---
@@ -88,6 +89,7 @@ Before generating output, apply these primers:
 - G8 confirmation: Draft OCV entries excluded; labeled if referenced
 - Confidence: High when OCV catalog is current and CS platform is connected; Moderate when
   either is unavailable; Low when OCV catalog is absent (structural fallback mode)
+    - Confidence: [High] when OCV catalog is current and CS platform is connected / [Medium] when either is unavailable / [Low] when OCV catalog is absent (structural fallback mode)
 
 ---
 
@@ -112,7 +114,7 @@ Check 3: Measurement source accessible
 **Structural fallback (when OCV absent):**
 ```
 Run Tier 1 structural risk assessment only:
-  - Discount level vs. practice profile threshold
+  - Discount level vs. company profile threshold
   - Sales cycle vs. segment average
   - Stakeholder thread count
 Label all outputs: [Outcome data: OCV reference absent — structural signals only —

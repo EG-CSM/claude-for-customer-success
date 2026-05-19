@@ -9,6 +9,8 @@ eval_delta: "+0.500 (with_skill 1.000 vs baseline 0.500)"
 eval_workspace: "csql-tracking-workspace/iteration-4"
 ---
 
+[VALIDATED]
+
 ## Overview
 
 `rev-ops:csql-tracking` manages the full lifecycle of Customer Success Qualified Leads (CSQLs) — the handoff artifact produced by `csm:expansion-business-case [mode=csql]` — from CS handoff through closed/won or terminal pipeline states. It provides RevOps with a persistent, queryable portfolio of active and closed CSQLs within the CS plugin's filesystem control plane.
@@ -23,6 +25,18 @@ rev-ops:csql-tracking [operation=create]
 ```
 
 Four operations are supported: `create`, `update`, `close`, `query`.
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `cs_platform_connected`
 
 ---
 
@@ -51,6 +65,48 @@ Four operations are supported: `create`, `update`, `close`, `query`.
 - "Close CSQL-WIDG-20260510-002 — won at $42,000"
 - "Show me all active CSQLs assigned to Jane"
 - "Log a CSQL for Thorngate Partners — here's the qualification package"
+
+---
+
+## Reasoning Protocol
+
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of CSQL operation is this?
+   - Create (ingest a new CSQL Qualification Package and persist a new record)
+   - Update (modify mutable fields on an existing CSQL record)
+   - Close (set a CSQL to a terminal state — won, lost, or stalled)
+   - Query (retrieve, filter, and surface one or more CSQL records)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user requesting CSQL lifecycle management or retrieval
+   2. Resolve the target CSQL record(s) from filesystem; declare file path and data-as-of context
+   3. Apply G9 — all filesystem write operations (create, update, close) require explicit user confirmation before execution; surface as draft and await approval
+   4. Enforce immutable field lock — csql_id, created_at, csm_owner, and source_skill fields cannot be modified after record creation under any circumstance
+   5. Enforce terminal state immutability — records in won, lost, or stalled status cannot be reopened, updated, or re-staged; surface the block explicitly if attempted
+   6. Validate status transitions against the state machine before proposing any update; reject invalid transitions with a clear explanation
+   7. Confirm output destination before delivering — inline summary vs. formatted table vs. full record dump
+
+3. **EXPERT CHECK**: What would a veteran RevOps CSQL lifecycle analyst verify before executing?
+   - Is the CSQL ID being referenced one that actually exists in the filesystem? Fabricating or inferring a CSQL ID from partial context before confirming the record exists produces phantom operations. Read the record first, then act.
+   - Is the requested status transition valid per the state machine? The lifecycle is create → qualified → in_negotiation → won/lost/stalled. Skipping stages (create → won) or reversing direction (won → in_negotiation) are not supported — the analyst flags and blocks, not silently accepts.
+   - Is the close operation being performed with sufficient terminal-state data? A won close requires ACV; a lost close requires lost_reason. Attempting to close without required fields is a partial write — surface the missing data requirement before writing anything.
+   - Is the query filter producing the intended scope? Filters default to active records (exclude_closed=true); a query that silently omits closed records when the user asked "all CSQLs" is a silent data gap. Confirm include_closed intent before executing.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Attempting to modify csql_id, created_at, csm_owner, or source_skill after record creation — these are immutable and the operation must be blocked, not silently ignored
+   - Attempting to update or close a record already in won, lost, or stalled status — terminal states are locked; surface the block with the current terminal state and explain why the operation cannot proceed
+   - Executing filesystem writes (create, update, close) without surfacing the draft for G9 confirmation first — this is a write-tier protocol violation
+   - Silently rejecting an invalid status transition without explaining what transitions are valid from the current state — the user needs the valid path forward, not just a block
+   - Returning query results that omit closed records when the user's intent was a full-portfolio view — always confirm include_closed scope for broad queries
+
+**After execution**, verify:
+- G9 confirmation surfaced for all filesystem write operations — no writes executed autonomously
+- Immutable field lock enforced — no csql_id, created_at, csm_owner, or source_skill mutations accepted
+- Terminal state immutability enforced — no won/lost/stalled record updates or reopens executed
+- Status transition validated against state machine before any update was proposed
+- Confidence: High when CSQL record retrieved directly from filesystem and field values confirmed; Moderate when record inferred from context or CSQL ID not yet confirmed in filesystem
+    - Confidence: [High] when CSQL record retrieved directly from filesystem and field values confirmed / [Medium] when record inferred from context or CSQL ID not yet confirmed in filesystem / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -413,15 +469,29 @@ The CSQL Qualification Package emitted by the upstream skill serves as the prima
 
 ---
 
+## Output
+
+Each operation surfaces a structured confirmation or result. Output formats are documented inline within each `## Operations` subsection. Summary:
+
+- **create** — CSQL record confirmation with assigned csql_id, filesystem path, and record summary table
+- **update** — Changed fields summary with before/after values and updated record confirmation
+- **close** — Terminal state confirmation with close reason, ACV (if won), and immutability notice
+- **query** — Filtered CSQL table (id, account, status, ACV, assigned CSM, days since last update) with result count and active/total scope note
+
+All write operation outputs are presented as drafts requiring G9 confirmation before filesystem execution.
+
+---
+
 ## Reference Files
 
 Load these files on demand — do not load at skill invocation start.
 
 | File | Path | Load when |
 |------|------|-----------|
-| `csql-record-schema.md` | `rev-ops/skills/csql-tracking/reference/csql-record-schema.md` | Viewing or validating the canonical CSQL record format, field definitions, validation rules, or Auto-ID/sanitization algorithms |
-| `csql-status-transitions.md` | `rev-ops/skills/csql-tracking/reference/csql-status-transitions.md` | Reviewing the full state machine diagram, valid transition table, override rules, or transition log format |
-| `query-filter-patterns.md` | `rev-ops/skills/csql-tracking/reference/query-filter-patterns.md` | Reviewing query filter syntax, sort options, output format, include_closed behavior, or limit/offset patterns |
+| `csql-record-schema.md` | `reference/csql-record-schema.md` | Viewing or validating the canonical CSQL record format, field definitions, validation rules, or Auto-ID/sanitization algorithms |
+| `csql-status-transitions.md` | `reference/csql-status-transitions.md` | Reviewing the full state machine diagram, valid transition table, override rules, or transition log format |
+| `query-filter-patterns.md` | `reference/query-filter-patterns.md` | Reviewing query filter syntax, sort options, output format, include_closed behavior, or limit/offset patterns |
+| `reasoning-blueprint.md` | `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ---
 

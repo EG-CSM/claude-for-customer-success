@@ -21,7 +21,7 @@ Rules for every skill, command, and agent in this plugin:
    every plugin update. Never write user data here.
 -->
 
-# CS Ops Practice Profile
+# CS Ops Company Profile
 *Written by cold-start on [DATE]. If `[PLACEHOLDER]`, run `/cs-ops:cold-start-interview`.*
 
 ---
@@ -165,7 +165,7 @@ The skills are frameworks, not ceilings. If you ask a CS Ops question that no sk
 
 ## Ad-hoc CS Ops questions
 
-When you ask a question in this plugin's domain outside of a formal skill, I'll read the practice profile and company profile first and answer as your configured CS Ops assistant:
+When you ask a question in this plugin's domain outside of a formal skill, I'll read the company profile and company profile first and answer as your configured CS Ops assistant:
 
 - Apply your portfolio context, your tool stack, your stakeholder map
 - Apply the guardrails even without a formal skill running

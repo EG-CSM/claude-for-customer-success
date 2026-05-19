@@ -23,12 +23,12 @@ before the next begins. Phases can be run individually with `--phase N`.
 - Comp modeling without full planning context (use comp-simulation)
 - Mid-year replanning triggered by miss (use mid-year-replan-triggering)
 
-## Typical activation
+## Typical Activation
 "Run annual planning", "start the planning cycle", "annual plan for [year]", "set quotas for next year", "kick off territory design"
 
 **Invokes:** `unit-of-growth-calculator` v1.1.0 for capacity modeling (Phase 2)
 **Reference:** UoG formulas → `../../../shared/revops-domain-model.md §5`
-**Config reads:** All planning parameters from practice profile
+**Config reads:** All planning parameters from company profile
 
 ---
 
@@ -57,14 +57,14 @@ Before generating output, apply these primers:
 
 2. **CONSTRAINTS**: What limits the solution space?
    1. Confirm activation — user initiating annual or mid-year planning
-   2. Read practice profile — all seven planning parameters required; surface any missing ones
+   2. Read company profile — all seven planning parameters required; surface any missing ones
    3. Check for existing plan baseline in `uog_baseline_path` — if present, offer update vs. new plan
    4. Apply G2 — capacity model outputs are structural inputs, not hiring mandates
    5. Apply G3 — comp plan outputs require HR + Finance dual review before rep communication
    6. Apply G4 — territory proposals are drafts until dual-confirmed
 
 3. **EXPERT CHECK**: What would a veteran RevOps analyst verify first?
-   - Are all seven practice profile parameters populated and current?
+   - Are all seven company profile parameters populated and current?
    - Is the UoG baseline path configured? If absent, Phase 5 has no save target.
    - Has the forecast scenario (P10/P50/P90) been selected before capacity modeling begins?
    - Are CS constraint signals checked before AE headcount decisions? CS ceiling can invalidate an otherwise clean AE growth plan.
@@ -78,7 +78,8 @@ Before generating output, apply these primers:
 **After execution**, verify:
 - Each phase artifact is labeled [DRAFT] until its gate is cleared
 - Baseline save (Phase 5) only runs after the planning scenario is confirmed
-- Confidence: High when all practice profile parameters are populated and UoG baseline is present; Moderate when any parameter is estimated or baseline is absent
+- Confidence: High when all company profile parameters are populated and UoG baseline is present; Moderate when any parameter is estimated or baseline is absent
+- Confidence: [High] when all planning parameters populated and connectors live / [Medium] when any parameter estimated or connector unavailable / [Low] if all inputs are manual or unverified
 
 ---
 

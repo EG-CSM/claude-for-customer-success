@@ -299,7 +299,7 @@ Note from config:
 
 ## Reasoning Protocol
 
-> Blueprint: `reference/reasoning-blueprint.md` (on-demand only)
+> Blueprint: `references/reasoning-blueprint.md` (on-demand only)
 
 Before generating output, apply these primers:
 
@@ -429,7 +429,7 @@ The following reference files are loaded on-demand during skill execution:
 | `reference/progress-review-schema.md` | Canonical review record format, YAML frontmatter field definitions, section assembly order, field validation rules, auto-ID generation rules | Every `review` operation |
 | `reference/milestone-rating-guide.md` | Rating criteria for On Track / At Risk / Missed; escalation thresholds; CSM action generation logic per rating; Success Criteria evaluation logic; Measures of Success assessment; Key Benefits Already Realized guidance | Every `review` operation |
 | `reference/customer-summary-templates.md` | Customer-facing language templates by milestone status (positive, cautionary, escalation tones); QBR pre-work note structure and language guidance | When `include_customer_summary: true` or `include_qbr_note: true` |
-| `reference/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill | On-demand per Reasoning Protocol |
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill | On-demand per Reasoning Protocol |
 
 ---
 

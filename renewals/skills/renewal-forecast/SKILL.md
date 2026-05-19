@@ -33,7 +33,7 @@ Build a weighted renewal forecast calibrated to your book of business and target
 - Price increase planning for accounts in the pipeline — use `/renewals:price-increase-prep`
 - Churn root cause analysis after a lost renewal — use `/renewals:churn-rca`
 
-## Typical activation
+## Typical Activation
 > `/renewals:renewal-forecast` — full book-of-business forecast with pipeline stages, cohort breakdown, scenario modeling, and GRR/NRR projection
 > `/renewals:renewal-forecast --cohort 30` — focused view of renewals within the 30-day decision window with escalation requirements
 > `/renewals:renewal-forecast --account Acme Corp` — add a single account to the pipeline view and check its GRR contribution
@@ -50,7 +50,7 @@ If either file is missing or contains `[PLACEHOLDER]` markers in fields this
 skill requires (GRR target, NRR target, total ARR, account count, renewal cycle,
 negotiation window), stop and say:
 
-> "Your renewals practice profile isn't configured yet — or key forecast fields
+> "Your renewals company profile isn't configured yet — or key forecast fields
 > are still placeholders. Run `/renewals:cold-start-interview` to set up your
 > profile. The forecast skill needs your GRR/NRR targets, book ARR, renewal cycle,
 > and negotiation window to produce a meaningful output."
@@ -419,3 +419,9 @@ Suggested follow-on actions based on forecast results:
 - Price increase accounts in the pipeline: `/renewals:price-increase-prep`
 - Strategic account renewal summaries for leadership: `/renewals:executive-summary`
 - Expansion signals in the pipeline: `/renewals:expansion-signal`
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill

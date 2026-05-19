@@ -326,8 +326,8 @@
   },
   {
     "id": "cm-008",
-    "label": "Practice profile missing required fields — graceful stop",
-    "description": "Orchestrator reads practice profile but arr_per_csm is absent. Agent stops before delegating to subagents and reports the missing field.",
+    "label": "Company profile missing required fields — graceful stop",
+    "description": "Orchestrator reads company profile but arr_per_csm is absent. Agent stops before delegating to subagents and reports the missing field.",
     "input": {
       "practice_profile": {
         "company_name": "Incomplete Corp",

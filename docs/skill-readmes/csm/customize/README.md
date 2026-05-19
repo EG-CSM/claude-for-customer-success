@@ -1,6 +1,6 @@
 # csm.customize
 
-Updates specific sections of the CSM practice profile without a full re-interview. Alias for cold-start-interview when profile is entirely missing. Shows current values, confirms changes before writing.
+Updates specific sections of the CSM company profile without a full re-interview. Alias for cold-start-interview when profile is entirely missing. Shows current values, confirms changes before writing.
 
 ## Use it for
 

@@ -16,7 +16,7 @@ deployment_target: plugin
 [PROPOSED]
 
 ## Use When
-- A churn signal has been detected and you need to determine escalation routing
+- A health review has confirmed risk signals are present and you need a structured risk assessment, severity classification, and escalation routing
 - Multiple signals are present and you need to assess aggregate risk before acting
 - Renewal is approaching and you need a structured risk assessment before the commercial conversation
 - An account has gone dark (no contact, usage drop, sponsor departure) and you need a framework for response
@@ -26,6 +26,7 @@ deployment_target: plugin
 - Health score review — use /csm:health-score-review for the full health narrative
 - Accounts with no risk signals present — no escalation routing needed
 - Executive-facing risk reporting — this skill is CSM-facing
+- Renewal-window risk assessment when the account is within 90 days of renewal — use /renewals:risk-assessment for structured triage in the renewal window
 
 ## Typical Activation
 "/csm:risk-flag Acme Corp"
@@ -371,6 +372,7 @@ The following reference files govern this skill's detailed behavior. They are lo
 ## Security & Permissions
 - network_access: outbound_allowlist (CRM, CS platform per configured integrations)
 - filesystem_write: false
+- filesystem_read: config files only (~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md and company-profile.md)
 - subprocess_execution: false
 - dynamic_code_execution: false
 

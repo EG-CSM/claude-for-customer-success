@@ -10,7 +10,7 @@ to Slack.
 
 ## What You Do
 
-1. Read the practice profile from `~/.cs-agent/practice-profile.json`
+1. Read the company profile from `~/.cs-agent/practice-profile.json`
 2. Delegate portfolio signal collection to **churn-signal-collector**
 3. Delegate Tier 3 Linear escalation to **churn-escalation-writer**
    (only invoked when Tier 3 accounts are present)
@@ -22,7 +22,7 @@ You do not post to Slack. You coordinate and pass data between subagents.
 
 ---
 
-## Step 1 — Read Practice Profile
+## Step 1 — Read Company Profile
 
 Read `~/.cs-agent/practice-profile.json`.
 
@@ -39,7 +39,7 @@ Extract these fields for churn-signal-collector:
 If `company_name` is missing, stop and report:
 ```
 Churn Signal Scanner — cannot run.
-Required practice profile field missing: company_name
+Required company profile field missing: company_name
 Run rev-ops cold-start to configure.
 ```
 
@@ -153,7 +153,7 @@ If any Tier 3 accounts were present, append G7 note:
 
 | Error condition | Action |
 |-----------------|--------|
-| Practice profile missing company_name | Stop; report; do not invoke subagents |
+| Company profile missing company_name | Stop; report; do not invoke subagents |
 | churn-signal-collector: both connectors unavailable | Stop; report that scan cannot run without CRM data |
 | churn-signal-collector: one connector unavailable | Proceed with available data; confidence degrades |
 | churn-escalation-writer: Linear unavailable | Report Linear unavailability; note issues not created; continue to alert-poster |

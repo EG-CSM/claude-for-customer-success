@@ -345,6 +345,7 @@ The following reference files govern this skill's detailed behavior. They are lo
 ## Security & Permissions
 - network_access: outbound_allowlist (CRM, CS platform per configured integrations)
 - filesystem_write: false
+- filesystem_read: config files only (~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md and company-profile.md)
 - subprocess_execution: false
 - dynamic_code_execution: false
 

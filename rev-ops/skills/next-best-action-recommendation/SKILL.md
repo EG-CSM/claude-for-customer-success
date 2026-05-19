@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Produces specific, rationale-backed interventions for deals flagged at-risk by deal-health-scoring or pipeline-velocity-tracking. Intervention types: executive sponsor escalation, competitive response, procurement/legal acceleration, CS pre-close engagement, closed/lost reclassification. Not generic nudges — every recommendation names what to do, who does it, and why. Triggers: 'next action for [deal]', 'intervention for [account]', 'what should we do with [deal]', 'stuck deal'."
 ---
 
+[PROPOSED]
+
 # Next Best Action Recommendation
 
 Specific interventions for at-risk deals. Every recommendation has a what,
@@ -13,6 +15,18 @@ a who, and a why grounded in the specific signal that triggered it.
 
 **Reference:** Cross-skill registry → `reference/cross-skill-registry.md`
 **Config reads:** `primary_segment`, `renewal_conversation_window_days`
+
+---
+
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `primary_segment`, `renewal_conversation_window_days`
 
 ---
 
@@ -26,18 +40,54 @@ a who, and a why grounded in the specific signal that triggered it.
 - Deal approval routing (use deal-desk-workflow-management)
 - Portfolio-level strategy (this is account/deal-level)
 
-## Typical activation
+## Typical Activation
 "Next best action for [account/deal]", "what should I do with this deal", "prioritize my actions", "NBA for [rep]", "recommended actions for [account]"
 
 ---
 
 ## Reasoning Protocol
 
-1. Confirm activation — user is asking about a specific at-risk deal or set of flagged deals
-2. Read deal health score and triggering signal from `deal-health-scoring` output or HubSpot
-3. Apply G5 — recommendations are inputs; rep and manager own the decision
-4. Apply G7 — any risk flag includes an escalation path and named owner
-5. Confirm whether this deal has CS implications (high ACV, implementation complexity)
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of next best action request is this?
+   - Single-deal intervention (one at-risk account — primary signal matched to intervention type)
+   - Batch prioritization (multiple flagged deals — ranked action list for weekly planning)
+   - Rep or CS manager action queue (all flagged deals for a specific owner)
+   - Post-health-score handoff (deal-health-scoring output → intervention recommendation)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user asking about a specific at-risk deal or set of flagged deals
+   2. Pull deal health score and triggering signal from `deal-health-scoring` output or HubSpot; declare connector status
+   3. Apply G5 — recommendations are inputs; rep and manager own the decision
+   4. Apply G7 — every at-risk flag includes a named escalation path and owner
+   5. Apply G6 — data-as-of timestamp required on all HubSpot deal reads
+   6. Confirm whether deal has CS implications (high ACV, implementation complexity) before selecting intervention type
+   7. Match intervention type to primary signal from the intervention table — do not default to generic "follow up"
+
+3. **EXPERT CHECK**: What would a veteran RevOps or Sales manager verify before surfacing recommendations?
+   - Is the triggering signal current? A signal flagged 10 days ago may have already been addressed — confirm
+     the signal is still active before recommending an intervention built around it.
+   - Is the intervention type matched to the primary signal, not a secondary one? Prescribing an executive
+     sponsor escalation when the real blocker is a legal review gap sends the rep in the wrong direction.
+   - Is the "BY" timeframe grounded in deal context? A generic "this week" is not actionable — the timeframe
+     should reflect the deal's close date and current stage duration.
+   - Is the CS pre-close engagement signal evaluated? High ACV + technical complexity is a CS trigger regardless
+     of other signals — it should surface as a secondary recommendation even when not the primary intervention.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Recommending generic next steps ("follow up with the customer") without naming signal, owner, and timeframe
+   - Missing the G7 escalation path — every at-risk flag must name an escalation path and owner, not just an action
+   - Pulling HubSpot deal data without a data-as-of timestamp (G6 violation)
+   - Skipping CS implications check on high-ACV deals — failure to flag CS pre-close on complex implementations
+     leads to post-close onboarding failures
+
+**After execution**, verify:
+- G5 qualifier present — recommendation named as an analytical input, rep and manager named as decision owners
+- G7 escalation path present on every at-risk flag (named owner + channel + timeframe)
+- G6 data-as-of label applied to all HubSpot deal reads
+- Intervention type matched to primary signal from the intervention table
+- Confidence: High when HubSpot connected and deal health score current; Moderate when connector unavailable or signal sourced from rep notes only
+    - Confidence: [High] when HubSpot connected and deal health score current / [Medium] when connector unavailable or signal sourced from rep notes only / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -56,7 +106,7 @@ Match recommendation to the primary signal from `deal-health-scoring`:
 
 ---
 
-## Output Format (per deal)
+## Output
 
 ```
 NEXT BEST ACTION — [Account Name]
@@ -85,6 +135,12 @@ Secondary recommendation (if applicable):
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

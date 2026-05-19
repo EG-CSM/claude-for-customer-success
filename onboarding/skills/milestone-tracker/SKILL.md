@@ -13,6 +13,8 @@ version: "1.0.0"
 deployment_target: plugin
 ---
 
+<!-- Status: [PROPOSED] -->
+
 # /onboarding:milestone-tracker
 
 Milestone health tracking — single account or portfolio view.
@@ -55,13 +57,13 @@ Proceed with generic defaults if confirmed.
 - Time-to-value analysis with segment-normalized benchmarking (use `/onboarding:ttv-analysis`)
 - Generating the onboarding plan or updating milestone targets (use `/onboarding:onboarding-plan`)
 
-**Typical activation:**
+## Typical Activation
 - "Where are we on milestones for [Account]?"
 - "Show me the portfolio heat map for all active accounts"
 - "Which accounts are at risk this week?"
-- `/onboarding:milestone-tracker [account] --status`
-- `/onboarding:milestone-tracker --portfolio`
-- `/onboarding:milestone-tracker --flag`
+- CSM runs `/onboarding:milestone-tracker [account] --status` to check a single account's milestone progress
+- CSM runs `/onboarding:milestone-tracker --portfolio` to generate a portfolio-wide milestone heat map
+- CSM runs `/onboarding:milestone-tracker --flag` to surface at-risk accounts for intervention
 
 ## Reasoning Protocol
 
@@ -299,6 +301,12 @@ Milestone tracking output — format driven by flag (`--status`, `--portfolio`,
 `--flag`). Status mode: per-account milestone table with RAG status and next action.
 Portfolio mode: cross-account summary table. Flag mode: at-risk milestone alert.
 See mode-specific sections for field-level structure.
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill
+
+---
 
 ## Security & Permissions
 

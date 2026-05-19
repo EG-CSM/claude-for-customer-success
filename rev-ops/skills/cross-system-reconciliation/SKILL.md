@@ -41,7 +41,7 @@ Note from config: `crm_system`, `google_drive_connected`
 - Forecast variance analysis (use forecast-variance-analysis)
 - Revenue recognition decisions (analytical input only — G1 applies)
 
-## Typical activation
+## Typical Activation
 "Cross-system reconciliation", "data doesn't match between [system A] and [system B]", "reconcile ARR across systems", "why is CRM different from finance", "system reconciliation report"
 
 ---
@@ -82,6 +82,7 @@ Before generating output, apply these primers:
 - Root cause is specific (not just category-labeled)
 - Recommended action has a named owner and timeframe
 - Confidence: High when both systems are connected and timestamps are confirmed; Moderate when either system is unavailable or timing cannot be verified
+    - Confidence: [High] when both systems are connected and timestamps are confirmed / [Medium] when either system is unavailable or timing cannot be verified / [Low] if all inputs are manual or unverified
 
 ---
 

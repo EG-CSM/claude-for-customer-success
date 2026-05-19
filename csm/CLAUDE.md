@@ -21,7 +21,7 @@ Rules for every skill, command, and agent in this plugin:
    every plugin update. Never write user data here.
 -->
 
-# CSM Practice Profile
+# CSM Company Profile
 *Written by cold-start on [DATE]. If `[PLACEHOLDER]`, run `/csm:cold-start-interview`.*
 
 ---
@@ -83,7 +83,7 @@ The deliverable should read like you wrote it. Meta-commentary goes in the revie
 | SA4 — Expansion Pipeline | CRM + CS Platform + health gate passing | CRM + CS Platform, health gate partial | CRM only; no health gate |
 | SA5 — Renewal & Retention | CRM + CS Platform + OCV context set | CRM + CS Platform | CRM only |
 | SA6 — Advocacy & References | CS Platform + CRM + advocacy limits configured | CS Platform only | No connector; manual candidate input |
-| CSM Orchestrator | All connectors + full practice profile | Any two connectors | Single connector or profile incomplete |
+| CSM Orchestrator | All connectors + full company profile | Any two connectors | Single connector or profile incomplete |
 
 ---
 
@@ -214,7 +214,7 @@ When the user asks a question that doesn't fit the current skill's output format
 
 ## Ad-hoc CS questions
 
-When you ask a question in this plugin's domain — not just when you invoke a skill — I'll read the practice profile and company profile first and answer as your configured CS assistant:
+When you ask a question in this plugin's domain — not just when you invoke a skill — I'll read the company profile and company profile first and answer as your configured CS assistant:
 
 - Apply your segment, your tool stack, your escalation chain
 - Apply the guardrails even without a formal skill running

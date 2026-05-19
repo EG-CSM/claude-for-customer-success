@@ -36,7 +36,7 @@ deployment_target: plugin
 ---
 
 Produce a one-page account brief calibrated to your CS motion, health model,
-and escalation matrix from the configured practice profile.
+and escalation matrix from the configured company profile.
 
 ---
 
@@ -47,7 +47,7 @@ Read `~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md` and
 
 If either file is missing or still contains `[PLACEHOLDER]` markers, stop:
 
-> "This skill needs your practice profile before it can produce calibrated output.
+> "This skill needs your company profile before it can produce calibrated output.
 > Run `/csm:cold-start-interview` — it takes 2 minutes for a quick start or 15
 > minutes for full setup. Without it, account research output will be generic and
 > won't reflect your health model, escalation chain, or CS motion."
@@ -375,11 +375,12 @@ The following reference files govern this skill's detailed behavior. They are lo
 ## Security & Permissions
 - network_access: outbound_allowlist (CRM, CS platform, call recording tool, document storage per configured integrations)
 - filesystem_write: false
+- filesystem_read: config files only (~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md and company-profile.md)
 - subprocess_execution: false
 - dynamic_code_execution: false
 
 ## Trust & Verification
-- All data is sourced from configured integrations per the CSM practice profile
+- All data is sourced from configured integrations per the CSM company profile
 - Staleness is flagged explicitly — data older than configured thresholds is labeled [STALE]
 - Internal signals (health scores, expansion tags, escalation status) must not be included in any customer-visible output
 - If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview

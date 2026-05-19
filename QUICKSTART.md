@@ -9,7 +9,7 @@ Get a plugin running in under 60 seconds. Pick your install path below, run the 
 1. Open Cowork and click the **Plugins** icon in the sidebar
 2. Click **Install from file** and select the plugin file from [`dist/`](./dist/)
 3. The plugin appears in your plugin list — click it to open the panel
-4. Run the cold-start interview to write your practice profile:
+4. Run the cold-start interview to write your company profile:
 
 ```
 /[plugin]:cold-start-interview
@@ -57,7 +57,7 @@ Install at **project scope** only when the plugin is purpose-built for a specifi
 /install dist/[plugin]-v1.0.0.plugin --scope project
 ```
 
-If skills fail to read the practice profile or connector config, the most likely cause is a project-scoped install trying to read a user-level path. Reinstall at user scope.
+If skills fail to read the company profile or connector config, the most likely cause is a project-scoped install trying to read a user-level path. Reinstall at user scope.
 
 ---
 

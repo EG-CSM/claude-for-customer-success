@@ -29,7 +29,7 @@ Say something like:
 
 ## Prerequisites
 
-- csm CLAUDE.md practice profile
+- csm CLAUDE.md company profile
 - Account name or ID
 
 ## Governance

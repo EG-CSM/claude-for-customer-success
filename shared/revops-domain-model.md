@@ -241,7 +241,7 @@ Check 3: Measurement source accessible
 
 ```
 Run Tier 1 structural risk assessment only:
-  - Discount level vs. practice profile threshold
+  - Discount level vs. company profile threshold
   - Sales cycle vs. segment average
   - Stakeholder thread count
 
@@ -311,7 +311,7 @@ Two modes; declare mode on every output:
 `[Tier 1: Rule mode — configurable thresholds]`
 `[Tier 1: Cohort mode — correlation-based]`
 
-**Rule mode signals** (thresholds from practice profile):
+**Rule mode signals** (thresholds from company profile):
 
 ```
 discount_pct > discount_elevated_threshold_pct
@@ -320,7 +320,7 @@ stakeholder_threads = 1   (single-threaded, when tier1_single_thread_flag = true
 ocv_entry_referenced = false  (no Ratified OCV at close)
 ```
 
-**Cohort mode:** Requires `churn_cohort_data_path` in practice profile.
+**Cohort mode:** Requires `churn_cohort_data_path` in company profile.
 Compares deal attributes to historical closed/won-to-churn cohort.
 Cohort mode is unavailable below 6 months of outcome data.
 

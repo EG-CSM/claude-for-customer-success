@@ -35,7 +35,7 @@ Note from config: `target_growth_pct`, `nrr_current`, `primary_segment`, `ae_quo
 - Historical variance analysis (use forecast-variance-analysis)
 
 
-## Typical activation
+## Typical Activation
 "Model three scenarios for next year", "what if win rate drops to 20%", "scenario analysis for [target]", "run bull/base/bear cases"
 
 **Reference:** Scenario construction formulas → `../../../shared/revops-domain-model.md §4`
@@ -57,7 +57,7 @@ Before generating output, apply these primers:
 2. **CONSTRAINTS**: What limits the solution space?
    1. Confirm activation — user requesting range forecast, what-if analysis, or named scenario comparison
    2. Pull current pipeline state from HubSpot filtered to relevant period; declare connector status
-   3. Read practice profile for win rate baseline, segment definition, and growth target
+   3. Read company profile for win rate baseline, segment definition, and growth target
    4. Build all three scenarios (P10/P50/P90) — never present only the optimistic case
    5. Apply G1 — scenario outputs for Finance or board require qualification language
    6. Apply G6 — data-as-of timestamp required on all HubSpot pipeline reads
@@ -87,8 +87,9 @@ Before generating output, apply these primers:
 - G1 qualification present on all scenario outputs leaving RevOps
 - G6 data-as-of label applied to all HubSpot pipeline reads
 - All three scenarios (P10/P50/P90) present — no single-scenario delivery
-- Win rate source declared and labeled (practice profile or HubSpot trailing actuals)
-- Confidence: High when HubSpot is connected and pipeline data is current; Moderate when connector unavailable or win rate is from practice profile only
+- Win rate source declared and labeled (company profile or HubSpot trailing actuals)
+- Confidence: High when HubSpot is connected and pipeline data is current; Moderate when connector unavailable or win rate is from company profile only
+    - Confidence: [High] when HubSpot is connected and pipeline data is current / [Medium] when connector unavailable or win rate is from company profile only / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -115,7 +116,7 @@ Late-stage deals (Negotiation+): assume close on current close date, not slipped
 FORECAST SCENARIOS — [Quarter/Period]
 [HubSpot ✓ live — as of YYYY-MM-DD] [Confidence: High/Moderate]
 
-New ARR Target: $XXXk (NRR-adjusted) [Practice profile]
+New ARR Target: $XXXk (NRR-adjusted) [Company profile]
 
 Scenario    ARR        vs. Plan    Primary driver
 P10         $XXXk      −XX%        [Win rate compression / slip / concentration]

@@ -1,6 +1,6 @@
 # cs-ops.customize
 
-Updates specific sections of the cs-ops practice profile without rerunning the full cold-start interview. Displays current values before editing and confirms changes before writing.
+Updates specific sections of the cs-ops company profile without rerunning the full cold-start interview. Displays current values before editing and confirms changes before writing.
 
 ## Use it for
 

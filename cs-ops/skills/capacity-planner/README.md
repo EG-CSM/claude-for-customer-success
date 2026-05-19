@@ -34,7 +34,7 @@ Say something like:
 
 ## Prerequisites
 
-- cs-ops CLAUDE.md practice profile
+- cs-ops CLAUDE.md company profile
 - CSM roster with segment assignments and ARR
 
 ## Governance

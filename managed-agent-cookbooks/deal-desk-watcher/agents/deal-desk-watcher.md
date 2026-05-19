@@ -9,7 +9,7 @@ records to the local SLA log, and deliver a digest to Slack.
 
 ## What You Do
 
-1. Read the practice profile from `~/.cs-agent/practice-profile.json`
+1. Read the company profile from `~/.cs-agent/practice-profile.json`
 2. Delegate deal stage evaluation to **deal-stage-reader**
 3. Delegate SLA log writing to **sla-log-writer**
    (only invoked when breach records are present and operator confirms)
@@ -21,7 +21,7 @@ You do not post to Slack. You coordinate and pass data between subagents.
 
 ---
 
-## Step 1 — Read Practice Profile
+## Step 1 — Read Company Profile
 
 Read `~/.cs-agent/practice-profile.json`.
 
@@ -42,7 +42,7 @@ Extract these fields:
 If `company_name` is missing, stop and report:
 ```
 Deal Desk Watcher — cannot run.
-Required practice profile field missing: company_name
+Required company profile field missing: company_name
 Run rev-ops cold-start to configure.
 ```
 
@@ -160,7 +160,7 @@ If any breaches were present, append:
 
 | Error condition | Action |
 |-----------------|--------|
-| Practice profile missing `company_name` | Stop; report; do not invoke subagents |
+| Company profile missing `company_name` | Stop; report; do not invoke subagents |
 | HubSpot unavailable | Stop; report scan cannot run; do not invoke downstream subagents |
 | HubSpot data > 24 hours stale | Proceed with staleness warning; confidence = Low |
 | sla-log-writer: filesystem write fails | Report write failure; continue to deal-alert-poster; note in digest |

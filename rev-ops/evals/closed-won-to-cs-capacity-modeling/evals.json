@@ -9,7 +9,7 @@
       "name": "happy-path-three-scenario-with-baseline",
       "category": "happy-path",
       "prompt": "Model CS capacity for next quarter based on the current forecast.",
-      "context": "Practice profile: current_arr=12000000, arr_per_csm=2000000, current_csm_count=6, csm_avg_ramp_days=90, open_csm_requisitions=1. UoG baseline present: csm_required=8 at P50. SA1 scenarios: P10 new_arr=800000, P50 new_arr=1400000, P90 new_arr=2100000.",
+      "context": "Company profile: current_arr=12000000, arr_per_csm=2000000, current_csm_count=6, csm_avg_ramp_days=90, open_csm_requisitions=1. UoG baseline present: csm_required=8 at P50. SA1 scenarios: P10 new_arr=800000, P50 new_arr=1400000, P90 new_arr=2100000.",
       "expected_output": "Skill runs three-scenario capacity check, produces comparison table with CSMs required, headroom %, and constraint signal per scenario. Compares to UoG baseline. Surfaces hiring lead time flag if gap exists. Applies G2.",
       "files": [],
       "assertions": [
@@ -55,7 +55,7 @@
       "name": "cs-over-capacity-critical-signal",
       "category": "edge-case",
       "prompt": "Check CS capacity — I think we might be hitting our ceiling.",
-      "context": "Practice profile: current_arr=18000000, arr_per_csm=2000000, current_csm_count=8. P50 new_arr=2500000. Max supported ARR = 8 × 2000000 = 16000000. current_arr already exceeds max supported ARR — CS is already over capacity.",
+      "context": "Company profile: current_arr=18000000, arr_per_csm=2000000, current_csm_count=8. P50 new_arr=2500000. Max supported ARR = 8 × 2000000 = 16000000. current_arr already exceeds max supported ARR — CS is already over capacity.",
       "expected_output": "Skill detects CS is already over capacity (headroom < 0%), fires CRITICAL signal, explicitly states 'CS already over capacity — churn risk is live NOW', surfaces immediate hiring action with lead time calculation.",
       "files": [],
       "assertions": [
@@ -94,7 +94,7 @@
       "name": "degraded-no-uog-baseline",
       "category": "degraded-input",
       "prompt": "How many CSMs do we need for Q3?",
-      "context": "Practice profile: current_arr=8000000, arr_per_csm=2000000, current_csm_count=4. uog_baseline_path is absent from practice profile.",
+      "context": "Company profile: current_arr=8000000, arr_per_csm=2000000, current_csm_count=4. uog_baseline_path is absent from company profile.",
       "expected_output": "Skill runs current-state capacity calculation but explicitly declares UoG baseline absent, labels output as reporting mode only, does not produce plan comparison, applies correct confidence label.",
       "files": [],
       "assertions": [

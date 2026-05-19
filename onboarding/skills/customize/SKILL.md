@@ -14,9 +14,18 @@ deployment_target: plugin
 config_skill: true
 ---
 
+<!-- Status: [PROPOSED] -->
+
 # /onboarding:customize
 
 Onboarding profile configuration management.
+
+---
+
+## Pre-flight
+- Confirm account context (company name, CSM, current onboarding stage)
+- Identify customization goals for this account
+- Note any existing onboarding plan or prior session outputs
 
 ---
 
@@ -32,13 +41,13 @@ Onboarding profile configuration management.
 - Initial configuration setup from scratch (use `/onboarding:cold-start-interview --full`)
 - Running onboarding operations — this skill only reads and writes configuration
 
-**Typical activation:**
+## Typical Activation
 - "Show me my current onboarding config"
 - "Update my escalation matrix"
 - "Validate my config before I run the onboarding plan"
-- `/onboarding:customize --view`
-- `/onboarding:customize --update escalation`
-- `/onboarding:customize --validate`
+- CSM runs `/onboarding:customize --view` to display current configuration
+- CSM runs `/onboarding:customize --update escalation` to update a specific section
+- CSM runs `/onboarding:customize --validate` to check config completeness before running onboarding operations
 
 ---
 
@@ -54,9 +63,9 @@ Before generating output, apply these primers:
    - **Scope Redirect**: Request targets company-level settings (company name, products, segments) that belong in `company-profile.md`. Redirect to `/cs-ops:customize` — never write company-level values into the onboarding config.
 
 2. **CONSTRAINTS**: What limits the solution space?
-   - Config changes take effect immediately — no staging environment. Warn the CSM when a change could alter in-progress account workflows.
-   - Section-targeted writes only — updates modify the named section; adjacent sections are preserved exactly as they exist. Read-before-write is mandatory.
-   - TtV values are always labeled `[review — internal planning target]` — these must never appear in customer-facing output.
+   - G1: Config changes take effect immediately — no staging environment. Warn the CSM when a change could alter in-progress account workflows. No write without explicit user confirmation.
+   - G2: Section-targeted writes only — updates modify the named section; adjacent sections are preserved exactly as they exist. Read-before-write is mandatory. Never infer or default-fill missing values.
+   - G5: TtV values are always labeled `[review — internal planning target]` — these must never appear in customer-facing output.
    - Escalation contact accuracy is the CSM's responsibility — record what they provide, remind them to verify contacts are aware and current.
    - Reset is destructive and cannot be undone without manual re-entry — always offer `--update` as the less destructive alternative first.
 
@@ -444,6 +453,12 @@ Before writing any change to the config file:
 4. **No writes without confirmation**: Every update mode shows a before/after
    and asks for confirmation before writing. `--view` and `--validate` are
    always read-only.
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill
+
+---
 
 ## Security & Permissions
 

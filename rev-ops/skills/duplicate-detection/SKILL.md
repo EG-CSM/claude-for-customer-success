@@ -40,7 +40,7 @@ Note from config: `crm_system`
 - Field completion monitoring (use field-completion-monitoring)
 - Merging records autonomously (outputs are proposals — G9 applies)
 
-## Typical activation
+## Typical Activation
 "Find duplicates", "duplicate detection", "deduplicate the CRM", "flag duplicate contacts/companies", "duplicate scan before import"
 
 ---
@@ -86,6 +86,7 @@ Before generating output, apply these primers:
 - G9 Write-tier qualifier present: all merges require explicit human confirmation before execution
 - Confidence tier (High/Medium/Low) correctly assigned per matching signal count and quality
 - Confidence: High when HubSpot is connected and data is current; Moderate when data is stale or connector is unavailable
+    - Confidence: [High] when HubSpot is connected and data is current / [Medium] when data is stale or connector is unavailable / [Low] if all inputs are manual or unverified
 
 ---
 

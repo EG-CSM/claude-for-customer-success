@@ -34,7 +34,7 @@ here is a lead until proven otherwise.
 - Post-churn expansion analysis — use `/renewals:churn-rca`
 - Quick renewal status checks without an expansion research goal — use `/renewals:executive-summary`
 
-## Typical activation
+## Typical Activation
 > `/renewals:expansion-signal Acme Corp` — full expansion signal audit across all six signal types with qualification tier and TARO play recommendations
 > `/renewals:expansion-signal Acme Corp --quick` — targeted pass for highest-probability signal before a renewal call
 > `/renewals:expansion-signal --catalog` — list all detectable signal types for your configured pricing model
@@ -258,7 +258,7 @@ For any signal at Pipeline-ready or Qualified tier, note the AE handoff:
 > - Recommended timing relative to renewal date"
 
 If no AE partner is configured:
-> "No AE partner is configured in your practice profile. Run
+> "No AE partner is configured in your company profile. Run
 > `/renewals:cold-start-interview --section team` to add your AE contact."
 
 ---
@@ -366,3 +366,9 @@ conversion unless configured otherwise.
 **Renewal risk first.** If the account also has active churn risk signals,
 surface them before expansion signals and recommend `/renewals:risk-assessment`
 before pursuing expansion. An at-risk account's priority is renewal, not growth.
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill

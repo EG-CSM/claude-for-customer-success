@@ -43,7 +43,7 @@ Note from config: `tier1_mode`, `discount_elevated_threshold_pct`,
 - Outcome rubric level assessment (use deal-to-outcome-tracing)
 - Revenue brief generation (this is a signal, not a brief)
 
-## Typical activation
+## Typical Activation
 "Churn signal for [account]", "early churn detection", "downgrade risk", "Tier 1 churn signals", "flag at-risk accounts"
 
 ---
@@ -55,7 +55,7 @@ Before generating output, apply these primers:
 1. **CLASSIFY**: What type of churn signal request is this?
    - Single account assessment (one account — tier evaluation + active signals + recommended action)
    - Portfolio scan (segment or full book — distribution by tier + top ACV accounts at risk)
-   - Tier 1 at deal close (structural signals at close — rule mode or cohort mode per practice profile)
+   - Tier 1 at deal close (structural signals at close — rule mode or cohort mode per company profile)
    - Tier 2 behavioral (30–90 days post-onboarding — usage, OCV, champion, EBR signals)
    - Tier 3 pre-renewal (90–120 days out — health trend, renewal conversation, support volume)
 
@@ -63,7 +63,7 @@ Before generating output, apply these primers:
    1. Confirm activation — user asking about churn risk, at-risk accounts, or downgrade signals
    2. Determine scope: single account or portfolio scan
    3. Check CS platform connector — health score, usage, renewal date required; declare fallback if absent
-   4. Declare tier1_mode: rule or cohort [Practice profile] — required on every Tier 1 output
+   4. Declare tier1_mode: rule or cohort [Company profile] — required on every Tier 1 output
    5. Apply G7 — every Tier 2 and Tier 3 flag must include escalation path and named owner
    6. Apply G5 — signals are analytical inputs; CS and CS manager own the response
    7. Apply G6 — data-as-of on all reads
@@ -89,6 +89,7 @@ Before generating output, apply these primers:
 - G6 data-as-of label applied to all CS platform and CRM reads
 - G7 escalation path with named owner present on every Tier 2 and Tier 3 flag
 - Confidence: High when CS platform is connected and data is current; Moderate when data is stale or connector is unavailable
+    - Confidence: [High] when CS platform is connected and data is current / [Medium] when data is stale or connector is unavailable / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -100,7 +101,7 @@ Declare mode on every output:
 `[Tier 1: Rule mode — configurable thresholds]` or
 `[Tier 1: Cohort mode — correlation-based]`
 
-**Rule mode signals (defaults from practice profile):**
+**Rule mode signals (defaults from company profile):**
 ```
 discount_pct > discount_elevated_threshold_pct
 sales_cycle_days > avg_sales_cycle_days × tier1_long_cycle_multiplier
@@ -108,7 +109,7 @@ stakeholder_threads = 1  (single-threaded, if tier1_single_thread_flag = true)
 ocv_entry_referenced = false  (no Ratified OCV at close)
 ```
 
-**Cohort mode:** Requires `churn_cohort_data_path` in practice profile.
+**Cohort mode:** Requires `churn_cohort_data_path` in company profile.
 Compares deal attributes to historical closed/won-to-churn cohort.
 
 ### Tier 2 — Behavioral risk (30–90 days post-onboarding)

@@ -28,7 +28,7 @@ No skill in this suite takes autonomous action on customer accounts. Skills prod
 
 ## Data Retention
 
-This suite does not store customer data beyond the current session context. Configuration files written to `~/.claude/plugins/config/` contain practice profile and company-level settings only — not account-specific data from live sessions.
+This suite does not store customer data beyond the current session context. Configuration files written to `~/.claude/plugins/config/` contain company profile and company-level settings only — not account-specific data from live sessions.
 
 ## Reporting
 

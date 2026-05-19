@@ -6,6 +6,8 @@ status: PROPOSED
 description: "Monitors contact and account data freshness. Flags records where title, company, or contact data has likely changed and enrichment is overdue. Decay signals: contact title unchanged >18 months, account employee count stale >12 months, primary contact no email activity >6 months, account domain change detected. Prioritizes enterprise accounts. Triggers: 'stale contacts', 'data decay', 'enrichment needed', 'contact freshness', 'stale account data'."
 ---
 
+[PROPOSED]
+
 # Data Decay Tracking
 
 Data decay is the slow death of CRM quality. Contacts leave roles. Companies
@@ -16,7 +18,20 @@ get acquired. Enrichment overdue means signals are built on wrong data.
 
 ---
 
+## Pre-flight
+
+Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` and
+`~/.claude/plugins/config/claude-for-customer-success/company-profile.md`.
+
+If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
+`/rev-ops:cold-start-interview`.
+
+Note from config: `primary_segment`, `crm_system`
+
+---
+
 ## Use when
+> Routing: Use this skill when **contact or company record age is the specific concern** — for a point-in-time CRM health score use `crm-hygiene-audit`; for field completion rates over time use `field-completion-monitoring`.
 - CRM record staleness needs to be quantified and trended
 - Data freshness audit required before a planning or forecast cycle
 - Records without activity within a configurable window need identification
@@ -26,18 +41,50 @@ get acquired. Enrichment overdue means signals are built on wrong data.
 - Field completion compliance (use field-completion-monitoring)
 - Duplicate detection (use duplicate-detection)
 
-## Typical activation
-"Data decay tracking", "stale records", "CRM freshness", "how old is our data", "data decay report for [object/period]"
+## Typical Activation
+"Data decay tracking", "stale records", "how old is our data", "data decay report for [object/period]"
 
 ---
 
 ## Reasoning Protocol
 
-1. Confirm activation — user requesting freshness review or enrichment candidates
-2. Check HubSpot contact and account data; declare fallback if unavailable
-3. Apply G6 — stale data must be labeled; decay findings are themselves evidence of staleness
-4. Prioritize enterprise tier accounts in output
-5. No autonomous enrichment calls — flag candidates for human action
+Before generating output, apply these primers:
+
+1. **CLASSIFY**: What type of data decay request is this?
+   - Single-account decay audit (one account — all four signals checked across contacts and account record)
+   - Segment-level freshness sweep (enterprise tier, mid-market, or full portfolio — prioritized by segment)
+   - Signal-specific scan (user requesting a targeted check on one decay signal type — title age, employee count, email activity, or domain change)
+   - Pre-cycle enrichment triage (identifying enrichment candidates before a planning, forecast, or QBR cycle)
+
+2. **CONSTRAINTS**: What limits the solution space?
+   1. Confirm activation — user requesting freshness review, enrichment candidates, or CRM data quality assessment
+   2. Pull HubSpot contact and account data; declare connector status and data-as-of timestamp per G6
+   3. Apply G6 — stale data must be labeled; decay findings are themselves evidence of staleness; every flagged record carries its own data-as-of note
+   4. Apply G9 — no autonomous enrichment API calls; flag candidates for human action only
+   5. Prioritize enterprise tier accounts in output; surface mid-market as secondary tier
+   6. Confirm `primary_segment` from config to scope tier-level prioritization correctly
+   7. Confirm output destination before delivering — internal RevOps enrichment queue vs. CSM account review vs. leadership data quality report
+
+3. **EXPERT CHECK**: What would a veteran RevOps data quality analyst verify before surfacing findings?
+   - Is the title-unchanged signal calibrated to B2B tenure, not calendar time? The 18-month threshold reflects average B2B role tenure — applying it uniformly to individual contributors and executives produces different false-positive rates. Flag when the contact is a champion or economic buyer, not just any contact.
+   - Is the email activity gap distinguished from enrichment staleness? A contact with no email activity in 6 months may still have a current title — the signal indicates possible departure, not confirmed departure. The output must not conflate "likely departed" with "confirmed stale."
+   - Is the domain change signal sourced from a reliable detection mechanism? Domain changes flagged from deal notes or rep-entered data carry lower confidence than those detected from connector-side validation. Declare the detection source and confidence level.
+   - Is the enterprise account list scoped to the configured `primary_segment`? Applying enterprise-tier prioritization to a primarily SMB or mid-market book produces a misleading high-priority list. Confirm segment alignment before ranking.
+
+4. **ANTI-PATTERNS**: Common mistakes to avoid:
+   - Conflating "no email activity >6 months" with "confirmed contact departure" — label as departure signal, not confirmed fact (G6 violation if presented as fact)
+   - Flagging title-unchanged signal on all contacts regardless of role seniority — champion and economic buyer contacts are the high-value targets; all-contact title sweeps generate noise
+   - Pulling HubSpot contact/account data without data-as-of timestamp (G6 violation)
+   - Surfacing domain change findings without declaring detection source confidence
+   - Proposing autonomous enrichment API calls — all enrichment is flagged for human action per G9
+
+**After execution**, verify:
+- G6 data-as-of label applied to all HubSpot contact and account reads
+- G9 compliance — no autonomous enrichment calls proposed; all findings are human-action candidates
+- Departure signal labeled as signal, not confirmed fact — no overstatement of contact status
+- Enterprise tier accounts prioritized per `primary_segment` config
+- Confidence: High when HubSpot connected and contact/account data current; Moderate when connector unavailable or decay signals sourced from last-known update timestamps only
+- Confidence: [High] when HubSpot connected and contact/account data current / [Medium] when connector unavailable or data estimated / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -52,7 +99,7 @@ Signal 4: Account domain change detected (acquisition or rebrand)
 
 ---
 
-## Output Format
+## Output
 
 ```
 DATA DECAY REPORT — [Tier/Scope] — [Date]
@@ -79,6 +126,12 @@ Enrichment tool: [user's configured enrichment source if available, else manual]
 ```
 
 ---
+
+## Reference Files
+
+| File | Purpose |
+|------|---------|
+| `references/reasoning-blueprint.md` | Problem classification taxonomy, domain heuristics, common failure modes, and expert judgment patterns for this skill |
 
 ## Security & Permissions
 

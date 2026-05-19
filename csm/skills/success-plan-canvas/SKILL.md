@@ -23,6 +23,7 @@ Three plan types are supported, each producing a distinct document structure:
 
 ## Use When
 
+- The organization uses the OCV (Outcome-to-Customer Value) system and a structured 7-component canvas format is required — if OCV is not in use, use `/csm:success-plan-builder` instead
 - A CSM needs to generate a structured success plan canvas for a specific account at a lifecycle stage (initial onboarding, pre-expansion, pre-renewal review)
 - An existing canvas needs to be refreshed with updated objectives, OCV data, or notes without generating a new dated artifact
 
@@ -35,9 +36,9 @@ Three plan types are supported, each producing a distinct document structure:
 - Modifying OCV files (this skill is read-only with respect to OCV data)
 
 ## Typical Activation
-"/csm:success-plan-canvas Acme Corp"
+"/csm:success-plan-canvas Acme Corp" (requires OCV system to be in use)
 "/csm:success-plan-canvas Acme Corp --update"
-"Create a success plan canvas for [account]"
+"Create a success plan canvas for [account]" (OCV-aligned 7-component canvas format)
 "Update the canvas for [customer]"
 
 ---

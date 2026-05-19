@@ -15,7 +15,7 @@ coherent story — not a dashboard dump.
 
 **Reference:** All domain model sections, output destination labels →
 `../../../shared/revops-domain-model.md §11`
-**Config reads:** All practice profile fields
+**Config reads:** All company profile fields
 
 ---
 
@@ -27,11 +27,16 @@ Read `~/.claude/plugins/config/claude-for-customer-success/rev-ops/CLAUDE.md` an
 If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
 `/rev-ops:cold-start-interview`.
 
-Note from config: all practice profile fields
+Note from config: all company profile fields
 
 ---
 
 ## Use when
+
+This skill produces a **cross-functional revenue narrative** that spans Sales pipeline,
+CS-owned ARR vectors, and finance-facing forecast. It is not a CS-function operational
+dashboard — it synthesizes across functions for leadership or board consumption.
+
 - Leadership or board review requires a structured revenue performance brief
 - Weekly or monthly revenue status needs synthesis across pipeline, forecast, and actuals
 - RevOps needs to package revenue narrative for a specific audience
@@ -40,8 +45,10 @@ Note from config: all practice profile fields
 - Raw pipeline analysis (use pipeline-coverage-analysis)
 - Detailed forecast variance decomposition (use forecast-variance-analysis)
 - Deal-level detail (this is a brief, not a deal review)
+- CS-internal operational reporting — weekly triage, CSM performance summaries,
+  or GRR/NRR dashboards for the CS team (use `/cs-ops:metric-dashboard`)
 
-## Typical activation
+## Typical Activation
 "Revenue brief", "generate revenue summary", "revenue status for [period]", "brief for leadership", "weekly revenue brief"
 
 ---
@@ -93,6 +100,7 @@ Before generating output, apply these primers:
 - Output destination confirmed — account-level data labeled for correct audience
 - [DRAFT] status applied — RevOps lead review before distribution
 - Confidence: High when all source skills and connectors are live; Moderate when any section is in fallback mode
+    - Confidence: [High] when all source skills and connectors are live / [Medium] when any section is in fallback mode / [Low] if all inputs are manual or unverified
 
 ---
 

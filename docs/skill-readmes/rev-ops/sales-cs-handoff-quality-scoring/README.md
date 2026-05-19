@@ -34,8 +34,8 @@ Say something like:
 ## Prerequisites
 
 - HubSpot deal fields for target deal(s)
-- OCV catalog (ocv_catalog_path from practice profile) — Ratified entries only
-- linear_connected flag from practice profile
+- OCV catalog (ocv_catalog_path from company profile) — Ratified entries only
+- linear_connected flag from company profile
 
 ## Governance
 

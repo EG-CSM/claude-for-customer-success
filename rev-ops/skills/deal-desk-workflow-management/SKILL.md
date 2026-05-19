@@ -43,7 +43,7 @@ Note from config: `discount_standard_threshold_pct`, `discount_elevated_threshol
 - Discount threshold calculation in isolation (use discount-threshold-monitoring)
 - Non-standard terms detection without approval routing context (use non-standard-terms-detection)
 
-## Typical activation
+## Typical Activation
 "Submit to deal desk", "route for approval", "deal desk for [account]", "deal approval status", "process a deal desk request"
 
 ---
@@ -63,12 +63,12 @@ Before generating output, apply these primers:
    2. Read deal fields from HubSpot — deal link, ACV, discount %, close date, rep required
    3. Run sub-skills: discount-threshold-monitoring, non-standard-terms-detection,
       revenue-leakage-scanning to assemble context brief
-   4. Route to correct approval authority per discount tier from practice profile
+   4. Route to correct approval authority per discount tier from company profile
    5. Apply G1 — desk review does not constitute deal approval or revenue commitment
    6. Track SLA — flag breach to #revops-ops; 24h standard / 4h final 2 weeks of quarter
 
 3. **EXPERT CHECK**: What would a veteran RevOps deal desk analyst verify first?
-   - Is the discount tier confirmed from the practice profile thresholds — not estimated?
+   - Is the discount tier confirmed from the company profile thresholds — not estimated?
      Routing to the wrong approver tier wastes SLA time and creates audit gaps.
    - Is the context brief complete before routing? An incomplete brief (missing competitive
      context or churn signal) sends the approver back to the rep — extending SLA.
@@ -90,6 +90,7 @@ Before generating output, apply these primers:
 - SLA deadline calculated from submission timestamp; quarter-end window identified if applicable
 - Confidence: High when HubSpot is connected and all sub-skills return data; Moderate when
   any sub-skill is unavailable or deal fields are partially populated
+    - Confidence: [High] when HubSpot is connected and all sub-skills return data / [Medium] when any sub-skill is unavailable or deal fields are partially populated / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -107,7 +108,7 @@ Stage 2 — Context brief assembly
 
 Stage 3 — Routing
   Create Linear issue with context brief attached
-  Assign to: [determined by discount tier from practice profile]
+  Assign to: [determined by discount tier from company profile]
   Set SLA: 24h standard / 4h final 2 weeks of quarter
 
 Stage 4 — Decision

@@ -9,7 +9,7 @@ flags when thresholds are crossed.
 
 ## What You Do
 
-1. Read the practice profile from `~/.cs-agent/practice-profile.json`
+1. Read the company profile from `~/.cs-agent/practice-profile.json`
 2. Delegate data collection and capacity modeling to **capacity-reader**
 3. Delegate alert formatting and Slack delivery to **capacity-reporter**
 4. Return a completion summary
@@ -19,7 +19,7 @@ You coordinate and pass data between subagents.
 
 ---
 
-## Step 1 — Read Practice Profile
+## Step 1 — Read Company Profile
 
 Read `~/.cs-agent/practice-profile.json`.
 
@@ -34,11 +34,11 @@ Extract these fields for capacity-reader:
 - `nrr_current`
 - `uog_baseline_path` (may be empty — capacity analysis degrades to Low if absent)
 
-If the practice profile does not exist or is missing required fields (`current_arr`,
+If the company profile does not exist or is missing required fields (`current_arr`,
 `arr_per_csm`, `current_csm_count`), stop and report:
 ```
 Capacity Monitor — cannot run.
-Required practice profile fields missing: [list missing fields].
+Required company profile fields missing: [list missing fields].
 Run rev-ops cold-start to configure.
 ```
 
@@ -106,7 +106,7 @@ Run at:        [ISO timestamp]
 
 | Error condition | Action |
 |-----------------|--------|
-| Practice profile missing | Stop; report missing fields; do not invoke subagents |
+| Company profile missing | Stop; report missing fields; do not invoke subagents |
 | HubSpot unavailable | capacity-reader falls back to profile ARR only; confidence degrades to Low |
 | Slack unavailable | capacity-reporter renders alert in session; reports delivery failed |
 | capacity-reader returns insufficient data | Stop; report which inputs were absent |

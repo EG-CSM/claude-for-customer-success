@@ -94,7 +94,7 @@
       "name": "degraded-no-uog-baseline-reporting-mode",
       "category": "degraded-input",
       "prompt": "How are we tracking against plan?",
-      "context": "uog_baseline_path absent from practice profile. HubSpot connected: closed_won_ytd=1200000. CS platform connected: nrr=1.08.",
+      "context": "uog_baseline_path absent from company profile. HubSpot connected: closed_won_ytd=1200000. CS platform connected: nrr=1.08.",
       "expected_output": "Skill declares baseline absent before showing any numbers, runs in reporting mode only (actuals without comparison), labels output accordingly, does not produce variance memos or threshold assessments.",
       "files": [],
       "assertions": [

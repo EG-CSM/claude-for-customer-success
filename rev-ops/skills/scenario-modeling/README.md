@@ -36,7 +36,7 @@ Say something like:
 
 - HubSpot current pipeline with stage breakdown
 - Win rate history (trailing 4Q) by stage and segment
-- target_growth_pct, nrr_current, primary_segment, ae_quota, ae_attainment_planning_rate from practice profile
+- target_growth_pct, nrr_current, primary_segment, ae_quota, ae_attainment_planning_rate from company profile
 
 ## Governance
 

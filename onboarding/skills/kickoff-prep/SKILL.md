@@ -16,6 +16,8 @@ version: "1.0.0"
 deployment_target: plugin
 ---
 
+<!-- Status: [PROPOSED] -->
+
 # /onboarding:kickoff-prep
 
 Kickoff agenda and preparation checklist for a specific account.
@@ -60,13 +62,13 @@ despite missing config.
 - Onboarding plan generation — the kickoff prep and onboarding plan are separate artifacts
 - Blocker review or risk assessment — this skill is pre-onboarding preparation only
 
-**Typical activation:**
+## Typical Activation
 - "Prep me for my kickoff with [Account] on [date]"
 - "Generate the kickoff agenda for [Account]"
 - "Give me the internal checklist for the [Account] kickoff"
-- `/onboarding:kickoff-prep [account] --prep`
-- `/onboarding:kickoff-prep [account] --agenda`
-- `/onboarding:kickoff-prep [account] --checklist`
+- CSM runs `/onboarding:kickoff-prep [account] --prep` to generate both agenda and checklist
+- CSM runs `/onboarding:kickoff-prep [account] --agenda` for the customer-facing agenda only
+- CSM runs `/onboarding:kickoff-prep [account] --checklist` for the internal prep checklist only
 
 ---
 
@@ -325,6 +327,12 @@ Questions before we meet? Reach [CSM name] at [contact].
 > - **Before sending agenda:** Remove this reviewer note block. Confirm [Company Brand
 >   Name] appears correctly in the header. Confirm the M1 target date is accurate
 >   before the customer sees it.
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill
 
 ---
 

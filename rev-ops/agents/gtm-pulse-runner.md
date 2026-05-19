@@ -36,7 +36,7 @@ Weekly on Monday at 8:00 AM. Configurable in `../CLAUDE.md` → `pulse_schedule`
    markers, stop and surface: "This agent needs `rev-ops` configured before it can run.
    Use `/rev-ops:cold-start-interview` to complete setup."
 
-2. Dispatch the **Data Collector** subagent. Pass: full practice profile context
+2. Dispatch the **Data Collector** subagent. Pass: full company profile context
    including connector names, company name, primary segment, ARR, NRR, and growth
    target. Receive: structured five-section raw data payload with connector status
    and data freshness timestamps. Do not proceed until the Collector returns. If the

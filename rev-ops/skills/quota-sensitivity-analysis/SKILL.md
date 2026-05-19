@@ -34,7 +34,7 @@ Note from config: `ae_quota`, `ae_attainment_planning_rate`, `current_ae_count`
 - Full annual planning orchestration (use annual-planning-workflow)
 - Comp plan modeling (use comp-simulation)
 
-## Typical activation
+## Typical Activation
 "How sensitive is quota to win rate?", "quota sensitivity analysis", "what happens to attainment if ACV drops 10%", "sensitivity test the plan"
 
 **Reference:** UoG formulas → `../../../shared/revops-domain-model.md §5`
@@ -55,7 +55,7 @@ Before generating output, apply these primers:
 
 2. **CONSTRAINTS**: What limits the solution space?
    1. Confirm activation — user asking about quota modeling, achievability, or attainment scenarios
-   2. Read UoG-confirmed inputs from practice profile or `annual-planning-workflow` Phase 2 output
+   2. Read UoG-confirmed inputs from company profile or `annual-planning-workflow` Phase 2 output
    3. Apply G2 — quota model output is a structural input; quota decisions require leadership approval before finalization
    4. Apply G3 — if quota model output changes OTE or comp structure, HR + Finance dual review required
    5. Apply G1 — revenue projections in scenario table require forecast language qualification
@@ -84,17 +84,18 @@ Before generating output, apply these primers:
 - G2 qualifier present — quota decisions require leadership approval
 - G3 evaluated — if derived quota differs from profile `ae_quota`, dual review flag surfaced
 - All inputs labeled as `[UoG confirmed]` or `[Estimated]` as appropriate
-- Confidence: High when all inputs are UoG-confirmed from Phase 2; Moderate when any input is estimated or practice profile only
+- Confidence: High when all inputs are UoG-confirmed from Phase 2; Moderate when any input is estimated or company profile only
+    - Confidence: [High] when all inputs are UoG-confirmed from Phase 2 / [Medium] when any input is estimated or company profile only / [Low] if all inputs are manual or unverified
 
 ---
 
 ## Workflow
 
 ```
-From UoG (practice profile or Phase 2 output):
+From UoG (company profile or Phase 2 output):
   ae_required      = confirmed from selected scenario
   new_arr_target   = confirmed from selected scenario
-  ae_quota         = from practice profile
+  ae_quota         = from company profile
 
 Per-rep quota = new_arr_target ÷ ae_required
 
@@ -117,7 +118,7 @@ Structural achievability flag:
 
 ```
 QUOTA SENSITIVITY ANALYSIS [DRAFT]
-[Practice profile] [Confidence: High if UoG confirmed / Moderate if estimated]
+[Company profile] [Confidence: High if UoG confirmed / Moderate if estimated]
 
 Confirmed inputs:
   AEs required (selected scenario): N

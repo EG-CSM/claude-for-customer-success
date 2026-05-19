@@ -1,16 +1,16 @@
 # cs-ops.cold-start-interview
 
-Configures the CS-Ops plugin by collecting team structure, segmentation model, health model parameters, reporting cadence, and connector status. Writes the cs-ops CLAUDE.md practice profile consumed by all other cs-ops skills.
+Configures the CS-Ops plugin by collecting team structure, segmentation model, health model parameters, reporting cadence, and connector status. Writes the cs-ops CLAUDE.md company profile consumed by all other cs-ops skills.
 
 ## Use it for
 
 - First-time cs-ops plugin setup
-- Full practice profile rebuild after major org changes
+- Full company profile rebuild after major org changes
 - Section-specific updates via --section flag
 
 ## Don't use it for
 
-- CSM-specific practice profiles (use csm.cold-start-interview)
+- CSM-specific company profiles (use csm.cold-start-interview)
 - Onboarding or renewals configuration
 
 ## How to trigger it
@@ -24,7 +24,7 @@ Say something like:
 
 ## What you get
 
-- cs-ops/CLAUDE.md practice profile
+- cs-ops/CLAUDE.md company profile
 
 ## Governance
 

@@ -34,7 +34,7 @@ Extract the contract terms that govern this renewal before the negotiation start
 - Accounts where no executed contract is available — flag outputs `[Low Confidence]` and obtain the document before any commercial decision
 - Price increase analysis — always run contract-review first to surface any price cap, then proceed to `/renewals:price-increase-prep`
 
-## Typical activation
+## Typical Activation
 > `/renewals:contract-review Meridian Health` — full extraction of all renewal-relevant terms for a named account
 > `/renewals:contract-review Meridian Health --flag` — targeted pass: deviations from standard terms and Legal-routing clauses only
 > `/renewals:contract-review Meridian Health --summary` — two-page executive summary of key dates, price constraints, and top 3 risks for a pre-call quick reference
@@ -98,6 +98,7 @@ Before generating output, apply these primers:
 - Are all red-flag clauses routed to Legal with specific clause references, not generic routing?
 - Are all date-sensitive obligations converted to specific calendar dates with days-remaining counts?
 - Confidence: [Verified] if pulled from contract system and cross-referenced / [Moderate] if uploaded document, version unconfirmed / [Low Confidence] if working from notes or verbal accounts — state which and why.
+    - Confidence: [High] when executed contract confirmed and cross-referenced / [Medium] when uploaded document with unconfirmed version / [Low] if working from notes or verbal accounts
 
 ## This Skill vs. Other Renewals Skills
 
@@ -527,3 +528,9 @@ call.
 about a non-standard clause during the renewal, the response is: "Let me confirm
 the details with our team and come back to you." Do not improvise contract
 interpretation on a live call.
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill

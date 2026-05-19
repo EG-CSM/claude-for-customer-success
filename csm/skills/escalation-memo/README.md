@@ -11,7 +11,7 @@ Manages the full escalation lifecycle — opening, updating, and closing escalat
 ## Don't use it for
 
 - Churn risk assessment (use renewals.risk-assessment)
-- Escalation routing decisions (governed by practice profile matrix)
+- Escalation routing decisions (governed by company profile matrix)
 
 ## How to trigger it
 

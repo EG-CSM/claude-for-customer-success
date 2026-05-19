@@ -9,7 +9,7 @@
 
 Brings AI-native intelligence to the full renewal cycle: risk assessment, expansion signal detection, renewal forecasting, negotiation prep, price increase planning, churn analysis, and executive renewal summaries.
 
-Every skill reads your configured practice profile — your pricing structure, your discount authority, your churn signals, your escalation chain — so outputs are calibrated to your actual book of business, not a generic renewals template.
+Every skill reads your configured company profile — your pricing structure, your discount authority, your churn signals, your escalation chain — so outputs are calibrated to your actual book of business, not a generic renewals template.
 
 ---
 
@@ -31,7 +31,7 @@ Takes 2 minutes for quick start (role + integrations + defaults) or 15 minutes f
 
 | Skill | What it does | Typical use |
 |-------|-------------|-------------|
-| `cold-start-interview` | Setup interview — configures your practice profile | First install; re-run with `--redo` to update |
+| `cold-start-interview` | Setup interview — configures your company profile | First install; re-run with `--redo` to update |
 | `renewal-forecast` | Build a weighted renewal forecast with scenario modeling | Monthly/quarterly forecast; pipeline reviews |
 | `risk-assessment` | Structured churn risk assessment for a specific account | 90/60/30-day outreach windows; red account review |
 | `expansion-signal` | Identify and qualify expansion signals in an account | Pre-renewal; QBR prep; post-adoption milestone |
@@ -40,7 +40,7 @@ Takes 2 minutes for quick start (role + integrations + defaults) or 15 minutes f
 | `churn-analysis` | Root cause analysis of churn or contraction in a closed account | Win/loss review; portfolio retrospective |
 | `executive-summary` | Executive-ready renewal summary for a strategic account | CRO/board update; strategic account review |
 | `contract-review` | Extract and flag renewal-relevant terms from a contract | Before renewal conversation; redline review |
-| `customize` | Update practice profile mid-session | When pricing, portfolio, or team structure changes |
+| `customize` | Update company profile mid-session | When pricing, portfolio, or team structure changes |
 
 ---
 
@@ -76,7 +76,7 @@ These apply to every skill in this plugin and cannot be overridden:
 
 ## Configuration
 
-Your practice profile lives at:
+Your company profile lives at:
 ```
 ~/.claude/plugins/config/claude-for-customer-success/renewals/CLAUDE.md
 ```

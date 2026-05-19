@@ -104,7 +104,7 @@ Load ratio: [X]% of target. Hiring window: [N]+ weeks.
 ## What this agent does NOT do
 
 - Make or recommend specific hiring decisions — it surfaces the math; leadership decides
-- Query HubSpot or the CS platform directly — all inputs come from the practice profile
+- Query HubSpot or the CS platform directly — all inputs come from the company profile
 - Post to Slack on green-state runs — file log only when no threshold is crossed
 - Fabricate UoG baseline data when the file is absent — it degrades confidence band instead
 - Modify any records in any connected system

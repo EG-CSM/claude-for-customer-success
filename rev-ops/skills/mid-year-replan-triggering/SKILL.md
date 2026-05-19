@@ -40,7 +40,7 @@ Note from config: `uog_baseline_path`, `target_growth_pct`, `current_csm_count`
 - Forecast variance analysis in isolation (use forecast-variance-analysis)
 - Scenario modeling for a replan (use scenario-modeling after trigger fires)
 
-## Typical activation
+## Typical Activation
 "Should we replan?", "mid-year replan", "replan trigger assessment", "are we off plan enough to replan", "evaluate replan criteria"
 
 ---
@@ -84,9 +84,10 @@ Before generating output, apply these primers:
 **After execution**, verify:
 - G1 qualification present on all year-end projections and forward-looking outputs
 - G2 qualifier present if headcount signal appears in output
-- G6 data-as-of label applied to all HubSpot and practice profile reads
+- G6 data-as-of label applied to all HubSpot and company profile reads
 - Replan recommendation tied to named firing trigger(s) with supporting delta
 - Confidence: High when HubSpot connected and baseline present; Moderate when data stale or baseline absent (reporting mode)
+    - Confidence: [High] when HubSpot connected and baseline present / [Medium] when data stale or baseline absent (reporting mode) / [Low] if all inputs are manual or unverified
 
 ---
 

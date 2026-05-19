@@ -34,7 +34,7 @@ commercial posture.
 - Real-time negotiation coaching during a live customer call
 - Price increase notifications — use `/renewals:price-increase-prep` for structured price increase communication
 
-## Typical activation
+## Typical Activation
 > `/renewals:negotiation-prep Acme Corp` — full negotiation brief for a named account
 > `/renewals:negotiation-prep Acme Corp --brief` — condensed brief: anchor, walk-away, top 3 objections, and discount authority check only
 > `/renewals:negotiation-prep Acme Corp --export` — customer-facing renewal proposal with all internal positioning suppressed
@@ -50,7 +50,7 @@ Read both configuration files before preparing any negotiation brief:
 If either file is missing or contains `[PLACEHOLDER]` markers in the pricing,
 discount authority, or escalation fields, stop:
 
-> "Your renewals practice profile isn't configured for negotiation prep — discount
+> "Your renewals company profile isn't configured for negotiation prep — discount
 > authority, pricing model, and escalation matrix are required. Run
 > `/renewals:cold-start-interview` to configure these fields. Proceeding without
 > them means the brief cannot validate whether proposed offers require approval."
@@ -121,6 +121,25 @@ only: proposed renewal terms, value summary, and next steps. Safe to share.
 
 > ⚠️ `--export` mode output does NOT include any internal brief content.
 > Review the brief first, then generate the export separately.
+
+### Timing guidance
+
+| Mode | Recommended lead time | Reason |
+|------|-----------------------|--------|
+| `--full` | 7–14 days before the call | Leaves time to research competitive signals, run escalation approvals if needed, and validate the stakeholder map |
+| `--brief` | 24–48 hours before the call | Core numbers and top objections; narrow window for escalation approvals |
+| `--export` | After brief is reviewed and approved | Never generate export before the internal brief is complete — suppression cannot be reversed |
+
+### Commercial context
+
+Generate a negotiation brief when one or more commercial signals are present:
+- ARR at stake warrants structured preparation (any account with material contraction or churn risk)
+- A discount or concession is under consideration — requires authority validation before the call
+- Competitive displacement has been signaled (call recordings, CRM notes, or direct customer statement)
+- A price increase applies and the customer has not yet acknowledged it
+- The renewal is within 30 days and no commercial posture has been established
+
+For routine renewals with no pressure signals, no pricing change, and no concession in play, a brief may be unnecessary — a pre-call review of the account record in CRM may suffice.
 
 ---
 
@@ -226,7 +245,7 @@ Validate every offer scenario against the configured ceiling before the call.
 > Obtain approval before the call, not after.
 
 If no discount authority is configured:
-> "Discount authority is not configured in your practice profile. Run
+> "Discount authority is not configured in your company profile. Run
 > `/renewals:cold-start-interview --section pricing` to define it. Until
 > configured, this field will not flag authority breaches."
 
@@ -299,7 +318,7 @@ champion mentions "evaluation"; procurement involved earlier than usual.
 
 > Internal note: [if specific competitor intelligence is configured, reference
 > it here. If not: "No competitive intelligence is configured for this competitor
-> in your practice profile. Run `/renewals:cold-start-interview --section
+> in your company profile. Run `/renewals:cold-start-interview --section
 > churn-signals` to add competitive displacement patterns."]
 
 ---
@@ -538,3 +557,9 @@ before responding. Do not improvise contract language on a renewal call.
 in-negotiation projection, not a closed-won revenue commitment. Flag any scenario
 table with `[review — not yet a revenue commitment]` if it will be shared with
 leadership before the deal is signed.
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill

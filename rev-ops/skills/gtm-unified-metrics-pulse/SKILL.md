@@ -41,7 +41,7 @@ Note from config: `slack_connected`, `linear_connected`, `cs_platform_connected`
 - Revenue brief for a single function (use revenue-brief-generation)
 - Pipeline analysis in isolation (use pipeline-coverage-analysis)
 
-## Typical activation
+## Typical Activation
 "GTM metrics pulse", "unified metrics brief", "GTM health check", "cross-functional metrics report", "weekly GTM pulse"
 
 ---
@@ -88,6 +88,7 @@ Before generating output, apply these primers:
 - G7 escalation path with named owner present on every Section 4 churn flag
 - Slack destination confirmed for account-level data — #cs-leadership only
 - Confidence: High when all connectors are live and data is current; Moderate when any connector is unavailable or data is stale
+    - Confidence: [High] when all connectors are live and data is current / [Medium] when any connector is unavailable or data is stale / [Low] if all inputs are manual or unverified
 
 ---
 
@@ -132,7 +133,7 @@ Source: HubSpot + OCV catalog [CRM ✓ live]
 
 ### Section 3 — CS Capacity Signal
 ```
-Source: Practice profile + SA1 forecast [Practice profile]
+Source: Company profile + SA1 forecast [Company profile]
   CS headroom: XX%  [HEALTHY / AT-RISK / CRITICAL]
   At P50 forecast: CSMs needed [N], in seat [N], gap [+N/-N]
   Hiring lead time flag: [if applicable]

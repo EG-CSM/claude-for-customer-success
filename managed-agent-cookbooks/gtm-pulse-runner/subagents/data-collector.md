@@ -100,7 +100,7 @@ Aggregate counts only — no account names in Section 5:
 | HubSpot partial (pipeline but no closed-won) | Section 2 incomplete | Return what's available; mark gap: "closed_won_unavailable" |
 | CS platform unavailable | Section 4 cannot be populated | Return `"status": "unavailable"` for Section 4; set connector_status.cs_platform = "unavailable" |
 | CS platform missing health trend | Section 4 Tier 3 incomplete | Return available signals; mark gap: "health_trend_unavailable" |
-| Win rate not available | Coverage ratio uses fallback | Use 25% as fallback win rate; label `[Win rate: fallback 25% — configure in practice profile]` |
+| Win rate not available | Coverage ratio uses fallback | Use 25% as fallback win rate; label `[Win rate: fallback 25% — configure in company profile]` |
 
 ---
 

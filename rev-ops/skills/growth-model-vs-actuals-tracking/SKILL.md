@@ -42,7 +42,7 @@ Note from config: `uog_baseline_path`, `nrr_current`, `cs_platform_connected`
 - Forecast variance root cause (use forecast-variance-analysis)
 - Annual plan replanning trigger (use mid-year-replan-triggering)
 
-## Typical activation
+## Typical Activation
 "Growth model vs actuals", "how are we tracking against the model", "growth model attainment", "actuals vs growth plan for [period]"
 
 ---
@@ -88,6 +88,7 @@ Before generating output, apply these primers:
 - G6 data-as-of label applied to all CRM and CS platform reads
 - CS-owned vector accountability correctly routed to CS leadership + RevOps
 - Confidence: High when both CRM and CS platform are connected and baseline is present; Moderate when data is stale or baseline is absent (reporting mode)
+    - Confidence: [High] when both CRM and CS platform are connected and baseline is present / [Medium] when data is stale or baseline is absent (reporting mode) / [Low] if all inputs are manual or unverified
 
 ---
 

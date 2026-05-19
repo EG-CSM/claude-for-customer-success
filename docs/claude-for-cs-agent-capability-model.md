@@ -13,7 +13,7 @@ This model describes what the `claude-for-customer-success` agentic system can d
 
 The system operates across five primary plugins — **csm**, **renewals**, **onboarding**, **cs-ops**, and **rev-ops** — with supporting capability provided by sales, marketing, customer-support, data, and operations plugins. The **Outcome & Value Catalog (OCV)** is not a plugin; it is an artifact produced by `rev-ops:outcome-statement-builder` and consumed by downstream skills (particularly `rev-ops:outcome-to-value-tracking`) that require a validated outcome library for value evidence scoring and tracking.
 
-All skills execute against a practice profile (CLAUDE.md + company-profile.md) pre-flight, giving them account and organizational context without requiring explicit input on every call.
+All skills execute against a company profile (CLAUDE.md + company-profile.md) pre-flight, giving them account and organizational context without requiring explicit input on every call.
 
 ---
 
@@ -281,11 +281,11 @@ Rev-ops adds 34 skills across portfolio intelligence, forecasting, pipeline heal
 
 ## System Architecture Notes
 
-**Practice profile pre-flight:** All skills read CLAUDE.md + company-profile.md before executing. This means account context, product terminology, and organizational conventions are injected without requiring explicit user input on every skill invocation. Skills behave as informed colleagues, not generic assistants.
+**Company profile pre-flight:** All skills read CLAUDE.md + company-profile.md before executing. This means account context, product terminology, and organizational conventions are injected without requiring explicit user input on every skill invocation. Skills behave as informed colleagues, not generic assistants.
 
 **Five-plugin architecture:** The system's primary execution capability lives in csm, renewals, onboarding, cs-ops, and rev-ops. Rev-ops operates as the portfolio intelligence and organizational infrastructure layer — it provides revenue analytics, capacity modeling, and CRM data quality functions that span the full lifecycle, rather than per-account execution (that's csm/renewals/onboarding/cs-ops). Supporting capability from sales, marketing, customer-support, data, and operations plugins extends into gaps at Stage 4 (expansion selling), Stage 6 (advocacy/content), and Stage 7 (post-churn documentation).
 
-**Outcome & Value Catalog (OCV):** The OCV is not a plugin. It is an artifact produced by `rev-ops:outcome-statement-builder` — a registry of sold outcomes, with evidence quality scoring and value delivery tracking. Skills that need to validate value claims against committed outcomes (primarily `rev-ops:outcome-to-value-tracking`) consume the OCV catalog path stored in the practice profile. The OCV enables the system to distinguish between "we delivered something valuable" and "we delivered the specific outcome the customer paid for."
+**Outcome & Value Catalog (OCV):** The OCV is not a plugin. It is an artifact produced by `rev-ops:outcome-statement-builder` — a registry of sold outcomes, with evidence quality scoring and value delivery tracking. Skills that need to validate value claims against committed outcomes (primarily `rev-ops:outcome-to-value-tracking`) consume the OCV catalog path stored in the company profile. The OCV enables the system to distinguish between "we delivered something valuable" and "we delivered the specific outcome the customer paid for."
 
 **Cold start coverage:** All five primary plugins carry a `cold-start-interview` skill variant. When account data is sparse, cold-start produces a profile that seeds downstream skills. Particularly important at Stage 0 and for net-new expansion accounts.
 

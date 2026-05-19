@@ -40,7 +40,7 @@ Note from config: `avg_deal_acv`, `primary_segment`
 - ARR classification decisions (use deal-classification)
 - Deal health or risk scoring (use deal-health-scoring)
 
-## Typical activation
+## Typical Activation
 "Revenue leakage scan", "are we leaving money on the table", "missing expansion clause", "mispriced services", "deal structure review for [account]"
 
 ---
@@ -91,6 +91,7 @@ Before generating output, apply these primers:
 - Deal stage confirmed — action window status declared (open / closed)
 - Leakage findings prioritized by estimated ARR impact
 - Confidence: High when HubSpot connected and deal structure fields complete; Moderate when fields missing or deal is post-close
+    - Confidence: [High] when HubSpot connected and deal structure fields complete / [Medium] when fields missing or deal is post-close / [Low] if all inputs are manual or unverified
 
 ---
 

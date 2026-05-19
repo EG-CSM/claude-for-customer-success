@@ -32,7 +32,7 @@ Strategic account renewal summary calibrated for executive audiences.
 - Risk scoring without a specific account in hand — use `/renewals:risk-assessment` first
 - Accounts that do not meet your configured strategic account threshold (deal size or segment)
 
-## Typical activation
+## Typical Activation
 > `/renewals:executive-summary Acme Corp` — full internal executive summary for a named strategic account
 > `/renewals:executive-summary Acme Corp --brief` — condensed brief: commercial status, risk tier, and recommended executive action only
 > `/renewals:executive-summary Acme Corp --board` — board-format version with anonymization if account identity is not authorized for external sharing
@@ -49,7 +49,7 @@ If either file is missing or contains `[PLACEHOLDER]` markers in fields this
 skill requires (GRR/NRR targets, customer segments, escalation matrix,
 company name, executive contacts), stop:
 
-> "Your renewals practice profile isn't configured — specifically the company
+> "Your renewals company profile isn't configured — specifically the company
 > profile and executive contact fields. Run `/renewals:cold-start-interview`
 > to configure these. An executive summary built without your actual targets
 > and company context will require significant manual editing before it's
@@ -437,3 +437,9 @@ for executive sponsorship — it routes to Head of CS, CRO, or CEO depending
 on the situation. It does not route to peers or AE partners (those requests
 go through standard channels). Confirm the escalation path with the configured
 escalation matrix before sending.
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill

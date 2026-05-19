@@ -26,6 +26,7 @@ deployment_target: plugin
 - Replacing call-prep — use /csm:call-prep after health review for the full pre-call brief
 - Generating the escalation memo — use /csm:escalation-memo once risk is confirmed
 - Portfolio reporting for leadership — this skill is CSM-facing, not exec-facing
+- Producing the structured risk memo or determining escalation routing once health review confirms an at-risk classification — use /csm:risk-flag
 
 ## Typical Activation
 "/csm:health-score-review Acme Corp"
@@ -165,7 +166,7 @@ If CRM is not connected:
 *Threshold applied: Red = [configured], Yellow = [configured]*
 
 If no CS Platform configured and components are not defined: use the manual
-signal prompts from the practice profile (what signals make you worried).
+signal prompts from the company profile (what signals make you worried).
 Classify as [At Risk / Watch / Healthy] based on signals present.
 
 ---
@@ -358,6 +359,7 @@ The following reference files govern this skill's detailed behavior. They are lo
 ## Security & Permissions
 - network_access: outbound_allowlist (CS platform, CRM, call recording tool per configured integrations)
 - filesystem_write: false
+- filesystem_read: config files only (~/.claude/plugins/config/claude-for-customer-success/csm/CLAUDE.md and company-profile.md)
 - subprocess_execution: false
 - dynamic_code_execution: false
 

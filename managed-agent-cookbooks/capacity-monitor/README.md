@@ -11,7 +11,7 @@ before capacity is breached.
 
 ## What This Agent Does
 
-1. Reads the practice profile from `~/.cs-agent/practice-profile.json`
+1. Reads the company profile from `~/.cs-agent/practice-profile.json`
 2. Pulls closed-won QTD actuals from HubSpot (live connector)
 3. Loads the Unit of Growth baseline file if configured
 4. Computes the CS capacity model: max supportable ARR, headroom %, CSMs required, hire-by date
@@ -55,7 +55,7 @@ Principle of least privilege: capacity-reporter has zero filesystem access. It f
 
 Before running for the first time:
 
-- [ ] `rev-ops cold-start` complete — practice profile written to `~/.cs-agent/practice-profile.json`
+- [ ] `rev-ops cold-start` complete — company profile written to `~/.cs-agent/practice-profile.json`
 - [ ] Required profile fields present: `current_arr`, `arr_per_csm`, `current_csm_count`
 - [ ] HubSpot MCP connected (for closed-won QTD actuals; degrades to Low confidence if absent)
 - [ ] Slack MCP connected (alerts delivered in-session if Slack unavailable)
@@ -73,7 +73,7 @@ Before running for the first time:
 
 ---
 
-## Practice Profile Fields (capacity-monitor consumes)
+## Company Profile Fields (capacity-monitor consumes)
 
 | Field | Type | Required | Description |
 |---|---|---|---|
@@ -143,7 +143,7 @@ Hire-by Date         = today − csm_avg_ramp_days
 ```
 Run /rev-ops:capacity-monitor
 ```
-Reads practice profile, pulls HubSpot, posts live alert to Slack.
+Reads company profile, pulls HubSpot, posts live alert to Slack.
 
 ### Preview Mode
 ```
@@ -335,6 +335,6 @@ Run at:        2026-05-15T09:00:00Z
 | `rev-ops/reference/revops-domain-model.md` | Canonical capacity model formulas and threshold definitions |
 | `rev-ops/skills/closed-won-to-cs-capacity-modeling/SKILL.md` | Skill invoked for standalone capacity analysis |
 | `rev-ops/skills/unit-of-growth-calculator/SKILL.md` | UoG baseline computation (used as input to capacity model) |
-| `~/.cs-agent/practice-profile.json` | Practice profile written by cold-start; read by this agent |
-| `~/.cs-agent/uog-baseline.json` | UoG baseline (optional); path referenced in practice profile |
+| `~/.cs-agent/practice-profile.json` | Company profile written by cold-start; read by this agent |
+| `~/.cs-agent/uog-baseline.json` | UoG baseline (optional); path referenced in company profile |
 | `rev-ops/reference/token-economics.md` | Token budget details for all rev-ops managed agents |

@@ -21,7 +21,7 @@ Rules for every skill, command, and agent in this plugin:
    every plugin update. Never write user data here.
 -->
 
-# Renewals Practice Profile
+# Renewals Company Profile
 *Written by cold-start on [DATE]. If `[PLACEHOLDER]`, run `/renewals:cold-start-interview`.*
 
 ---
@@ -180,7 +180,7 @@ If you ask a renewals question that no skill covers, answer it using the shared 
 
 ## Ad-hoc renewals questions
 
-When you ask a question in this plugin's domain, I'll read the practice profile and company profile first:
+When you ask a question in this plugin's domain, I'll read the company profile and company profile first:
 
 - Apply your renewal motion, pricing structure, approval thresholds, and escalation chain
 - Apply the guardrails even without a formal skill running

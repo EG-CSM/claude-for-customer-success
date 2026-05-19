@@ -30,8 +30,8 @@ Say something like:
 
 ## Prerequisites
 
-- UoG-confirmed AE count and revenue target (from annual-planning-workflow Phase 2 or practice profile)
-- ae_quota from practice profile
+- UoG-confirmed AE count and revenue target (from annual-planning-workflow Phase 2 or company profile)
+- ae_quota from company profile
 - Historical attainment actuals (trailing 4Q) for achievability flag
 
 ## Governance

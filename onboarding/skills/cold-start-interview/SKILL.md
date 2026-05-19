@@ -1,7 +1,7 @@
 ---
 name: cold-start-interview
 description: >
-  First-time setup for your onboarding practice profile — collects your role,
+  First-time setup for your onboarding company profile — collects your role,
   onboarding model, segment configuration, TtV targets, milestone definitions,
   success criteria model, kickoff and handoff format, escalation matrix,
   integrations, and CS methodology preferences. Writes everything to your
@@ -15,9 +15,11 @@ deployment_target: plugin
 config_skill: true
 ---
 
+<!-- Status: [PROPOSED] -->
+
 # /onboarding:cold-start-interview
 
-First-time configuration for your onboarding practice profile.
+First-time configuration for your onboarding company profile.
 
 ---
 
@@ -59,12 +61,12 @@ If the company profile does not exist, run Section 1 as normal.
 - Making targeted edits to an existing config section (use `/onboarding:customize --update <section>`)
 - Running onboarding operations — this skill only generates configuration
 
-**Typical activation:**
+## Typical Activation
 - "Set up my onboarding config"
 - "I need to run the cold start interview"
 - "My config is outdated — redo it"
-- `/onboarding:cold-start-interview --full`
-- `/onboarding:cold-start-interview --section milestones`
+- CSM runs `/onboarding:cold-start-interview --full` for a complete first-time setup
+- CSM runs `/onboarding:cold-start-interview --section milestones` to update a specific config section
 
 ---
 
@@ -302,7 +304,7 @@ For each connected tool, confirm what data the onboarding skills can pull:
 After completing all sections (or the minimum for `--quick`), display a structured
 summary of what will be written:
 
-> "Here's your onboarding practice profile — review before I write it:
+> "Here's your onboarding company profile — review before I write it:
 >
 > **Role & model:** [role] · [model] · Segments: [list]
 > **Duration & TtV:** [by segment] · TtV target: [target]
@@ -333,6 +335,34 @@ If the file already exists and `--redo` was not specified:
 > "A configuration file already exists. Writing will overwrite the current profile.
 > Confirm to overwrite, or run `/onboarding:customize --section <name>` to update
 > a specific section only. Overwrite? (yes / no)"
+
+### Dual-write safety
+
+This protocol writes to two files: the onboarding config and (during Section 1 /
+`--redo-company-profile`) the shared company profile. Execute writes in order:
+
+1. **Write primary file first**: Write to
+   `~/.claude/plugins/config/claude-for-customer-success/onboarding/CLAUDE.md`
+2. **Confirm primary write succeeded**: Read back the written file and verify the
+   key fields are present before proceeding. If the read-back fails or the content
+   does not match what was written, stop immediately and surface:
+   > "⚠️ Write to onboarding/CLAUDE.md could not be confirmed. The secondary write
+   > to company-profile.md has NOT been attempted. Please check file permissions
+   > or disk space, then retry."
+3. **Write secondary file only after primary is confirmed**: Write to
+   `~/.claude/plugins/config/claude-for-customer-success/company-profile.md`
+   (Section 1 / `--redo-company-profile` only).
+4. **If secondary write fails**: Surface an explicit error immediately — do NOT
+   silently proceed:
+   > "⚠️ Write to company-profile.md failed after onboarding/CLAUDE.md was written
+   > successfully. The two files are now out of sync.
+   >
+   > What was written to onboarding/CLAUDE.md: [confirm success]
+   > What failed to write to company-profile.md:
+   > [paste the full company-profile content block here so you can apply it manually]
+   >
+   > To resolve: manually create or update company-profile.md with the content above,
+   > or run `/onboarding:cold-start-interview --redo-company-profile` to retry."
 
 After writing:
 > "Configuration written — [timestamp].
@@ -395,6 +425,12 @@ After collecting:
 > ttv-analysis (needs TtV measurement method), customize (needs full profile).
 >
 > Run `/onboarding:cold-start-interview --redo` to complete the full setup."
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill
 
 ---
 

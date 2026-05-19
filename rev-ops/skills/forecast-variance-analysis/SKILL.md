@@ -41,7 +41,7 @@ Note from config: `current_arr`, `primary_segment`, `crm_system`
 - Pipeline coverage adequacy (use pipeline-coverage-analysis)
 - Individual deal health (use deal-health-scoring)
 
-## Typical activation
+## Typical Activation
 "Forecast variance analysis", "why did we miss forecast", "actuals vs forecast for Q[N]", "variance decomposition", "forecast accuracy review"
 
 ---
@@ -86,6 +86,7 @@ Before generating output, apply these primers:
 - G1 qualification present on any forward-looking projection derived from variance analysis
 - G5 qualifier present: rep scorecard is analytical input; manager owns the coaching response
 - Confidence: High when HubSpot is connected and multi-quarter data is current; Moderate when data is stale or connector is unavailable
+    - Confidence: [High] when HubSpot is connected and multi-quarter data is current / [Medium] when data is stale or connector is unavailable / [Low] if all inputs are manual or unverified
 
 ---
 

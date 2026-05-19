@@ -22,7 +22,7 @@ and recommended play.
 
 ## Use when
 - You are at the 90-, 60-, or 30-day outreach window for a renewal account and need a structured signal read before engaging
-- A churn signal has been detected (login drop, NPS decline, executive sponsor departure, non-renewal notice) and the account needs immediate triage
+- A churn signal has been detected within the 90-day renewal window (login drop, NPS decline, executive sponsor departure, non-renewal notice) and the account needs immediate triage
 - You need to prioritize accounts before a pipeline review and want a preliminary risk tier for each
 - An account has been flagged by a health score alert and you need to decompose the score into actionable domain-level signals
 - You are preparing an escalation and need a structured risk brief for your Head of CS or AE partner
@@ -33,8 +33,9 @@ and recommended play.
 - Expansion opportunity identification — use `/renewals:expansion-signal`
 - Generating an executive-ready renewal brief — run this skill first, then use `/renewals:executive-summary` to translate the tier output
 - Batch pipeline forecasting without per-account triage — use `/renewals:renewal-forecast` for portfolio-level views
+- Churn signal triage outside the 90-day renewal window — use `/csm:risk-flag` for day-to-day risk assessment outside the renewal motion
 
-## Typical activation
+## Typical Activation
 > `/renewals:risk-assessment Acme Corp` — full signal aggregation across all five domains for a named account
 > `/renewals:risk-assessment Acme Corp --quick` — rapid three-domain pass for a time-pressured single account read
 > `/renewals:risk-assessment --triage` — multi-account triage mode; provide a list of account names or ARR figures for ranked preliminary tier assignment
@@ -50,7 +51,7 @@ Read both configuration files before assessing any account:
 If either file is missing or contains `[PLACEHOLDER]` markers in churn-signal fields,
 stop:
 
-> "Your renewals practice profile isn't configured yet — specifically the churn signal
+> "Your renewals company profile isn't configured yet — specifically the churn signal
 > definitions and escalation matrix. Run `/renewals:cold-start-interview` to configure
 > these fields. Risk assessment without your defined signals will use generic defaults
 > that may not match your product or motion."
@@ -422,3 +423,9 @@ output — is the recipient authorized to see this account's renewal data?
 
 **Data freshness.** State data-as-of for every source. CRM data older than 7 days
 triggers a freshness warning before the tier assignment.
+
+---
+
+## Reference Files
+
+- `references/reasoning-blueprint.md` — reasoning framework for this skill

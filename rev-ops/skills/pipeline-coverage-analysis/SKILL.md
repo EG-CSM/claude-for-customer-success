@@ -15,7 +15,7 @@ a missed quarter. Coverage threshold is always derived from win rate — never a
 universal 3x rule.
 
 **Reference:** Coverage thresholds → `../../../shared/revops-domain-model.md §7`
-**Config reads:** `win_rate` (user-provided or practice profile), `current_arr`,
+**Config reads:** `win_rate` (user-provided or company profile), `current_arr`,
 `target_growth_pct`, `nrr_current`
 
 ---
@@ -42,8 +42,8 @@ Note from config: `win_rate`, `current_arr`, `target_growth_pct`, `nrr_current`
 - Pipeline velocity or stage conversion analysis (use pipeline-velocity-tracking)
 - Full forecast number generation (use forecast-variance-analysis)
 
-## Typical activation
-"Pipeline coverage analysis", "do we have enough pipeline?", "coverage ratio for Q[N]", "pipeline vs quota for [rep/team]", "coverage check"
+## Typical Activation
+"Pipeline coverage analysis", "do we have enough pipeline?", "coverage ratio for Q[N]", "pipeline vs quota for [rep/team]"
 
 ---
 
@@ -60,7 +60,7 @@ Before generating output, apply these primers:
 2. **CONSTRAINTS**: What limits the solution space?
    1. Confirm activation — user asking about coverage, pipeline sufficiency, or quarter risk
    2. Check HubSpot connector for pipeline data; declare fallback if unavailable
-   3. Read practice profile for win rate, target growth, segment definition
+   3. Read company profile for win rate, target growth, segment definition
    4. Apply G6 — data-as-of timestamp required on all pipeline figures
    5. Apply G1 — coverage output for leadership or board requires forecast language qualification
    6. Apply G5 — coverage ratio is a structural signal; Sales leadership owns the response
@@ -89,15 +89,16 @@ Before generating output, apply these primers:
 - G6 data-as-of label applied to all pipeline figures from HubSpot
 - Coverage threshold derivation declared — win rate source named and labeled
 - Confidence: High when HubSpot is connected and data is current; Moderate when data is stale, win rate is assumed, or connector is unavailable
+    - Confidence: [High] when HubSpot is connected and data is current / [Medium] when data is stale, win rate is assumed, or connector is unavailable / [Low] if all inputs are manual or unverified
 
 ---
 
 ## Inputs
 
-Required (from practice profile or user):
+Required (from company profile or user):
 - Current pipeline value by stage (from HubSpot or user-provided)
-- Win rate (practice profile or user-stated)
-- New ARR target (derived from practice profile or user-provided)
+- Win rate (company profile or user-stated)
+- New ARR target (derived from company profile or user-provided)
 
 Optional:
 - Segment filter, rep filter, quarter filter
@@ -111,7 +112,7 @@ Optional:
 Required Coverage = 1 ÷ Win Rate  [revops-domain-model.md §4]
 Pipeline Target   = New ARR Target × Required Coverage
 ```
-State the win rate used and its source `[Practice profile]` or `[User provided]`.
+State the win rate used and its source `[Company profile]` or `[User provided]`.
 
 **Step 2 — Calculate current coverage by segment**
 Pull open pipeline from HubSpot filtered to current quarter close dates.

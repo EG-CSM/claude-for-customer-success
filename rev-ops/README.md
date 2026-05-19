@@ -167,7 +167,7 @@ If another C4CS plugin is already installed, cold-start reads your existing
 ```
 ~/.claude/plugins/config/claude-for-customer-success/
 ├── company-profile.md              # Shared — written by first C4CS plugin cold-start
-└── rev-ops/CLAUDE.md               # Rev-ops practice profile — written by cold-start
+└── rev-ops/CLAUDE.md               # Rev-ops company profile — written by cold-start
 ```
 
 ## Changelog
