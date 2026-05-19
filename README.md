@@ -927,6 +927,8 @@ Copyright 2026 SuccessCOACHING. Licensed under the [Apache License, Version 2.0]
 
 ## Disclaimer
 
+**Independent project — not affiliated with Anthropic PBC.** This is an independent open-source project. It is not affiliated with, endorsed by, sponsored by, or approved by Anthropic PBC. "Claude" is a trademark of Anthropic PBC; its use here is solely to identify the underlying AI model platform on which these plugins and agents are designed to operate. The name "Claude for Customer Success" does not imply any association with, endorsement by, or approval from Anthropic PBC. The views, methodologies, frameworks, and content expressed in this repository are those of SuccessCOACHING and its contributors and do not represent the views of Anthropic PBC.
+
 This repository — including all skills, plugins, managed agent cookbooks, commands, Claude Code hooks, MCP configurations, and accompanying documentation — is provided for **demonstration and educational purposes only**. It is a reference implementation, not a production-ready deployment.
 
 **Skills and plugins.** The 81 skills and six plugins in this suite illustrate patterns and possibilities for AI-enabled Customer Success. While the capabilities they describe may be available in Claude, the specific behaviors you observe will vary based on the Claude model version, the connectors you have installed, the quality and completeness of your CRM and tooling data, and how your organization's context differs from the assumptions encoded in each skill. Skill outputs should be reviewed by a qualified practitioner before any consequential action is taken.
