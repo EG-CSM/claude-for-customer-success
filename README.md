@@ -6,7 +6,7 @@ Six Claude Code/Claude Cowork plugins covering every function in a modern CS org
 
 > New here? Start with **[QUICKSTART.md](./QUICKSTART.md)** — install in 60 seconds. This README is the full reference.
 
-Everything here is available two ways from one source: install it as a **[Claude Cowork](https://claude.com/product/cowork)** or **[Claude Code](https://claude.com/product/claude-code)** plugin, or deploy it through the **[Claude Managed Agents API](https://docs.claude.com/en/api/managed-agents)** behind your own workflow engine. Same system prompt, same skills — you choose where it runs.
+Everything here is available two ways from one source: install it as a **[Claude Cowork](https://claude.com/product/cowork)** or **[Claude Code](https://claude.com/product/claude-code)** plugin, or deploy it through the **[Claude Managed Agents API](https://platform.claude.com/docs/en/managed-agents/overview)** behind your own workflow engine. Same system prompt, same skills — you choose where it runs.
 
 ---
 
