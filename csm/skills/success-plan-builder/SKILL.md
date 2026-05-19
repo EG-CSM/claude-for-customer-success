@@ -22,7 +22,7 @@ deployment_target: plugin
 - Executive sponsor has changed and the plan needs to be refreshed for the new stakeholder
 - The organization does not use the OCV (Outcome-to-Customer Value) system, or the OCV canvas format is not applicable to this account or engagement
 
-**Upstream dependency:** Before building a success plan for a new engagement, run `/onboarding:success-criteria` to define the 3–5 success criteria that form the plan's foundation.
+**Upstream dependency:** Before building a success plan for a new engagement, define the 3–5 success criteria that form the plan's foundation using the Onboarding plugin's success-criteria skill (if the `onboarding` plugin is installed, run `/onboarding:success-criteria`).
 
 ## Do NOT Use For
 - The structured success plan canvas format — use /csm:success-plan-canvas for OCV-aligned canvas output

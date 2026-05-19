@@ -39,7 +39,7 @@ substitute for cross-functional revenue narratives that span Sales, CS, and fina
 - Configuring which metrics are tracked (use `/cs-ops:customize --section reporting`)
 - At-risk triage (use `/cs-ops:segment-analyzer --at-risk`)
 - Cross-functional executive revenue narratives that include Sales pipeline, forecast,
-  and CS vectors in a single brief (use `/rev-ops:revenue-brief-generation`)
+  and CS vectors in a single brief (use the Rev-Ops plugin's revenue-brief-generation skill; if the `rev-ops` plugin is installed, run `/rev-ops:revenue-brief-generation`)
 
 ## Typical Activation
 

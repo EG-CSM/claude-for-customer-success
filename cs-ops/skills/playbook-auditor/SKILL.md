@@ -5,8 +5,9 @@ description: >
   measurability, play adoption rates, and dead plays. Use quarterly or when
   churn patterns suggest the playbook is missing key scenarios. Produces an
   ops-level playbook assessment with specific gap and improvement recommendations.
-  Distinct from /csm:taro-play-runner which executes individual plays; this skill
-  evaluates whether the right plays exist and whether they are working.
+  Distinct from the CSM plugin's taro-play-runner skill (which executes
+  individual plays); this skill evaluates whether the right plays exist
+  and whether they are working.
 argument-hint: "[--full | --coverage | --adoption | --dead-plays | --play <play-name>]"
 version: "1.0.0"
 deployment_target: plugin
@@ -35,7 +36,7 @@ Is the playbook complete, specific, and actually being used?
 
 ## Do NOT use for
 
-- Individual play execution or CSM coaching on play steps (use `/csm:taro-play-runner`)
+- Individual play execution or CSM coaching on play steps (use the CSM plugin's taro-play-runner skill; if the `csm` plugin is installed, run `/csm:taro-play-runner`)
 - Creating or updating plays in config (use `/cs-ops:customize --section playbook`)
 - Generating the playbook governance framework document
   (use `/cs-ops:process-doc --playbook-governance`)
@@ -511,7 +512,7 @@ get explicit sign-off.
 
 ## After the audit
 
-- "Coverage gaps confirmed — build the missing plays: `/csm:taro-play-runner --build`"
+- "Coverage gaps confirmed — build the missing plays using the CSM plugin's taro-play-runner skill (if the `csm` plugin is installed, run `/csm:taro-play-runner --build`)"
 - "Adoption data shows CSM variance — check capacity context: `/cs-ops:capacity-planner`"
 - "Trigger vagueness identified — update playbook config: `/cs-ops:customize --section playbook`"
 - "Dead plays confirmed for archival — document the decision: `/cs-ops:process-doc --playbook-governance`"

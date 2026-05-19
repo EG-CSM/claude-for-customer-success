@@ -6,7 +6,8 @@ description: >
   assessment. Use quarterly or when churn patterns diverge from health
   classifications. Produces an ops-level health model assessment with
   calibration recommendations, not account-level health reviews (use
-  /csm:health-score-review for individual accounts).
+  the CSM plugin's health-score-review skill for individual accounts;
+  if the `csm` plugin is installed, run `/csm:health-score-review`).
 argument-hint: "[--distribution | --calibration | --component-audit | --full]"
 version: "1.0.0"
 deployment_target: plugin
@@ -34,7 +35,7 @@ churn, or does it just classify accounts?
 
 ## Do NOT use for
 
-- Individual account health reviews (use `/csm:health-score-review`)
+- Individual account health reviews (use the CSM plugin's health-score-review skill; if the `csm` plugin is installed, run `/csm:health-score-review`)
 - Updating health model thresholds in config (use `/cs-ops:customize --section health`)
 - Pulling the current portfolio health snapshot for a weekly report
   (use `/cs-ops:metric-dashboard --weekly` for lightweight distribution view)

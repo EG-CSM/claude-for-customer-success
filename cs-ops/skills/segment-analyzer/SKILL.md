@@ -33,7 +33,7 @@ and where motion-to-segment fit is breaking down.
 ## Do NOT use for
 
 - Portfolio-wide health model calibration (use `/cs-ops:health-model-review`)
-- Individual account health reviews (use `/csm:health-score-review`)
+- Individual account health reviews (use the CSM plugin's health-score-review skill; if the `csm` plugin is installed, run `/csm:health-score-review`)
 - CSM capacity load analysis (use `/cs-ops:capacity-planner`)
 - Updating segment definitions in config (use `/cs-ops:customize --section segments`)
 

@@ -11,12 +11,6 @@ enhancement_level: P1
 task_id: expansion-business-case
 duration_minutes: 3
 lifecycle_stage: stage-4-expansion
-metadata:
-  type: workflow
-  domain: customer-success
-  service: expansion-and-growth
-  skill_version: "1.0.0"
-  spec_version: "5.3"
 ---
 
 # /csm:expansion-business-case
@@ -52,7 +46,7 @@ but activates relevant constraint warnings.
 - Account has clear adoption signal and CSM needs to articulate value chain to economic buyer
 - QBR preparation requires a formal expansion proposal
 
-**Upstream dependency:** Before using this skill, run `/renewals:expansion-signal` to identify and qualify expansion signals — this skill builds the business case from those qualified signals.
+**Upstream dependency:** Before using this skill, identify and qualify expansion signals using the Renewals plugin's expansion-signal skill — this skill builds the business case from those qualified signals (if the `renewals` plugin is installed, run `/renewals:expansion-signal`).
 
 ## Do NOT Use For
 

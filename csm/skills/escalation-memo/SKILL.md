@@ -459,7 +459,7 @@ or finance.
 
 - "Escalation open — want to track risk holistically? `/csm:risk-flag [account]`"
 - "Escalation resolved — should this inform the next QBR? `/csm:qbr-builder [account]`"
-- "Pattern of escalations — route to CS Ops for systemic review: `/cs-ops:playbook-auditor`"
+- "Pattern of escalations — route to CS Ops for systemic review (if the `cs-ops` plugin is installed, run `/cs-ops:playbook-auditor`)"
 - "Renewal approaching during an open escalation — run: `/csm:renewal-readiness [account]`"
 
 ---

@@ -32,7 +32,7 @@ This suite does not store customer data beyond the current session context. Conf
 
 ## Reporting
 
-If you encounter behavior that violates these principles, please report it via the standard Anthropic feedback mechanisms or open an issue in the repository where this plugin is maintained.
+If you encounter behavior that violates these principles, please report it via the standard SuccessCOACHING feedback mechanisms or open an issue in the repository where this plugin is maintained.
 
 ---
 

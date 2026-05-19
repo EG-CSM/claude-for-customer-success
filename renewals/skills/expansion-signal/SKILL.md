@@ -27,7 +27,7 @@ here is a lead until proven otherwise.
 - You need to map each expansion signal to a qualification tier and a recommended TARO play before engaging the account or routing to the AE
 - You want to confirm whether an account is at Pipeline-ready or Qualified tier before involving an AE in a commercial conversation
 
-**Downstream dependency:** After this skill produces qualified expansion signals, use `/csm:expansion-business-case` to build the formal business case document for AE engagement.
+**Downstream dependency:** After this skill produces qualified expansion signals, use the CSM plugin's expansion-business-case skill to build the formal business case document for AE engagement (if the `csm` plugin is installed, run `/csm:expansion-business-case`).
 
 ## Do NOT use for
 - Accounts with active churn risk signals — run `/renewals:risk-assessment` first; expansion pursuit on at-risk accounts damages trust and is counterproductive

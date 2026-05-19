@@ -61,7 +61,7 @@ Before generating output, apply these primers:
    - **Section Update**: CSM wants to change values within a named section. Requires before/after confirmation, consistency checks against adjacent sections, and immediate-effect warning.
    - **Section Reset**: Destructive operation — restores template defaults, erasing custom values. Verify intent (reset vs. update confusion is common), show current values before executing, require typed confirmation.
    - **Validation / Health Check**: Cross-section audit — placeholder scan, required field presence, and internal consistency. Must map failures to downstream skill impact, not just report PASS/FAIL.
-   - **Scope Redirect**: Request targets company-level settings (company name, products, segments) that belong in `company-profile.md`. Redirect to `/cs-ops:customize` — never write company-level values into the onboarding config.
+   - **Scope Redirect**: Request targets company-level settings (company name, products, segments) that belong in `company-profile.md`. Redirect to the CS Ops plugin's customize skill for company-level settings (if the `cs-ops` plugin is installed, run `/cs-ops:customize`) — never write company-level values into the onboarding config.
 
 2. **CONSTRAINTS**: What limits the solution space?
    - G1: Config changes take effect immediately — no staging environment. Warn the CSM when a change could alter in-progress account workflows. No write without explicit user confirmation.
@@ -81,7 +81,7 @@ Before generating output, apply these primers:
    - ❌ Reformatting or rewriting sections not targeted by the current update — adjacent sections must be preserved byte-for-byte.
    - ❌ Reporting validation PASS on sections that are structurally complete but operationally nonsensical (all milestones at the same day target, TtV of 1 day).
    - ❌ Displaying section status without mapping incomplete sections to the specific skills they block.
-   - ❌ Writing company-level settings (company name, products, segments) into the onboarding config instead of redirecting to `/cs-ops:customize`.
+   - ❌ Writing company-level settings (company name, products, segments) into the onboarding config instead of redirecting to the CS Ops plugin's customize skill (if the `cs-ops` plugin is installed, run `/cs-ops:customize`).
 
 **After execution**, verify:
 - Did the output match the classified request type (view/update/reset/validate/redirect)?
@@ -104,7 +104,7 @@ The shared company profile at:
 ```
 
 is read-only from this skill — changes to company-level settings (company name,
-products, segments, primary methodology) use `/cs-ops:customize`.
+products, segments, primary methodology) are managed through the CS Ops plugin's customize skill (if the `cs-ops` plugin is installed, run `/cs-ops:customize`).
 
 ---
 
@@ -481,10 +481,11 @@ CSM review is required before treating any config change as final.
 
 **This skill manages onboarding config only.** Company-level settings (company
 name, products, segments, primary CS methodology) live in `company-profile.md`
-and are modified through `/cs-ops:customize`. If the user tries to change a
+and are modified through the CS Ops plugin's customize skill. If the user tries to change a
 company-level setting here, redirect:
 > "Company profile settings are shared across all plugins and managed through
-> `/cs-ops:customize`. I can update the onboarding-specific portion, but company
+> the CS Ops plugin's customize skill (if the `cs-ops` plugin is installed, run
+> `/cs-ops:customize`). I can update the onboarding-specific portion, but company
 > name, product catalog, and segment definitions should be changed there."
 
 **TtV values are always labeled.** When displaying TtV target values in any mode,

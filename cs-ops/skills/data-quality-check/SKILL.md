@@ -37,7 +37,7 @@ dashboards, missed renewals, and capacity plans built on fictional account count
 - Health score recalibration (use `/cs-ops:health-model-review`)
 - Configuring which fields are required (use `/cs-ops:customize --section data-quality`)
 - Generating a data quality SOP document (use `/cs-ops:process-doc --data-quality`)
-- Sales pipeline field hygiene — use /rev-ops:crm-hygiene-audit
+- Sales pipeline field hygiene (use the Rev-Ops plugin's crm-hygiene-audit skill; if the `rev-ops` plugin is installed, run `/rev-ops:crm-hygiene-audit`)
 
 ## Typical Activation
 

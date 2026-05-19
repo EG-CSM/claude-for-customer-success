@@ -413,7 +413,7 @@ completed. The user must be able to recover the failed content manually.
 - "Plugin is configured. Run a health review on an account: `/csm:health-score-review [account]`"
 - "Build account context before your next call: `/csm:account-research [account]`"
 - "Run a portfolio triage to see where your book stands: `/csm:health-score-review --triage`"
-- "Want to configure the other CS plugins? Run `/cs-ops:customize`, `/renewals:customize`, or `/onboarding:customize`"
+- "Want to configure the other CS plugins? If the `cs-ops` plugin is installed, run `/cs-ops:customize`. If the `renewals` plugin is installed, run `/renewals:customize`. If the `onboarding` plugin is installed, run `/onboarding:customize`."
 
 ## Reference Files
 
