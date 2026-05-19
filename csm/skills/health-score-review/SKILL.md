@@ -56,6 +56,7 @@ Critical configuration to load:
 - Churn signal definitions
 - Escalation matrix — what triggers escalation and to whom
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 
@@ -117,6 +118,12 @@ list with top risk factor per account.
 ---
 
 ## Data gathering
+
+
+**Connector error categorization:** When a connector call fails, distinguish the error type before proceeding:
+- **Rate-limited (transient):** Connector returns HTTP 429 or equivalent throttle signal. Note the rate limit explicitly in output ("CRM data temporarily rate-limited — retry in 60 seconds recommended") and offer to retry rather than proceeding with degraded output.
+- **Unavailable (permanent for this session):** Connector is not configured, authentication has expired, or service is down. Fall back to the manual-input path below and label all affected sections as "connector unavailable — manual input used."
+Do not conflate these — a rate-limited connector will return data shortly; an unavailable connector will not.
 
 ### Single account
 

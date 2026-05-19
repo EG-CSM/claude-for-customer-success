@@ -22,6 +22,8 @@ deployment_target: plugin
 - Executive sponsor has changed and the plan needs to be refreshed for the new stakeholder
 - The organization does not use the OCV (Outcome-to-Customer Value) system, or the OCV canvas format is not applicable to this account or engagement
 
+**Upstream dependency:** Before building a success plan for a new engagement, run `/onboarding:success-criteria` to define the 3–5 success criteria that form the plan's foundation.
+
 ## Do NOT Use For
 - The structured success plan canvas format — use /csm:success-plan-canvas for OCV-aligned canvas output
 - Progress tracking against an existing canvas — use /csm:success-plan-progress-review
@@ -58,6 +60,7 @@ Note from config:
 - Customer-facing plan format preference
 - Playbook sources — use configured success plan template if available
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 
@@ -119,6 +122,12 @@ Default: prompt once — "Is this a new plan or an update to an existing one?"
 ---
 
 ## Data gathering
+
+
+**Connector error categorization:** When a connector call fails, distinguish the error type before proceeding:
+- **Rate-limited (transient):** Connector returns HTTP 429 or equivalent throttle signal. Note the rate limit explicitly in output ("CRM data temporarily rate-limited — retry in 60 seconds recommended") and offer to retry rather than proceeding with degraded output.
+- **Unavailable (permanent for this session):** Connector is not configured, authentication has expired, or service is down. Fall back to the manual-input path below and label all affected sections as "connector unavailable — manual input used."
+Do not conflate these — a rate-limited connector will return data shortly; an unavailable connector will not.
 
 **What's needed before building:**
 
@@ -375,5 +384,6 @@ The following reference files govern this skill's detailed behavior. They are lo
 
 ## Trust & Verification
 - Internal signals (health scores, expansion flags, ARR) must not appear in customer-facing plan output
+- Output documents are routed to configured document storage only — customer-facing plan to the configured customer portal or collaboration platform; reviewer notes and internal context to the CSM workspace; do not distribute outside configured destinations
 - Success criteria must be validated against the customer's stated goals — do not invent metrics
 - If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview

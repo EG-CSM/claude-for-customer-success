@@ -29,6 +29,7 @@ If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
 
 Note from config: `slack_connected`, `linear_connected`, `cs_platform_connected`
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Use when
@@ -38,7 +39,7 @@ Note from config: `slack_connected`, `linear_connected`, `cs_platform_connected`
 
 ## Do NOT use for
 - Deep-dive analysis on a specific metric (use the domain-specific skill)
-- Revenue brief for a single function (use revenue-brief-generation)
+- Narrative executive revenue brief — use `revenue-brief-generation`
 - Pipeline analysis in isolation (use pipeline-coverage-analysis)
 
 ## Typical Activation

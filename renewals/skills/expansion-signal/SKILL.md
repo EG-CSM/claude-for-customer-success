@@ -27,6 +27,8 @@ here is a lead until proven otherwise.
 - You need to map each expansion signal to a qualification tier and a recommended TARO play before engaging the account or routing to the AE
 - You want to confirm whether an account is at Pipeline-ready or Qualified tier before involving an AE in a commercial conversation
 
+**Downstream dependency:** After this skill produces qualified expansion signals, use `/csm:expansion-business-case` to build the formal business case document for AE engagement.
+
 ## Do NOT use for
 - Accounts with active churn risk signals — run `/renewals:risk-assessment` first; expansion pursuit on at-risk accounts damages trust and is counterproductive
 - GRR or renewal-rate forecasting — expansion ARR is never included in GRR calculations
@@ -61,6 +63,7 @@ Fields read from config:
 - AE partner (for expansion handoff routing)
 - Configured TARO playbook sources / SuccessCOACHING methodology flag
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 

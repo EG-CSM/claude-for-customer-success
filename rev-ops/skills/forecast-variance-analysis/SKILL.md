@@ -29,6 +29,7 @@ If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
 
 Note from config: `current_arr`, `primary_segment`, `crm_system`
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Use when
@@ -91,6 +92,11 @@ Before generating output, apply these primers:
 ---
 
 ## Inputs
+
+**Connector error categorization:** When a connector call fails, distinguish the error type before proceeding:
+- **Rate-limited (transient):** Connector returns HTTP 429 or equivalent throttle signal. Note the rate limit explicitly in output ("CRM data temporarily rate-limited — retry in 60 seconds recommended") and offer to retry rather than proceeding with degraded output.
+- **Unavailable (permanent for this session):** Connector is not configured, authentication has expired, or service is down. Fall back to user-provided data and label all affected sections as "connector unavailable — manual input used."
+Do not conflate these — a rate-limited connector will return data shortly; an unavailable connector will not.
 
 Required:
 - Period to analyze (default: most recently closed quarter)

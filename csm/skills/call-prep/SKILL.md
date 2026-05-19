@@ -25,6 +25,7 @@ deployment_target: plugin
 - Post-call logging or follow-up drafting — use post-call workflow instead
 - Renewal commercial prep (pricing, negotiation) — use /csm:renewal-readiness
 - Account deep-dive research without a call scheduled — use /csm:account-research
+- Kickoff calls where no account context exists in session yet — run `/csm:account-research` first to populate session context, then call-prep
 - Routine check-ins with nothing substantive to discuss — recommend async instead
 
 ## Typical Activation
@@ -55,6 +56,7 @@ Note from config:
 - Playbook sources — pull call-specific templates if configured
 - Escalation matrix — know the routing before the call if risk signals are present
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 
@@ -114,6 +116,12 @@ Do not build a generic brief.
 ---
 
 ## Data gathering
+
+
+**Connector error categorization:** When a connector call fails, distinguish the error type before proceeding:
+- **Rate-limited (transient):** Connector returns HTTP 429 or equivalent throttle signal. Note the rate limit explicitly in output ("CRM data temporarily rate-limited — retry in 60 seconds recommended") and offer to retry rather than proceeding with degraded output.
+- **Unavailable (permanent for this session):** Connector is not configured, authentication has expired, or service is down. Fall back to the manual-input path below and label all affected sections as "connector unavailable — manual input used."
+Do not conflate these — a rate-limited connector will return data shortly; an unavailable connector will not.
 
 Before building the brief, pull what's available.
 

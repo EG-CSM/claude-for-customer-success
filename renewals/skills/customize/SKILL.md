@@ -48,6 +48,7 @@ full interview.
 - Read `~/.claude/plugins/config/claude-for-customer-success/company-profile.md` for company-level fields
 - Identify any downstream skills that consume the target field
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Reasoning Protocol

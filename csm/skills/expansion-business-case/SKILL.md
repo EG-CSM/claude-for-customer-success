@@ -52,6 +52,8 @@ but activates relevant constraint warnings.
 - Account has clear adoption signal and CSM needs to articulate value chain to economic buyer
 - QBR preparation requires a formal expansion proposal
 
+**Upstream dependency:** Before using this skill, run `/renewals:expansion-signal` to identify and qualify expansion signals — this skill builds the business case from those qualified signals.
+
 ## Do NOT Use For
 
 - Initial onboarding value assessments (use `csm:onboarding-value-assessment`)
@@ -574,6 +576,7 @@ Note from config:
 - Escalation matrix — required if surfacing escalation routing from expansion signals
 - Integrations — determines which data sources are available for expansion signals
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Reasoning Protocol

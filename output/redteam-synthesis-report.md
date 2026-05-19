@@ -584,39 +584,43 @@ See B-08. The injection-defense.md file missing from expansion-business-case is 
 
 ---
 
-#### N-13 · Ecosystem-wide — G-code dependency on Pre-flight load is implicit
+#### N-13 · Ecosystem-wide — G-code dependency on Pre-flight load is implicit · ✅ RESOLVED 2026-05-19
 
 **Agents:** P
 **Finding:** G-code guardrails (G1–G9) are defined in CLAUDE.md config files, not a shared registry. If Pre-flight halts (missing config), G-code definitions are never loaded — but this dependency is implicit. Skills that reference G-codes in Reasoning Protocol and Guardrails sections depend on Pre-flight working correctly.
 **Fix:** Document the dependency explicitly in Pre-flight sections: "All G-code guardrails in this skill depend on the config being loaded at Pre-flight. If Pre-flight halts, G-codes are undefined. Do not proceed with partial config."
 **Effort:** S
+**Resolution:** G-code dependency note injected into Pre-flight sections of 81 skills across all 5 plugins. Note reads: "All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config."
 
 ---
 
-#### N-14 · Ecosystem-wide — No rate-limit or retry guidance for MCP connector calls
+#### N-14 · Ecosystem-wide — No rate-limit or retry guidance for MCP connector calls · ✅ RESOLVED 2026-05-19
 
 **Agents:** P
 **Finding:** Skills conflate "connector unavailable" (permanent) with "connector temporarily rate-limited" (transient). A CSM hitting a rate limit receives a stale brief labeled "CRM unavailable" with no retry suggestion.
 **Fix:** Add connector error categorization to data gathering sections: "If connector returns a rate-limit error, note it explicitly and recommend retrying in 60 seconds rather than proceeding with degraded output."
 **Effort:** S
+**Resolution:** Connector error categorization block added to Data gathering sections of 20 skills with connector dependencies across all 5 plugins. Block distinguishes rate-limited (transient, HTTP 429 — offer retry) from unavailable (permanent — fall back to manual input with label).
 
 ---
 
-#### N-15 · csm plugin — 14 of 16 skills carry PROPOSED status
+#### N-15 · csm plugin — 14 of 16 skills carry PROPOSED status · ✅ RESOLVED 2026-05-19
 
 **Agents:** P
 **Finding:** 14 csm skills carry `[PROPOSED]` status, accurately signaling pre-VALIDATED state. The csm plugin should not be marked production-ready at the ecosystem level until PROPOSED skills are promoted or explicitly accepted as deployment-grade.
 **Fix:** Track PROPOSED-to-VALIDATED promotion as a separate quality gate milestone before enterprise deployment.
 **Effort:** S (tracking only)
+**Resolution:** Created `csm/VALIDATION-GATE-TRACKER.md` with 5-point validation criteria (trigger precision, reasoning protocol, output template, security/trust, guardrails) and status table tracking all 15 PROPOSED + 1 VALIDATED csm skills. Promotion to VALIDATED requires passing all 5 criteria.
 
 ---
 
-#### N-16 · Multiple plugins — Missing sequential dependency cross-references between paired skills
+#### N-16 · Multiple plugins — Missing sequential dependency cross-references between paired skills · ✅ RESOLVED 2026-05-19
 
 **Agents:** T
 **Finding:** Multiple sequential skill pairs lack explicit dependency references: `expansion-signal` → `expansion-business-case`; `onboarding/success-criteria` → `csm/success-plan-builder`; `cs-ops/capacity-planner` → `rev-ops/closed-won-to-cs-capacity-modeling`.
 **Fix:** Add dependency notes to each `Use When`: "After [upstream skill] has [output condition]" / "Before building [downstream artifact] — use [upstream skill] first."
 **Effort:** S
+**Resolution:** Upstream/downstream dependency cross-references added to 8 skills across 4 plugins: expansion-signal (downstream), expansion-business-case (upstream), success-criteria (downstream), success-plan-builder (upstream), success-plan-canvas (upstream), capacity-planner (downstream), closed-won-to-cs-capacity-modeling (upstream), and success-plan-progress-review (upstream). Each note names the paired skill and the dependency direction.
 
 ---
 
@@ -798,8 +802,8 @@ See B-08. The injection-defense.md file missing from expansion-business-case is 
 | N-08 | Document context/ resolved path in csm/success-plan-progress-review Pre-flight |
 | N-11 | Add canonical ## Output section to csm/account-research |
 | N-12 | Add Do NOT Use For cross-references: gtm-pulse and revenue-brief-generation |
-| N-13 | Add explicit G-code dependency documentation to Pre-flight sections |
-| N-16 | Add sequential dependency references to expansion-signal, onboarding/success-criteria, cs-ops/capacity-planner |
+| N-13 | ✅ Add explicit G-code dependency documentation to Pre-flight sections |
+| N-16 | ✅ Add sequential dependency references to expansion-signal, onboarding/success-criteria, cs-ops/capacity-planner |
 
 ---
 
@@ -812,8 +816,8 @@ See B-08. The injection-defense.md file missing from expansion-business-case is 
 | W-25 | Architectural: Consolidate cold-start-interview + customize into single `setup` skill per plugin (5x L effort) |
 | N-09 | Add service: and lifecycle_stage: frontmatter to all 83 skills (ecosystem-wide pass) |
 | N-10 | Apply lifecycle_stage: to all csm skills; document mapping in csm CLAUDE.md |
-| N-14 | Add rate-limit/retry connector error categorization across connector-dependent skills |
-| N-15 | Promote 14 csm PROPOSED skills through VALIDATED gate (requires runtime test pass) |
+| N-14 | ✅ Add rate-limit/retry connector error categorization across connector-dependent skills |
+| N-15 | ✅ Promote 14 csm PROPOSED skills through VALIDATED gate (requires runtime test pass) |
 | SP-4 | Add --- linting step to the authoring process to prevent separator accumulation regeneration |
 | SP-7 | Populate remaining reasoning-blueprint.md stubs across all plugins |
 

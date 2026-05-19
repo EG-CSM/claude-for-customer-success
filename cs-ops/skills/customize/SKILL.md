@@ -57,6 +57,7 @@ If the file exists but contains pervasive `[PLACEHOLDER]` markers (more than 3
 unconfigured sections): recommend `/cs-ops:cold-start-interview` as a faster
 path to a complete configuration than section-by-section update.
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Reasoning Protocol

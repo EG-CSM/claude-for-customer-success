@@ -24,6 +24,8 @@ The skill that prevents hiring CSMs one quarter after you needed them.
 - Onboarding capacity planning requires modeling against pipeline close projections
 - CS hiring or resource decisions need to be tied to revenue intake rate
 
+**Upstream dependency:** Before using this skill, run `/cs-ops:capacity-planner` to establish current CSM load and coverage ratios — this skill models incoming volume against that capacity baseline.
+
 ## Do NOT use for
 - Individual CS assignment decisions (use handoff workflow)
 - CS performance assessment
@@ -44,6 +46,7 @@ If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
 
 Note from config: `current_csm_count`, `arr_per_csm`, `avg_deal_acv`, `csm_avg_ramp_days`, `uog_baseline_path`, `open_csm_requisitions`
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Reasoning Protocol

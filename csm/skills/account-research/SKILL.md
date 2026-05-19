@@ -16,10 +16,10 @@ deployment_target: plugin
 [PROPOSED]
 
 ## Use When
-- Building context before any customer-facing call: kickoff, QBR, health check, renewal, check-in
+- No account context exists in the current session and an initial account context pull is needed before acting
+- Building context before any customer-facing call: kickoff, QBR, health check, renewal, check-in — when session context is absent or stale
 - Running portfolio triage to assess multiple accounts quickly
 - An account has been flagged at risk and you need current signal state before acting
-- No account context exists in the current session and a call or action is imminent
 
 ## Do NOT Use For
 - Replacing call-prep — account-research provides context; call-prep produces the brief
@@ -57,6 +57,7 @@ If configured, note:
 - Health model components and Red/Yellow thresholds
 - Available integrations (from `## Available integrations` in the config)
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 
@@ -113,6 +114,12 @@ for a full standalone stakeholder analysis.
 ---
 
 ## Data gathering
+
+
+**Connector error categorization:** When a connector call fails, distinguish the error type before proceeding:
+- **Rate-limited (transient):** Connector returns HTTP 429 or equivalent throttle signal. Note the rate limit explicitly in output ("CRM data temporarily rate-limited — retry in 60 seconds recommended") and offer to retry rather than proceeding with degraded output.
+- **Unavailable (permanent for this session):** Connector is not configured, authentication has expired, or service is down. Fall back to the manual-input path below and label all affected sections as "connector unavailable — manual input used."
+Do not conflate these — a rate-limited connector will return data shortly; an unavailable connector will not.
 
 ### What to pull and from where
 
@@ -359,6 +366,22 @@ Offer contextual next steps based on account state:
 
 Offer one suggestion — the most relevant one given the account's current state.
 Don't list all five.
+
+---
+
+## Output
+
+Structured account brief in markdown. Format and depth depend on the invoked mode:
+
+| Mode | Contents | Primary use |
+|------|----------|-------------|
+| `--brief` (default) | Account snapshot table · health signals · key stakeholders · recent activity · open items · renewal context (if within 180 days or Yellow/Red) · recommended next actions | Pre-call prep, quick account check-in, portfolio triage |
+| `--deep` | All brief sections + call history themes · support ticket summary · usage trend · expansion signals (tagged internal-only) | QBR prep, risk review, escalation context |
+| `--stakeholders` | All brief sections + dedicated stakeholder map with engagement gaps, influence notes, ghost/shadow stakeholder flags | Stakeholder reviews, champion departure response, executive engagement planning |
+
+Every output includes a **Reviewer note** block: sources used, data timestamps, gaps, items flagged for judgment, and a destination check before any external sharing.
+
+No customer-facing version of this output may contain ARR, contract terms, internal health scores, or expansion signals without explicit CSM review per the Guardrails section.
 
 ---
 

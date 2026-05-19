@@ -55,6 +55,7 @@ Note from config:
 - Customer-facing plan format preference (Google Doc / Notion / slide deck)
 - Escalation matrix — know routing if account surfaces risk during QBR
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 
@@ -115,6 +116,12 @@ Default: `--draft`.
 ---
 
 ## Data gathering
+
+
+**Connector error categorization:** When a connector call fails, distinguish the error type before proceeding:
+- **Rate-limited (transient):** Connector returns HTTP 429 or equivalent throttle signal. Note the rate limit explicitly in output ("CRM data temporarily rate-limited — retry in 60 seconds recommended") and offer to retry rather than proceeding with degraded output.
+- **Unavailable (permanent for this session):** Connector is not configured, authentication has expired, or service is down. Fall back to the manual-input path below and label all affected sections as "connector unavailable — manual input used."
+Do not conflate these — a rate-limited connector will return data shortly; an unavailable connector will not.
 
 **First, check if account-research was run this session.** If yes, use that context.
 
@@ -385,5 +392,6 @@ The following reference files govern this skill's detailed behavior. They are lo
 
 ## Trust & Verification
 - The internal prep brief and customer-facing EBR deck are distinct outputs — internal health scores, expansion signals, and stakeholder assessments must not appear in the customer deck
+- Output documents are routed to configured document storage only — customer-facing deliverable to the configured customer portal or presentation platform; internal working document to the CSM workspace; do not distribute outside configured destinations
 - Value metrics must reference configured success criteria — do not invent outcomes
 - If config files are missing or contain [PLACEHOLDER] markers, halt and prompt for /csm:cold-start-interview

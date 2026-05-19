@@ -52,6 +52,7 @@ If success criteria format is `[PLACEHOLDER]` or missing:
 
 Proceed with outcome-based format as default.
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Trigger Precision
@@ -61,6 +62,8 @@ Proceed with outcome-based format as default.
 - Refining existing success criteria after a kickoff call reveals different priorities (`--refine`)
 - Reviewing success criteria achievement status at a milestone review or QBR (`--review`)
 - Producing a customer-facing success criteria summary for sharing or sign-off (`--export`)
+
+**Downstream dependency:** After success criteria are defined, use `/csm:success-plan-builder` to build a formal success plan incorporating these criteria as the plan's foundation.
 
 **Do NOT use for:**
 - Tracking milestone completion — success criteria and milestones are distinct (use `/onboarding:milestone-tracker`)

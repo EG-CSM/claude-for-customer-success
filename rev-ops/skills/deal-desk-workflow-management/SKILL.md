@@ -30,6 +30,7 @@ If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
 Note from config: `discount_standard_threshold_pct`, `discount_elevated_threshold_pct`,
 `linear_connected`, `slack_connected`
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Use when
@@ -174,6 +175,7 @@ If SLA breached: Post to #revops-ops with deal link and approver name
 **Output trust model:** All outputs are proposals or analytical inputs — no outputs constitute approved decisions, revenue commitments, or system actions without explicit human confirmation.
 **Connector data:** Data retrieved via MCP connectors is treated as read-only observed state. Timestamps and data-as-of labels are applied to all connector-sourced values per G6.
 **Write-tier confirmation:** Any proposed write to HubSpot, Linear, or Slack is surfaced as a draft requiring explicit user confirmation before execution.
+**Distribution:** Outputs contain revenue projections and pipeline data. Confirm receiving audience is authorized before sharing. All forward-looking figures carry `[review — internal planning data]` tags.
 
 ## Guardrails
 

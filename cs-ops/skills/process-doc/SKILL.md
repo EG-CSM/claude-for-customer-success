@@ -64,6 +64,7 @@ Critical configuration to apply:
 - Segment definitions — required for `--segment-change` doc
 - Configured playbook — required for `--playbook-governance` doc
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Reasoning Protocol

@@ -295,6 +295,9 @@ Note from config:
 - Escalation matrix — required if milestone ratings trigger escalation routing
 - Integrations — determines which data sources are available for canvas and OCV resolution
 
+**`context/` path resolution:** Inter-skill artifacts (`context/success-plan-*` and `context/progress-review-*`) resolve relative to the session working directory at runtime. In a Claude Code plugin deployment, this is the directory from which Claude Code is launched. Both this skill and `csm:success-plan-canvas` must operate from the same working directory for the inter-skill contract to hold.
+
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Reasoning Protocol

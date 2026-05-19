@@ -27,6 +27,7 @@ Onboarding profile configuration management.
 - Identify customization goals for this account
 - Note any existing onboarding plan or prior session outputs
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Trigger Precision
@@ -457,6 +458,7 @@ Before writing any change to the config file:
 ## Reference Files
 
 - `references/reasoning-blueprint.md` — reasoning framework for this skill
+- `references/skill-impact-map.md` — output template, section-by-section field reference, required fields per section, internal consistency rules, and downstream skill impact map
 
 ---
 

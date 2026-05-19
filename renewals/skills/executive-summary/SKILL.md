@@ -63,6 +63,7 @@ Fields read from config:
 - AE partner (for co-sponsorship context)
 - Negotiation posture (affects how risk and save strategy are framed)
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 

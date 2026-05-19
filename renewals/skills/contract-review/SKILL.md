@@ -59,6 +59,7 @@ If config is missing or contains `[PLACEHOLDER]` markers in standard contract te
 > in the contract but cannot identify deviations from your standard. Run
 > `/renewals:cold-start-interview --section contracts` to configure your baseline."
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 

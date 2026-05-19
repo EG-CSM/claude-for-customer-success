@@ -33,6 +33,7 @@ Note from config: `discount_standard_threshold_pct`, `discount_elevated_threshol
 `discount_executive_threshold_pct`, `linear_connected`,
 `cs_expansion_discount_standard_threshold_pct`, `cs_expansion_discount_elevated_threshold_pct`
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Use when

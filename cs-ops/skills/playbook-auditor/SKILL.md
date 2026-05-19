@@ -35,7 +35,7 @@ Is the playbook complete, specific, and actually being used?
 
 ## Do NOT use for
 
-- Individual play execution or CSM coaching on play steps (use `/csm:play-runner`)
+- Individual play execution or CSM coaching on play steps (use `/csm:taro-play-runner`)
 - Creating or updating plays in config (use `/cs-ops:customize --section playbook`)
 - Generating the playbook governance framework document
   (use `/cs-ops:process-doc --playbook-governance`)
@@ -65,6 +65,7 @@ Critical configuration to apply:
 - Escalation matrix — confirms plays exist for each escalation scenario
 - Standard TARO play library as baseline if no custom playbook is configured
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 
@@ -128,6 +129,12 @@ one named play.
 ---
 
 ## Data gathering
+
+
+**Connector error categorization:** When a connector call fails, distinguish the error type before proceeding:
+- **Rate-limited (transient):** Connector returns HTTP 429 or equivalent throttle signal. Note the rate limit explicitly in output ("CRM data temporarily rate-limited — retry in 60 seconds recommended") and offer to retry rather than proceeding with degraded output.
+- **Unavailable (permanent for this session):** Connector is not configured, authentication has expired, or service is down. Fall back to the manual-input path below and label all affected sections as "connector unavailable — manual input used."
+Do not conflate these — a rate-limited connector will return data shortly; an unavailable connector will not.
 
 Pull from connected integrations:
 - CS Platform: configured plays, CTA templates, play activation history per account

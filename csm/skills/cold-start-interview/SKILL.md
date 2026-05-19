@@ -54,6 +54,7 @@ For `--full` or no argument: proceed regardless of whether files exist — this 
 For `--section <name>`: load existing config file content before displaying current values alongside each question.
 For `--reset`: display a destructive-clear warning and require explicit confirmation before proceeding.
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Reasoning Protocol
@@ -375,7 +376,9 @@ Write `catalog_path: [PENDING]` to the `## Outcome Catalog` section of `company-
    If the user wants to refine entries, invoke `outcome-catalog-entry-builder` for each nominated entry. If they want to defer, move on.
 
 7. **Confirm completion.**
-   "Outcome catalog saved to `~/.claude/plugins/config/claude-for-customer-success/outcome-catalog.md` — [N] outcome entries across [M] product areas. Skills that reference outcome data will use this catalog. You can run `/csm:cold-start-interview --generate-outcome-catalog` to regenerate it after a major product release."
+   "Outcome catalog saved to `~/.claude/plugins/config/claude-for-customer-success/outcome-catalog.md` — [N] outcome entries across [M] product areas. Skills that reference outcome data will use this catalog. You can run `/csm:cold-start-interview --generate-outcome-catalog` to regenerate it after a major product release.
+
+   **Note:** This catalog is provisional (`catalog_version: provisional-1.0`). Review entries with your CS leadership before using outcome claims in customer-facing materials (QBRs, renewal narratives, expansion proposals). When ratified, update `ratified_date` in `company-profile.md` to record the ratification date."
 
 ---
 

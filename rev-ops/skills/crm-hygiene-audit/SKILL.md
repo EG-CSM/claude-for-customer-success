@@ -28,6 +28,7 @@ If either is missing or contains `[PLACEHOLDER]` markers, stop and prompt for
 
 Note from config: `crm_system`, `primary_segment`
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Use when

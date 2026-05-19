@@ -68,6 +68,7 @@ renewals-specific configuration."
 If it doesn't exist: run Section 1 in full and write the shared company profile
 when the interview completes.
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 

@@ -29,6 +29,8 @@ Know whether CSMs have too much on their plate — and what to do about it.
   product or relationship issue
 - A segment analysis has flagged a coverage gap and you need the capacity follow-up
 
+**Downstream dependency:** After this skill produces capacity analysis, use `/rev-ops:closed-won-to-cs-capacity-modeling` to model whether CS can absorb projected closed-won volume given current capacity.
+
 ## Do NOT use for
 
 - Segment-level health analysis (use `/cs-ops:segment-analyzer`)
@@ -60,6 +62,7 @@ Critical configuration to apply:
 - Segment definitions and assignment method
 - CS motion type per segment
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 
@@ -118,6 +121,12 @@ how to redistribute their accounts, which accounts need immediate attention.
 ---
 
 ## Data gathering
+
+
+**Connector error categorization:** When a connector call fails, distinguish the error type before proceeding:
+- **Rate-limited (transient):** Connector returns HTTP 429 or equivalent throttle signal. Note the rate limit explicitly in output ("CRM data temporarily rate-limited — retry in 60 seconds recommended") and offer to retry rather than proceeding with degraded output.
+- **Unavailable (permanent for this session):** Connector is not configured, authentication has expired, or service is down. Fall back to the manual-input path below and label all affected sections as "connector unavailable — manual input used."
+Do not conflate these — a rate-limited connector will return data shortly; an unavailable connector will not.
 
 Pull from connected integrations:
 - CRM: account list with ARR, segment, CSM owner

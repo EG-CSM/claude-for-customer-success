@@ -52,6 +52,7 @@ For `--full` or no argument: proceed regardless of whether files exist — this 
 For `--section <name>`: load existing config file content before displaying current values alongside each question.
 For `--reset`: display a destructive-clear warning and require explicit confirmation before proceeding.
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Reasoning Protocol

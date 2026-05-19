@@ -57,6 +57,7 @@ If the request contains signals of full contract cancellation ("cancel everythin
 - Note any prior analysis or existing documentation to reference
 - Check `~/.claude/plugins/config/claude-for-customer-success/company-profile.md` for company segment and escalation context (`company-profile.md` is a runtime config dependency, not a reference file)
 
+**G-code dependency:** All G-code guardrails referenced in this skill (G1–G9) are defined in the CLAUDE.md config loaded above. If Pre-flight halts or config is missing, G-codes are undefined — do not proceed with partial config.
 ---
 
 ## Operations
@@ -110,7 +111,7 @@ Please use renewals:churn-rca for churn analysis.
 | competitor, alternative, switching, vendor, cheaper tool, evaluating others | `competitive_pressure` |
 | problems, unhappy, support, broken, frustrated, disappointed, not working | `dissatisfaction` |
 
-Mixed-signal handling: if two or more categories are signaled, identify the primary (strongest/most explicit signal) and note secondary signals in the analysis. Load `reference/downgrade-driver-taxonomy.md` for full heuristics.
+Mixed-signal handling: if two or more categories are signaled, identify the primary (strongest/most explicit signal) and note secondary signals in the analysis. Load `references/downgrade-driver-taxonomy.md` for full heuristics.
 
 **Analysis output structure:**
 
@@ -257,7 +258,7 @@ If `driver_category` is provided: validate against the 5-category enum. If inval
 If `driver_category` is not provided: scan `downgrade_request` for signal vocabulary per inference table. Identify primary category. Note secondary signals. Set `driver_source` to `inferred`.
 
 **Step 4 — Value chain failure classification**
-Apply the three-way classification (load `reference/value-chain-failure-map.md`):
+Apply the three-way classification (load `references/value-chain-failure-map.md`):
 - **Missing link**: Outcome committed but not delivered. OCV shows gap between expected and actual outcome delivery. Root cause: CSM/delivery failure.
 - **Broken link**: Outcome delivered but customer has not recognized or adopted it. Low usage despite feature availability. Root cause: adoption/change management failure.
 - **Non-value-chain driver**: Budget cuts, reorg, market conditions, headcount reduction, competitive pricing. Value delivery is not the root cause.
@@ -272,7 +273,7 @@ Classification heuristics:
 When `ocv_snapshot` is provided: OCV gap between committed and actual outcomes strengthens Missing link; strong outcome delivery + low adoption strengthens Broken link.
 
 **Step 5 — Counter-proposal inputs**
-Generate retention levers and negotiation anchors per driver category. Load `reference/counter-proposal-framework.md` for the full lever catalog. Mark all counter-proposal inputs as CSM/AM internal use only.
+Generate retention levers and negotiation anchors per driver category. Load `references/counter-proposal-framework.md` for the full lever catalog. Mark all counter-proposal inputs as CSM/AM internal use only.
 
 **Step 6 — Recommended response strategy**
 Generate primary action, supporting actions (ordered by priority), and escalation trigger. Escalation trigger must be specific and actionable, not generic.
@@ -350,10 +351,10 @@ OCV data is accepted only through the `ocv_snapshot` input parameter. This skill
 
 | File | Path | Purpose |
 |------|------|---------|
-| Reasoning Blueprint | `reference/reasoning-blueprint.md` | Reasoning framework for this skill — D1 cognitive stance, constraints, and expert orientation |
-| Downgrade Driver Taxonomy | `reference/downgrade-driver-taxonomy.md` | Full definitions, signal vocabulary, diagnostic questions, and mixed-signal handling for all 5 driver categories |
-| Value Chain Failure Map | `reference/value-chain-failure-map.md` | Missing link / Broken link / Non-value-chain definitions, detection patterns, remediation pathways, and escalation guidance |
-| Counter-Proposal Framework | `reference/counter-proposal-framework.md` | Retention levers per driver category, negotiation anchors, concession guidance, and escalation trigger conditions |
+| Reasoning Blueprint | `references/reasoning-blueprint.md` | Reasoning framework for this skill — D1 cognitive stance, constraints, and expert orientation |
+| Downgrade Driver Taxonomy | `references/downgrade-driver-taxonomy.md` | Full definitions, signal vocabulary, diagnostic questions, and mixed-signal handling for all 5 driver categories |
+| Value Chain Failure Map | `references/value-chain-failure-map.md` | Missing link / Broken link / Non-value-chain definitions, detection patterns, remediation pathways, and escalation guidance |
+| Counter-Proposal Framework | `references/counter-proposal-framework.md` | Retention levers per driver category, negotiation anchors, concession guidance, and escalation trigger conditions |
 
 Reference files are loaded on demand during analysis generation — not front-loaded into every response.
 
