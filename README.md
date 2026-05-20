@@ -607,6 +607,14 @@ The coverage gaps in Stages 6 and 7 are architectural decisions, not oversights.
 
 Plugin templates (this directory) ship with the plugin and are replaced on update. User data lives only in `~/.claude/plugins/config/`.
 
+Practitioner deployment guides live in the repository under `user-cookbooks/`:
+
+```
+user-cookbooks/
+├── README.md                   # Reference build explanation and tailoring guidance
+└── solo-csm-cookbook.md        # Solo CSM deployment guide — full lifecycle, personal use
+```
+
 ### Developer Tooling
 
 The repository includes build and evaluation tooling for contributors and operators maintaining the suite:
@@ -638,6 +646,20 @@ The [`docs/`](./docs/) directory contains extended reference documentation:
 | [`claude-for-cs-agent-capability-model-lifecycle.md`](./docs/claude-for-cs-agent-capability-model-lifecycle.md) | Skills organized by lifecycle stage with Two-Layer Outcome/Value Model integration; coverage summary table |
 | [`claude-for-cs-integrated-journey-value-realization-guide.md`](./docs/claude-for-cs-integrated-journey-value-realization-guide.md) | Stage-by-stage workflow guide with Mermaid diagrams, value chain focus tables, gap risk tables, and stage gate criteria for all lifecycle stages |
 | [`claude-for-cs-agent-capability-model.yaml`](./docs/claude-for-cs-agent-capability-model.yaml) | Machine-readable capability registry for all 81 skills: structured YAML with per-skill `id`, `version`, `summary`, `intended_tasks`, `out_of_scope`, `invocation_cues`, `anti_cues`, `constraints`, `tools_used`, `related_skills`, and `success_criteria`; authoritative source for tooling and integrations |
+
+---
+
+## User Cookbooks
+
+The [`user-cookbooks/`](./user-cookbooks/) directory contains operational guides for practitioners deploying the suite. These are role-specific deployment companions — not the same as the automated managed-agent cookbooks in `managed-agent-cookbooks/`.
+
+> **These are reference builds, not plug-and-play deployments.** The plugins and workflows described in the cookbooks are designed around generalizable patterns. Every deployment requires tailoring to the specific tools, data schema, and CS motion of the organization using them. See [`user-cookbooks/README.md`](./user-cookbooks/README.md) for the full explanation of what "reference build" means and what tailoring is required before going live.
+
+| Cookbook | Audience | Status |
+|----------|----------|--------|
+| [`solo-csm-cookbook.md`](./user-cookbooks/solo-csm-cookbook.md) | Individual CSMs deploying the full suite for solo use across the customer lifecycle | [PROPOSED] |
+
+To add a cookbook for a different role, motion, or deployment variant, follow the instructions in [`user-cookbooks/README.md`](./user-cookbooks/README.md).
 
 ---
 
