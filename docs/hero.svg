@@ -1,0 +1,63 @@
+<svg width="680" height="240" viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg">
+<title>Claude for Customer Success</title>
+<defs>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;900&amp;display=swap');
+  </style>
+</defs>
+<rect width="680" height="240" fill="#0C2731"/>
+
+<!-- Topo cluster: top-left -->
+<path d="M-10,30 C20,10 60,5 90,25 C115,40 120,65 100,80 C75,95 40,90 20,70 C5,55 -5,45 -10,30 Z" fill="none" stroke="#2B89AC" stroke-width="0.8" opacity="0.25"/>
+<path d="M10,38 C35,22 70,20 92,38 C108,52 108,72 88,82 C65,93 38,85 22,68 C10,56 8,50 10,38 Z" fill="none" stroke="#34A7D2" stroke-width="0.7" opacity="0.18"/>
+
+<!-- Topo cluster: top-center -->
+<path d="M280,0 C310,-8 360,5 385,28 C405,46 400,75 375,85 C348,96 312,88 292,68 C274,50 270,20 280,0 Z" fill="none" stroke="#226B86" stroke-width="0.8" opacity="0.22"/>
+<path d="M295,8 C320,2 355,14 375,34 C390,50 385,72 362,80 C340,88 310,80 294,63 C280,48 278,22 295,8 Z" fill="none" stroke="#2B89AC" stroke-width="0.7" opacity="0.16"/>
+<path d="M308,16 C330,10 358,22 372,40 C382,54 378,70 358,76 C337,83 313,74 300,58 C288,44 288,26 308,16 Z" fill="none" stroke="#34A7D2" stroke-width="0.6" opacity="0.13"/>
+
+<!-- Topo cluster: top-right -->
+<path d="M560,5 C595,-5 640,8 658,38 C672,62 660,95 632,105 C603,115 568,100 552,75 C538,52 538,22 560,5 Z" fill="none" stroke="#194E61" stroke-width="1.0" opacity="0.35"/>
+<path d="M572,15 C602,5 638,18 652,44 C663,65 652,92 628,100 C602,108 573,94 560,72 C549,53 552,28 572,15 Z" fill="none" stroke="#226B86" stroke-width="0.9" opacity="0.28"/>
+<path d="M584,26 C610,18 638,30 649,52 C657,70 648,90 627,96 C604,102 579,88 568,68 C559,51 562,34 584,26 Z" fill="none" stroke="#2B89AC" stroke-width="0.8" opacity="0.22"/>
+<path d="M598,36 C618,30 638,42 645,60 C650,74 643,88 626,92 C607,96 586,84 578,66 C572,52 576,42 598,36 Z" fill="none" stroke="#34A7D2" stroke-width="0.7" opacity="0.17"/>
+
+<!-- Topo cluster: mid-left -->
+<path d="M-15,120 C15,100 55,98 78,118 C96,133 95,160 72,172 C48,183 15,175 -2,155 C-15,140 -18,130 -15,120 Z" fill="none" stroke="#226B86" stroke-width="0.9" opacity="0.28"/>
+<path d="M5,128 C30,112 62,112 80,130 C94,144 92,163 72,172 C51,181 24,172 8,155 C-4,141 -2,132 5,128 Z" fill="none" stroke="#2B89AC" stroke-width="0.7" opacity="0.20"/>
+
+<!-- Topo cluster: mid-right -->
+<path d="M590,118 C622,102 662,108 675,135 C685,156 672,185 646,192 C618,200 582,185 570,162 C560,143 562,130 590,118 Z" fill="none" stroke="#194E61" stroke-width="1.0" opacity="0.38"/>
+<path d="M600,128 C628,114 660,120 670,143 C678,162 666,184 644,190 C619,197 588,183 578,162 C570,145 575,136 600,128 Z" fill="none" stroke="#226B86" stroke-width="0.9" opacity="0.30"/>
+<path d="M612,138 C634,126 660,134 667,155 C672,170 663,184 644,189 C622,194 600,181 593,162 C587,148 592,146 612,138 Z" fill="none" stroke="#2B89AC" stroke-width="0.8" opacity="0.22"/>
+<path d="M624,148 C642,138 660,147 664,164 C667,177 660,184 644,188 C626,192 610,180 606,164 C602,152 608,156 624,148 Z" fill="none" stroke="#34A7D2" stroke-width="0.7" opacity="0.16"/>
+
+<!-- Topo cluster: bottom-left -->
+<path d="M30,185 C62,168 100,170 118,192 C132,208 126,232 102,240 C75,248 42,238 26,218 C14,202 12,195 30,185 Z" fill="none" stroke="#226B86" stroke-width="0.9" opacity="0.26"/>
+<path d="M46,193 C72,178 104,180 118,200 C128,214 124,232 104,238 C80,244 52,234 40,216 C30,202 32,200 46,193 Z" fill="none" stroke="#2B89AC" stroke-width="0.7" opacity="0.18"/>
+
+<!-- Topo cluster: bottom-center -->
+<path d="M310,195 C338,178 378,182 396,204 C410,222 402,246 376,252 C348,258 314,244 300,224 C288,208 290,204 310,195 Z" fill="none" stroke="#194E61" stroke-width="0.9" opacity="0.30"/>
+<path d="M322,202 C346,188 376,192 390,212 C400,228 394,246 372,250 C348,254 320,240 310,222 C302,208 306,208 322,202 Z" fill="none" stroke="#226B86" stroke-width="0.8" opacity="0.22"/>
+
+<!-- Topo cluster: bottom-right -->
+<path d="M588,190 C618,175 655,180 668,204 C678,222 665,245 640,250 C612,256 578,240 566,218 C556,200 562,198 588,190 Z" fill="none" stroke="#194E61" stroke-width="1.0" opacity="0.35"/>
+<path d="M600,198 C625,185 654,190 664,210 C672,226 660,244 638,248 C613,252 585,238 576,218 C568,204 578,206 600,198 Z" fill="none" stroke="#226B86" stroke-width="0.8" opacity="0.26"/>
+<path d="M612,206 C632,196 652,200 659,216 C665,228 655,242 637,246 C617,250 596,238 590,220 C584,208 595,212 612,206 Z" fill="none" stroke="#2B89AC" stroke-width="0.7" opacity="0.18"/>
+
+<!-- SUBHEAD: ALL CAPS, above title -->
+<text x="52" y="112"
+  font-family="'Poppins', 'Segoe UI', sans-serif"
+  font-weight="400"
+  font-size="10.5"
+  fill="#34A7D2"
+  letter-spacing="5.0">AI-ENABLING THE COMPLETE SAAS CUSTOMER LIFECYCLE</text>
+
+<!-- MAIN HEADLINE -->
+<text x="52" y="158"
+  font-family="'Poppins', 'Segoe UI', sans-serif"
+  font-weight="900"
+  font-size="40"
+  fill="#F8F8F8"
+  letter-spacing="-0.5">Claude for Customer Success</text>
+</svg>
