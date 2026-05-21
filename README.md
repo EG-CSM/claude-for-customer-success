@@ -1,6 +1,6 @@
 # Claude for Customer Success
 
-[![License](https://img.shields.io/github/license/t0ddc3by/claude-for-customer-success)](./LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-34A7D2)](./LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/t0ddc3by/claude-for-customer-success)](https://github.com/t0ddc3by/claude-for-customer-success/releases)
 [![Last Commit](https://img.shields.io/github/last-commit/t0ddc3by/claude-for-customer-success)](https://github.com/t0ddc3by/claude-for-customer-success/commits)
 [![Plugins](https://img.shields.io/badge/plugins-6-34A7D2)](./dist/)
