@@ -25,8 +25,10 @@ Get a plugin running in under 60 seconds. Pick your install path below, run the 
 2. From the repo root, install the plugin:
 
 ```bash
-/install dist/[plugin]-v1.0.0.plugin
+/install dist/[plugin]-[version].plugin
 ```
+
+Use the exact filename from `dist/` (versions are listed below). For example: `/install dist/csm-v1.0.7.plugin`.
 
 3. Run the cold-start interview:
 
@@ -38,11 +40,11 @@ Get a plugin running in under 60 seconds. Pick your install path below, run the 
 
 | File | Plugin |
 |------|--------|
-| `csm-v1.0.0.plugin` | Core CSM workflows |
-| `renewals-v1.0.0.plugin` | Renewal pipeline |
-| `cs-ops-v1.0.0.plugin` | CS operations |
-| `onboarding-v1.0.0.plugin` | Customer onboarding |
-| `rev-ops-v1.1.0.plugin` | Revenue operations |
+| `csm-v1.0.7.plugin` | Core CSM workflows |
+| `renewals-v1.0.1.plugin` | Renewal pipeline |
+| `cs-ops-v1.0.1.plugin` | CS operations |
+| `onboarding-v1.0.1.plugin` | Customer onboarding |
+| `rev-ops-v1.1.1.plugin` | Revenue operations |
 | `auq-resilience-v1.1.0.plugin` | AUQ fallback hooks (Claude Code) + `/auq` command (Cowork) |
 
 ---
@@ -54,7 +56,7 @@ Install at **user scope** (the default) when your CSM workflow touches files out
 Install at **project scope** only when the plugin is purpose-built for a specific repo and you want it isolated to that folder:
 
 ```bash
-/install dist/[plugin]-v1.0.0.plugin --scope project
+/install dist/[plugin]-[version].plugin --scope project
 ```
 
 If skills fail to read the company profile or connector config, the most likely cause is a project-scoped install trying to read a user-level path. Reinstall at user scope.
