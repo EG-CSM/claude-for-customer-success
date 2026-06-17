@@ -2,10 +2,12 @@
   "name": "claude-for-customer-success",
   "owner": { "name": "Egan" },
   "plugins": [
-    { "name": "csm",        "source": "./csm" },
-    { "name": "cs-ops",     "source": "./cs-ops" },
-    { "name": "renewals",   "source": "./renewals" },
-    { "name": "onboarding", "source": "./onboarding" },
-    { "name": "rev-ops",    "source": "./rev-ops" }
+    { "name": "csm",                         "source": "./csm" },
+    { "name": "cs-ops",                      "source": "./cs-ops" },
+    { "name": "renewals",                    "source": "./renewals" },
+    { "name": "onboarding",                  "source": "./onboarding" },
+    { "name": "rev-ops",                     "source": "./rev-ops" },
+    { "name": "auq-resilience",              "source": "./auq-resilience" },
+    { "name": "claude-for-msft-365-install", "source": "./claude-for-msft-365-install" }
   ]
 }
