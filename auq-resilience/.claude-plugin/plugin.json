@@ -1,0 +1,5 @@
+{
+  "name": "auq-resilience",
+  "version": "1.0.0",
+  "description": "AUQ render-failure resilience hooks"
+}
